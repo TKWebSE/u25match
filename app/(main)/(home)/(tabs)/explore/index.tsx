@@ -1,174 +1,34 @@
-import EmptyState from '@components/common/EmptyState';
-import { useCardLayout } from '@components/explore/CardLayoutCalculator';
-import ExploreTabs from '@components/explore/ExploreTabs';
-import UserCard from '@components/explore/UserCard';
-import WebGridLayout from '@components/explore/WebGridLayout';
-import { getProfilePath } from '@constants/routes';
-import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
-import { useSidebar } from '@layouts/WebLayout';
-import { colors, spacing } from '@styles/globalStyles';
-import { isWeb } from '@utils/platform';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// app/(main)/(home)/(tabs)/explore/index.tsx
 
-interface User {
-  name: string;
-  age: number;
-  location: string;
-  imageUrl: string;
-  isOnline: boolean;
-  lastActiveAt: Date;
-}
+/**
+ * フォールバックファイル（Expo Routerのプラットフォーム自動解決のため必要）
+ * 
+ * 【重要】このファイルの役割について：
+ * 
+ * 1. プラットフォーム自動解決の仕組み
+ *    - index.web.tsx が存在する場合 → Web版では index.web.tsx が実行される
+ *    - index.native.tsx が存在する場合 → モバイル版では index.native.tsx が実行される
+ *    - この index.tsx は、プラットフォーム別ファイルが存在しない場合の「フォールバック」として機能
+ * 
+ * 2. なぜこのファイルが必要なのか
+ *    - Expo Routerは、プラットフォーム別ファイル（.web.tsx, .native.tsx）が存在する場合、
+ *      必ずベースファイル（index.tsx）も存在することを要求する
+ *    - これは、プラットフォーム別ファイルが読み込めない環境での安全性を確保するため
+ * 
+ * 3. このファイルに書いたロジックは無視される
+ *    - プラットフォーム別ファイルが存在する場合、このファイルの内容は実行されない
+ *    - そのため、ビジネスロジックやUIは index.web.tsx と index.native.tsx に書く必要がある
+ *    - このファイルは「存在するだけ」で十分
+ * 
+ * 4. 実際の実装
+ *    - ビジネスロジック: index.web.tsx と index.native.tsx の両方に記述
+ *    - UI表示: プラットフォーム別に最適化された内容を各ファイルに記述
+ *    - 状態管理: 各ファイル内で独立して管理
+ */
 
-const ExploreScreen = () => {
-  const router = useRouter();
 
-  // カードリストエリアの幅を計測（シンプル化）
-  const [cardListWidth, setCardListWidth] = useState(0);
-
-  // アクティブなタブの状態管理
-  const [activeTab, setActiveTab] = useState<ExploreTabType>('search');
-
-  // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
-  const cardLayout = useCardLayout(cardListWidth);
-
-  // Web環境ではWebLayoutの検索クエリを使用、モバイルではローカル状態を使用
-  const [localSearchQuery, setLocalSearchQuery] = useState('');
-  const { searchQuery: webSearchQuery } = useSidebar();
-
-  // 実際に使用する検索クエリを決定
-  const actualSearchQuery = isWeb ? webSearchQuery : localSearchQuery;
-
-  const {
-    filteredUsers,
-    hasSearchResults,
-    hasSearchQuery
-  } = useUserSearch(actualSearchQuery, activeTab);
-
-  const handleCardPress = (user: User) => {
-    const userId = user.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(getProfilePath(userId) as any);
-  };
-
-  // タブ切り替えハンドラー
-  const handleTabPress = (tab: ExploreTabType) => {
-    setActiveTab(tab);
-    // タブに応じた処理をここに追加（例：フィルタリング、データ取得など）
-    console.log('🎯 タブ切り替え:', tab);
-  };
-
-  const renderUserItem = ({ item }: { item: User }) => (
-    <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
-  );
-
-  const renderEmptyComponent = () => {
-    if (hasSearchQuery && !hasSearchResults) {
-      return (
-        <EmptyState
-          message=""
-          showSearchMessage={true}
-          searchQuery={actualSearchQuery}
-        />
-      );
-    }
-
-    if (!hasSearchQuery && !hasSearchResults) {
-      return <EmptyState message="ユーザーが見つかりません" />;
-    }
-
-    return null;
-  };
-
-  // Web環境用のグリッドレイアウト
-  const renderWebGrid = () => (
-    <ScrollView
-      style={styles.webScrollView}
-      contentContainerStyle={styles.webScrollContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <WebGridLayout
-        gridTemplateColumns={cardLayout.gridTemplateColumns}
-        gridGap={cardLayout.gridGap}
-      >
-        {filteredUsers.map((user, index) => (
-          <UserCard key={`${user.name}-${index}`} user={user} onPress={handleCardPress} layout={cardLayout} />
-        ))}
-      </WebGridLayout>
-    </ScrollView>
-  );
-
-  // モバイル環境用のFlatList
-  const renderMobileList = () => (
-    <FlatList
-      data={filteredUsers}
-      renderItem={renderUserItem}
-      keyExtractor={(item, index) => `${item.name}-${index}`}
-      numColumns={cardLayout.columnCount}
-      key={`flatlist-${cardLayout.columnCount}`}
-      contentContainerStyle={styles.listContainer}
-      showsVerticalScrollIndicator={false}
-      ListEmptyComponent={renderEmptyComponent}
-    />
-  );
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* タブエリア */}
-        <ExploreTabs
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          cardListWidth={cardListWidth}
-        />
-
-        {/* カードリストエリアの幅を計測 */}
-        <View
-          style={styles.cardListArea}
-          onLayout={(event) => {
-            const { width } = event.nativeEvent.layout;
-            setCardListWidth(width);
-            console.log('🎯 カードリストエリアの幅:', width);
-          }}
-        >
-          {/* プラットフォームに応じてレイアウトを切り替え */}
-          {isWeb ? renderWebGrid() : renderMobileList()}
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: 'cyan', // 水色に変更
-  },
-  listContainer: {
-    padding: spacing.lg,
-    // paddingHorizontal: spacing.xl, // 左右に余分なスペースを追加
-    // paddingRight: spacing.xl + spacing.xl + spacing.xl + spacing.base, // 右側により多くのスペースを追加
-
-  },
-  cardListArea: {
-    flex: 1,
-    backgroundColor: 'cyan', // カードリストエリア（水色）
-  },
-  // Web環境用のスクロールスタイル
-  webScrollView: {
-    flex: 1,
-  },
-  webScrollContent: {
-    flexGrow: 1,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
-});
-
-export default ExploreScreen; 
+export default function Placeholder() {
+  // この関数は実行されません（プラットフォーム別ファイルが存在するため）
+  // ただし、Expo Routerの要件を満たすために必要
+  return null;
+} 
