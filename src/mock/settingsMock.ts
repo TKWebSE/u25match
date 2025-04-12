@@ -25,6 +25,13 @@ export const mockUserSettings = {
     // 興味のある性別（both: 両方, male: 男性, female: 女性）
     interestedIn: 'both' as const,
   },
+  // プレミアム会員情報
+  membership: {
+    isPremium: true,
+    planName: 'プレミアム会員',
+    expiryDate: '2025-12-31', // 有効期限（YYYY-MM-DD形式）
+    startDate: '2025-01-01', // 開始日
+  },
 };
 
 export const mockPrivacySettings = {

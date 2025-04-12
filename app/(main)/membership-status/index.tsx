@@ -2,6 +2,7 @@ import { EMOJIS } from '@constants/emojis';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { mockUserSettings } from '@mock/settingsMock';
 import { getMembershipType, getPlanName } from '@utils/membershipUtils';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -35,6 +36,21 @@ export default function MembershipStatusScreen() {
   const membershipType = getMembershipType(profile || undefined);
   const planName = getPlanName(profile || undefined);
 
+  // 有効期限のフォーマット関数
+  const formatExpiryDate = (dateString?: string) => {
+    if (!dateString) return null;
+
+    try {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      return `${year}年${month}月${day}日まで`;
+    } catch (error) {
+      return null;
+    }
+  };
+
   // useEffect(() => {
   //   // 有料会員でない場合は前の画面に戻る
   //   if (membershipType !== 'premium') {
@@ -59,7 +75,7 @@ export default function MembershipStatusScreen() {
           colors={['#667eea', '#764ba2']}
           style={styles.loadingGradient}
         >
-          <Text style={styles.loadingText}>💎 読み込み中...</Text>
+          <Text style={styles.loadingText}>{EMOJIS.PREMIUM} 読み込み中...</Text>
         </LinearGradient>
       </View>
     );
@@ -123,6 +139,13 @@ export default function MembershipStatusScreen() {
               <Text style={styles.membershipDescription}>
                 プレミアム機能をすべて利用可能
               </Text>
+              {mockUserSettings.membership.expiryDate && (
+                <View style={styles.expiryContainer}>
+                  <Text style={styles.expiryText}>
+                    {formatExpiryDate(mockUserSettings.membership.expiryDate)}
+                  </Text>
+                </View>
+              )}
             </View>
           </LinearGradient>
         </View>
@@ -373,6 +396,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
     lineHeight: 24,
+  },
+
+  expiryContainer: {
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+
+  expiryText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
 
   section: {

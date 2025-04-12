@@ -24,6 +24,7 @@ import {
 import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { mockUserSettings } from '@mock/settingsMock';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { getMembershipType, getPlanName } from '@utils/membershipUtils';
 import * as Haptics from 'expo-haptics';
@@ -529,6 +530,7 @@ const SettingsScreen = () => {
             {getMembershipType(profile || undefined) === 'premium' ? (
               <PremiumMembershipDisplay
                 planName={getPlanName(profile || undefined)}
+                expiryDate={mockUserSettings.membership.expiryDate}
               />
             ) : (
               <FreeMembershipDisplay
