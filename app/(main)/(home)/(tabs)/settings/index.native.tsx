@@ -1,8 +1,7 @@
 import { AccountInfo } from '@components/settings/AccountInfo';
-import { FreeMembershipDisplay } from '@components/settings/FreeMembershipDisplay';
 import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
-import { PremiumMembershipDisplay } from '@components/settings/PremiumMembershipDisplay';
+import { MembershipDisplay } from '@components/settings/mobile/MembershipDisplay.native';
 import { RemainingStats } from '@components/settings/RemainingStats';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import {
@@ -23,9 +22,8 @@ import {
 import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
-import { mockUserSettings } from '@mock/settingsMock';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
-import { getMembershipType, getPlanName } from '@utils/membershipUtils';
+import { getMembershipType } from '@utils/membershipUtils';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -109,10 +107,6 @@ const SettingsScreen = () => {
     }
   };
 
-  // セール詳細画面への遷移
-  const handleSalesDetail = () => {
-    router.push(SALES_SCREEN_PATH as any);
-  };
 
   // 会員アップグレードの表示
   const handleUpgradePress = () => {
@@ -526,16 +520,10 @@ const SettingsScreen = () => {
 
           {/* 会員種別セクション */}
           <View style={SettingsStyles.section}>
-            {getMembershipType(profile || undefined) === 'premium' ? (
-              <PremiumMembershipDisplay
-                planName={getPlanName(profile || undefined)}
-                expiryDate={mockUserSettings.membership.expiryDate}
-              />
-            ) : (
-              <FreeMembershipDisplay
-                onUpgradePress={handleUpgradePress}
-              />
-            )}
+            <MembershipDisplay
+              membershipType={getMembershipType(profile || undefined)}
+              onUpgradePress={handleUpgradePress}
+            />
           </View>
 
           {/* ブースト実行セクション */}

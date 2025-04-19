@@ -1,7 +1,8 @@
 import { colors } from '@styles/globalStyles';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /**
@@ -21,36 +22,70 @@ const ContactScreen = () => {
 
   // お問い合わせ送信処理
   const handleSubmit = () => {
-    if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
-      Alert.alert('エラー', 'すべての項目を入力してください。');
+    // バリデーション: 必須項目のチェック
+    if (!name.trim()) {
+      showErrorToast('お名前を入力してください');
+      return;
+    }
+
+    if (!email.trim()) {
+      showErrorToast('メールアドレスを入力してください');
+      return;
+    }
+
+    if (!subject.trim()) {
+      showErrorToast('件名を入力してください');
+      return;
+    }
+
+    if (!message.trim()) {
+      showErrorToast('お問い合わせ内容を入力してください');
       return;
     }
 
     // メールアドレスの形式チェック
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('エラー', '正しいメールアドレスを入力してください。');
+      showErrorToast('正しいメールアドレスを入力してください');
+      return;
+    }
+
+    // 文字数制限チェック
+    if (name.length > 50) {
+      showErrorToast('お名前は50文字以内で入力してください');
+      return;
+    }
+
+    if (subject.length > 100) {
+      showErrorToast('件名は100文字以内で入力してください');
+      return;
+    }
+
+    if (message.length > 1000) {
+      showErrorToast('お問い合わせ内容は1000文字以内で入力してください');
       return;
     }
 
     // 送信処理（実際の実装ではAPI呼び出しなど）
-    Alert.alert(
-      '送信完了',
-      'お問い合わせを送信しました。\n通常3営業日以内にご返信いたします。',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            // フォームをリセット
-            setName('');
-            setEmail('');
-            setSubject('');
-            setMessage('');
-            router.back();
-          }
-        }
-      ]
-    );
+    try {
+      // シミュレーション: 送信処理
+      setTimeout(() => {
+        showSuccessToast('お問い合わせを送信しました');
+
+        // フォームをリセット
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+
+        // 少し遅延してから前の画面に戻る
+        setTimeout(() => {
+          router.back();
+        }, 2000);
+      }, 1000);
+    } catch (error) {
+      showErrorToast('送信に失敗しました。もう一度お試しください');
+    }
   };
 
   return (

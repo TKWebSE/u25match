@@ -1,4 +1,5 @@
 // app/(main)/profile/detail/[uid].native.tsx
+import { LikeButton } from '@/src/components/profile/detail/mobile/LikeButton.native';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import {
@@ -9,7 +10,6 @@ import {
 } from '@components/profile/detail';
 import { EditButton } from '@components/profile/EditButton';
 import ImageIndicator from '@components/profile/ImageIndicator';
-import { LikeButton } from '@components/profile/LikeButton';
 import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';

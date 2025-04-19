@@ -1,9 +1,9 @@
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
-import { MembershipDisplay } from '@components/settings/MembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
+import { MembershipDisplay } from '@components/settings/web/MembershipDisplay.web';
 import {
   CONTACT_SCREEN_PATH,
   getProfilePath,

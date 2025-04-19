@@ -1,7 +1,6 @@
-import { MobileLikeButton } from '@components/profile/MobileLikeButton';
-import { WebLikeButton } from '@components/profile/WebLikeButton';
 import React, { useEffect, useState } from 'react';
-import { Animated, Platform } from 'react-native';
+import { Animated } from 'react-native';
+import { WebLikeButton } from './WebLikeButton.web';
 
 interface LikeButtonProps {
   onPress: () => void;    // いいねボタンが押された時の処理
@@ -9,8 +8,7 @@ interface LikeButtonProps {
 }
 
 /**
- * いいねボタンコンポーネント
- * プラットフォームに応じてWeb版またはモバイル版を表示
+ * Web版いいねボタンコンポーネント
  * 
  * @param onPress - いいねボタンが押された時の処理
  * @param liked - いいね済みかどうか（デフォルト: false）
@@ -64,18 +62,10 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ onPress, liked = false }
     return null;
   }
 
-  // プラットフォームに応じて適切なコンポーネントを返す
-  if (Platform.OS === 'web') {
-    return (
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <WebLikeButton onPress={handlePress} />
-      </Animated.View>
-    );
-  } else {
-    return (
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <MobileLikeButton onPress={handlePress} />
-      </Animated.View>
-    );
-  }
+  // Web版いいねボタンを返す
+  return (
+    <Animated.View style={{ opacity: fadeAnim }}>
+      <WebLikeButton onPress={handlePress} />
+    </Animated.View>
+  );
 }; 

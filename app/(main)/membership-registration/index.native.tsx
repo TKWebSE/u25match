@@ -114,7 +114,7 @@ export default function MembershipRegistrationScreen() {
               end={{ x: 1, y: 1 }}
             >
               <Text style={styles.registerButtonText}>
-                {isLoading ? '登録中...' : '💎 プレミアム会員に登録'}
+                {isLoading ? '登録中...' : '👑 プレミアム会員に登録'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>

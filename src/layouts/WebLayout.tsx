@@ -1,5 +1,5 @@
+import { WebSidebar } from '@components/common/web/WebSidebar';
 import SearchBar from '@components/explore/SearchBar';
-import { WebSidebar } from '@components/navigation/WebSidebar';
 import { Colors } from '@constants/Colors';
 import React, { createContext, useContext, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, useWindowDimensions, View } from 'react-native';

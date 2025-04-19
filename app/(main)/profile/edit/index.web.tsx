@@ -3,7 +3,7 @@ import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
-import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
+import { ProfileData, getChangeSummary, getProfileDiff } from '@utils/profileDiff';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Animated, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
@@ -81,30 +81,6 @@ const ProfileEditScreen = () => {
     }).start();
   };
 
-
-  // 戻る処理（キャンセル処理）
-  const handleBack = () => {
-    // 変更がある場合のみ確認ダイアログを表示
-    if (hasProfileChanges(mockProfileData, profileData)) {
-      Alert.alert(
-        '編集内容を破棄しますか？',
-        '保存していない変更があります',
-        [
-          { text: '続行', style: 'cancel' },
-          {
-            text: '破棄',
-            onPress: () => {
-              router.back();
-            }
-          }
-        ]
-      );
-    } else {
-      // 変更がない場合は直接戻る
-      router.back();
-    }
-  };
-
   // Web版用の設定
   const contentWidth = Math.min(windowWidth * 0.9, 1200);
   const contentMargin = (windowWidth - contentWidth) / 2;
@@ -122,7 +98,7 @@ const ProfileEditScreen = () => {
   );
 
   // Web版用のサイドバー
-  const WebSidebar = () => (
+  const LocalWebSidebar = () => (
     <View style={ProfileEditStyles.webSidebar}>
       <Text style={ProfileEditStyles.webSidebarTitle}>編集項目</Text>
 
@@ -170,7 +146,7 @@ const ProfileEditScreen = () => {
           <WebHeader />
 
           <View style={{ flexDirection: 'row' }}>
-            <WebSidebar />
+            {/* <LocalWebSidebar /> */}
 
             <View style={{ flex: 1, padding: 20 }}>
               {/* プロフィール画像編集 */}
@@ -206,30 +182,32 @@ const ProfileEditScreen = () => {
                 details={profileData.details}
                 onDetailsChange={(details) => setProfileData(prev => ({ ...prev, details }))}
               />
+
+              {/* 保存ボタン */}
+              <View style={{ marginTop: 20, marginBottom: 20, alignItems: 'center' }}>
+                <Animated.View style={{ transform: [{ scale: saveButtonScale }] }}>
+                  <TouchableOpacity
+                    onPress={() => handleSave(profileData)}
+                    onPressIn={handleButtonPressIn}
+                    onPressOut={handleButtonPressOut}
+                    style={[ProfileEditStyles.button, {
+                      minWidth: 200,
+                      paddingHorizontal: 40,
+                      paddingVertical: 16
+                    }]}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={[ProfileEditStyles.buttonText, {
+                      fontSize: 18,
+                      fontWeight: '700'
+                    }]}>保存</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
             </View>
           </View>
         </View>
       </ScrollView>
-
-      {/* Web版用の保存ボタン */}
-      <View style={{
-        position: 'fixed',
-        bottom: 20,
-        right: 20,
-        zIndex: 1000
-      }}>
-        <Animated.View style={{ transform: [{ scale: saveButtonScale }] }}>
-          <TouchableOpacity
-            onPress={() => handleSave(profileData)}
-            onPressIn={handleButtonPressIn}
-            onPressOut={handleButtonPressOut}
-            style={ProfileEditStyles.button}
-            activeOpacity={0.8}
-          >
-            <Text style={ProfileEditStyles.buttonText}>保存</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </View>
     </SafeAreaView>
   );
 };
