@@ -6,5 +6,7 @@
 export * from '../multi';
 
 // Web固有コンポーネント
-export { default as WebChatContainer } from './ChatContainer';
+export { default as WebChatContainer } from './ChatContainer.web';
+export { default as ChatInput } from './ChatInput.web';
+export { default as ChatMessage } from './ChatMessage.web';
 

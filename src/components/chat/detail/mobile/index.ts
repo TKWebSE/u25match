@@ -6,5 +6,7 @@
 export * from '../multi';
 
 // モバイル固有コンポーネント
-export { default as MobileChatContainer } from './ChatContainer';
+export { default as MobileChatContainer } from './ChatContainer.native';
+export { default as ChatInput } from './ChatInput.native';
+export { default as ChatMessage } from './ChatMessage.native';
 

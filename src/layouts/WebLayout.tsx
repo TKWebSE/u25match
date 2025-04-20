@@ -1,5 +1,4 @@
 import { WebSidebar } from '@components/common/web/WebSidebar';
-import SearchBar from '@components/explore/SearchBar';
 import { Colors } from '@constants/Colors';
 import React, { createContext, useContext, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, useWindowDimensions, View } from 'react-native';
@@ -9,16 +8,12 @@ interface SidebarContextType {
   isSidebarOpen: boolean;
   sidebarWidth: number;
   mainContentWidth: number; // メインコンテンツエリアの幅を追加
-  searchQuery: string; // 検索クエリを追加
-  setSearchQuery: (query: string) => void; // 検索クエリ設定関数を追加
 }
 
 const SidebarContext = createContext<SidebarContextType>({
   isSidebarOpen: true,
   sidebarWidth: 280,
   mainContentWidth: 829, // デフォルト値を設定
-  searchQuery: '', // デフォルトの検索クエリ
-  setSearchQuery: () => { }, // デフォルトの設定関数
 });
 
 // カスタムフックでドロワーの状態を取得
@@ -39,9 +34,6 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light' as keyof typeof Colors];
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  // 検索クエリの状態管理
-  const [searchQuery, setSearchQuery] = useState('');
 
   // 実際の幅を計測するための状態
   const [actualSidebarWidth, setActualSidebarWidth] = useState(0);
@@ -95,8 +87,6 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
     isSidebarOpen,
     sidebarWidth: actualSidebarWidth || sidebarWidth, // 実際に計測した値を使用
     mainContentWidth: actualMainContentWidth || (width - sidebarWidth), // 実際に計測した値を使用
-    searchQuery, // 検索クエリを追加
-    setSearchQuery, // 検索クエリ設定関数を追加
   };
 
   return (
@@ -141,12 +131,6 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
           }}
         >
           <View style={styles.contentWrapper}>
-            {/* 検索バーをメインコンテンツエリアの上部に配置 */}
-            <View style={styles.searchBarContainer}>
-              <SearchBar
-                onSearch={setSearchQuery}
-              />
-            </View>
             {/* メインコンテンツ */}
             <View style={styles.mainContentArea}>
               {children}
@@ -181,10 +165,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 32, // 左右余白あり
     paddingTop: 20, // メニューボタンとの重複を避ける
-  },
-  // 検索バーコンテナのスタイル
-  searchBarContainer: {
-    // marginBottom: 8, // 検索バーとメインコンテンツの間隔
   },
   // メインコンテンツエリアのスタイル
   mainContentArea: {

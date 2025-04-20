@@ -2,7 +2,7 @@ import { mockUsers } from "@mock/chatMock";
 import { ChatMessage as ChatMessageType } from "@services/main/chat/types";
 import React, { useEffect, useRef } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import ChatMessage from "./ChatMessage";
+import ChatMessage from "../web/ChatMessage.web";
 import DateSeparator from "./DateSeparator";
 import EmptyChatMessage from "./EmptyChatMessage";
 

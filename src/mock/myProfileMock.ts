@@ -90,7 +90,7 @@ export const myProfileMock: ProfileDetail = {
 
   // 会員種別（テスト用に無料会員に設定）
   membershipType: 'premium' as const,
-  planName: '無料会員',
+  planName: 'プレミアム会員',
   membershipExpiryDate: undefined, // 無料会員なので有効期限なし
   membershipStartDate: '2024-01-01',
 

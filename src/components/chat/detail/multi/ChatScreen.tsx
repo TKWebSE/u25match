@@ -3,7 +3,7 @@ import { ChatMessage } from "@services/main/chat/types";
 import { ServiceRegistry } from "@services/ServiceRegistry";
 import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, Text, View } from "react-native";
-import ChatInput from "./ChatInput";
+import ChatInput from "../web/ChatInput.web";
 import ChatList from "./ChatList";
 
 type ChatContainerProps = {

@@ -4,7 +4,7 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import ChatInput from "./ChatInput";
+import ChatInput from "../web/ChatInput.web";
 import ChatList from "./ChatList";
 
 type ChatContainerProps = {

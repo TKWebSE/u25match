@@ -10,8 +10,8 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import ChatInput from "../multi/ChatInput";
 import ChatList from "../multi/ChatList";
+import ChatInput from "./ChatInput.native";
 
 // プロパティの型定義
 type ChatContainerProps = {
