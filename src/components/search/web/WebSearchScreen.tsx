@@ -14,7 +14,6 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import SearchModal from '../mobile/SearchModal';
-import SearchResults from '../mobile/SearchResults';
 import WebUserGrid from './WebUserGrid';
 
 const WebSearchScreen = () => {
@@ -124,10 +123,9 @@ const WebSearchScreen = () => {
 
       {/* 検索結果またはメインコンテンツ */}
       {isSearchActive ? (
-        <SearchResults
-          selectedCategory={selectedCategory}
-          searchResults={searchResults}
-          onCardPress={handleCardPress}
+        <WebUserGrid
+          users={searchResults}
+          emptyMessage="このカテゴリにはユーザーがいません"
         />
       ) : (
         <WebUserGrid
