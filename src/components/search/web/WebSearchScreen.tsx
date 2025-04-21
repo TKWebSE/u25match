@@ -10,9 +10,10 @@ import { getUsersByCategory } from '@mock/searchMock';
 import { User } from '@my-types/search';
 import { colors, spacing } from '@styles/globalStyles';
 import { getMembershipType } from '@utils/membershipUtils';
+import { getCategoryTitle } from '@utils/searchUtils';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import SearchModal from '../mobile/SearchModal';
 import WebUserGrid from './WebUserGrid';
 
@@ -85,23 +86,12 @@ const WebSearchScreen = () => {
 
   // 検索モーダルを開く
   const handleOpenSearchModal = () => {
-    // 無料会員の場合は制限メッセージを表示
-    if (membershipType !== 'premium') {
-      Alert.alert(
-        '検索機能について',
-        '検索機能の一部はプレミアム会員限定です。\n無料会員でも基本的な検索はご利用いただけます。',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setIsSearchModalVisible(true);
-            }
-          }
-        ]
-      );
-    } else {
-      setIsSearchModalVisible(true);
-    }
+    console.log('🔍 虫眼鏡ボタンがクリックされました');
+    console.log('🔍 現在の会員種別:', membershipType);
+
+    // 無料会員でもモーダルを直接開く（制限はモーダル内で行う）
+    console.log('🔍 モーダルを開きます');
+    setIsSearchModalVisible(true);
   };
 
   // 検索モーダルを閉じる
@@ -120,6 +110,15 @@ const WebSearchScreen = () => {
       >
         <MaterialIcons name="search" size={40} color={colors.primary} />
       </TouchableOpacity>
+
+      {/* 検索結果ヘッダー（検索アクティブ時のみ表示） */}
+      {isSearchActive && (
+        <View style={styles.searchResultsHeader}>
+          <Text style={styles.searchResultsTitle}>
+            {getCategoryTitle(selectedCategory)}
+          </Text>
+        </View>
+      )}
 
       {/* 検索結果またはメインコンテンツ */}
       {isSearchActive ? (
@@ -168,6 +167,18 @@ const styles = StyleSheet.create({
     ...({
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     } as any),
+  },
+  searchResultsHeader: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.base,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+    marginBottom: spacing.base,
+  },
+  searchResultsTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
 });
 
