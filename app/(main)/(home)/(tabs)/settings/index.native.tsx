@@ -324,17 +324,16 @@ const SettingsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* ログアウトセクション */}
+        {/* アカウント管理セクション */}
         <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>アカウント管理</Text>
+
           {/* ログアウトボタン */}
           <LogoutButton loading={loading} onLogout={handleLogout} />
-        </View>
 
-        {/* アカウント削除セクション */}
-        <View style={SettingsStyles.section}>
           {/* アカウント削除ボタン */}
           <TouchableOpacity
-            style={[SettingsStyles.button, SettingsStyles.dangerButton]}
+            style={[SettingsStyles.button, SettingsStyles.dangerButton, { marginTop: 12 }]}
             onPress={handleDeleteAccount}
             activeOpacity={0.7}
           >

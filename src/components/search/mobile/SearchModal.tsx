@@ -4,10 +4,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { myProfileMock } from '@mock/myProfileMock';
 import { colors, spacing } from '@styles/globalStyles';
-import { SearchCategory } from '@types/search';
 import React from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SearchCategory } from '../../../types/search';
 
 interface SearchModalProps {
   visible: boolean;
@@ -27,7 +27,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
     const userTags = myProfileMock.tags || [];
     return userTags.map((tag, index) => ({
       key: `tag-${tag.id}`,
-      title: `🏷️ ${tag.name}好き`,
+      title: `🏷️ ${tag.name}`,
       icon: 'favorite',
     }));
   };
@@ -41,6 +41,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
     { key: 'nearby', title: '📍 近くの人', icon: 'location-on' },
     { key: 'student', title: '🎓 学生', icon: 'school' },
     { key: 'working', title: '💼 社会人', icon: 'work' },
+    { key: 'marriage', title: '💍 結婚したい', icon: 'favorite' },
   ];
 
   // ユーザータグカテゴリと基本カテゴリを結合（ユーザータグを最後に配置）

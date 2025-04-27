@@ -274,14 +274,16 @@ export const ProfileEditStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.base,
+    justifyContent: 'space-between',
   },
 
   imageContainer: {
-    width: 120,
-    height: 180, // 2:3の比率（120 * 1.5 = 180）
+    width: '48%', // 2列で収まるように幅を調整
+    aspectRatio: 2 / 3, // 2:3の比率を維持
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
     position: 'relative',
+    marginBottom: spacing.base,
   },
 
   image: {
@@ -383,7 +385,6 @@ export const ProfileEditStyles = StyleSheet.create({
     padding: spacing.xl,
     borderTopWidth: 1,
     borderTopColor: colors.gray200,
-    marginTop: spacing.xl,
   },
 
   footerButtons: {
@@ -441,5 +442,88 @@ export const ProfileEditStyles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     lineHeight: 18,
+  },
+
+  // 時間選択用スタイル
+  detailValueText: {
+    fontSize: typography.base,
+    color: colors.textPrimary,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContent: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    width: '90%',
+    maxWidth: 400,
+  },
+
+  modalTitle: {
+    fontSize: typography.lg,
+    fontWeight: typography.semibold,
+    color: colors.textPrimary,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+  },
+
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xl,
+  },
+
+  picker: {
+    flex: 1,
+    height: 200,
+  },
+
+  pickerSeparator: {
+    fontSize: typography['2xl'],
+    fontWeight: typography.bold,
+    color: colors.textPrimary,
+    marginHorizontal: spacing.base,
+  },
+
+  modalButtons: {
+    flexDirection: 'row',
+    gap: spacing.base,
+  },
+
+  modalButton: {
+    flex: 1,
+    paddingVertical: spacing.base,
+    borderRadius: borderRadius.base,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  modalButtonCancel: {
+    backgroundColor: colors.gray100,
+    borderWidth: 1,
+    borderColor: colors.gray300,
+  },
+
+  modalButtonConfirm: {
+    backgroundColor: colors.primary,
+  },
+
+  modalButtonCancelText: {
+    fontSize: typography.base,
+    fontWeight: typography.medium,
+    color: colors.textPrimary,
+  },
+
+  modalButtonConfirmText: {
+    fontSize: typography.base,
+    fontWeight: typography.medium,
+    color: colors.white,
   },
 });

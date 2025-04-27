@@ -29,7 +29,7 @@ interface LikesHistoryItem {
     lastActiveAt: Date;
     gender: 'male' | 'female';
   };
-  reactionType: 'like' | 'super_like' | 'footprint';
+  reactionType: 'like' | 'footprint';
   timestamp: Date;
   message?: string;
 }
@@ -46,9 +46,9 @@ const LikesHistoryScreen = () => {
     try {
       setLoading(true);
 
-      // モックデータからいいね履歴を構築（足跡は除外）
+      // モックデータからいいね履歴を構築（足跡とスーパーいいねは除外）
       const historyItems: LikesHistoryItem[] = mockSentReactions
-        .filter((reaction) => reaction.type !== 'footprint') // 足跡を除外
+        .filter((reaction) => reaction.type !== 'footprint' && reaction.type !== 'super_like') // 足跡とスーパーいいねを除外
         .map((reaction) => {
           // ランダムなユーザー情報を取得（実際の実装ではAPIから取得）
           const randomUser = users[Math.floor(Math.random() * users.length)];
@@ -105,8 +105,6 @@ const LikesHistoryScreen = () => {
     switch (type) {
       case 'like':
         return '❤️ いいね';
-      case 'super_like':
-        return '⭐ スーパーいいね';
       case 'footprint':
         return '👣 足あと';
       default:

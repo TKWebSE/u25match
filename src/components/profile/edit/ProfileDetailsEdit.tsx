@@ -26,6 +26,7 @@ import { MarriageIntentionSelector } from '@components/common/MarriageIntentionS
 import { PetsSelector } from '@components/common/PetsSelector';
 import { PrefectureSelector } from '@components/common/PrefectureSelector';
 import { SmokingSelector } from '@components/common/SmokingSelector';
+import { TimeSelector } from '@components/common/TimeSelector';
 import { WantChildrenSelector } from '@components/common/WantChildrenSelector';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -95,7 +96,6 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
     height: details.height.toString(),
     weight: details.weight?.toString() || '',
     occupation: details.occupation,
-    sleepSchedule: details.sleepSchedule || '',
   });
 
   // デバウンス処理（500ms後に親に通知）
@@ -120,10 +120,6 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
         updates.occupation = localValues.occupation;
       }
 
-      // 就寝時間の更新
-      if (localValues.sleepSchedule !== (details.sleepSchedule || '')) {
-        updates.sleepSchedule = localValues.sleepSchedule;
-      }
 
       // 変更があった場合のみ親コンポーネントに通知
       if (Object.keys(updates).length > 0) {
@@ -140,7 +136,6 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
       height: details.height.toString(),
       weight: details.weight?.toString() || '',
       occupation: details.occupation,
-      sleepSchedule: details.sleepSchedule || '',
     });
   }, [details]);
 
@@ -178,6 +173,7 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
             placeholder="身長を入力"
             placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
+            maxLength={3}
           />
           <Text style={{ marginLeft: 8, color: '#6B7280' }}>cm</Text>
         </View>
@@ -197,6 +193,7 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
             placeholder="体重を入力（オプション）"
             placeholderTextColor="#9CA3AF"
             keyboardType="numeric"
+            maxLength={3}
           />
           <Text style={{ marginLeft: 8, color: '#6B7280' }}>kg</Text>
         </View>
@@ -368,17 +365,10 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
         {/* 寝る時間（オプション項目） */}
         <View style={ProfileEditStyles.detailRow}>
           <Text style={ProfileEditStyles.detailLabel}>寝る時間</Text>
-          <TextInput
-            style={[
-              ProfileEditStyles.detailValue,
-              focusedField === 'sleepSchedule' && ProfileEditStyles.inputFocused
-            ]}
-            value={localValues.sleepSchedule}
-            onChangeText={(text) => handleTextChange('sleepSchedule', text)}
-            onFocus={() => setFocusedField('sleepSchedule')}
-            onBlur={() => setFocusedField(null)}
-            placeholder="寝る時間を入力（オプション）"
-            placeholderTextColor="#9CA3AF"
+          <TimeSelector
+            selectedTime={details.sleepSchedule || ''}
+            onTimeChange={(time) => updateDetail('sleepSchedule', time)}
+            placeholder="寝る時間を選択（オプション）"
           />
         </View>
       </View>

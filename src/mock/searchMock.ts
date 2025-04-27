@@ -12,6 +12,7 @@ export const searchUsersMock: Record<string, User[]> = {
   'age21-25': generateUsers('age21-25', 19),
   student: generateUsers('student', 17),
   working: generateUsers('working', 21),
+  marriage: generateUsers('marriage', 19),
   sports: generateUsers('sports', 14),
   music: generateUsers('music', 18),
   travel: generateUsers('travel', 13),

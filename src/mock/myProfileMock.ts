@@ -70,11 +70,11 @@ export const myProfileMock: ProfileDetail = {
 
   // タグ情報
   tags: [
-    { id: '1', name: '写真', imageUrl: 'src/assets/mock-assets/tag-images/cat.jpg' },
-    { id: '2', name: 'カフェ', imageUrl: 'src/assets/mock-assets/tag-images/coffee.jpg' },
-    { id: '3', name: 'アート', imageUrl: 'src/assets/mock-assets/tag-images/musiclive.jpg' },
-    { id: '4', name: '映画', imageUrl: 'src/assets/mock-assets/tag-images/game.jpg' },
-    { id: '5', name: '旅行', imageUrl: 'src/assets/mock-assets/tag-images/party.jpg' },
+    { id: 'coffee', name: 'コーヒー好き', imageUrl: 'src/assets/mock-assets/tag-images/coffee.jpg' },
+    { id: 'takoparty', name: 'タコパ好き！', imageUrl: 'src/assets/mock-assets/tag-images/takoparty.jpg' },
+    { id: 'ramen', name: 'ラーメン愛好家', imageUrl: 'src/assets/mock-assets/tag-images/takoparty.jpg' },
+    { id: 'sushi', name: '寿司マニア', imageUrl: 'src/assets/mock-assets/tag-images/coffee.jpg' },
+    { id: 'wine', name: 'ワイン好き', imageUrl: 'src/assets/mock-assets/tag-images/party.jpg' },
   ],
 
   // 本人確認済みフラグ

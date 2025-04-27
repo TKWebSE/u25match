@@ -10,7 +10,7 @@ export const getCategoryTitle = (categoryKey: string | null): string => {
   if (categoryKey.startsWith('tag-')) {
     const tagId = categoryKey.replace('tag-', '');
     const userTag = myProfileMock.tags?.find(tag => tag.id === tagId);
-    return userTag ? `🏷️ ${userTag.name}好き` : 'あなたのタグで検索';
+    return userTag ? `🏷️ ${userTag.name}` : 'あなたのタグで検索';
   }
 
   // 基本カテゴリのマッピング
@@ -22,6 +22,7 @@ export const getCategoryTitle = (categoryKey: string | null): string => {
     'nearby': '📍 近くの人',
     'student': '🎓 学生',
     'working': '💼 社会人',
+    'marriage': '💍 結婚したい',
   };
 
   return categoryTitles[categoryKey] || '検索結果';

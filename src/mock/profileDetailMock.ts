@@ -22,7 +22,6 @@ export const mockProfileUser = {
   tags: [
     { id: '1', name: 'コーヒー', imageUrl: 'src/assets/mock-assets/tag-images/coffee.jpg' },
     { id: '2', name: 'たこパーティー', imageUrl: 'src/assets/mock-assets/tag-images/takoparty.jpg' },
-    { id: '3', name: 'ゲーム', imageUrl: 'src/assets/mock-assets/tag-images/game.jpg' },
     { id: '4', name: 'ライブ', imageUrl: 'src/assets/mock-assets/tag-images/musiclive.jpg' },
     { id: '5', name: '犬', imageUrl: 'src/assets/mock-assets/tag-images/dog.jpg' },
     { id: '6', name: '猫', imageUrl: 'src/assets/mock-assets/tag-images/cat.jpg' },

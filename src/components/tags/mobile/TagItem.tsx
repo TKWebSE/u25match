@@ -16,26 +16,43 @@ interface TagItemProps {
   tag: Tag;
   index: number;
   onPress: (tag: Tag) => void;
+  isSelected?: boolean;
+  isMaxReached?: boolean;
 }
 
-const TagItem: React.FC<TagItemProps> = ({ tag, index, onPress }) => {
+const TagItem: React.FC<TagItemProps> = ({ tag, index, onPress, isSelected = false, isMaxReached = false }) => {
   const tagImage = tagDataMap[tag.id as keyof typeof tagDataMap]?.image || require('@assets/tag-images/cat.jpg');
+  const isDisabled = !isSelected && isMaxReached;
 
   return (
     <TouchableOpacity
       key={`${tag.name}-${index}`}
-      style={styles.tagItem}
+      style={[
+        styles.tagItem,
+        isSelected && styles.tagItemSelected,
+        isDisabled && styles.tagItemDisabled
+      ]}
       onPress={() => onPress(tag)}
-      activeOpacity={0.8}
+      activeOpacity={isDisabled ? 1 : 0.8}
+      disabled={isDisabled}
     >
       <View style={styles.imageContainer}>
         <Image source={tagImage} style={styles.tagImage} />
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Text style={styles.selectedText}>✓</Text>
+          </View>
+        )}
         <View style={styles.countBadge}>
           <Text style={styles.countText}>{tag.userCount}人</Text>
         </View>
       </View>
       <View style={styles.tagContent}>
-        <Text style={styles.tagName}>{tag.name}</Text>
+        <Text style={[
+          styles.tagName,
+          isSelected && styles.tagNameSelected,
+          isDisabled && styles.tagNameDisabled
+        ]}>{tag.name}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -108,6 +125,41 @@ const styles = StyleSheet.create({
     color: '#2d3748',
     textAlign: 'center',
     lineHeight: 20,
+  },
+  tagItemSelected: {
+    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+    borderColor: colors.primary,
+    borderWidth: 2,
+  },
+  selectedBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  selectedText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  tagNameSelected: {
+    color: colors.primary,
+  },
+  tagItemDisabled: {
+    opacity: 0.5,
+  },
+  tagNameDisabled: {
+    color: colors.gray400,
   },
 });
 

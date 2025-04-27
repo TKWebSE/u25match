@@ -10,27 +10,11 @@ export const mockReactions = [
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
   },
   {
-    id: 'reaction_2',
-    fromUserId: 'user2',
-    toUserId: 'current_user',
-    type: 'super_like' as const,
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    message: '素敵なプロフィールですね！',
-  },
-  {
     id: 'reaction_3',
     fromUserId: 'user3',
     toUserId: 'current_user',
     type: 'like' as const,
     timestamp: new Date(Date.now() - 1000 * 60 * 45),
-  },
-  {
-    id: 'reaction_4',
-    fromUserId: 'user4',
-    toUserId: 'current_user',
-    type: 'super_like' as const,
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    message: 'あなたが気になります！',
   },
   {
     id: 'reaction_5',

@@ -9,9 +9,11 @@ interface TagListProps {
   tags: Tag[];
   category: string;
   onTagPress: (tag: Tag) => void;
+  selectedTagIds?: string[];
+  isMaxReached?: boolean;
 }
 
-const TagList: React.FC<TagListProps> = ({ tags, category, onTagPress }) => {
+const TagList: React.FC<TagListProps> = ({ tags, category, onTagPress, selectedTagIds = [], isMaxReached = false }) => {
   // タグアイテムのレンダリング（メモ化）
   const renderTagItem = useCallback(({ item, index }: { item: Tag; index: number }) => {
     return (
@@ -19,9 +21,11 @@ const TagList: React.FC<TagListProps> = ({ tags, category, onTagPress }) => {
         tag={item}
         index={index}
         onPress={onTagPress}
+        isSelected={selectedTagIds.includes(item.id)}
+        isMaxReached={isMaxReached}
       />
     );
-  }, [onTagPress]);
+  }, [onTagPress, selectedTagIds, isMaxReached]);
 
   if (tags.length === 0) {
     return (

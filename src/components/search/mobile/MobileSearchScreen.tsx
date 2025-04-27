@@ -6,11 +6,11 @@ import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { getUsersByCategory } from '@mock/searchMock';
 import { colors } from '@styles/globalStyles';
-import { User } from '@types/search';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { User } from '../../../types/search';
 import SearchHeader from './SearchHeader';
 import SearchModal from './SearchModal';
 import SearchResults from './SearchResults';
@@ -27,7 +27,7 @@ const MobileSearchScreen = () => {
 
   // リアクションデータをメモ化（パフォーマンス向上）
   const { likeReactions, footprintReactions } = useMemo(() => {
-    const likes = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
+    const likes = mockReactions.filter(r => r.type === 'like');
     const footprints = mockReactions.filter(r => r.type === 'footprint');
     return { likeReactions: likes, footprintReactions: footprints };
   }, []);
