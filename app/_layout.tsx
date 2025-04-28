@@ -17,7 +17,7 @@ function InitializationGate() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsInitializing(false);
-    }, 300); // 最低限の初期化時間
+    }, 100); // 最低限の初期化時間
 
     return () => clearTimeout(timer);
   }, []);
