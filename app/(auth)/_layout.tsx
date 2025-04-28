@@ -1,5 +1,6 @@
 // app/(auth)/_layout.tsx
 // 認証関連画面の共通レイアウト - ログイン済みユーザーのリダイレクト処理を含む
+import { LoadingScreen } from '@components/common';
 import { EXPLORE_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { Stack, useRouter } from 'expo-router';
@@ -16,6 +17,11 @@ export default function AuthLayout() {
     }
   }, [user, router]);
 
+  // 認証済みユーザーのリダイレクト中はローディング表示
+  if (user) {
+    return <LoadingScreen message="メイン画面に移動中..." />;
+  }
+
   return (
     <Stack
       screenOptions={{
@@ -31,3 +37,4 @@ export default function AuthLayout() {
     </Stack>
   );
 }
+

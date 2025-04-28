@@ -1,10 +1,32 @@
 // (main)/_layout.tsx
-import { Stack, usePathname } from 'expo-router';
+// メインレイアウト - 認証が必要な画面の制御
+import { LoadingScreen } from '@components/common';
+import { ENTRY_SCREEN_PATH } from '@constants/routes';
+import { useAuth } from '@contexts/AuthContext';
+import { Stack, usePathname, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { PlatformLayout } from '../../src/layouts'; // 正しいパスに修正
 
 export default function MainLayout() {
+  const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+
   console.log('mainのレイアウトpathnameは：', pathname);
+
+  // 未認証の場合はエントリー画面にリダイレクト
+  useEffect(() => {
+    if (!user) {
+      console.log('🔐 MainLayout: 未認証ユーザーをエントリー画面にリダイレクト');
+      router.replace(ENTRY_SCREEN_PATH as any);
+    }
+  }, [user, router]);
+
+  // 未認証の場合はローディング表示（リダイレクト中）
+  if (!user) {
+    return <LoadingScreen message="認証確認中..." />;
+  }
+
   return (
     <PlatformLayout> {/* PlatformLayoutでラップ */}
       <Stack screenOptions={{ headerShown: false }}>
@@ -17,4 +39,6 @@ export default function MainLayout() {
       </Stack>
     </PlatformLayout>
   );
-} 
+}
+
+
