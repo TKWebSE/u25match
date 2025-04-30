@@ -1,8 +1,8 @@
 // src/services/main/settings/mock.ts
 // 🎭 設定サービスのモック実装
 
-import { mockUserSettings } from '../../../mock/settingsMock';
-import { BaseService } from '../../base/BaseService';
+import { mockUserSettings } from '@mock/settingsMock';
+import { BaseService } from '../core/BaseService';
 import { SettingsResponse, SettingsService, UserSettings } from './types';
 
 export class MockSettingsService extends BaseService implements SettingsService {

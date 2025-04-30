@@ -1,8 +1,8 @@
 // src/services/main/explore/mock.ts
 // 🎭 探索サービスのモック実装
 
-import { mockUserRecommendations } from '../../../mock/exploreMock';
-import { BaseService } from '../../base/BaseService';
+import { mockUserRecommendations } from '@mock/exploreMock';
+import { BaseService } from '../core/BaseService';
 import { ExploreResponse, ExploreService } from './types';
 
 export class MockExploreService extends BaseService implements ExploreService {

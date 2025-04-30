@@ -1,8 +1,8 @@
 // src/services/main/chat/mock.ts
 // 🎭 チャットサービスのモック実装
 
-import { mockChatMessages, mockChatRooms } from '../../../mock/chatMock';
-import { BaseService } from '../../base/BaseService';
+import { mockChatMessages, mockChatRooms } from '@mock/chatMock';
+import { BaseService } from '../core/BaseService';
 import { ChatResponse, ChatService } from './types';
 
 export class MockChatService extends BaseService implements ChatService {

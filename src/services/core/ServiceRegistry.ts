@@ -1,12 +1,20 @@
 // src/services/ServiceRegistry.ts
 // 🏭 サービスレジストリ - 依存性管理の一元化
 
-import { createAuthService } from './auth/factory';
-import { AuthService } from './auth/types';
-import { createChatService } from './main/chat/factory';
-import { ChatService } from './main/chat/types';
-import { createProfileService } from './profile/factory';
-import { ProfileDetailService } from './profile/types';
+import { createAuthService } from '../auth/factory';
+import { AuthService } from '../auth/types';
+import { createChatService } from '../chat/factory';
+import { ChatService } from '../chat/types';
+import { createExploreService } from '../explore/factory';
+import { ExploreService } from '../explore/types';
+import { createProfileService } from '../profile/factory';
+import { ProfileDetailService } from '../profile/types';
+import { createReactionsService } from '../reactions/factory';
+import { ReactionsService } from '../reactions/types';
+import { createSalesService } from '../sales/factory';
+import { SalesService } from '../sales/types';
+import { createSettingsService } from '../settings/factory';
+import { SettingsService } from '../settings/types';
 
 export class ServiceRegistry {
   private static instance: ServiceRegistry;  // シングルトンインスタンス
@@ -46,8 +54,17 @@ export class ServiceRegistry {
     // チャットサービスの登録
     this.register('chat', createChatService());
 
-    // 他のサービスもここで登録
-    // this.register('user', createUserService());
+    // 探索サービスの登録
+    this.register('explore', createExploreService());
+
+    // リアクションサービスの登録
+    this.register('reactions', createReactionsService());
+
+    // 販売サービスの登録
+    this.register('sales', createSalesService());
+
+    // 設定サービスの登録
+    this.register('settings', createSettingsService());
   }
 
   /**
@@ -110,11 +127,31 @@ export class ServiceRegistry {
   }
 
   /**
-   * 💬 チャットサービスの取得（静的メソッド）
-   * @returns ChatServiceインスタンス
+   * 🔍 探索サービスの型安全な取得
    */
-  static getChatService(): ChatService {
-    return ServiceRegistry.getInstance().chat;
+  get explore(): ExploreService {
+    return this.get<ExploreService>('explore');
+  }
+
+  /**
+   * ❤️ リアクションサービスの型安全な取得
+   */
+  get reactions(): ReactionsService {
+    return this.get<ReactionsService>('reactions');
+  }
+
+  /**
+   * 🏪 販売サービスの型安全な取得
+   */
+  get sales(): SalesService {
+    return this.get<SalesService>('sales');
+  }
+
+  /**
+   * ⚙️ 設定サービスの型安全な取得
+   */
+  get settings(): SettingsService {
+    return this.get<SettingsService>('settings');
   }
 }
 

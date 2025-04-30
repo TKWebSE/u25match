@@ -2,7 +2,7 @@
 // 🔥 本番用認証サービス - 実際のFirebaseを使う
 
 import { AuthUser } from '@my-types/user';
-import { getUserProfile } from '@services/firestoreUserProfile';
+// import { getUserProfile } from '@services/firestoreUserProfile'; // 削除済み
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';

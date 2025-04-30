@@ -1,7 +1,7 @@
 // src/services/sales/mock.ts
 // 🎭 セールサービスのモック実装
 
-import { BaseService } from '../../base/BaseService';
+import { BaseService } from '../core/BaseService';
 import { SaleItem, SalesResponse, SalesService, SalesStats } from './types';
 
 // モックセールデータ

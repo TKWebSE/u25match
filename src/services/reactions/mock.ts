@@ -1,11 +1,14 @@
 // src/services/main/reactions/mock.ts
 // 🎭 リアクションサービスのモック実装
 
-import { mockReactions } from '../../../mock/reactionsMock';
-import { BaseService } from '../../base/BaseService';
+import { mockReactions } from '@mock/reactionsMock';
+import { BaseService } from '../core/BaseService';
 import { ReactionsResponse, ReactionsService } from './types';
 
 export class MockReactionsService extends BaseService implements ReactionsService {
+  leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
+    throw new Error('Method not implemented.');
+  }
   /**
    * ❤️ リアクションを送信（モック）
    * @param targetUserId 対象ユーザーID

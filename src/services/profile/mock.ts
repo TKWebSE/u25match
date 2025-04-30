@@ -3,7 +3,7 @@
 
 import { myProfileMock } from '@mock/myProfileMock';
 import { mockProfileUser } from '@mock/profileDetailMock';
-import { BaseService } from '../base/BaseService';
+import { BaseService } from '../core/BaseService';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
 export class MockProfileService extends BaseService implements ProfileDetailService {
