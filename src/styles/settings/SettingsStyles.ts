@@ -370,4 +370,188 @@ export const SettingsStyles = StyleSheet.create({
   dangerButtonArrow: {
     color: '#d32f2f',
   },
+
+  // 無効化されたボタン
+  disabledButton: {
+    backgroundColor: '#f5f5f5',
+    opacity: 0.6,
+  },
+
+  // 無効化されたボタンテキスト
+  disabledButtonText: {
+    color: '#999',
+  },
+
+  // 無効化された矢印
+  disabledButtonArrow: {
+    color: '#999',
+  },
+
+  // ブーストボタン
+  boostButton: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    marginBottom: 5,
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: '#FF6B6B',
+    overflow: 'hidden',
+  },
+
+  // ブーストボタン無効状態
+  boostButtonDisabled: {
+    backgroundColor: '#f5f5f5',
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  // ブーストボタンコンテンツ
+  boostButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+  },
+
+  // ブーストアイコンコンテナ
+  boostIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FF6B6B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+
+  // ブーストアイコン
+  boostIcon: {
+    fontSize: 28,
+  },
+
+  // ブーストテキストコンテナ
+  boostTextContainer: {
+    flex: 1,
+  },
+
+  // ブーストボタンタイトル
+  boostButtonTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+    marginBottom: 4,
+  },
+
+  // ブーストボタンタイトル無効状態
+  boostButtonTitleDisabled: {
+    color: '#999',
+  },
+
+  // ブーストボタンサブタイトル
+  boostButtonSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 18,
+  },
+
+  // ブーストボタンサブタイトル無効状態
+  boostButtonSubtitleDisabled: {
+    color: '#bbb',
+  },
+
+  // ブースト矢印コンテナ
+  boostArrowContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#FF6B6B',
+    marginLeft: 12,
+  },
+
+  // ブースト矢印
+  boostArrow: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
+  // ブースト矢印無効状態
+  boostArrowDisabled: {
+    backgroundColor: '#ddd',
+    color: '#999',
+  },
+
+  // ブースト実行中のスタイル
+  boostButtonBoosting: {
+    backgroundColor: '#FF6B35',
+    shadowColor: '#FF6B35',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  boostButtonTitleBoosting: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  boostButtonSubtitleBoosting: {
+    color: '#FFFFFF',
+    opacity: 0.9,
+  },
+  boostArrowBoosting: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  // プログレスバーのスタイル
+  boostProgressContainer: {
+    marginTop: 12,
+    paddingHorizontal: 16,
+  },
+  boostProgressBar: {
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  boostProgressFill: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 2,
+  },
+
+  // 画面全体の爆発エフェクトのスタイル
+  fullScreenExplosionContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    pointerEvents: 'none', // タッチイベントを無効化
+  },
+  explosionText: {
+    position: 'absolute',
+    fontSize: 40,
+    fontWeight: 'bold',
+    textShadowColor: '#FFD700',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
 }); 

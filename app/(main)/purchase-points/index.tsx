@@ -173,11 +173,11 @@ const PurchasePointsScreen = () => {
         <View style={styles.noticeContainer}>
           <Text style={styles.noticeTitle}>ご利用上の注意</Text>
           <Text style={styles.noticeText}>
-            • 購入したポイントは即座に反映されます{'\n'}
             • ポイントの有効期限はありません{'\n'}
             • 購入後の返金はできません{'\n'}
             • ボーナスポイントは期間限定の特典です{'\n'}
-            • 決済は安全なSSL暗号化通信で行われます
+            • アカウント削除時は残りのポイントも失効します{'\n'}
+            • 不具合が発生した場合はお問い合わせください
           </Text>
         </View>
       </ScrollView>

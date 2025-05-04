@@ -42,6 +42,9 @@ export interface ProfileDetail {
   };
   isVerified?: boolean;           // 本人確認済みフラグ
   isEditable?: boolean;           // 編集可能フラグ
+  remainingLikes?: number;        // 残いいね数
+  remainingBoosts?: number;       // 残ブースト数
+  remainingPoints?: number;       // 残ポイント数
   createdAt?: Date;               // 作成日時
   updatedAt?: Date;               // 更新日時
 }

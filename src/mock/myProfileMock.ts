@@ -83,6 +83,11 @@ export const myProfileMock: ProfileDetail = {
   // 編集可能フラグ
   isEditable: true,
 
+  // 残数情報
+  remainingLikes: 10,
+  remainingBoosts: 5,
+  remainingPoints: 1000,
+
   // 作成・更新日時
   createdAt: new Date('2024-01-15'),
   updatedAt: new Date('2024-01-20'),

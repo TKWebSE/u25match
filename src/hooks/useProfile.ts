@@ -38,6 +38,9 @@ export const useProfile = (uid: string) => {
             age: myProfileMock.age,
             location: myProfileMock.location,
             isVerified: myProfileMock.isVerified,
+            remainingLikes: myProfileMock.remainingLikes,
+            remainingBoosts: myProfileMock.remainingBoosts,
+            remainingPoints: myProfileMock.remainingPoints,
           };
 
           // 少し遅延を入れてローディング状態をシミュレート

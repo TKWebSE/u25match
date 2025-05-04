@@ -18,9 +18,7 @@ interface BoostPlan {
   id: string;
   boosts: number;
   points: number;
-  bonus?: number;
   popular?: boolean;
-  description: string;
 }
 
 const PurchaseBoostsScreen = () => {
@@ -34,38 +32,28 @@ const PurchaseBoostsScreen = () => {
     {
       id: '1',
       boosts: 5,
-      points: 150,
-      bonus: 1,
-      description: 'プロフィール表示時間を延長'
+      points: 150
     },
     {
       id: '2',
       boosts: 12,
       points: 300,
-      bonus: 3,
-      popular: true,
-      description: 'おすすめ度アップでマッチ率向上'
+      popular: true
     },
     {
       id: '3',
       boosts: 25,
-      points: 500,
-      bonus: 7,
-      description: 'より多くのユーザーに表示される'
+      points: 500
     },
     {
       id: '4',
       boosts: 50,
-      points: 800,
-      bonus: 15,
-      description: '最優先表示でマッチチャンス最大化'
+      points: 800
     },
     {
       id: '5',
       boosts: 100,
-      points: 1200,
-      bonus: 30,
-      description: 'プレミアムブーストで差別化'
+      points: 1200
     },
   ];
 
@@ -121,7 +109,7 @@ const PurchaseBoostsScreen = () => {
         <View style={styles.infoContainer}>
           <Text style={styles.infoTitle}>ブーストとは？</Text>
           <Text style={styles.infoText}>
-            ブーストを使用すると、あなたのプロフィールがより多くのユーザーに表示され、マッチの可能性が高まります。プロフィール表示時間も延長されます。
+            ブーストを使用すると、あなたのプロフィールがより多くのユーザーに表示され、マッチの可能性が高まります。
           </Text>
         </View>
 
@@ -147,12 +135,7 @@ const PurchaseBoostsScreen = () => {
 
               <View style={styles.planHeader}>
                 <Text style={styles.boostsCount}>{plan.boosts}ブースト</Text>
-                {plan.bonus && (
-                  <Text style={styles.bonusText}>+{plan.bonus}ボーナス</Text>
-                )}
               </View>
-
-              <Text style={styles.planDescription}>{plan.description}</Text>
 
               <View style={styles.planDetails}>
                 <Text style={styles.pointsRequired}>{plan.points} pt</Text>
@@ -183,11 +166,11 @@ const PurchaseBoostsScreen = () => {
         <View style={styles.noticeContainer}>
           <Text style={styles.noticeTitle}>ご利用上の注意</Text>
           <Text style={styles.noticeText}>
-            • 購入したブーストは即座に反映されます{'\n'}
-            • ブーストは1回使用すると24時間有効です{'\n'}
-            • 購入後の返金はできません{'\n'}
-            • ポイントは1ポイント = 1円で計算されます{'\n'}
-            • ボーナスブーストは期間限定の特典です
+            • ブーストは1回使用すると1時間有効です{'\n'}
+            • 購入後のポイント返還はできません{'\n'}
+            • ブーストは購入後すぐに利用可能になります{'\n'}
+            • アカウント削除時は残りのブーストも失効します{'\n'}
+            • 不具合が発生した場合はお問い合わせください
           </Text>
         </View>
       </ScrollView>
@@ -300,17 +283,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 4,
-  },
-  bonusText: {
-    fontSize: 14,
-    color: '#FF6B6B',
-    fontWeight: '600',
-  },
-  planDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-    lineHeight: 18,
   },
   planDetails: {
     flexDirection: 'row',

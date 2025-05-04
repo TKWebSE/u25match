@@ -18,7 +18,6 @@ interface LikePlan {
   id: string;
   likes: number;
   points: number;
-  bonus?: number;
   popular?: boolean;
 }
 
@@ -30,11 +29,11 @@ const PurchaseLikesScreen = () => {
 
   // いいね購入プランの定義
   const likePlans: LikePlan[] = [
-    { id: '1', likes: 10, points: 100, bonus: 2 },
-    { id: '2', likes: 25, points: 200, bonus: 5, popular: true },
-    { id: '3', likes: 50, points: 350, bonus: 12 },
-    { id: '4', likes: 100, points: 600, bonus: 25 },
-    { id: '5', likes: 200, points: 1000, bonus: 50 },
+    { id: '1', likes: 10, points: 100 },
+    { id: '2', likes: 25, points: 200, popular: true },
+    { id: '3', likes: 50, points: 350 },
+    { id: '4', likes: 100, points: 600 },
+    { id: '5', likes: 200, points: 1000 },
   ];
 
   // 現在の残りポイント
@@ -107,9 +106,6 @@ const PurchaseLikesScreen = () => {
 
               <View style={styles.planHeader}>
                 <Text style={styles.likesCount}>{plan.likes}いいね</Text>
-                {plan.bonus && (
-                  <Text style={styles.bonusText}>+{plan.bonus}ボーナス</Text>
-                )}
               </View>
 
               <View style={styles.planDetails}>
@@ -141,10 +137,10 @@ const PurchaseLikesScreen = () => {
         <View style={styles.noticeContainer}>
           <Text style={styles.noticeTitle}>ご利用上の注意</Text>
           <Text style={styles.noticeText}>
-            • 購入したいいねは即座に反映されます{'\n'}
-            • 購入後の返金はできません{'\n'}
-            • ポイントは1ポイント = 1円で計算されます{'\n'}
-            • ボーナスいいねは期間限定の特典です
+            • 購入後のポイント返還はできません{'\n'}
+            • いいねは購入後すぐに利用可能になります{'\n'}
+            • アカウント削除時は残りのいいねも失効します{'\n'}
+            • 不具合が発生した場合はお問い合わせください
           </Text>
         </View>
       </ScrollView>
@@ -235,11 +231,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 4,
-  },
-  bonusText: {
-    fontSize: 14,
-    color: '#FF6B6B',
-    fontWeight: '600',
   },
   planDetails: {
     flexDirection: 'row',
