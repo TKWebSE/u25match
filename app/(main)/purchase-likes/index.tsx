@@ -1,17 +1,24 @@
+import { EMOJIS } from '@constants/emojis';
 import { PURCHASE_POINTS_SCREEN_PATH } from '@constants/routes';
+import { Ionicons } from '@expo/vector-icons';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
+  Dimensions,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { width, height } = Dimensions.get('window');
 
 // いいね購入プランの型定義
 interface LikePlan {
@@ -77,12 +84,35 @@ const PurchaseLikesScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor="#6366F1" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* 現在の残りポイント表示 */}
-        <View style={styles.currentPointsContainer}>
-          <Text style={styles.currentPointsLabel}>現在の残りポイント</Text>
-          <Text style={styles.currentPointsValue}>{currentPoints.toLocaleString()} pt</Text>
-        </View>
+        {/* ヘッダーセクション */}
+        <LinearGradient
+          colors={['#6366F1', '#8B5CF6', '#A855F7']}
+          style={styles.headerGradient}
+        >
+          <View style={styles.headerContent}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>いいね購入</Text>
+            <View style={styles.placeholder} />
+          </View>
+
+          {/* 現在の残りポイント表示 */}
+          <View style={styles.currentPointsCard}>
+            <View style={styles.pointsIconContainer}>
+              <Text style={styles.pointsIcon}>{EMOJIS.POINT}</Text>
+            </View>
+            <View style={styles.pointsInfo}>
+              <Text style={styles.currentPointsLabel}>現在の残りポイント</Text>
+              <Text style={styles.currentPointsValue}>{currentPoints.toLocaleString()} pt</Text>
+            </View>
+          </View>
+        </LinearGradient>
 
         {/* プラン一覧 */}
         <View style={styles.plansContainer}>
@@ -97,22 +127,40 @@ const PurchaseLikesScreen = () => {
                 plan.popular && styles.popularPlanCard
               ]}
               onPress={() => handlePlanSelect(plan.id)}
+              activeOpacity={0.8}
             >
               {plan.popular && (
-                <View style={styles.popularBadge}>
+                <LinearGradient
+                  colors={['#FF6B6B', '#FF8E8E']}
+                  style={styles.popularBadge}
+                >
                   <Text style={styles.popularBadgeText}>人気</Text>
-                </View>
+                </LinearGradient>
               )}
 
-              <View style={styles.planHeader}>
-                <Text style={styles.likesCount}>{plan.likes}いいね</Text>
-              </View>
+              <View style={styles.planContent}>
+                <View style={styles.planHeader}>
+                  <View style={styles.likesIconContainer}>
+                    <Ionicons name="heart" size={24} color="#FF6B6B" />
+                  </View>
+                  <Text style={styles.likesCount}>{plan.likes}いいね</Text>
+                </View>
 
-              <View style={styles.planDetails}>
-                <Text style={styles.pointsRequired}>{plan.points} pt</Text>
-                <Text style={styles.pricePerLike}>
-                  {Math.round(plan.points / plan.likes)} pt/いいね
-                </Text>
+                <View style={styles.planDetails}>
+                  <View style={styles.pointsContainer}>
+                    <Text style={styles.pointsIconSmall}>{EMOJIS.POINT}</Text>
+                    <Text style={styles.pointsRequired}>{plan.points} pt</Text>
+                  </View>
+                  <Text style={styles.pricePerLike}>
+                    {Math.round(plan.points / plan.likes)} pt/いいね
+                  </Text>
+                </View>
+
+                {selectedPlan === plan.id && (
+                  <View style={styles.selectedIndicator}>
+                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
           ))}
@@ -121,15 +169,22 @@ const PurchaseLikesScreen = () => {
         {/* 購入ボタン */}
         {selectedPlan && (
           <View style={styles.purchaseSection}>
-            <TouchableOpacity
+            <LinearGradient
+              colors={['#10B981', '#059669']}
               style={styles.purchaseButton}
-              onPress={() => {
-                const plan = likePlans.find(p => p.id === selectedPlan);
-                if (plan) handlePurchase(plan);
-              }}
             >
-              <Text style={styles.purchaseButtonText}>購入する</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.purchaseButtonContent}
+                onPress={() => {
+                  const plan = likePlans.find(p => p.id === selectedPlan);
+                  if (plan) handlePurchase(plan);
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="cart" size={20} color="#FFFFFF" />
+                <Text style={styles.purchaseButtonText}>購入する</Text>
+              </TouchableOpacity>
+            </LinearGradient>
           </View>
         )}
 
@@ -151,131 +206,204 @@ const PurchaseLikesScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#F8FAFC',
   },
   container: {
     flex: 1,
-    padding: 16,
   },
-  currentPointsContainer: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
+  // ヘッダー関連
+  headerGradient: {
+    paddingTop: 20,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+  },
+  headerContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  placeholder: {
+    width: 40,
+  },
+  // ポイント表示カード
+  currentPointsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    padding: 20,
+    borderRadius: 16,
+    marginHorizontal: 0,
+  },
+  pointsIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  pointsInfo: {
+    flex: 1,
+  },
+  pointsIcon: {
+    fontSize: 32,
+  },
+  pointsIconSmall: {
+    fontSize: 16,
   },
   currentPointsLabel: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    color: '#6B7280',
+    marginBottom: 4,
   },
   currentPointsValue: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1F2937',
   },
+  // プラン一覧
   plansContainer: {
-    marginBottom: 20,
+    padding: 20,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 20,
   },
   planCard: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 16,
     borderWidth: 2,
-    borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderColor: '#E5E7EB',
     position: 'relative',
+    overflow: 'hidden',
   },
   selectedPlanCard: {
-    borderColor: '#007AFF',
-    backgroundColor: '#f0f8ff',
+    borderColor: '#10B981',
+    backgroundColor: '#F0FDF4',
   },
   popularPlanCard: {
     borderColor: '#FF6B6B',
   },
   popularBadge: {
     position: 'absolute',
-    top: -8,
+    top: -1,
     right: 16,
-    backgroundColor: '#FF6B6B',
     paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: 6,
+    borderRadius: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
   },
   popularBadgeText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '700',
+  },
+  planContent: {
+    padding: 20,
+    position: 'relative',
   },
   planHeader: {
-    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  likesIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FEF2F2',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
   likesCount: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    fontWeight: '700',
+    color: '#1F2937',
   },
   planDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  pointsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   pointsRequired: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    fontWeight: '700',
+    color: '#1F2937',
+    marginLeft: 6,
   },
   pricePerLike: {
     fontSize: 14,
-    color: '#666',
+    color: '#6B7280',
   },
+  selectedIndicator: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  // 購入ボタン
   purchaseSection: {
-    marginBottom: 20,
+    padding: 20,
   },
   purchaseButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  purchaseButtonContent: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 24,
   },
   purchaseButtonText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    marginLeft: 8,
   },
+  // 注意事項
   noticeContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
+    margin: 20,
+    borderRadius: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3B82F6',
   },
   noticeTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    color: '#1F2937',
     marginBottom: 12,
-    color: '#333',
   },
   noticeText: {
     fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
+    color: '#6B7280',
+    lineHeight: 22,
   },
 });
 

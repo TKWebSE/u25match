@@ -1,3 +1,4 @@
+import { EMOJIS } from '@constants/emojis';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
@@ -92,7 +93,7 @@ export default function MembershipStatusScreen() {
         </View>
 
         <View style={styles.headerIcon}>
-          <Text style={styles.headerIconText}>💎</Text>
+          <Text style={styles.headerIconText}>{EMOJIS.PREMIUM}</Text>
         </View>
       </LinearGradient>
 
@@ -108,7 +109,7 @@ export default function MembershipStatusScreen() {
             style={styles.membershipGradient}
           >
             <View style={styles.membershipHeader}>
-              <Text style={styles.membershipIcon}>💎</Text>
+              <Text style={styles.membershipIcon}>{EMOJIS.PREMIUM}</Text>
               <View style={styles.membershipInfo}>
                 <Text style={styles.membershipTitle}>{planName}</Text>
                 <Text style={styles.membershipSubtitle}>Premium Member</Text>
@@ -158,7 +159,7 @@ export default function MembershipStatusScreen() {
                 colors={['#A8E6CF', '#7FCDCD']}
                 style={styles.statGradient}
               >
-                <Text style={styles.statIcon}>💎</Text>
+                <Text style={styles.statIcon}>{EMOJIS.POINT}</Text>
                 <Text style={styles.statValue}>{profile?.remainingPoints ?? 0}</Text>
                 <Text style={styles.statLabel}>ポイント</Text>
               </LinearGradient>

@@ -1,5 +1,9 @@
+import { EMOJIS } from '@constants/emojis';
+import { MEMBERSHIP_STATUS_SCREEN_PATH } from '@constants/routes';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
  * 有料会員表示コンポーネントのプロパティ
@@ -21,13 +25,26 @@ interface PremiumMembershipDisplayProps {
 export const PremiumMembershipDisplay: React.FC<PremiumMembershipDisplayProps> = ({
   planName = 'プレミアム会員'
 }) => {
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(MEMBERSHIP_STATUS_SCREEN_PATH);
+  };
+
   return (
-    <View style={styles.membershipContainer}>
+    <TouchableOpacity
+      style={styles.membershipContainer}
+      onPress={handlePress}
+      activeOpacity={0.7}
+    >
       {/* 会員種別バッジ */}
-      <View style={styles.membershipBadge}>
-        <Text style={styles.membershipIcon}>💎</Text>
+      <LinearGradient
+        colors={['#8B5CF6', '#A855F7', '#C084FC']}
+        style={styles.membershipBadge}
+      >
+        <Text style={styles.membershipIcon}>{EMOJIS.PREMIUM}</Text>
         <Text style={styles.membershipText}>{planName}</Text>
-      </View>
+      </LinearGradient>
 
       {/* 会員情報セクション */}
       <View style={styles.membershipInfo}>
@@ -35,7 +52,7 @@ export const PremiumMembershipDisplay: React.FC<PremiumMembershipDisplayProps> =
           プレミアム機能を全て利用可能
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -66,7 +83,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     marginRight: 16,
-    backgroundColor: '#FFD700',
   },
 
   // 会員種別アイコン
