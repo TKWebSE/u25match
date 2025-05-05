@@ -8,8 +8,8 @@ import { useStrictAuth } from '@hooks/useStrictAuth';
 import { ChatRoom } from '@services/main/chat/types';
 import React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import EmptyChatMessage from '../detail/EmptyChatMessage';
 import ChatListItem from './ChatListItem';
-import EmptyChatMessage from './EmptyChatMessage';
 
 // チャットルームリストのプロパティ型定義
 interface ChatRoomListProps {

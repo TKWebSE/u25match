@@ -1,4 +1,4 @@
-import ChatRoomList from '@components/chat/ChatRoomList';
+import ChatRoomList from '@components/chat/List/ChatRoomList';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';

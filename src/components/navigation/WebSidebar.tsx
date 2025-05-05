@@ -4,7 +4,6 @@ import {
   EXPLORE_SCREEN_PATH,
   getProfilePath,
   REACTIONS_SCREEN_PATH,
-  RECOMMENDATIONS_SCREEN_PATH,
   SALES_SCREEN_PATH,
   SETTINGS_SCREEN_PATH
 } from '@constants/routes';
@@ -30,7 +29,7 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
 
   // ナビゲーションメニューアイテム
   const menuItems = useMemo(() => [
-    { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
+    // { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
     { id: 'explore', label: '探す', icon: '🔍', route: EXPLORE_SCREEN_PATH },
     { id: 'chat', label: 'チャット', icon: '💬', route: CHAT_LIST_SCREEN_PATH },
     { id: 'reactions', label: 'リアクション', icon: '❤️', route: REACTIONS_SCREEN_PATH },

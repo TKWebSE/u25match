@@ -1,154 +1,33 @@
-import { MobileChatContainer } from "@components/chat/mobile";
-import { WebChatContainer } from "@components/chat/web";
-import { MaterialIcons } from '@expo/vector-icons';
-import { useChatInput } from "@hooks/useChatInput";
-import { useChatMessages } from "@hooks/useChatMessages";
-import { useChatRooms } from "@hooks/useChatRooms";
-import { useKeyboard } from "@hooks/useKeyboard";
-import { useStrictAuth } from "@hooks/useStrictAuth";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useMemo } from "react";
-import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+// app/(main)/chat/[chatId].tsx
 
-export default function ChatDetailScreen() {
-  const { chatId } = useLocalSearchParams();
-  const user = useStrictAuth();
-  const router = useRouter();
+/**
+ * フォールバックファイル（Expo Routerのプラットフォーム自動解決のため必要）
+ * 
+ * 【重要】このファイルの役割について：
+ * 
+ * 1. プラットフォーム自動解決の仕組み
+ *    - [chatId].web.tsx が存在する場合 → Web版では [chatId].web.tsx が実行される
+ *    - [chatId].native.tsx が存在する場合 → モバイル版では [chatId].native.tsx が実行される
+ *    - この [chatId].tsx は、プラットフォーム別ファイルが存在しない場合の「フォールバック」として機能
+ * 
+ * 2. なぜこのファイルが必要なのか
+ *    - Expo Routerは、プラットフォーム別ファイル（.web.tsx, .native.tsx）が存在する場合、
+ *      必ずベースファイル（[chatId].tsx）も存在することを要求する
+ *    - これは、プラットフォーム別ファイルが読み込めない環境での安全性を確保するため
+ * 
+ * 3. このファイルに書いたロジックは無視される
+ *    - プラットフォーム別ファイルが存在する場合、このファイルの内容は実行されない
+ *    - そのため、ビジネスロジックやUIは [chatId].web.tsx と [chatId].native.tsx に書く必要がある
+ *    - このファイルは「存在するだけ」で十分
+ * 
+ * 4. 実際の実装
+ *    - ビジネスロジック: [chatId].web.tsx と [chatId].native.tsx の両方に記述
+ *    - UI表示: プラットフォーム別に最適化された内容を各ファイルに記述
+ *    - 状態管理: 各ファイル内で独立して管理
+ */
 
-  console.log('💬 チャット詳細画面 - chatId:', chatId, 'Platform:', Platform.OS);
-
-  const handleError = useCallback((error: string) => {
-    Alert.alert("エラー", error);
-  }, []);
-
-  // カスタムフックを使用して状態管理
-  const { messages, loading, sendMessage } = useChatMessages(chatId as string, handleError);
-  const { input, setInput, sending, clearInput, setSendingState } = useChatInput();
-  const { keyboardHeight } = useKeyboard();
-  const { chatRooms } = useChatRooms();
-
-  // 現在のチャットルーム情報を取得
-  const currentChatRoom = useMemo(() => {
-    return chatRooms.find(room => room.id === chatId);
-  }, [chatRooms, chatId]);
-
-  // 相手のユーザーIDを取得
-  const otherUserId = useMemo(() => {
-    if (!currentChatRoom) return null;
-    return currentChatRoom.participants.find(id => id !== user.uid);
-  }, [currentChatRoom, user.uid]);
-
-  // 相手の名前を取得（モックデータから）
-  const otherUserName = useMemo(() => {
-    if (!otherUserId) return 'ユーザー';
-    // モックデータから相手の名前を取得
-    const mockUsers = [
-      { id: 'user1', name: '山田太郎' },
-      { id: 'user2', name: '佐藤花子' },
-      { id: 'user3', name: '田中次郎' },
-    ];
-    const mockUser = mockUsers.find(u => u.id === otherUserId);
-    return mockUser?.name || `ユーザー${otherUserId}`;
-  }, [otherUserId]);
-
-  // メッセージ送信処理
-  const handleSend = async () => {
-    if (!input.trim() || sending) return;
-
-    setSendingState(true);
-    try {
-      const result = await sendMessage(input, user.uid);
-      if (result.success) {
-        clearInput();
-      }
-    } finally {
-      setSendingState(false);
-    }
-  };
-
-  // ローディング状態の表示
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>メッセージを読み込み中...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  // プラットフォームに応じて適切なコンテナを選択
-  const ChatContainer = Platform.OS === 'web' ? WebChatContainer : MobileChatContainer;
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* チャットヘッダー */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>{otherUserName}</Text>
-        </View>
-        <View style={styles.placeholder} />
-      </View>
-
-      <ChatContainer
-        messages={messages}
-        currentUserId={user.uid}
-        input={input}
-        setInput={setInput}
-        sending={sending}
-        onSend={handleSend}
-        keyboardHeight={keyboardHeight}
-      />
-    </SafeAreaView>
-  );
+export default function Placeholder() {
+  // この関数は実行されません（プラットフォーム別ファイルが存在するため）
+  // ただし、Expo Routerの要件を満たすために必要
+  return null;
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 8,
-  },
-  headerContent: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  placeholder: {
-    width: 40,
-  },
-});

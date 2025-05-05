@@ -12,7 +12,7 @@ export const PROFILE_MODAL_PATH = "/profile/detail/[uid]";
 
 // チャット
 export const CHAT_LIST_SCREEN_PATH = '/(home)/(tabs)/chat';
-export const CHAT_ROOM_SCREEN_PATH = (chatId: string) => `/chat/${chatId}`;
+export const CHAT_ROOM_SCREEN_PATH = (chatId: string) => `/(main)/chat/${chatId}`;
 
 // プロフィール
 export const PROFILE_SCREEN_PATH = '/profile/detail/[uid]';
