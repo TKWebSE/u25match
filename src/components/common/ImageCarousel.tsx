@@ -24,7 +24,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
 
   // 画面幅に応じて画像サイズを調整
   const imageSize = Math.min(width * 0.3, 200); // 最大200px、画面幅の30%
-  const imageSpacing = spacing.md;
+  const imageSpacing = spacing.base;
 
   return (
     <View style={styles.container}>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     marginVertical: spacing.lg,
   },
   titleSection: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.base,
     paddingHorizontal: spacing.base,
   },
   title: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.shadow,
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,

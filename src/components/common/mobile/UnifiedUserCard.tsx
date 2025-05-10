@@ -1,7 +1,7 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
-import { getOnlineStatus, getOnlineStatusIcon } from '@utils/getOnlineStatus';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { borderRadius, colors, shadows, spacing, typography } from '../../../styles/globalStyles';
+import { getOnlineStatus, getOnlineStatusIcon } from '../../../utils/getOnlineStatus';
 
 // ユーザー情報の型定義
 interface User {

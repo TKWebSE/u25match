@@ -277,7 +277,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
       left: 0,
       right: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      padding: spacing.md, // モバイル用に調整
+      padding: spacing.base, // モバイル用に調整
     },
     // オーバーレイ内のユーザー情報コンテナ
     userInfo: {

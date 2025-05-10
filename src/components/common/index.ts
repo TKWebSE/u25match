@@ -4,11 +4,11 @@
 // 両環境共通コンポーネント
 export { default as CustomPagination } from './CustomPagination';
 export { default as EmptyState } from './EmptyState';
-export { default as ErrorState } from './ErrorState';
+export { ErrorState } from './ErrorState';
 export { ImageCarousel } from './ImageCarousel';
-export { default as LoadingState } from './LoadingState';
+export { LoadingState } from './LoadingState';
 export { default as ScreenWrapper } from './ScreenWrapper';
-export { default as VerificationMark } from './VerificationMark';
+export { VerificationMark } from './VerificationMark';
 
 // モバイル専用コンポーネント
 export * from './mobile';
