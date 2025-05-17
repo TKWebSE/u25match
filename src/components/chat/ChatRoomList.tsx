@@ -5,14 +5,14 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import ChatListItem from './ChatListItem';
 import EmptyChatMessage from './EmptyChatMessage';
 
-interface ChatListScreenProps {
+interface ChatRoomListProps {
   chatRooms: ChatRoom[];
   onChatPress: (chatRoom: ChatRoom) => void;
   onRefresh?: () => void;
   refreshing?: boolean;
 }
 
-const ChatListScreen: React.FC<ChatListScreenProps> = ({
+const ChatRoomList: React.FC<ChatRoomListProps> = ({
   chatRooms,
   onChatPress,
   onRefresh,
@@ -76,4 +76,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatListScreen;
+export default ChatRoomList;

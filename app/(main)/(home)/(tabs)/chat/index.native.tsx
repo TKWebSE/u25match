@@ -1,4 +1,4 @@
-import ChatListScreen from '@components/chat/ChatListScreen';
+import ChatRoomList from '@components/chat/ChatRoomList';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
@@ -45,7 +45,7 @@ const ChatListScreenWrapper = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* チャット一覧 */}
-      <ChatListScreen
+      <ChatRoomList
         chatRooms={chatRooms}
         onChatPress={handleChatPress}
         onRefresh={handleRefresh}
