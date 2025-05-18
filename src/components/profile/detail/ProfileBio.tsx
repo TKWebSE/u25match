@@ -18,4 +18,4 @@ export const ProfileBio: React.FC<ProfileBioProps> = ({ bio }) => {
       <Text style={ProfileDetailStyles.bio}>{bio}</Text>
     </View>
   );
-}; 
+};

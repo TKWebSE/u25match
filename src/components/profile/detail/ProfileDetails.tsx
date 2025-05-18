@@ -267,4 +267,4 @@ export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
       </View>
     </View>
   );
-}; 
+};

@@ -51,6 +51,33 @@ export class ProdProfileDetailService implements ProfileDetailService {
   }
 
   /**
+   * 🔍 ユニークIDでプロフィール詳細を取得（本番）
+   * 実際のAPIからユニークIDでプロフィール情報を取得
+   * @param uniqueId 取得したいユーザーのユニークID
+   * @returns プロフィール詳細データ
+   */
+  async getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse> {
+    try {
+      const response = await fetch(`/api/profile/unique/${uniqueId}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch profile by unique ID: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
    * ✏️ プロフィール詳細を更新（本番）
    * 実際のAPIでプロフィール情報を更新
    * @param uid 更新したいユーザーのID

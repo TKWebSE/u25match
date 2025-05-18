@@ -43,4 +43,4 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({
       <Text style={ProfileDetailStyles.likes}>💖 {likeCount} いいね</Text>
     </View>
   );
-}; 
+};

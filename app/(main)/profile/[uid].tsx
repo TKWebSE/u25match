@@ -2,14 +2,11 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
+import { ProfileBio, ProfileDetails, ProfileInfo, ProfileTags } from '@components/profile/detail';
 import { EditButton } from '@components/profile/EditButton';
 import ImageIndicator from '@components/profile/ImageIndicator';
 import { LikeButton } from '@components/profile/LikeButton';
 import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
-import { ProfileBio } from '@components/profile/ProfileBio';
-import { ProfileDetails } from '@components/profile/ProfileDetails';
-import { ProfileInfo } from '@components/profile/ProfileInfo';
-import { ProfileTags } from '@components/profile/ProfileTags';
 import WebImageNavigator from '@components/profile/WebImageNavigator';
 import { useProfileDetail } from '@hooks/useProfileDetail';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';

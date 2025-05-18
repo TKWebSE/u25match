@@ -144,4 +144,4 @@ export const ProfileTags: React.FC<ProfileTagsProps> = ({ tags }) => {
       </View>
     </View>
   );
-}; 
+};

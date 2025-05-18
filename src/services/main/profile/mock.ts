@@ -44,6 +44,24 @@ export class MockProfileDetailService extends BaseService implements ProfileDeta
   }
 
   /**
+   * 🔍 ユニークIDでプロフィール詳細を取得（モック）
+   * 指定されたユニークIDのプロフィール情報を取得
+   * @param uniqueId 取得したいユーザーのユニークID
+   * @returns プロフィール詳細データ（統一されたレスポンス形式）
+   */
+  async getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse> {
+    // 🎭 モックモード: 開発用のダミーデータを返す
+    await this.simulateNetworkDelay();
+    return {
+      success: true,
+      data: {
+        ...mockProfileUser,
+        uid: uniqueId,  // 渡されたuniqueIdを使用
+      },
+    };
+  }
+
+  /**
    * ✏️ プロフィール詳細を更新（モック）
    * 指定されたユーザーのプロフィール情報を更新
    * @param uid 更新したいユーザーのID
