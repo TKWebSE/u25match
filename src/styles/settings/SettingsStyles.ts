@@ -352,4 +352,22 @@ export const SettingsStyles = StyleSheet.create({
     color: '#ccc',
     fontWeight: 'bold',
   },
+
+  // 危険な操作用のボタン
+  dangerButton: {
+    backgroundColor: '#ffebee',
+    borderColor: '#f44336',
+    borderWidth: 1,
+  },
+
+  // 危険な操作用のボタンテキスト
+  dangerButtonText: {
+    color: '#d32f2f',
+    fontWeight: '600',
+  },
+
+  // 危険な操作用の矢印
+  dangerButtonArrow: {
+    color: '#d32f2f',
+  },
 }); 

@@ -39,7 +39,7 @@ const PrivacyPolicyScreen = () => {
             marginBottom: 30,
             textAlign: 'center'
           }}>
-            最終更新日: 2025年8月20日
+            最終更新日: 2025年9月1日
           </Text>
 
           {/* プライバシーポリシー内容 */}

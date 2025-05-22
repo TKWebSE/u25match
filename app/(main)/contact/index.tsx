@@ -206,9 +206,6 @@ const ContactScreen = () => {
               <Text style={{ fontWeight: '600' }}>メール：</Text>support@u25match.com
             </Text>
 
-            <Text style={{ fontSize: 14, lineHeight: 20, color: '#666', marginTop: 15 }}>
-              ※ 緊急の場合は、アプリ内のチャット機能をご利用ください。
-            </Text>
           </View>
 
           {/* よくある質問 */}
@@ -232,10 +229,10 @@ const ContactScreen = () => {
             </Text>
 
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Q: 不適切なユーザーがいる
+              Q: パスワードを忘れてしまった
             </Text>
             <Text style={{ fontSize: 14, lineHeight: 20, color: '#666', marginBottom: 15 }}>
-              A: 該当ユーザーのプロフィールから「報告」ボタンで報告してください。
+              A: ログイン画面の「パスワードを忘れた方」から再設定できます。
             </Text>
           </View>
         </View>

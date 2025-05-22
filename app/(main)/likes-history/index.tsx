@@ -46,28 +46,30 @@ const LikesHistoryScreen = () => {
     try {
       setLoading(true);
 
-      // モックデータからいいね履歴を構築
-      const historyItems: LikesHistoryItem[] = mockSentReactions.map((reaction) => {
-        // ランダムなユーザー情報を取得（実際の実装ではAPIから取得）
-        const randomUser = users[Math.floor(Math.random() * users.length)];
+      // モックデータからいいね履歴を構築（足跡は除外）
+      const historyItems: LikesHistoryItem[] = mockSentReactions
+        .filter((reaction) => reaction.type !== 'footprint') // 足跡を除外
+        .map((reaction) => {
+          // ランダムなユーザー情報を取得（実際の実装ではAPIから取得）
+          const randomUser = users[Math.floor(Math.random() * users.length)];
 
-        return {
-          id: reaction.id,
-          user: {
-            id: reaction.toUserId,
-            name: randomUser.name,
-            age: randomUser.age,
-            location: randomUser.location,
-            imageUrl: randomUser.imageUrl,
-            isOnline: randomUser.isOnline,
-            lastActiveAt: randomUser.lastActiveAt,
-            gender: randomUser.gender,
-          },
-          reactionType: reaction.type,
-          timestamp: reaction.timestamp,
-          message: reaction.message,
-        };
-      });
+          return {
+            id: reaction.id,
+            user: {
+              id: reaction.toUserId,
+              name: randomUser.name,
+              age: randomUser.age,
+              location: randomUser.location,
+              imageUrl: randomUser.imageUrl,
+              isOnline: randomUser.isOnline,
+              lastActiveAt: randomUser.lastActiveAt,
+              gender: randomUser.gender,
+            },
+            reactionType: reaction.type,
+            timestamp: reaction.timestamp,
+            message: reaction.message,
+          };
+        });
 
       // タイムスタンプでソート（新しい順）
       historyItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());

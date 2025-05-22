@@ -17,6 +17,7 @@ import {
   PURCHASE_LIKES_SCREEN_PATH,
   PURCHASE_POINTS_SCREEN_PATH,
   SALES_SCREEN_PATH,
+  TERMS_OF_SERVICE_SCREEN_PATH,
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
@@ -25,7 +26,7 @@ import { useStrictAuth } from '@hooks/useStrictAuth';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 設定画面コンポーネント - ユーザー設定とアプリ情報を管理
@@ -58,7 +59,7 @@ const SettingsScreen = () => {
 
   // 利用規約の表示
   const handleTermsOfService = () => {
-    router.push(PRIVACY_POLICY_SCREEN_PATH as any);
+    router.push(TERMS_OF_SERVICE_SCREEN_PATH as any);
   };
 
   // お問い合わせの表示
@@ -121,6 +122,30 @@ const SettingsScreen = () => {
     router.push(LIKES_HISTORY_SCREEN_PATH as any);
   };
 
+  // アカウント削除処理
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'アカウント削除',
+      'アカウントを削除すると、すべてのデータが永久に失われます。この操作は取り消せません。本当に削除しますか？',
+      [
+        {
+          text: 'キャンセル',
+          style: 'cancel',
+        },
+        {
+          text: '削除する',
+          style: 'destructive',
+          onPress: () => {
+            // 実際の削除処理を実装
+            Alert.alert('削除完了', 'アカウントが削除されました。');
+            // ログアウト処理も実行
+            logout();
+          },
+        },
+      ]
+    );
+  };
+
   // 推奨画面への遷移
   const handleRecommendations = () => {
     try {
@@ -159,39 +184,6 @@ const SettingsScreen = () => {
           />
         </View>
 
-        {/* 導線セクション - 新機能案内とクイックアクション */}
-        <View style={SettingsStyles.section}>
-          <Text style={SettingsStyles.sectionTitle}>🚀 新機能・おすすめ</Text>
-
-          {/* 新機能案内カード */}
-          <View style={SettingsStyles.guideCard}>
-            <View style={SettingsStyles.guideHeader}>
-              <Text style={SettingsStyles.guideTitle}>✨ 新機能が追加されました！</Text>
-              <Text style={SettingsStyles.guideSubtitle}>AIマッチングでより良い出会いを</Text>
-            </View>
-            <TouchableOpacity style={SettingsStyles.guideButton}>
-              <Text style={SettingsStyles.guideButtonText}>詳しく見る</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* クイックアクション */}
-          <View style={SettingsStyles.quickActionsContainer}>
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleVerification}>
-              <Text style={SettingsStyles.quickActionIcon}>🔐</Text>
-              <Text style={SettingsStyles.quickActionText}>本人確認</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleUpgradePress}>
-              <Text style={SettingsStyles.quickActionIcon}>⭐</Text>
-              <Text style={SettingsStyles.quickActionText}>プレミアム</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleLikesPurchase}>
-              <Text style={SettingsStyles.quickActionIcon}>❤️</Text>
-              <Text style={SettingsStyles.quickActionText}>いいね追加</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* 推奨画面への導線セクション */}
         <View style={SettingsStyles.section}>
@@ -308,6 +300,21 @@ const SettingsScreen = () => {
         <View style={SettingsStyles.section}>
           {/* ログアウトボタン */}
           <LogoutButton loading={loading} onLogout={handleLogout} />
+        </View>
+
+        {/* アカウント削除セクション */}
+        <View style={SettingsStyles.section}>
+          {/* アカウント削除ボタン */}
+          <TouchableOpacity
+            style={[SettingsStyles.button, SettingsStyles.dangerButton]}
+            onPress={handleDeleteAccount}
+            activeOpacity={0.7}
+          >
+            <Text style={[SettingsStyles.buttonText, SettingsStyles.dangerButtonText]}>
+              アカウントを削除
+            </Text>
+            <Text style={[SettingsStyles.buttonArrow, SettingsStyles.dangerButtonArrow]}>›</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

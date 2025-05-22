@@ -38,6 +38,7 @@ export const LIKES_HISTORY_SCREEN_PATH = '/likes-history';
 export const MEMBERSHIP_REGISTRATION_SCREEN_PATH = '/membership-registration';
 export const NOTIFICATIONS_SCREEN_PATH = '/notifications';
 export const PRIVACY_POLICY_SCREEN_PATH = '/privacy-policy';
+export const TERMS_OF_SERVICE_SCREEN_PATH = '/terms-of-service';
 export const PURCHASE_BOOSTS_SCREEN_PATH = '/purchase-boosts';
 export const PURCHASE_LIKES_SCREEN_PATH = '/purchase-likes';
 export const PURCHASE_POINTS_SCREEN_PATH = '/purchase-points';
