@@ -17,7 +17,7 @@ const ChatListScreenWrapper = () => {
     console.log('🖱️ チャットタップ:', chatRoom);
     // チャット詳細画面に遷移
     console.log('🚀 遷移先:', chatRoom.id);
-    router.push(`/(main)/(home)/(tabs)/(chat)/${chatRoom.id}` as any);
+    router.push(`/chat/${chatRoom.id}`);
   };
 
   const handleRefresh = () => {

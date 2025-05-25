@@ -1,4 +1,3 @@
-
 import ChatScreen from "@components/chat/ChatScreen";
 import CustomHeader from "@components/common/CustomHeader";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -50,4 +49,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
 });
-

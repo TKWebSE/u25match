@@ -51,7 +51,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
 
     setSending(true);
     try {
-      const response = await chatService.sendMessage(chatUid, input);
+      const response = await chatService.sendMessage(chatUid, input, user.uid);
 
       if (response.success && response.data) {
         // 新しいメッセージをリストに追加

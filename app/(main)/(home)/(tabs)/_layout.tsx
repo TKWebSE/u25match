@@ -69,7 +69,7 @@ export default function TabsLayout() {
 
       {/* チャットタブ - メッセージ機能 */}
       <Tab.Screen
-        name="chatList"
+        name="(chat)"
         component={ChatListScreen}
         options={{
           title: 'チャット',

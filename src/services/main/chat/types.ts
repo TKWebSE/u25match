@@ -30,7 +30,7 @@ export interface ChatResponse {
  */
 export interface ChatService {
   // メッセージを送信
-  sendMessage(chatId: string, message: string): Promise<ChatResponse>;
+  sendMessage(chatId: string, message: string, senderId?: string): Promise<ChatResponse>;
 
   // メッセージを取得
   getMessages(chatId: string): Promise<ChatResponse>;

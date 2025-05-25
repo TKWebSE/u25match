@@ -94,4 +94,30 @@ export class ProdChatService implements ChatService {
       };
     }
   }
-} 
+
+  /**
+   * 📋 チャット一覧を取得（本番）
+   * @param userId ユーザーID
+   * @returns チャットルーム一覧
+   */
+  async getChatRooms(userId: string): Promise<ChatResponse> {
+    try {
+      const response = await fetch(`/api/chat?userId=${userId}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to get chat rooms: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+}

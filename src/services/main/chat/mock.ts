@@ -12,15 +12,17 @@ export class MockChatService extends BaseService implements ChatService {
    * @param message メッセージ内容
    * @returns 送信結果
    */
-  async sendMessage(chatId: string, message: string): Promise<ChatResponse> {
+  async sendMessage(chatId: string, message: string, senderId?: string): Promise<ChatResponse> {
     await this.simulateNetworkDelay();
     return {
       success: true,
       data: {
         id: `msg_${Date.now()}`,
         chatId,
+        senderId: senderId || 'current_user',
         content: message,
         timestamp: new Date(),
+        type: 'text',
       },
     };
   }

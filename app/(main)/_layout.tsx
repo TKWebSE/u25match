@@ -6,6 +6,7 @@ export default function MainLayout() {
       <Stack.Screen name="(home)" />
       <Stack.Screen name="profile/[uid]" />
       <Stack.Screen name="profile/edit" />
+      <Stack.Screen name="chat/[chatId]" />
     </Stack>
   );
 } 
