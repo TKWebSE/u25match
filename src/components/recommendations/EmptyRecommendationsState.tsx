@@ -28,7 +28,7 @@ export const EmptyRecommendationsState: React.FC = () => {
         <Text style={styles.emptyTitle}>今日のオススメは終了です</Text>
         <Text style={styles.emptySubtitle}>明日また新しいオススメをお届けします</Text>
 
-        {/* explore画面への遷移ボタン（モバイル版のみ） */}
+        {/* explore画面への遷移ボタン */}
         <TouchableOpacity style={styles.exploreButton} onPress={handleExploreNavigation}>
           <Text style={styles.exploreButtonText}>🔍 他のユーザーを探す</Text>
         </TouchableOpacity>
