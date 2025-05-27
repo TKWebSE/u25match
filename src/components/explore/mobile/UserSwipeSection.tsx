@@ -1,29 +1,10 @@
+import UnifiedUserCard, { User } from '@components/common/UnifiedUserCard';
+import { useCardSize } from '@hooks/useCardSize';
 import { colors, spacing, typography } from '@styles/globalStyles';
-import { getOnlineStatus, getOnlineStatusIcon } from '@utils/getOnlineStatus';
-import React, { useRef, useState } from 'react';
-import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-// 画面サイズを取得
-const { width: screenWidth } = Dimensions.get('window');
-
-// ユーザー情報の型定義
-interface User {
-  name: string;
-  age: number;
-  location: string;
-  imageUrl: string;
-  isOnline: boolean;
-  lastActiveAt: Date;
-  createdAt?: Date;
-}
+// User型はUnifiedUserCardからインポート済み
 
 // UserSwipeSectionのProps型定義
 interface UserSwipeSectionProps {
@@ -43,79 +24,28 @@ const UserSwipeSection: React.FC<UserSwipeSectionProps> = ({
   users,
   onCardPress
 }) => {
-  const scrollViewRef = useRef<ScrollView>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // 統一カードサイズを取得
+  const cardSize = useCardSize('swiper');
 
-  // カードのサイズ設定
-  const CARD_WIDTH = screenWidth * 0.6; // 画面幅の60%（小さく）
-  const CARD_HEIGHT = CARD_WIDTH * 1.25; // 縦横比1.25（今日のオススメ画面と同じ比率）
-  const CARD_MARGIN = spacing.lg;
-  const CARD_SPACING = CARD_WIDTH + CARD_MARGIN * 2;
+  // カードのスペーシング設定
+  const CARD_SPACING = cardSize.width + spacing.lg * 2;
 
   // スクロール位置の変更を監視
   const handleScroll = (event: any) => {
     const contentOffset = event.nativeEvent.contentOffset.x;
     const index = Math.round(contentOffset / CARD_SPACING);
-    setCurrentIndex(index);
   };
 
-  // 特定のカードにスクロール
-  const scrollToCard = (index: number) => {
-    scrollViewRef.current?.scrollTo({
-      x: index * CARD_SPACING,
-      animated: true,
-    });
-  };
-
-  // 新規ユーザー判定
-  const isNewUser = (user: User) => {
-    if (!user.createdAt) return false;
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    return user.createdAt > oneWeekAgo;
-  };
-
-  // オンラインステータス判定
-  const getOnlineStatusDisplay = (user: User) => {
-    const isOnline = getOnlineStatus(user.lastActiveAt) === '🟢 オンライン';
-    return { isOnline, icon: getOnlineStatusIcon(user.lastActiveAt) };
-  };
-
-  // カードレンダリング
+  // 統一カードを使用したレンダリング
   const renderCard = (user: User, index: number) => {
-    const { isOnline, icon } = getOnlineStatusDisplay(user);
-    const isNew = isNewUser(user);
-
     return (
-      <TouchableOpacity
+      <UnifiedUserCard
         key={`${user.name}-${index}`}
-        style={[styles.card, { width: CARD_WIDTH, height: CARD_HEIGHT }]}
-        onPress={() => onCardPress(user)}
-        activeOpacity={0.9}
-      >
-        {/* 画像エリア */}
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
-
-          {/* NEWラベル */}
-          {isNew && (
-            <View style={styles.newLabel}>
-              <Text style={styles.newLabelText}>NEW</Text>
-            </View>
-          )}
-
-          {/* カード情報オーバーレイ */}
-          <View style={styles.cardOverlay}>
-            <View style={styles.userInfo}>
-              <View style={styles.ageContainer}>
-                <Text style={styles.ageOnlineIndicator}>{icon}</Text>
-                <Text style={styles.userName}>{user.age}歳 </Text>
-                <Text style={styles.userName}>{user.location}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
+        user={user}
+        onPress={onCardPress}
+        size={cardSize}
+        layout="swiper"
+      />
     );
   };
 
@@ -138,7 +68,6 @@ const UserSwipeSection: React.FC<UserSwipeSectionProps> = ({
       {/* ユーザーカードスワイプエリア */}
       <View style={styles.carouselContainer}>
         <ScrollView
-          ref={scrollViewRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled={false}
@@ -193,100 +122,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacing.lg,
   },
-  card: {
-    marginRight: spacing.lg,
-    borderRadius: spacing.lg,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  imageContainer: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-  },
-  cardImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  onlineIndicator: {
-    position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: spacing.xs,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.xs,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  onlineDot: {
-    width: spacing.xs,
-    height: spacing.xs,
-    borderRadius: spacing.xs / 2,
-    backgroundColor: colors.white,
-  },
-  onlineText: {
-    fontSize: typography.sm,
-    color: colors.white,
-    fontWeight: '600',
-  },
-  newLabel: {
-    position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
-    backgroundColor: '#FF6B6B',
-    borderRadius: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  newLabelText: {
-    fontSize: typography.base,
-    color: colors.white,
-    fontWeight: 'bold',
-  },
-  cardOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    borderBottomLeftRadius: spacing.lg,
-    borderBottomRightRadius: spacing.lg,
-    padding: spacing.sm,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  ageContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  ageOnlineIndicator: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-  },
-  userName: {
-    fontSize: typography.lg,
-    fontWeight: 'bold',
-    color: colors.white,
-  },
-  locationContainer: {
-    alignItems: 'flex-end',
-  },
-  userLocation: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-  },
+  // 統一カードコンポーネントを使用するため、カード関連のスタイルは削除
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',

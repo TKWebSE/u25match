@@ -1,11 +1,12 @@
 import EmptyState from '@components/common/EmptyState';
+import UnifiedUserCard, { User } from '@components/common/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
-import UserCard from '@components/explore/UserCard';
 import { getProfilePath } from '@constants/routes';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useCardSize } from '@hooks/useCardSize';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
@@ -13,14 +14,7 @@ import React, { useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface User {
-  name: string;
-  age: number;
-  location: string;
-  imageUrl: string;
-  isOnline: boolean;
-  lastActiveAt: Date;
-}
+// User型はUnifiedUserCardからインポート済み
 
 // 探索画面コンポーネント - ユーザー検索・探索機能（モバイル版）
 const ExploreScreen = () => {
@@ -34,6 +28,10 @@ const ExploreScreen = () => {
 
   // カードレイアウト情報を取得
   const cardLayout = useCardLayout(cardListWidth);
+
+  // 統一カードサイズを取得
+  const gridCardSize = useCardSize('grid');
+  const swiperCardSize = useCardSize('swiper');
 
   // モバイルではローカル状態を使用
   const [localSearchQuery, setLocalSearchQuery] = useState('');
@@ -93,26 +91,17 @@ const ExploreScreen = () => {
     }, 100);
   };
 
-  const renderUserItem = ({ item }: { item: User }) => {
-    // 画面幅を取得
-    const screenWidth = Dimensions.get('window').width;
-
-    // グリッドレイアウト用のレイアウト情報を生成
-    const containerPadding = spacing.lg * 2; // 左右のパディング
-    const cardGap = spacing.sm; // カード間のスペース
-    const availableWidth = screenWidth - containerPadding; // 利用可能な幅
-    const cardWidth = (availableWidth - cardGap) / 2; // 2列で画面いっぱいに配置
-
-    const gridLayout = {
-      ...cardLayout,
-      cardWidth: cardWidth,
-      cardHeight: 220, // カードサイズを少し大きく
-      columnCount: 2,
-      mainContentAvailableWidth: screenWidth,
-      cardGap: cardGap,
-    };
-
-    return <UserCard user={item} onPress={handleCardPress} layout={gridLayout} />;
+  // 統一カードを使用したレンダリング
+  const renderUserItem = ({ item, index }: { item: User; index: number }) => {
+    return (
+      <UnifiedUserCard
+        key={`${item.name}-${index}`}
+        user={item}
+        onPress={handleCardPress}
+        size={gridCardSize}
+        layout="grid"
+      />
+    );
   };
 
   const renderEmptyComponent = () => {
@@ -284,6 +273,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     marginBottom: spacing.sm,
   },
+  // 統一カードコンポーネントを使用するため、カード関連のスタイルは削除
   fab: {
     position: 'absolute',
     bottom: 20, // 下タブの少し上に配置

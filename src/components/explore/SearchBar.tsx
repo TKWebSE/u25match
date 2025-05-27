@@ -114,7 +114,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <MaterialIcons
           name={isExpanded ? "close" : "search"}
           size={24}
-          color={colors.text}
+          color={colors.textPrimary}
         />
       </TouchableOpacity>
 
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: colors.text,
+    color: colors.textPrimary,
     paddingVertical: 4,
   },
   clearButton: {
