@@ -1,4 +1,4 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
+import { borderRadius, colors, spacing, typography } from '@styles/globalStyles';
 import { StyleSheet } from 'react-native';
 
 /**
@@ -11,7 +11,6 @@ export const ProfileEditStyles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
     marginBottom: spacing.lg,
-    ...shadows.sm,
   },
 
   sectionTitle: {
@@ -82,7 +81,6 @@ export const ProfileEditStyles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.sm,
   },
 
   buttonText: {
@@ -246,7 +244,6 @@ export const ProfileEditStyles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
     position: 'relative',
-    ...shadows.sm,
   },
 
   image: {

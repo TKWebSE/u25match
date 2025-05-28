@@ -47,15 +47,6 @@ export const ProfileDetailStyles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     borderRadius: 20,
-    // より強いシャドウ
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 6,
     // ガラス効果のためのボーダー
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -127,21 +118,15 @@ export const ProfileDetailStyles = StyleSheet.create({
     marginHorizontal: 24, // 16から24に変更して左右の隙間を増やす
     borderRadius: 16,
     padding: 20,
-    // モダンなシャドウ
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   bioTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#2d3748',
-    marginBottom: 12,
+    marginBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
   },
   bio: {
     fontSize: 16,
@@ -158,22 +143,16 @@ export const ProfileDetailStyles = StyleSheet.create({
     borderRadius: 16,
     paddingTop: 20,
     marginBottom: 100, // いいねボタンが入るくらいの隙間を追加
-    // モダンなシャドウ
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   detailsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#2d3748',
     marginBottom: 16,
     paddingHorizontal: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
   },
   detailSection: {
     marginBottom: 24,
@@ -251,23 +230,17 @@ export const ProfileDetailStyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
     padding: 20, // 自己紹介と同じパディング
-    // モダンなシャドウ
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   tagsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#2d3748',
     marginTop: 24, // 上に空白をもっと追加
     marginBottom: 16,
     textAlign: 'left', // 左寄せに変更
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
   },
   tagsContainer: {
     flexDirection: 'column',

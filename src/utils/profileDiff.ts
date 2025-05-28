@@ -41,7 +41,7 @@ export interface ProfileDetails {
   familyStructure?: string; // 家族構成
   pets?: string[]; // ペット
   languages: string[]; // 話せる言語
-  smoking: string; // 喫煙習慣
+  smoking: boolean; // 喫煙習慣
   drinking: string; // 飲酒習慣
   children?: string; // 子供の有無
   holidayPreferences?: HolidayPreferenceName[]; // 休日の過ごし方

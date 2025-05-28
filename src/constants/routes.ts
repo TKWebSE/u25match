@@ -22,7 +22,7 @@ export const getProfilePath = (uid: string) => `/profile/detail/${uid}`;
 // リアクション
 export const REACTIONS_SCREEN_PATH = '/(home)/(tabs)/reactions';
 
-// オススメ
+// レコメンド
 export const RECOMMENDATIONS_SCREEN_PATH = '/recommendations';
 
 // 設定

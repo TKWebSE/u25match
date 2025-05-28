@@ -11,7 +11,6 @@ import { MarriageHistoryName } from '@/src/constants/userEdit/marriageHistory';
 import { MarriageIntentionName } from '@/src/constants/userEdit/marriageIntention';
 import { PetName } from '@/src/constants/userEdit/pets';
 import { PrefectureName } from '@/src/constants/userEdit/prefectures';
-import { SmokingName } from '@/src/constants/userEdit/smoking';
 import { WantChildrenName } from '@/src/constants/userEdit/wantChildren';
 import { BloodTypeSelector } from '@components/common/BloodTypeSelector';
 import { BodyTypeSelector } from '@components/common/BodyTypeSelector';
@@ -48,7 +47,7 @@ export interface ProfileDetails {
   familyStructure?: FamilyStructureName | string;
   pets?: PetName[] | string[];
   languages: LanguageName[] | string[];
-  smoking: SmokingName | string;
+  smoking: boolean;
   drinking: DrinkingName | string;
   children?: ChildrenName | string;
   holidayPreferences?: HolidayPreferenceName[];
@@ -350,8 +349,8 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
         <View style={ProfileEditStyles.detailRow}>
           <Text style={ProfileEditStyles.detailLabel}>タバコ</Text>
           <SmokingSelector
-            selectedSmoking={details.smoking as SmokingName}
-            onSmokingChange={(smoking) => updateDetail('smoking', smoking)}
+            selectedSmoking={details.smoking ? '吸う' : '吸わない'}
+            onSmokingChange={(smoking) => updateDetail('smoking', smoking === '吸う')}
             placeholder="喫煙習慣を選択"
           />
         </View>

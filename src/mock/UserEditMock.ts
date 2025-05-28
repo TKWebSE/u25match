@@ -30,7 +30,7 @@ export const mockProfileData: ProfileData = {
     familyStructure: '一人暮らし',
     pets: ['猫'],
     languages: ['日本語', '英語'],
-    smoking: '吸わない',
+    smoking: false,
     drinking: 'たまに',
     children: 'なし',
     holidayPreferences: ['土日'],

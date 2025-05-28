@@ -1,9 +1,11 @@
 import EmptyState from '@components/common/EmptyState';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
+import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
-import { getProfilePath } from '@constants/routes';
+import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
+import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { useSidebar } from '@layouts/WebLayout';
 import { colors, spacing } from '@styles/globalStyles';
@@ -35,6 +37,9 @@ const ExploreScreen = () => {
 
   // Web環境ではWebLayoutの検索クエリを使用
   const { searchQuery: webSearchQuery } = useSidebar();
+
+  // 今日のおすすめバナーの状態管理
+  const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
 
   const {
     filteredUsers,
@@ -90,6 +95,17 @@ const ExploreScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* 今日のおすすめバナー */}
+      {showTodaysRecommendation && (
+        <TodaysRecommendationBanner
+          onPress={() => {
+            router.push(RECOMMENDATIONS_SCREEN_PATH as any);
+          }}
+          onClose={dismissBanner}
+          visible={showTodaysRecommendation}
+        />
+      )}
+
       {/* タブエリア */}
       <ExploreTabs
         activeTab={activeTab}

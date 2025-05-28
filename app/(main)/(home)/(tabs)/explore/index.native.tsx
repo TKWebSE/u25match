@@ -3,10 +3,12 @@ import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard
 import { SearchBar } from '@components/explore';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
+import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
-import { getProfilePath } from '@constants/routes';
+import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCardSize } from '@hooks/useCardSize';
+import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
@@ -37,6 +39,9 @@ const ExploreScreen = () => {
   const [localSearchQuery, setLocalSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // 今日のおすすめバナーの状態管理
+  const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
 
   const {
     filteredUsers,
@@ -181,6 +186,17 @@ const ExploreScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
+        {/* 今日のおすすめバナー */}
+        {showTodaysRecommendation && (
+          <TodaysRecommendationBanner
+            onPress={() => {
+              router.push(RECOMMENDATIONS_SCREEN_PATH as any);
+            }}
+            onClose={dismissBanner}
+            visible={showTodaysRecommendation}
+          />
+        )}
+
         {/* 検索バー（検索タブがアクティブで検索が表示されている時） */}
         {activeTab === 'search' && isSearchVisible && (
           <View style={styles.searchContainer}>

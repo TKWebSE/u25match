@@ -109,9 +109,9 @@ export const MobileProfileTags: React.FC<ProfileTagsProps> = ({ tags }) => {
   }
 
   return (
-    <View style={ProfileDetailStyles.tagsContainer}>
+    <View style={ProfileDetailStyles.tagsSection}>
       <Text style={ProfileDetailStyles.tagsTitle}>興味・趣味</Text>
-      <View style={ProfileDetailStyles.tagsGrid}>
+      <View style={ProfileDetailStyles.tagsContainer}>
         {tags.map((tag) => (
           <TagItem key={tag.id} tag={tag} />
         ))}

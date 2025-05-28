@@ -43,7 +43,7 @@ interface ProfileDetailsProps {
     familyStructure?: string;
     pets?: string[];
     languages: string[];
-    smoking: string;
+    smoking: boolean;
     drinking: string;
     children?: string;
     holidayPreferences?: string[];
@@ -207,7 +207,7 @@ export const MobileProfileDetails: React.FC<ProfileDetailsProps> = ({ details })
         {/* タバコ（必須項目） */}
         <View style={ProfileDetailStyles.detailRow}>
           <Text style={ProfileDetailStyles.detailLabel}>タバコ</Text>
-          <Text style={ProfileDetailStyles.detailValue}>{details.smoking}</Text>
+          <Text style={ProfileDetailStyles.detailValue}>{details.smoking ? '吸う' : '吸わない'}</Text>
         </View>
 
         {/* お酒（必須項目） */}
