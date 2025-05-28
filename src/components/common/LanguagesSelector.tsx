@@ -4,37 +4,27 @@ import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface LanguagesSelectorProps {
-  selectedLanguages?: LanguageName[];
-  onLanguagesChange: (languages: LanguageName[]) => void;
+  selectedLanguage?: LanguageName;
+  onLanguageChange: (language: LanguageName) => void;
   placeholder?: string;
   disabled?: boolean;
 }
 
 /**
  * 言語セレクターコンポーネント
- * モーダルで話せる言語を複数選択できる
+ * モーダルで話せる言語を単一選択できる
  */
 export const LanguagesSelector: React.FC<LanguagesSelectorProps> = ({
-  selectedLanguages = [],
-  onLanguagesChange,
+  selectedLanguage,
+  onLanguageChange,
   placeholder = '言語を選択',
   disabled = false,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleLanguageToggle = (language: LanguageName) => {
-    const isSelected = selectedLanguages.includes(language);
-    let newLanguages: LanguageName[];
-
-    if (isSelected) {
-      // 選択解除
-      newLanguages = selectedLanguages.filter(l => l !== language);
-    } else {
-      // 選択追加
-      newLanguages = [...selectedLanguages, language];
-    }
-
-    onLanguagesChange(newLanguages);
+  const handleLanguageSelect = (language: LanguageName) => {
+    onLanguageChange(language);
+    setIsModalVisible(false);
   };
 
   const openModal = () => {
@@ -44,13 +34,10 @@ export const LanguagesSelector: React.FC<LanguagesSelectorProps> = ({
   };
 
   const getDisplayText = () => {
-    if (selectedLanguages.length === 0) {
+    if (!selectedLanguage) {
       return placeholder;
     }
-    if (selectedLanguages.length === 1) {
-      return selectedLanguages[0];
-    }
-    return `${selectedLanguages.length}言語選択中`;
+    return selectedLanguage;
   };
 
   return (
@@ -66,7 +53,7 @@ export const LanguagesSelector: React.FC<LanguagesSelectorProps> = ({
       >
         <Text style={{
           fontSize: 16,
-          color: selectedLanguages.length > 0 ? '#000000' : '#9CA3AF',
+          color: selectedLanguage ? '#000000' : '#9CA3AF',
           fontWeight: 'normal',
         }}>
           {getDisplayText()}
@@ -96,7 +83,7 @@ export const LanguagesSelector: React.FC<LanguagesSelectorProps> = ({
           {/* 言語リスト */}
           <ScrollView style={{ flex: 1 }}>
             {LANGUAGES.map((language) => {
-              const isSelected = selectedLanguages.includes(language.name);
+              const isSelected = selectedLanguage === language.name;
               return (
                 <TouchableOpacity
                   key={language.code}
@@ -110,7 +97,7 @@ export const LanguagesSelector: React.FC<LanguagesSelectorProps> = ({
                       alignItems: 'center',
                     }
                   ]}
-                  onPress={() => handleLanguageToggle(language.name)}
+                  onPress={() => handleLanguageSelect(language.name)}
                   activeOpacity={0.7}
                 >
                   <Text style={[

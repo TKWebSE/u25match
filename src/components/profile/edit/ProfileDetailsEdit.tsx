@@ -331,13 +331,13 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
           />
         </View>
 
-        {/* 言語（必須項目） */}
+        {/* 第一言語（必須項目） */}
         <View style={ProfileEditStyles.detailRow}>
-          <Text style={ProfileEditStyles.detailLabel}>言語</Text>
+          <Text style={ProfileEditStyles.detailLabel}>第一言語</Text>
           <LanguagesSelector
-            selectedLanguages={details.languages as LanguageName[]}
-            onLanguagesChange={(languages) => updateDetail('languages', languages)}
-            placeholder="言語を選択"
+            selectedLanguage={Array.isArray(details.languages) ? details.languages[0] as LanguageName : details.languages as LanguageName}
+            onLanguageChange={(language) => updateDetail('languages', [language])}
+            placeholder="第一言語を選択"
           />
         </View>
       </View>

@@ -191,11 +191,11 @@ export const WebProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) =>
           </View>
         )}
 
-        {/* 言語（必須項目） */}
+        {/* 第一言語（必須項目） */}
         <View style={ProfileDetailStyles.detailRow}>
-          <Text style={ProfileDetailStyles.detailLabel}>言語</Text>
+          <Text style={ProfileDetailStyles.detailLabel}>第一言語</Text>
           <Text style={ProfileDetailStyles.detailValue}>
-            {details.languages.join('、')}
+            {Array.isArray(details.languages) ? details.languages[0] : details.languages}
           </Text>
         </View>
       </View>
