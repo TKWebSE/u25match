@@ -17,43 +17,47 @@ export const ProfileDetailStyles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: getPlatformValue(700, width),
+    height: getPlatformValue(600, width), // 高さを少し調整
     overflow: 'hidden',
-    marginHorizontal: 4,
-    marginTop: 16, // 画像コンポーネントの上に隙間を追加
-    // モダンなシャドウ効果
+    marginHorizontal: 8,
+    marginTop: 12,
+    borderRadius: 20, // より丸みを帯びた角
+    // より強いシャドウ効果
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 12,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 12,
   },
   profileImage: {
-    width: width - 8,
-    height: getPlatformValue(700, width),
-    resizeMode: 'contain',
-    borderRadius: 16, // より丸みを帯びた角
+    width: width - 16,
+    height: getPlatformValue(600, width),
+    resizeMode: 'cover', // containからcoverに変更してより良い表示
+    borderRadius: 20,
   },
   header: {
-    padding: 20,
+    padding: 24,
     alignItems: 'center',
-    // ガラスモーフィズム効果
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    marginHorizontal: 24, // 16から24に変更して左右の隙間を増やす
-    marginTop: 16,
-    borderRadius: 16,
-    // モダンなシャドウ
+    // より透明なガラスモーフィズム効果
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 20,
+    // より強いシャドウ
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 6,
+    // ガラス効果のためのボーダー
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   name: {
     fontSize: 24,
@@ -239,13 +243,13 @@ export const ProfileDetailStyles = StyleSheet.create({
   },
   // タグ表示用スタイル
   tagsSection: {
-    marginBottom: 16, // 24から16に変更して詳細情報との間隔を詰める
-    marginHorizontal: 24,
-    marginTop: 24, // 自己紹介セクションとの間隔を追加
+    marginBottom: 16,
+    marginHorizontal: 24, // 自己紹介や詳細プロフィールと同じ幅に調整
+    marginTop: 16, // 自己紹介と同じ間隔に調整
     // ガラスモーフィズム効果
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
-    padding: 20,
+    padding: 20, // 自己紹介と同じパディング
     // モダンなシャドウ
     shadowColor: '#000',
     shadowOffset: {
@@ -260,19 +264,18 @@ export const ProfileDetailStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#2d3748',
+    marginTop: 24, // 上に空白をもっと追加
     marginBottom: 16,
+    textAlign: 'left', // 左寄せに変更
   },
   tagsContainer: {
     flexDirection: 'column',
     gap: 12,
   },
   tagItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 12,
     padding: 12,
-    minWidth: 140,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
@@ -280,6 +283,12 @@ export const ProfileDetailStyles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.05)',
+    width: '100%', // タグ項目を全幅に
+    alignSelf: 'stretch', // 親コンテナの幅に合わせる
+  },
+  tagContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   tagImage: {
     width: 40,

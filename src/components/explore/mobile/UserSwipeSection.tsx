@@ -1,4 +1,4 @@
-import UnifiedUserCard, { User } from '@components/common/UnifiedUserCard';
+import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { useCardSize } from '@hooks/useCardSize';
 import { colors, spacing, typography } from '@styles/globalStyles';
 import React from 'react';

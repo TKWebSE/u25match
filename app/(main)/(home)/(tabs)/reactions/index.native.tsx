@@ -1,35 +1,26 @@
 import EmptyState from '@components/common/EmptyState';
-import { useCardLayout } from '@components/explore/CardLayoutCalculator';
-import UserCard from '@components/explore/UserCard';
+import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import ReactionTabs from '@components/reactions/ReactionTabs';
 import { getProfilePath } from '@constants/routes';
+import { useCardSize } from '@hooks/useCardSize';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface User {
-  name: string;
-  age: number;
-  location: string;
-  imageUrl: string;
-  isOnline: boolean;
-  lastActiveAt: Date;
-}
+// User型はUnifiedUserCardからインポート済み
 
 const ReactionsScreen = () => {
   const router = useRouter();
 
-  // カードリストエリアの幅を計測（デフォルト値を設定）
-  const [cardListWidth, setCardListWidth] = useState(300); // デフォルト値を設定
-
   // アクティブなタブの状態管理
   const [activeTab, setActiveTab] = useState<'likes' | 'footprints'>('likes');
 
-  // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
-  const cardLayout = useCardLayout(cardListWidth);
+  // 統一カードサイズを取得
+  const gridCardSize = useCardSize('grid');
 
   // リアクションデータからユーザーリストを生成
   const getReactionUsers = () => {
@@ -58,9 +49,18 @@ const ReactionsScreen = () => {
     setActiveTab(tab);
   };
 
-  const renderUserItem = ({ item }: { item: User }) => (
-    <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
-  );
+  // 統一カードを使用したレンダリング
+  const renderUserItem = ({ item, index }: { item: User; index: number }) => {
+    return (
+      <UnifiedUserCard
+        key={`${item.name}-${index}`}
+        user={item}
+        onPress={handleCardPress}
+        size={gridCardSize}
+        layout="grid"
+      />
+    );
+  };
 
   const renderEmptyComponent = () => {
     if (filteredUsers.length === 0) {
@@ -78,56 +78,60 @@ const ReactionsScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* リアクションタブ */}
-      <ReactionTabs
-        activeTab={activeTab}
-        onTabPress={handleTabPress}
-      />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container}>
+        {/* リアクションタブ */}
+        <ReactionTabs
+          activeTab={activeTab}
+          onTabPress={handleTabPress}
+        />
 
-      {/* カードリストエリアの幅を計測（エクスプローラー画面と同じ） */}
-      <View
-        style={styles.cardListArea}
-        onLayout={(event) => {
-          const { width } = event.nativeEvent.layout;
-          setCardListWidth(width);
-        }}
-      >
-        {/* モバイル環境用のFlatList */}
-        {filteredUsers.length > 0 ? (
-          <FlatList
-            data={filteredUsers}
-            renderItem={renderUserItem}
-            keyExtractor={(item, index) => `${item.name}-${index}`}
-            numColumns={Math.max(1, cardLayout.columnCount)} // 最低1列を保証
-            key={`flatlist-${cardLayout.columnCount}`}
-            contentContainerStyle={styles.listContainer}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={renderEmptyComponent}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            {renderEmptyComponent()}
-          </View>
-        )}
+        {/* カードリストエリア */}
+        <View style={styles.cardListArea}>
+          {filteredUsers.length > 0 ? (
+            <FlatList
+              data={filteredUsers}
+              renderItem={renderUserItem}
+              keyExtractor={(item, index) => `${item.name}-${index}`}
+              numColumns={2}
+              contentContainerStyle={styles.gridContainer}
+              columnWrapperStyle={styles.row}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={renderEmptyComponent}
+            />
+          ) : (
+            <View style={styles.emptyStateContainer}>
+              {renderEmptyComponent()}
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
   },
-  listContainer: {
-    padding: spacing.lg,
-  },
   cardListArea: {
     flex: 1,
-    backgroundColor: colors.background,
   },
-  emptyContainer: {
+  gridContainer: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  row: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
+    marginBottom: spacing.sm,
+  },
+  emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,5 +1,5 @@
 import EmptyState from '@components/common/EmptyState';
-import UnifiedUserCard, { User } from '@components/common/UnifiedUserCard';
+import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
@@ -165,13 +165,13 @@ const ExploreScreen = () => {
     <>
       <UserSwipeSection
         title="おすすめユーザー"
-        subtitle={`${filteredUsers.length}人のユーザー`}
+        subtitle={filteredUsers.length + "人のユーザー"}
         users={filteredUsers}
         onCardPress={handleCardPress}
       />
       <UserSwipeSection
         title="新着ユーザー"
-        subtitle={`${filteredUsers.length}人のユーザー`}
+        subtitle={filteredUsers.length + "人のユーザー"}
         users={filteredUsers}
         onCardPress={handleCardPress}
       />
@@ -189,17 +189,24 @@ const ExploreScreen = () => {
               isVisible={isSearchVisible}
               onFocus={handleSearchFocus}
               onBlur={handleSearchBlur}
+              onClose={() => {
+                setIsSearchVisible(false);
+                setIsSearchFocused(false);
+                setLocalSearchQuery('');
+              }}
               autoFocus={true}
             />
           </View>
         )}
 
-        {/* タブエリア */}
-        <ExploreTabs
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-          cardListWidth={cardListWidth}
-        />
+        {/* タブエリア（検索フィールドが表示されている時は非表示） */}
+        {!(activeTab === 'search' && isSearchVisible) && (
+          <ExploreTabs
+            activeTab={activeTab}
+            onTabPress={handleTabPress}
+            cardListWidth={cardListWidth}
+          />
+        )}
 
         {/* カードリストエリアの幅を計測 */}
         <View style={styles.cardListArea}>

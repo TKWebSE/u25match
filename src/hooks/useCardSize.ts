@@ -1,4 +1,4 @@
-import { CardSize, LayoutType } from '@components/common/UnifiedUserCard';
+import { CardSize, LayoutType } from '@components/common/mobile/UnifiedUserCard';
 import { spacing } from '@styles/globalStyles';
 import { Dimensions } from 'react-native';
 

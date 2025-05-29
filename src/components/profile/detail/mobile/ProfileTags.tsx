@@ -85,12 +85,12 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
       activeOpacity={0.8}
     >
       <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]}>
-        <Image
-          source={getTagImage(tag.name)}
-          style={ProfileDetailStyles.tagImage}
-          onError={handleImageError}
-        />
-        <View style={ProfileDetailStyles.tagOverlay}>
+        <View style={ProfileDetailStyles.tagContent}>
+          <Image
+            source={getTagImage(tag.name)}
+            style={ProfileDetailStyles.tagImage}
+            onError={handleImageError}
+          />
           <Text style={ProfileDetailStyles.tagText}>{tag.name}</Text>
         </View>
       </Animated.View>

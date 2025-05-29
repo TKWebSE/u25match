@@ -19,6 +19,7 @@ interface SearchBarProps {
   onToggle?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  onClose?: () => void;
   autoFocus?: boolean;
 }
 
@@ -29,6 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onToggle,
   onFocus,
   onBlur,
+  onClose,
   autoFocus = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -101,6 +103,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleClear = () => {
     setSearchQuery('');
     onSearch('');
+    // フォーカスを外して初期状態に戻す
+    textInputRef.current?.blur();
+    // 外部の状態も更新
+    if (onClose) {
+      onClose();
+    }
+    // 検索バーを閉じる
+    Animated.timing(expandAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => {
+      setIsExpanded(false);
+    });
   };
 
   return (

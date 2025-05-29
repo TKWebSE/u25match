@@ -8,7 +8,7 @@ export default function ChatDetailScreen() {
   const { chatId } = useLocalSearchParams();
   const router = useRouter();
 
-  console.log('💬 チャット詳細画面 - chatId:', chatId);
+  console.log('📱 チャット詳細画面（モバイル版） - chatId:', chatId);
 
   const handleError = (error: string) => {
     Alert.alert("エラー", error);

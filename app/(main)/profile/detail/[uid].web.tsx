@@ -1,11 +1,7 @@
-// app/(main)/profile/detail/[uid].tsx
+// app/(main)/profile/detail/[uid].web.tsx
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import {
-  MobileProfileBio,
-  MobileProfileDetails,
-  MobileProfileInfo,
-  MobileProfileTags,
   WebProfileBio,
   WebProfileDetails,
   WebProfileInfo,
@@ -14,12 +10,10 @@ import {
 import { EditButton } from '@components/profile/EditButton';
 import ImageIndicator from '@components/profile/ImageIndicator';
 import { LikeButton } from '@components/profile/LikeButton';
-import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
 import WebImageNavigator from '@components/profile/WebImageNavigator';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
-import { isWeb } from '@utils/platform';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -52,8 +46,8 @@ export default function ProfileScreen() {
   } = useProfileDetail(uniqueId);
 
   // Web版でのコンテンツ幅と余白の計算
-  const contentWidth = isWeb ? Math.min(windowWidth * 0.9, 900) : windowWidth;
-  const contentMargin = isWeb ? (windowWidth - contentWidth) / 2 : 0;
+  const contentWidth = Math.min(windowWidth * 0.9, 900);
+  const contentMargin = (windowWidth - contentWidth) / 2;
 
   // 読み込み中の表示
   if (loading) {
@@ -81,22 +75,11 @@ export default function ProfileScreen() {
         <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>
           {/* 画像スライダー */}
           <View style={ProfileDetailStyles.imageContainer}>
-            {/* スクリーン側でプラットフォーム判定 */}
-            {isWeb ? (
-              // Web版: 画像表示コンポーネント（矢印ボタン付き）
-              <WebImageNavigator
-                images={profile.images}
-                currentIndex={activeDotIndex}
-                onImageChange={setActiveDotIndex}
-              />
-            ) : (
-              // モバイル版: 画像カルーセルコンポーネント
-              <MobileImageCarousel
-                images={profile.images}
-                currentIndex={activeDotIndex}
-                onIndexChange={setActiveDotIndex}
-              />
-            )}
+            <WebImageNavigator
+              images={profile.images}
+              currentIndex={activeDotIndex}
+              onImageChange={setActiveDotIndex}
+            />
           </View>
 
           {/* 画像インジケーター（ドット） */}
@@ -107,46 +90,23 @@ export default function ProfileScreen() {
           />
 
           {/* プロフィール情報 */}
-          {isWeb ? (
-            <WebProfileInfo
-              name={profile.name}
-              age={profile.age}
-              location={profile.location}
-              onlineStatus={onlineStatus}
-              likeCount={profile.likeCount}
-              isVerified={profile.isVerified}
-            />
-          ) : (
-            <MobileProfileInfo
-              name={profile.name}
-              age={profile.age}
-              location={profile.location}
-              onlineStatus={onlineStatus}
-              likeCount={profile.likeCount}
-              isVerified={profile.isVerified}
-            />
-          )}
+          <WebProfileInfo
+            name={profile.name}
+            age={profile.age}
+            location={profile.location}
+            onlineStatus={onlineStatus}
+            likeCount={profile.likeCount}
+            isVerified={profile.isVerified}
+          />
 
           {/* 自己紹介 */}
-          {isWeb ? (
-            <WebProfileBio bio={profile.bio} />
-          ) : (
-            <MobileProfileBio bio={profile.bio} />
-          )}
+          <WebProfileBio bio={profile.bio} />
 
           {/* タグ表示 */}
-          {isWeb ? (
-            <WebProfileTags tags={profile.tags} />
-          ) : (
-            <MobileProfileTags tags={profile.tags} />
-          )}
+          <WebProfileTags tags={profile.tags} />
 
           {/* 詳細プロフィール */}
-          {isWeb ? (
-            <WebProfileDetails details={profile.details} />
-          ) : (
-            <MobileProfileDetails details={profile.details} />
-          )}
+          <WebProfileDetails details={profile.details} />
         </View>
       </ScrollView>
 
