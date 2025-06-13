@@ -80,7 +80,7 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
             いいね
           </Text>
           {activeTab === 'likes' && (
-            <View style={styles.activeIndicator}>
+            <View style={[styles.activeIndicator, { backgroundColor: '#FFE5E5' }]}>
               <Text style={styles.activeIndicatorText}>❤️</Text>
             </View>
           )}
@@ -112,7 +112,7 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
             足あと
           </Text>
           {activeTab === 'footprints' && (
-            <View style={styles.activeIndicator}>
+            <View style={[styles.activeIndicator, { backgroundColor: '#E5F4FF' }]}>
               <Text style={styles.activeIndicatorText}>👣</Text>
             </View>
           )}
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     top: 4,
     left: 4,
     width: (screenWidth - 32) / 2 - 4,
-    height: 44, // 40から44に変更して少し高く
+    height: 52, // 48から52に変更してさらに下のスペースを広く
     backgroundColor: '#fff',
     borderRadius: 12,
     shadowColor: '#000',
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    minHeight: 44, // 40から44に変更してスライディングインジケーターと合わせる
+    minHeight: 52, // 48から52に変更してスライディングインジケーターと合わせる
     flexDirection: 'row', // アイコンとテキストを横並びに
   },
   activeTabContent: {
@@ -190,11 +190,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -2,
     right: 8,
-    backgroundColor: Colors.light.tint,
+    backgroundColor: 'transparent', // 動的に設定するため透明に
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    shadowColor: Colors.light.tint,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
