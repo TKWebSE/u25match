@@ -1,17 +1,17 @@
 // components/CustomHeader.tsx
+import { useAuth } from '@contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from '../src/contexts/AuthContext'; // パスは適宜調整してください
 
 export default function CustomHeader({ title }: { title: string }) {
   const router = useRouter();
-  const { user } = useAuth(); // userがnullかどうかでログイン判定
+  const { user }: = useAuth(); // userがnullかどうかでログイン判定
 
   const handleLogoPress = () => {
     if (user) {
-      router.push('/(main)/exploreScreen');  // ログイン中はExploreScreenへ
+      router.push('/homeScreen');  // ログイン中はHomeScreenへ
     } else {
-      router.push('/entryScreen');            // ログアウト中はentryScreenへ
+      router.push('/entryScreen');  // ログアウト中はentryScreenへ
     }
   };
 

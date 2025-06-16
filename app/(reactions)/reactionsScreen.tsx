@@ -1,8 +1,8 @@
 // app/(main)/ReactionsScreen.tsx
-import { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { getReactionsToCurrentUser } from '@services/firestoreReactions'; // サービス層にて後ほど実装
 import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type ReactionItem = {
   uid: string;
