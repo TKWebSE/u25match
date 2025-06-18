@@ -1,8 +1,5 @@
-import { Colors } from '@constants/Colors';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const { width: screenWidth } = Dimensions.get('window');
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
 interface ReactionCardProps {
   reaction: {
@@ -26,7 +23,45 @@ interface ReactionCardProps {
 }
 
 const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress }) => {
+  const { width } = useWindowDimensions();
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // 最小カードサイズを定義
+  const MIN_CARD_WIDTH = 140; // 最小カード幅
+  const MIN_IMAGE_HEIGHT = 168; // 最小画像高さ（140 * 1.2）- 縦長最適化
+
+  // 極端に小さな画面でのエラーを防ぐ
+  const safeWidth = Math.max(width, 320); // 最小320pxを確保
+
+  // 画面サイズに応じて列数とカードサイズを動的に調整
+  const getResponsiveLayout = () => {
+    const availableWidth = Math.max(safeWidth - 48, 280); // 最小幅を確保
+
+    // 画面幅に基づいて列数を決定
+    let columns;
+    if (safeWidth <= 570) {
+      columns = 1; // 480×837のトグルデバイスシミュレーション
+    } else if (safeWidth <= 960) {
+      columns = 2; // 570px超
+    } else if (safeWidth <= 1200) {
+      columns = 3; // 960px超
+    } else {
+      columns = 4; // 最大4列
+    }
+
+    const cardWidth = Math.max(availableWidth / columns, MIN_CARD_WIDTH); // 最小カード幅を確保
+    const imageHeight = Math.max(cardWidth * 1.2, MIN_IMAGE_HEIGHT); // 縦長最適化（1.2のアスペクト比）
+
+    return {
+      columns,
+      cardWidth,
+      imageHeight,
+    };
+  };
+
+  const layout = getResponsiveLayout();
+  const cardWidth = layout.cardWidth;
+  const imageHeight = layout.imageHeight;
 
   useEffect(() => {
     // 控えめなエントランスアニメーション
@@ -89,92 +124,45 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress }) 
     }
   };
 
-  const getReactionText = () => {
-    switch (reaction.type) {
-      case 'like':
-        return 'いいね！';
-      case 'super_like':
-        return 'スーパーライク！';
-      case 'pass':
-        return 'パス';
-      case 'footprint':
-        return '足あと';
-      default:
-        return 'リアクション';
-    }
-  };
-
-  const getReactionColor = () => {
-    switch (reaction.type) {
-      case 'like':
-        return '#FF6B6B';
-      case 'super_like':
-        return '#FFD93D';
-      case 'pass':
-        return '#6C5CE7';
-      case 'footprint':
-        return '#A8E6CF';
-      default:
-        return Colors.light.tint;
-    }
-  };
-
-  const formatTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-
-    if (diffInMinutes < 1) return '今';
-    if (diffInMinutes < 60) return `${diffInMinutes}分前`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}時間前`;
-    return `${Math.floor(diffInMinutes / 1440)}日前`;
-  };
-
   return (
     <Animated.View
       style={[
         styles.cardContainer,
         {
           transform: [{ scale: scaleAnim }],
+          flex: 1, // グリッドレイアウト用
         },
       ]}
     >
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, { width: cardWidth }]}
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={0.9}
       >
-        <View style={styles.userInfo}>
-          <View style={styles.avatarContainer}>
-            <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
-            <View style={[styles.onlineIndicator, { backgroundColor: user.isOnline ? '#4CAF50' : '#9E9E9E' }]} />
-          </View>
-          <View style={styles.userDetails}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <View style={styles.userMeta}>
-              <Text style={styles.userAge}>{user.age}歳</Text>
-              <View style={styles.separator} />
-              <Text style={styles.userLocation}>{user.location}</Text>
-            </View>
-            <Text style={styles.timestamp}>{formatTimeAgo(reaction.timestamp)}</Text>
-          </View>
+        {/* メイン画像 - explore画面と同じ表示 */}
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: user.imageUrl }} style={[styles.cardImage, { height: imageHeight }]} />
+          {user.isOnline && <View style={styles.onlineIndicator} />}
         </View>
 
-        <View style={styles.reactionInfo}>
-          <View style={[styles.reactionIconContainer, { backgroundColor: getReactionColor() + '15' }]}>
-            <Text style={styles.reactionIcon}>{getReactionIcon()}</Text>
-          </View>
-          <Text style={[styles.reactionText, { color: getReactionColor() }]}>
-            {getReactionText()}
-          </Text>
-          {reaction.message && (
-            <View style={styles.messageContainer}>
-              <Text style={styles.message} numberOfLines={2}>
-                {reaction.message}
+        {/* ユーザー情報 - explore画面と同じ表示 */}
+        <View style={styles.cardContent}>
+          <View style={styles.infoRow}>
+            <Text style={styles.onlineStatusIcon}>
+              {getReactionIcon()}
+            </Text>
+            <Text style={styles.userName} numberOfLines={1}>
+              {user.age}歳
+            </Text>
+            <View style={styles.locationContainer}>
+              <Text style={styles.locationIcon}>📍</Text>
+              <Text style={styles.userLocation} numberOfLines={1}>
+                {user.location}
               </Text>
             </View>
-          )}
+          </View>
         </View>
       </TouchableOpacity>
     </Animated.View>
@@ -183,13 +171,13 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress }) 
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginHorizontal: 16,
-    marginVertical: 6,
+    marginBottom: 16,
+    marginLeft: 8,
+    marginRight: 0, // 右側のマージンを削除
   },
   container: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -200,108 +188,53 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: '#f1f3f4',
-    // タップ可能であることを示すスタイル
+    overflow: 'hidden',
+  },
+  imageContainer: {
     position: 'relative',
   },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginRight: 12,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: '#fff',
+  cardImage: {
+    width: '100%',
+    resizeMode: 'cover',
   },
   onlineIndicator: {
     position: 'absolute',
-    bottom: 1,
-    right: 1,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2,
+    top: 8,
+    right: 8,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#4CAF50',
+    borderWidth: 3,
     borderColor: '#fff',
   },
-  userDetails: {
-    flex: 1,
+  cardContent: {
+    padding: 12,
   },
-  userName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1a1a1a',
-    marginBottom: 4,
-  },
-  userMeta: {
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 3,
+    gap: 8,
   },
-  userAge: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
+  onlineStatusIcon: {
+    fontSize: 16,
   },
-  separator: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: '#666',
-    marginHorizontal: 6,
+  userName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1a1a1a',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationIcon: {
+    fontSize: 12,
+    marginRight: 3,
   },
   userLocation: {
     fontSize: 14,
     color: '#666',
-    fontWeight: '500',
-  },
-  timestamp: {
-    fontSize: 12,
-    color: '#999',
-    fontWeight: '400',
-  },
-  reactionInfo: {
-    alignItems: 'center',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f1f3f4',
-  },
-  reactionIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  reactionIcon: {
-    fontSize: 20,
-  },
-  reactionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  messageContainer: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    maxWidth: '100%',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  message: {
-    fontSize: 13,
-    color: '#666',
-    textAlign: 'center',
-    fontStyle: 'italic',
-    lineHeight: 18,
   },
 });
 

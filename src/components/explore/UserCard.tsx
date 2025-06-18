@@ -1,7 +1,7 @@
 import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
 import { getOnlineStatus, getOnlineStatusIcon } from '@utils/getOnlineStatus';
-import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
 interface User {
   name: string;
@@ -19,10 +19,11 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const { width } = useWindowDimensions();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   // 最小カードサイズを定義
   const MIN_CARD_WIDTH = 140; // 最小カード幅
-  const MIN_IMAGE_HEIGHT = 105; // 最小画像高さ（140 * 0.75）
+  const MIN_IMAGE_HEIGHT = 168; // 最小画像高さ（140 * 1.2）- 縦長最適化
 
   // 極端に小さな画面でのエラーを防ぐ
   const safeWidth = Math.max(width, 320); // 最小320pxを確保
@@ -44,7 +45,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     }
 
     const cardWidth = Math.max(availableWidth / columns, MIN_CARD_WIDTH); // 最小カード幅を確保
-    const imageHeight = Math.max(cardWidth * 0.75, MIN_IMAGE_HEIGHT); // 最小画像高さを確保
+    const imageHeight = Math.max(cardWidth * 1.2, MIN_IMAGE_HEIGHT); // 縦長最適化（1.2のアスペクト比）
 
     return {
       columns,
@@ -60,6 +61,52 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const onlineStatus = getOnlineStatus(user.lastActiveAt);
   const onlineStatusIcon = getOnlineStatusIcon(user.lastActiveAt);
   const isOnline = onlineStatus === '🟢 オンライン';
+
+  useEffect(() => {
+    // 控えめなエントランスアニメーション
+    Animated.timing(scaleAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handlePressIn = () => {
+    Animated.timing(scaleAnim, {
+      toValue: 0.98,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 150,
+      friction: 8,
+    }).start();
+  };
+
+  const handlePress = () => {
+    // タップ時の視覚的フィードバック
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 0.95,
+        duration: 50,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 200,
+        friction: 6,
+      }),
+    ]).start();
+
+    // 元のonPressを実行
+    onPress(user);
+  };
 
   const styles = StyleSheet.create({
     card: {
@@ -122,33 +169,43 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   });
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => onPress(user)}
-      activeOpacity={0.8}
+    <Animated.View
+      style={[
+        {
+          transform: [{ scale: scaleAnim }],
+        },
+      ]}
     >
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
-        {isOnline && <View style={styles.onlineIndicator} />}
-      </View>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.9}
+      >
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
+          {isOnline && <View style={styles.onlineIndicator} />}
+        </View>
 
-      <View style={styles.cardContent}>
-        <View style={styles.infoRow}>
-          <Text style={styles.onlineStatusIcon}>
-            {onlineStatusIcon}
-          </Text>
-          <Text style={styles.userName} numberOfLines={1}>
-            {user.age}歳
-          </Text>
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationIcon}>📍</Text>
-            <Text style={styles.userLocation} numberOfLines={1}>
-              {user.location}
+        <View style={styles.cardContent}>
+          <View style={styles.infoRow}>
+            <Text style={styles.onlineStatusIcon}>
+              {onlineStatusIcon}
             </Text>
+            <Text style={styles.userName} numberOfLines={1}>
+              {user.age}歳
+            </Text>
+            <View style={styles.locationContainer}>
+              <Text style={styles.locationIcon}>📍</Text>
+              <Text style={styles.userLocation} numberOfLines={1}>
+                {user.location}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 

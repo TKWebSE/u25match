@@ -1,6 +1,6 @@
 import { Colors } from '@constants/Colors';
 import React from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import ReactionCard from './ReactionCard';
 
 interface Reaction {
@@ -39,6 +39,34 @@ const ReactionList: React.FC<ReactionListProps> = ({
   refreshing = false,
   emptyMessage = 'リアクションがありません',
 }) => {
+  const { width } = useWindowDimensions();
+
+  // 最小カードサイズを定義
+  const MIN_CARD_WIDTH = 140; // 最小カード幅
+
+  // 極端に小さな画面でのエラーを防ぐ
+  const safeWidth = Math.max(width, 320); // 最小320pxを確保
+
+  // 画面サイズに応じて列数を動的に調整
+  const getResponsiveLayout = () => {
+    const availableWidth = Math.max(safeWidth - 48, 280); // 最小幅を確保
+
+    // 画面幅に基づいて列数を決定
+    let columns;
+    if (safeWidth <= 570) {
+      columns = 1; // 480×837のトグルデバイスシミュレーション
+    } else if (safeWidth <= 960) {
+      columns = 2; // 570px超
+    } else if (safeWidth <= 1200) {
+      columns = 3; // 960px超
+    } else {
+      columns = 4; // 最大4列
+    }
+
+    return columns;
+  };
+
+  const columns = getResponsiveLayout();
   const renderReactionCard = ({ item }: { item: Reaction }) => {
     // どちらのタブでも、リアクションを送ったユーザーのIDを使用
     // いいね: 他のユーザーから自分へのリアクション
@@ -72,6 +100,8 @@ const ReactionList: React.FC<ReactionListProps> = ({
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
+      numColumns={columns} // グリッドレイアウト用
+      columnWrapperStyle={styles.row} // 行のスタイル
       refreshControl={
         onRefresh ? (
           <RefreshControl
@@ -91,6 +121,10 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 8,
     minHeight: '100%',
+  },
+  row: {
+    justifyContent: 'space-between', // 行内のカードを均等配置
+    paddingHorizontal: 16,
   },
   emptyState: {
     flex: 1,
