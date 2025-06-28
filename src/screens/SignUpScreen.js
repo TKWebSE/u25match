@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
-import { logIn } from '../services/auth';
+import { signUp } from '../services/auth';
 
-export default function LoginScreen() {
+export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
@@ -16,8 +16,8 @@ export default function LoginScreen() {
       <Text>Password</Text>
       <TextInput value={password} onChangeText={setPassword} secureTextEntry style={{ borderWidth: 1, marginBottom: 10 }} />
 
-      <Button title="Log In" onPress={() => logIn(email, password)} />
-      <Button title="Go to Sign Up" onPress={() => navigation.navigate('SignUp')} />
+      <Button title="Sign Up" onPress={() => signUp(email, password)} />
+      <Button title="Go to Login" onPress={() => navigation.navigate('Login')} />
     </View>
   );
 }
