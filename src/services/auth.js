@@ -1,7 +1,9 @@
+// services/auth.js
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 
 export const signUp = (email, password) => {
+  console.log('Signing up with email:', email);
   return createUserWithEmailAndPassword(auth, email, password);
 };
 
