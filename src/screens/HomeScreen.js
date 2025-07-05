@@ -1,4 +1,4 @@
-import { Button, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { logOut } from '../services/auth';
 
@@ -6,9 +6,49 @@ export default function HomeScreen() {
   const { user } = useAuth();
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text>Welcome, {user.email}!</Text>
-      <Button title="Log Out" onPress={logOut} />
+    <View style={styles.container}>
+      <Text style={styles.welcome}>Welcome,</Text>
+      <Text style={styles.email}>{user.email}</Text>
+
+      <TouchableOpacity style={styles.button} onPress={logOut}>
+        <Text style={styles.buttonText}>Log Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F7F9FC',
+  },
+  welcome: {
+    fontSize: 20,
+    color: '#555',
+  },
+  email: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 40,
+    color: '#222',
+  },
+  button: {
+    backgroundColor: '#6C63FF',
+    paddingVertical: 14,
+    paddingHorizontal: 48,
+    borderRadius: 24,
+    shadowColor: '#6C63FF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+});
