@@ -8,7 +8,9 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { logIn } from '../services/auth';
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -17,7 +19,11 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     if (!email || !password) {
-      alert('メールとパスワードを入力してください💦');
+      Toast.show({
+        type: 'error',
+        text1: 'エラーだよ🥺',
+        text2: 'メールとパスワードを入力してね',
+      });
       return;
     }
     logIn(email, password);
@@ -57,6 +63,7 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#333',
-    marginBottom: 48,  // ← ここ広めに
+    marginBottom: 48,
     textAlign: 'center',
   },
   input: {
@@ -79,7 +86,7 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     fontSize: 16,
-    marginBottom: 24,  // ← ちょっと広げる
+    marginBottom: 24,
     borderWidth: 1,
     borderColor: '#ddd',
     width: '100%',
@@ -89,7 +96,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 32,  // ← ボタン下はしっかり空ける
+    marginBottom: 32,
     width: '100%',
   },
   buttonText: {
@@ -101,6 +108,6 @@ const styles = StyleSheet.create({
     color: '#6C63FF',
     fontSize: 14,
     textAlign: 'center',
-    marginTop: 16,  // ← リンクとの間隔を少し確保
+    marginTop: 16,
   },
 });
