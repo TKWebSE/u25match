@@ -1,36 +1,36 @@
-// screen/SignUpScreen.js
+// app/(auth)/signUpScreen.js
 import { useNavigation } from '@react-navigation/native';
+import { signUp } from '@services/auth';
+import { createUserProfile } from '@services/firestoreUserProfile';
 import { useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { signUp } from '../services/auth';
-import { createUserInFirestore } from '../services/firestoreUser';
 
-export default function SignUpScreen() {
+export default function signUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
   const handleSignUp = async () => {
     if (!email || !password) {
-      Alert.alert('入力不足', 'メールとパスワードを入力してください🥺');
+      // Web環境に合わせて Alert → Toast でもOKですが Alert でも今は可
+      alert('メールとパスワードを入力してください🥺');
       return;
     }
 
     try {
       const { user } = await signUp(email, password);
-      await createUserInFirestore(user);
-      Alert.alert('登録完了！', 'ようこそ！');
+      await createUserProfile(user); // ✅ 関数名修正
+      alert('登録完了！ようこそ✨');
       navigation.navigate('Home');
     } catch (error) {
-      Alert.alert('登録失敗', error.message);
+      alert(`登録失敗: ${error.message}`);
     }
   };
 
@@ -63,7 +63,9 @@ export default function SignUpScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.linkText}>すでにアカウントをお持ちですか？ ログイン</Text>
+        <Text style={styles.linkText}>
+          すでにアカウントをお持ちですか？ ログイン
+        </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );

@@ -1,4 +1,6 @@
+// app/(auth)/loginScreen.js
 import { useNavigation } from '@react-navigation/native';
+import { logIn } from '@services/auth';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -9,10 +11,9 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { logIn } from '../services/auth';
 
 
-export default function LoginScreen() {
+export default function loginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();

@@ -1,8 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
+// app/(other)/entryScreen.js
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function WelcomeScreen() {
-  const navigation = useNavigation();
+export default function entryScreen() {
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -14,14 +15,14 @@ export default function WelcomeScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => router.push('/loginScreen')}
       >
         <Text style={styles.buttonText}>ログインする</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, styles.signUpButton]}
-        onPress={() => navigation.navigate('SignUp')}
+        onPress={() => router.push('/signUpScreen')}
       >
         <Text style={styles.buttonText}>新規登録する</Text>
       </TouchableOpacity>
