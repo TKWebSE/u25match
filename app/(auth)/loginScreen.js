@@ -1,10 +1,9 @@
 // app/(auth)/loginScreen.js
-import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '@components/ScreenWrapper';
 import { logIn } from '@services/auth';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -16,7 +15,7 @@ import Toast from 'react-native-toast-message';
 export default function loginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -31,10 +30,7 @@ export default function loginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.select({ ios: 'padding', android: undefined })}
-    >
+    <ScreenWrapper >
       <Text style={styles.title}>ログイン</Text>
 
       <TextInput
@@ -58,10 +54,10 @@ export default function loginScreen() {
         <Text style={styles.buttonText}>ログイン</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+      <TouchableOpacity onPress={() => router.push('/signUpScreen')}>
         <Text style={styles.linkText}>アカウントがまだ？ 新規登録はこちら</Text>
       </TouchableOpacity>
-    </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 }
 
@@ -91,6 +87,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center'
   },
   loginButton: {
     backgroundColor: '#6C63FF',
@@ -99,6 +97,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
     width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center'
   },
   buttonText: {
     color: '#fff',

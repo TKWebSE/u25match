@@ -10,6 +10,9 @@
       "@contexts/*": [
         "src/contexts/*"
       ],
+      "@components/*": [
+        "src/components/*"
+      ],
       "@services/*": [
         "src/services/*"
       ]

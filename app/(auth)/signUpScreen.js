@@ -1,21 +1,20 @@
 // app/(auth)/signUpScreen.js
-import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '@components/ScreenWrapper';
 import { signUp } from '@services/auth';
 import { createUserProfile } from '@services/firestoreUserProfile';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
+  TouchableOpacity
 } from 'react-native';
 
 export default function signUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const handleSignUp = async () => {
     if (!email || !password) {
@@ -35,10 +34,7 @@ export default function signUpScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.select({ ios: 'padding', android: undefined })}
-    >
+    <ScreenWrapper >
       <Text style={styles.title}>アカウント新規登録 ✨</Text>
 
       <TextInput
@@ -62,12 +58,12 @@ export default function signUpScreen() {
         <Text style={styles.buttonText}>登録する</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity onPress={() => router.push('/loginScreen')}>
         <Text style={styles.linkText}>
           すでにアカウントをお持ちですか？ ログイン
         </Text>
       </TouchableOpacity>
-    </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 }
 
@@ -77,8 +73,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f6f7fb',
     justifyContent: 'center',
     padding: 24,
-    maxWidth: 400,
-    alignSelf: 'center',
     width: '100%',
   },
   title: {
@@ -97,6 +91,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center'
   },
   button: {
     backgroundColor: '#6C63FF',
@@ -105,6 +101,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
     width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center'
   },
   buttonText: {
     color: '#fff',
