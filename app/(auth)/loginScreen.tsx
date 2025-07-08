@@ -17,7 +17,7 @@ export default function loginScreen() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Toast.show({
         type: 'error',
@@ -26,7 +26,16 @@ export default function loginScreen() {
       });
       return;
     }
-    logIn(email, password);
+    try {
+      await logIn(email, password);
+      router.push('/homeScreen');
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'ログイン失敗🥺',
+        text2: error.message || '予期せぬエラーが発生しました',
+      });
+    }
   };
 
   return (
@@ -62,15 +71,6 @@ export default function loginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f6f7fb',
-    justifyContent: 'center',
-    padding: 24,
-    maxWidth: 400,
-    alignSelf: 'center',
-    width: '100%',
-  },
   title: {
     fontSize: 28,
     fontWeight: '700',

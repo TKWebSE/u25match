@@ -1,5 +1,5 @@
 // app/components/ScreenWrapper.tsx
-import { Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export default function ScreenWrapper({
   children,
@@ -13,9 +13,9 @@ export default function ScreenWrapper({
       style={[styles.wrapper, style]} // デフォルト＋渡されたstyle
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-        {children}
-      </Pressable>
+      {/* <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}> */}
+      {children}
+      {/* </Pressable> */}
     </KeyboardAvoidingView>
   );
 }
@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
     padding: 24,
     alignSelf: 'center',
     width: '100%',
-
+    justifyContent: 'center'
   },
 });

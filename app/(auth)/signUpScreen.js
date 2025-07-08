@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function signUpScreen() {
   const [email, setEmail] = useState('');
@@ -18,18 +19,28 @@ export default function signUpScreen() {
 
   const handleSignUp = async () => {
     if (!email || !password) {
-      // Web環境に合わせて Alert → Toast でもOKですが Alert でも今は可
-      alert('メールとパスワードを入力してください🥺');
+      Toast.show({
+        type: 'error',
+        text1: 'エラーだよ🥺',
+        text2: 'メールとパスワードを入力してね',
+      });
       return;
     }
 
     try {
       const { user } = await signUp(email, password);
       await createUserProfile(user); // ✅ 関数名修正
-      alert('登録完了！ようこそ✨');
-      navigation.navigate('Home');
+      Toast.show({
+        type: 'success',
+        text1: '登録完了！ようこそ✨',
+      });
+      router.push('/homeScreen');
     } catch (error) {
-      alert(`登録失敗: ${error.message}`);
+      Toast.show({
+        type: 'error',
+        text1: '登録失敗',
+        text2: error.message,
+      });
     }
   };
 
@@ -68,13 +79,6 @@ export default function signUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f6f7fb',
-    justifyContent: 'center',
-    padding: 24,
-    width: '100%',
-  },
   title: {
     fontSize: 28,
     fontWeight: '700',
