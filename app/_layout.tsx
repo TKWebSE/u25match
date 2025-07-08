@@ -1,6 +1,30 @@
 // app/_layout.tsx
-import { Stack } from 'expo-router';
+import CustomHeader from '@components/CustomHeader';
+import { Slot, useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
 
 export default function RootLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  const router = useRouter();
+
+  return (
+    <View style={styles.container}>
+      {/* 共通ヘッダー */}
+      <CustomHeader title="ログイン" />
+
+      {/* 各画面コンテンツ */}
+      <View style={styles.content}>
+        <Slot />
+      </View>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f6f7fb',
+  },
+  content: {
+    flex: 1,
+  },
+});
