@@ -46,54 +46,49 @@
 | チャットまで行くユーザーが多いか？ | チャット送信回数や継続率を見る    |
 | トラブル報告が必要か？       | 通報件数を集める           |
 
+<h2>入れたい機能</h2>
+ユーザー関連
 
-# Welcome to your Expo app 👋
+| 機能名                 | 説明                              |
+| ------------------- | ------------------------------- |
+| 🔐 ログイン / サインアップ    | Firebase Authでの認証（Google/メールなど） |
+| 🙋‍♀️ プロフィール作成 / 編集 | 名前・年齢・性別・自己紹介・写真など登録            |
+| 🧾 プロフィール閲覧         | 他のユーザーの情報を確認できる画面               |
+| 📸 プロフィール画像アップロード   | Firebase Storageなどと連携して画像アップ    |
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ マッチング・探索
+ | 機能名                | 説明                 |
+| ------------------ | ------------------ |
+| 🔍 ユーザー探索（Explore） | スワイプやリスト形式でユーザー表示  |
+| ❤️ いいね機能           | いいねを送ると、マッチの判定へ    |
+| 💑 マッチ成立機能         | 双方がいいね→マッチとして記録    |
+| 🔎 検索フィルター         | 年齢・性別・エリアなどで絞り込み可能 |
 
-## Get started
+コミュニケーション
+| 機能名        | 説明                |
+| ---------- | ----------------- |
+| 📥 チャットリスト | マッチした相手とのチャット一覧表示 |
+| 💬 チャットルーム | テキストメッセージのやり取り    |
+| 🔔 通知機能    | 新マッチやメッセージなどの通知表示 |
 
-1. Install dependencies
+ 補助・設定関連
+ | 機能名             | 説明                 |
+| --------------- | ------------------ |
+| ⚙️ 設定画面         | ログアウト、通知設定、ブロックなど  |
+| 🚪 ログアウト        | Firebase認証からサインアウト |
+| 🙈 非表示 / ブロック機能 | 特定ユーザーの非表示やブロック    |
 
-   ```bash
-   npm install
-   ```
+ プレミアム / 拡張機能（あれば）
+ | 機能名          | 説明                |
+| ------------ | ----------------- |
+| 🔁 いいねのリワインド | 間違えてスワイプした人を戻す    |
+| ✨ ブースト機能     | 自分のプロフィールの表示回数アップ |
+| 👀 足跡機能      | 誰が自分のプロフィールを見たか確認 |
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+ Firebase構成に関わる設計要素
+ | 種類               | 概要                 |
+| ---------------- | ------------------ |
+| users コレクション     | uid・プロフィール・画像URLなど |
+| likes サブコレクション   | 自分が「いいね」したユーザー一覧   |
+| matches コレクション   | 双方のいいねで作成されるマッチ    |
+| chats / messages | チャットルームとそのメッセージ群   |
