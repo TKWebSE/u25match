@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-export default function profileViewScreen() {
+export default function ProfileViewScreen() {
   const auth = getAuth();
   const user = auth.currentUser;
 

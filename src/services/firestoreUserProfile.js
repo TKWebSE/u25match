@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 /**
@@ -63,3 +63,34 @@ export const getUserProfile = async (uid) => {
     return null;
   }
 };
+
+/**
+ * Firestoreからユーザープロフィール一覧を取得する関数
+ * - 自分自身は除外
+ * - 今後はフィルター（性別・年齢・距離）を追加可能にする予定
+ */
+export async function getUsersList(currentUid = null) {
+  try {
+    const usersRef = collection(db, 'users');
+    let q = query(usersRef);
+    const snapshot = await getDocs(q);
+
+    const userList = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (!currentUid || doc.id !== currentUid) {
+        userList.push({
+          uid: doc.id,
+          name: data.name || '名無し',
+          bio: data.bio || '',
+          photoURL: data.photoURL || 'https://placehold.co/100x100?text=No+Image',
+        });
+      }
+    });
+
+    return userList;
+  } catch (error) {
+    console.error('ユーザー一覧の取得に失敗しました:', error);
+    return [];
+  }
+}
