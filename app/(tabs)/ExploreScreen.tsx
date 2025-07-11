@@ -1,7 +1,7 @@
-// app/(main)/LineupScreen.tsx
+// app/(main)/ExploreScreen.tsx
+import { getUsersList } from '@/src/services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
-import { getUsersList } from '@services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // ユーザー型定義
 type User = {
@@ -11,7 +11,7 @@ type User = {
   photoURL?: string;
 };
 
-export default function LineupScreen() {
+export default function ExploreScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 

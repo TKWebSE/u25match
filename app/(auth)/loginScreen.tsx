@@ -1,6 +1,6 @@
 // app/(auth)/loginScreen.js
+import { logIn } from '@/src/services/auth';
 import ScreenWrapper from '@components/ScreenWrapper';
-import { logIn } from '@services/auth';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {

@@ -1,17 +1,17 @@
 // app/(main)/MyPageScreen.tsx
-import { getAuth, signOut } from 'firebase/auth';
+import { getUserProfile } from '@/src/services/firestoreUserProfile';
 import { useRouter } from 'expo-router';
+import { getAuth, signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { getUserProfile } from '@services/firestoreUserProfile';
 
 export default function MyPageScreen() {
   const auth = getAuth();

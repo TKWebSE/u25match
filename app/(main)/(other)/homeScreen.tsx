@@ -1,6 +1,6 @@
 // app/(other)/homeScreen.js
-import { useAuth } from '@contexts/AuthContext';
-import { logOut } from '@services/auth';
+import { useAuth } from '@/src/contexts/AuthContext';
+import { logOut } from '@/src/services/auth';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

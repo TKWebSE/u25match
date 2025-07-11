@@ -1,7 +1,7 @@
 // app/(auth)/signUpScreen.js
+import { signUp } from '@/src/services/auth';
+import { createUserProfile } from '@/src/services/firestoreUserProfile';
 import ScreenWrapper from '@components/ScreenWrapper';
-import { signUp } from '@services/auth';
-import { createUserProfile } from '@services/firestoreUserProfile';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {

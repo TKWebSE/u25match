@@ -1,13 +1,23 @@
 // components/CustomHeader.tsx
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../src/contexts/AuthContext'; // パスは適宜調整してください
 
 export default function CustomHeader({ title }: { title: string }) {
   const router = useRouter();
+  const { user } = useAuth(); // userがnullかどうかでログイン判定
+
+  const handleLogoPress = () => {
+    if (user) {
+      router.push('/(main)/exploreScreen');  // ログイン中はExploreScreenへ
+    } else {
+      router.push('/entryScreen');            // ログアウト中はentryScreenへ
+    }
+  };
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={() => router.push('/entryScreen')}>
+      <TouchableOpacity onPress={handleLogoPress}>
         <Text style={styles.logo}>Under25Match</Text>
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>

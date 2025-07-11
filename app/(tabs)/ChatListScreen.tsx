@@ -1,8 +1,8 @@
 // app/(main)/ChatListScreen.tsx
-import { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { getChatList } from '@services/firestoreChats';
 import { useRouter } from 'expo-router';
-import { getChatList } from '@services/firestoreChats'; // サービス層で後ほど作成
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type ChatItem = {
   chatId: string;
