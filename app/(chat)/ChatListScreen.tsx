@@ -1,4 +1,5 @@
 // app/(main)/ChatListScreen.tsx
+import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
 import { getChatList } from '@services/firestoreChats';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -29,7 +30,7 @@ export default function ChatListScreen() {
   const renderItem = ({ item }: { item: ChatItem }) => (
     <TouchableOpacity
       style={styles.chatItem}
-      onPress={() => router.push(`/chatRoom/${item.chatId}`)}
+      onPress={() => router.push(CHAT_ROOM_SCREEN_PATH(item.chatId))}
     >
       <Image source={{ uri: item.photoURL }} style={styles.avatar} />
       <View style={styles.chatInfo}>

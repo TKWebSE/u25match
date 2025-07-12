@@ -1,6 +1,8 @@
 // app/(auth)/loginScreen.js
 import { logIn } from '@/src/services/auth';
 import ScreenWrapper from '@components/ScreenWrapper';
+import { HOME_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
+import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -9,8 +11,6 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import Toast from 'react-native-toast-message';
-
 
 export default function loginScreen() {
   const [email, setEmail] = useState('');
@@ -19,22 +19,14 @@ export default function loginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Toast.show({
-        type: 'error',
-        text1: 'エラーだよ🥺',
-        text2: 'メールとパスワードを入力してね',
-      });
+      showErrorToast('メールアドレスとパスワードを入力してください');
       return;
     }
     try {
       await logIn(email, password);
-      router.push('/homeScreen');
+      router.push(HOME_SCREEN_PATH);
     } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: 'ログイン失敗🥺',
-        text2: error.message || '予期せぬエラーが発生しました',
-      });
+      showErrorToast(error.message || 'ログインに失敗しました');
     }
   };
 
@@ -63,7 +55,7 @@ export default function loginScreen() {
         <Text style={styles.buttonText}>ログイン</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('/signUpScreen')}>
+      <TouchableOpacity onPress={() => router.push(SIGN_UP_SCREEN_PATH)}>
         <Text style={styles.linkText}>アカウントがまだ？ 新規登録はこちら</Text>
       </TouchableOpacity>
     </ScreenWrapper>

@@ -1,4 +1,5 @@
 // app/(other)/entryScreen.js
+import { LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -15,14 +16,14 @@ export default function entryScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/loginScreen')}
+        onPress={() => router.push(LOGIN_SCREEN_PATH)}
       >
         <Text style={styles.buttonText}>ログインする</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, styles.signUpButton]}
-        onPress={() => router.push('/signUpScreen')}
+        onPress={() => router.push(SIGN_UP_SCREEN_PATH)}
       >
         <Text style={styles.buttonText}>新規登録する</Text>
       </TouchableOpacity>

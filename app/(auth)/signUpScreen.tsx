@@ -1,7 +1,9 @@
 // app/(auth)/signUpScreen.js
 import { signUp } from '@/src/services/auth';
 import { createUserProfile } from '@/src/services/firestoreUserProfile';
+import { showErrorToast, showSuccessToast } from '@/src/utils/showToast';
 import ScreenWrapper from '@components/ScreenWrapper';
+import { HOME_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -10,7 +12,6 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 
 export default function signUpScreen() {
   const [email, setEmail] = useState('');
@@ -19,28 +20,18 @@ export default function signUpScreen() {
 
   const handleSignUp = async () => {
     if (!email || !password) {
-      Toast.show({
-        type: 'error',
-        text1: 'エラーだよ🥺',
-        text2: 'メールとパスワードを入力してね',
-      });
+      showErrorToast('メールアドレスとパスワードを入力してください');
       return;
     }
 
     try {
       const { user } = await signUp(email, password);
       await createUserProfile(user); // ✅ 関数名修正
-      Toast.show({
-        type: 'success',
-        text1: '登録完了！ようこそ✨',
-      });
-      router.push('/homeScreen');
+      showSuccessToast('登録完了！ようこそ✨');
+      router.push(HOME_SCREEN_PATH);
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: '登録失敗',
-        text2: error.message,
-      });
+      const message = error instanceof Error ? error.message : '登録に失敗しました';
+      showErrorToast(message);
     }
   };
 
@@ -69,7 +60,7 @@ export default function signUpScreen() {
         <Text style={styles.buttonText}>登録する</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('/loginScreen')}>
+      <TouchableOpacity onPress={() => router.push(LOGIN_SCREEN_PATH)}>
         <Text style={styles.linkText}>
           すでにアカウントをお持ちですか？ ログイン
         </Text>

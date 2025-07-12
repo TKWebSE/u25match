@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function CustomHeader({ title }: { title: string }) {
   const router = useRouter();
-  const { user }: = useAuth(); // userがnullかどうかでログイン判定
+  const { user } = useAuth(); // userがnullかどうかでログイン判定
 
   const handleLogoPress = () => {
     if (user) {
