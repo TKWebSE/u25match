@@ -1,3 +1,4 @@
+// services/firestoreChats.ts
 import { addDoc, collection, getDocs, onSnapshot, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebaseConfig'; // Firebase初期化ファイルのパスに合わせて調整してください
 

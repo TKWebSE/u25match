@@ -1,9 +1,7 @@
 // app/(main)/ChatListScreen.tsx
-import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
-import { getChatList } from '@services/firestoreChats';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 
 type ChatItem = {
   chatId: string;
@@ -14,50 +12,11 @@ type ChatItem = {
   updatedAt: string;
 };
 
-export default function ChatListScreen() {
+export default function chatListScreen() {
   const [chats, setChats] = useState<ChatItem[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      const data = await getChatList(); // あとでUIDを渡すように変更予定
-      setChats(data);
-      setLoading(false);
-    })();
-  }, []);
-
-  const renderItem = ({ item }: { item: ChatItem }) => (
-    <TouchableOpacity
-      style={styles.chatItem}
-      onPress={() => router.push(CHAT_ROOM_SCREEN_PATH(item.chatId))}
-    >
-      <Image source={{ uri: item.photoURL }} style={styles.avatar} />
-      <View style={styles.chatInfo}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.message} numberOfLines={1}>
-          {item.lastMessage || 'メッセージはまだありません'}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6C63FF" />
-      </View>
-    );
-  }
-
-  return (
-    <FlatList
-      data={chats}
-      keyExtractor={(item) => item.chatId}
-      renderItem={renderItem}
-      contentContainerStyle={styles.container}
-    />
-  );
+  return
 }
 
 const styles = StyleSheet.create({

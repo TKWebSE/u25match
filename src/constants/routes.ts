@@ -1,9 +1,9 @@
 // src/constants/routes.ts
 
 // 認証
-export const ENTRY_SCREEN_PATH = '/(auth)/entryScreen';
-export const LOGIN_SCREEN_PATH = '/(auth)/loginScreen';
-export const SIGN_UP_SCREEN_PATH = '/(auth)/signUpScreen';
+export const ENTRY_SCREEN_PATH = '/entryScreen';
+export const LOGIN_SCREEN_PATH = '/loginScreen';
+export const SIGN_UP_SCREEN_PATH = '/signUpScreen';
 
 // ホーム（ユーザー探索）
 export const HOME_SCREEN_PATH = '/homeScreen'; // index.tsx にすれば '/home' でOK

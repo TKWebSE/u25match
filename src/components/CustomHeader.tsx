@@ -1,17 +1,22 @@
 // components/CustomHeader.tsx
+import { ENTRY_SCREEN_PATH, HOME_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+/**
+ * カスタムヘッダーコンポーネント
+ * ロゴをタップするとログイン状態に応じて遷移先が変わる
+ */
 export default function CustomHeader({ title }: { title: string }) {
   const router = useRouter();
   const { user } = useAuth(); // userがnullかどうかでログイン判定
 
   const handleLogoPress = () => {
     if (user) {
-      router.push('/homeScreen');  // ログイン中はHomeScreenへ
+      router.push(HOME_SCREEN_PATH);  // ログイン中はHomeScreenへ
     } else {
-      router.push('/entryScreen');  // ログアウト中はentryScreenへ
+      router.push(ENTRY_SCREEN_PATH);  // ログアウト中はentryScreenへ
     }
   };
 

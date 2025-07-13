@@ -1,79 +1,18 @@
-// app/(main)/MyPageScreen.tsx
-import { getUserProfile } from '@/src/services/firestoreUserProfile';
+// app/(main)/settingsScreen.tsx
 import { useRouter } from 'expo-router';
-import { getAuth, signOut } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  StyleSheet
 } from 'react-native';
 
-export default function MyPageScreen() {
+export default function settingsScreen() {
   const auth = getAuth();
   const user = auth.currentUser;
   const router = useRouter();
   const [profile, setProfile] = useState<{ name: string; bio: string; photoURL?: string } | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      if (user) {
-        const data = await getUserProfile(user.uid);
-        setProfile(data);
-      }
-      setLoading(false);
-    })();
-  }, [user]);
-
-  const handleSignOut = async () => {
-    Alert.alert('ログアウト確認', '本当にログアウトしますか？', [
-      { text: 'キャンセル', style: 'cancel' },
-      {
-        text: 'ログアウト',
-        style: 'destructive',
-        onPress: async () => {
-          await signOut(auth);
-          router.replace('/(auth)/loginScreen');
-        },
-      },
-    ]);
-  };
-
-  const handleEditProfile = () => {
-    router.push('/(profile)/profileEditScreen');
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6C63FF" />
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: profile?.photoURL || 'https://placehold.co/100x100?text=No+Image' }}
-        style={styles.avatar}
-      />
-      <Text style={styles.name}>{profile?.name || '名無しユーザー'}</Text>
-      <Text style={styles.bio}>{profile?.bio || '自己紹介は未設定です。'}</Text>
-
-      <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
-        <Text style={styles.buttonText}>プロフィールを編集</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleSignOut}>
-        <Text style={[styles.buttonText, styles.logoutText]}>ログアウト</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  return
 }
 
 const styles = StyleSheet.create({

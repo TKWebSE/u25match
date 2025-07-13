@@ -4,8 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // 各タブに対応する画面コンポーネントをインポート
 import ExploreScreen from '../(home)/ExploreScreen';
-import MyPageScreen from '../(settings)/MyPageScreen';
-import ReactionsScreen from './ReactionsScreen';
+import ReactionsScreen from '../(reactions)/reactionsScreen';
 
 // BottomTabNavigatorのインスタンスを作成
 const Tab = createBottomTabNavigator();
@@ -39,16 +38,16 @@ export default function TabsLayout() {
         component={ExploreScreen} // 表示する画面コンポーネント
         options={{ title: '探す' }} // タブバーに表示するタイトル
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="chatList"
-        component={ChatListScreen}
+        component={chatListScreen}
         options={{ title: 'チャット' }}
       />
       <Tab.Screen
-        name="profile"
-        component={MyPageScreen}
-        options={{ title: 'マイページ' }}
-      />
+        name="settings"
+        component={settingScreen}
+        options={{ title: '設定' }}
+      /> */}
       <Tab.Screen
         name="reactions"
         component={ReactionsScreen}

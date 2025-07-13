@@ -1,4 +1,5 @@
-import { doc, getDoc, setDoc, collection, query, getDocs } from 'firebase/firestore';
+// services/firestoreUserProfile.ts
+import { collection, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 /**
@@ -6,13 +7,13 @@ import { db } from '../../firebaseConfig';
  * @param {Object} user - Firebase Auth のユーザーオブジェクト（uidとemailを含む）
  * @returns {Promise<void>}
  */
-export const createUserProfile = async (user) => {
+export const createUserProfile = async (uid: string, email: string) => {
   try {
-    await setDoc(doc(db, 'users', user.uid), {
-      email: user.email,
+    await setDoc(doc(db, 'users', uid), {
+      email: email,
       createdAt: new Date().toISOString(),
     });
-    console.log('✅ Firestore ユーザープロフィール作成成功:', user.uid);
+    console.log('✅ Firestore ユーザープロフィール作成成功:', uid);
   } catch (error) {
     console.error('❌ Firestore プロフィール作成エラー:', error);
   }
@@ -25,7 +26,7 @@ export const createUserProfile = async (user) => {
  * @param {Object} additionalData - マージして保存する追加のプロフィール情報（任意）
  * @returns {Promise<void>}
  */
-export const updateUserProfile = async (user, additionalData = {}) => {
+export const updateUserProfile = async (user: { uid: string; email: string }, additionalData: { [key: string]: any } = {}) => {
   try {
     await setDoc(
       doc(db, 'users', user.uid),
@@ -47,7 +48,7 @@ export const updateUserProfile = async (user, additionalData = {}) => {
  * @param {string} uid - Firebase Auth の uid
  * @returns {Promise<Object|null>} ユーザーデータまたは null
  */
-export const getUserProfile = async (uid) => {
+export const getUserProfile = async (uid: string) => {
   try {
     const ref = doc(db, 'users', uid);
     const snap = await getDoc(ref);
@@ -64,10 +65,17 @@ export const getUserProfile = async (uid) => {
   }
 };
 
+// ユーザープロフィールの型を定義
+export type UserProfileSummary = {
+  uid: string;
+  name: string;
+  bio: string;
+  photoURL: string;
+};
 /**
- * Firestoreからユーザープロフィール一覧を取得する関数
- * - 自分自身は除外
- * - 今後はフィルター（性別・年齢・距離）を追加可能にする予定
+ * Firestoreから全ユーザープロフィールのサマリーを取得します。
+ * @param {string|null} currentUid - 現在のユーザーのuid（自分自身は除外するため）
+ * @returns {Promise<UserProfileSummary[]>} ユーザープロフィールのサマリー一覧
  */
 export async function getUsersList(currentUid = null) {
   try {
@@ -75,7 +83,8 @@ export async function getUsersList(currentUid = null) {
     let q = query(usersRef);
     const snapshot = await getDocs(q);
 
-    const userList = [];
+
+    const userList: UserProfileSummary[] = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
       if (!currentUid || doc.id !== currentUid) {

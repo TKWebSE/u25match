@@ -1,11 +1,11 @@
 // contexts/AuthContext.tsx
-import { onAuthStateChanged } from 'firebase/auth';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../../firebaseConfig';
 
 // Contextが持つ値の型定義
 type AuthContextType = {
-  user: any | null;      // ログインしているユーザー情報（nullなら未ログイン）
+  user: User | null;      // ログインしているユーザー情報（nullなら未ログイン）
   loading: boolean;      // 認証状態の読み込み中かどうかのフラグ
 };
 
@@ -31,20 +31,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Contextに値をセットして、子コンポーネントに渡す
+
   return (
-    <AuthContext.Provider value= {{ user, loading }
-}>
-  { children }
-  </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading }
+    }>
+      {children}
+    </AuthContext.Provider>
   );
+
 };
 
 // Contextを安全に使うためのカスタムフック
-export const useAuth = () => {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   // Providerが使われていなければエラーを投げる（安全対策）
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}

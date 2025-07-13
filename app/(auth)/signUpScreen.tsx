@@ -25,8 +25,12 @@ export default function signUpScreen() {
     }
 
     try {
-      const { user } = await signUp(email, password);
-      await createUserProfile(user); // ✅ 関数名修正
+      const result = await signUp(email, password);
+      if (!result.user.email) {
+        showErrorToast('メールアドレスが取得できませんでした');
+        return;
+      }
+      await createUserProfile(result.user.uid, result.user.email);
       showSuccessToast('登録完了！ようこそ✨');
       router.push(HOME_SCREEN_PATH);
     } catch (error) {

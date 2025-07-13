@@ -1,19 +1,21 @@
 // app/(other)/homeScreen.js
 import { useAuth } from '@/src/contexts/AuthContext';
 import { logOut } from '@/src/services/auth';
+import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function homeScreen() {
   const { user } = useAuth();
   const router = useRouter();
+  if (!user) return null;
 
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome,</Text>
       <Text style={styles.email}>{user.email}</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/profileEdit')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push(PROFILE_EDIT_SCREEN_PATH)}>
         <Text style={styles.buttonText}>プロフィール編集</Text>
       </TouchableOpacity>
 
