@@ -18,7 +18,7 @@ import {
 import Toast from 'react-native-toast-message';
 
 export default function ProfileEditScreen() {
-  const [profile, setProfile] = useState({ name: '', bio: '' });
+  const [profile, setProfile] = useState({ uid: '', name: '', bio: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
@@ -26,10 +26,10 @@ export default function ProfileEditScreen() {
   useEffect(() => {
     const fetchProfile = async () => {
       const user = getAuth().currentUser;
-      if (!user) return;
+      // if (!user) return;
       const data = await getUserProfile(user.uid);
       if (data) {
-        setProfile({ name: data.name || '', bio: data.bio || '' });
+        setProfile({ uid: user.uid, name: data.name || '', bio: data.bio || '' });
       }
       setLoading(false);
     };

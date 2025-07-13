@@ -1,21 +1,36 @@
 // app/_layout.tsx
-import { AuthProvider } from '@/src/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/src/contexts/AuthContext';
 import CustomHeader from '@components/CustomHeader';
 import { Slot } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import LoginScreen from './(auth)/loginScreen';
+
+function AuthGate() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color="#6C63FF" />
+      </View>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  return <Slot />;
+}
 
 export default function RootLayout() {
-
   return (
     <AuthProvider>
       <View style={styles.container}>
-        {/* 共通ヘッダー */}
         <CustomHeader title="ログイン" />
-
-        {/* 各画面コンテンツ */}
         <View style={styles.content}>
-          <Slot />
+          <AuthGate />
           <Toast />
         </View>
       </View>
@@ -30,5 +45,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
