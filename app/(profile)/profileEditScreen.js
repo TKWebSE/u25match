@@ -1,5 +1,7 @@
 // app/(profile)/profileEditScreen.js
+import { PROFILE_SCREEN_PATH } from '@constants/routes';
 import { getUserProfile, updateUserProfile } from '@services/firestoreUserProfile';
+import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import {
@@ -19,6 +21,7 @@ export default function ProfileEditScreen() {
   const [profile, setProfile] = useState({ name: '', bio: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,6 +43,7 @@ export default function ProfileEditScreen() {
     try {
       await updateUserProfile(user, profile);
       Toast.show({ type: 'success', text1: 'プロフィールを保存しました！' });
+      router.push(PROFILE_SCREEN_PATH)
     } catch {
       Toast.show({ type: 'error', text1: '保存に失敗しました' });
     } finally {
@@ -98,3 +102,53 @@ export default function ProfileEditScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 24,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 32,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#555',
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+    fontSize: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  bioInput: {
+    height: 120,
+  },
+  button: {
+    backgroundColor: '#6C63FF',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#aaa',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F7F9FC',
+  },
+});

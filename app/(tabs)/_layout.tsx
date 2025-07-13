@@ -3,8 +3,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // 各タブに対応する画面コンポーネントをインポート
+import ChatListScreen from '../(chat)/chatListScreen';
 import ExploreScreen from '../(home)/ExploreScreen';
 import ReactionsScreen from '../(reactions)/reactionsScreen';
+import SettingScreen from '../(settings)/settingsScreen';
+
 
 // BottomTabNavigatorのインスタンスを作成
 const Tab = createBottomTabNavigator();
@@ -38,16 +41,16 @@ export default function TabsLayout() {
         component={ExploreScreen} // 表示する画面コンポーネント
         options={{ title: '探す' }} // タブバーに表示するタイトル
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="chatList"
-        component={chatListScreen}
+        component={ChatListScreen}
         options={{ title: 'チャット' }}
       />
       <Tab.Screen
         name="settings"
-        component={settingScreen}
+        component={SettingScreen}
         options={{ title: '設定' }}
-      /> */}
+      />
       <Tab.Screen
         name="reactions"
         component={ReactionsScreen}

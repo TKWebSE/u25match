@@ -12,7 +12,9 @@ export default function settingsScreen() {
   const router = useRouter();
   const [profile, setProfile] = useState<{ name: string; bio: string; photoURL?: string } | null>(null);
   const [loading, setLoading] = useState(true);
-  return
+  return (
+    <>setting</>
+  );
 }
 
 const styles = StyleSheet.create({

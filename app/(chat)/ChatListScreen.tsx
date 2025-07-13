@@ -12,11 +12,15 @@ type ChatItem = {
   updatedAt: string;
 };
 
-export default function chatListScreen() {
+export default function ChatListScreen() {
   const [chats, setChats] = useState<ChatItem[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  return
+  return (
+    <>
+      Chat List Screen
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

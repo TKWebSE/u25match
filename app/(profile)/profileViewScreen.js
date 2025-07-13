@@ -1,12 +1,14 @@
-// app/(profile)profileViewScreen.js
+import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { getUserProfile } from '@services/firestoreUserProfile';
+import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileViewScreen() {
   const auth = getAuth();
   const user = auth.currentUser;
+  const router = useRouter();
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +38,13 @@ export default function ProfileViewScreen() {
 
       <Text style={styles.label}>自己紹介</Text>
       <Text style={styles.value}>{profile?.bio || '未設定'}</Text>
+
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => router.push(PROFILE_EDIT_SCREEN_PATH)}
+      >
+        <Text style={styles.editButtonText}>編集する</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -45,6 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: '#F7F9FC',
+    justifyContent: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -56,6 +66,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 32,
     color: '#333',
+    alignItems: 'center',
   },
   label: {
     fontSize: 16,
@@ -66,5 +77,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#222',
     marginTop: 6,
+  },
+  editButton: {
+    marginTop: 32,
+    backgroundColor: '#6C63FF',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
   },
 });
