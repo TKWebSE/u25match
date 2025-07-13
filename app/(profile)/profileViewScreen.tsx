@@ -1,3 +1,4 @@
+// app/(profile)/profileViewScreen.tsx
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { getUserProfile } from '@services/firestoreUserProfile';
 import { useRouter } from 'expo-router';
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 32,
     color: '#333',
-    alignItems: 'center',
   },
   label: {
     fontSize: 16,
