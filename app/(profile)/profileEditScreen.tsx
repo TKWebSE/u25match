@@ -1,8 +1,8 @@
 // app/(profile)/profileEditScreen.js
 import { PROFILE_SCREEN_PATH } from '@constants/routes';
+import { useStrictAuth } from '@hooks/useStrictAuth';
 import { getUserProfile, updateUserProfile } from '@services/firestoreUserProfile';
 import { useRouter } from 'expo-router';
-import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -25,8 +25,7 @@ export default function ProfileEditScreen() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = getAuth().currentUser;
-      // if (!user) return;
+      const user = useStrictAuth();
       const data = await getUserProfile(user.uid);
       if (data) {
         setProfile({ uid: user.uid, name: data.name || '', bio: data.bio || '' });
@@ -37,11 +36,9 @@ export default function ProfileEditScreen() {
   }, []);
 
   const handleSave = async () => {
-    const user = getAuth().currentUser;
-    if (!user) return;
     setSaving(true);
     try {
-      await updateUserProfile(user, profile);
+      await updateUserProfile(profile.uid, profile);
       Toast.show({ type: 'success', text1: 'プロフィールを保存しました！' });
       router.push(PROFILE_SCREEN_PATH)
     } catch {

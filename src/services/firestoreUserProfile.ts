@@ -26,18 +26,17 @@ export const createUserProfile = async (uid: string, email: string) => {
  * @param {Object} additionalData - マージして保存する追加のプロフィール情報（任意）
  * @returns {Promise<void>}
  */
-export const updateUserProfile = async (user: { uid: string; email: string }, additionalData: { [key: string]: any } = {}) => {
+export const updateUserProfile = async (uid: string, additionalData: { [key: string]: any } = {}) => {
   try {
     await setDoc(
-      doc(db, 'users', user.uid),
+      doc(db, 'users', uid),
       {
-        email: user.email,
         updatedAt: new Date().toISOString(),
         ...additionalData,
       },
       { merge: true }
     );
-    console.log('✅ Firestore ユーザープロフィール更新成功:', user.uid);
+    console.log('✅ Firestore ユーザープロフィール更新成功:', uid);
   } catch (error) {
     console.error('❌ Firestore プロフィール更新エラー:', error);
   }

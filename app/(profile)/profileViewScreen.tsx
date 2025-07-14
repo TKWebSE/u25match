@@ -1,24 +1,24 @@
 // app/(profile)/profileViewScreen.tsx
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
+import { useStrictAuth } from '@hooks/useStrictAuth';
 import { getUserProfile } from '@services/firestoreUserProfile';
 import { useRouter } from 'expo-router';
-import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileViewScreen() {
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = useStrictAuth();
   const router = useRouter();
 
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState({ uid: '', name: '', bio: '' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      if (!user) return;
       const data = await getUserProfile(user.uid);
-      setProfile(data);
+      if (data) {
+        setProfile({ uid: user.uid, name: data.name || '', bio: data.bio || '' });
+      }
       setLoading(false);
     })();
   }, [user]);
