@@ -1,14 +1,13 @@
-// app/(other)/homeScreen.js
-import { useAuth } from '@/src/contexts/AuthContext';
+// app/(other)/settingsScreen.js
+import { useStrictAuth } from '@/src/hooks/useStrictAuth';
 import { logOut } from '@/src/services/auth';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function homeScreen() {
-  const { user } = useAuth();
+export default function settingsScreen() {
+  const user = useStrictAuth();
   const router = useRouter();
-  if (!user) return null;
 
   return (
     <View style={styles.container}>

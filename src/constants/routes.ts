@@ -6,7 +6,7 @@ export const LOGIN_SCREEN_PATH = '/loginScreen';
 export const SIGN_UP_SCREEN_PATH = '/signUpScreen';
 
 // ホーム（ユーザー探索）
-export const HOME_SCREEN_PATH = '/homeScreen'; // index.tsx にすれば '/home' でOK
+export const EXPLORE_SCREEN_PATH = '/exploreScreen'; // index.tsx にすれば '/home' でOK
 export const HOME_DETAIL_PATH = (userId: string) => `/home/detail/${userId}`;
 
 // チャット

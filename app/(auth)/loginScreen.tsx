@@ -1,7 +1,7 @@
 // app/(auth)/loginScreen.js
 import { logIn } from '@/src/services/auth';
 import ScreenWrapper from '@components/ScreenWrapper';
-import { HOME_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
+import { EXPLORE_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -24,7 +24,7 @@ export default function loginScreen() {
     }
     try {
       await logIn(email, password);
-      router.push(HOME_SCREEN_PATH);
+      router.push(EXPLORE_SCREEN_PATH);
     } catch (error: any) {
       showErrorToast(error.message || 'ログインに失敗しました');
     }

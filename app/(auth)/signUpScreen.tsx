@@ -3,7 +3,7 @@ import { signUp } from '@/src/services/auth';
 import { createUserProfile } from '@/src/services/firestoreUserProfile';
 import { showErrorToast, showSuccessToast } from '@/src/utils/showToast';
 import ScreenWrapper from '@components/ScreenWrapper';
-import { HOME_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
+import { EXPLORE_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -32,7 +32,7 @@ export default function signUpScreen() {
       }
       await createUserProfile(result.user.uid, result.user.email);
       showSuccessToast('登録完了！ようこそ✨');
-      router.push(HOME_SCREEN_PATH);
+      router.push(EXPLORE_SCREEN_PATH);
     } catch (error) {
       const message = error instanceof Error ? error.message : '登録に失敗しました';
       showErrorToast(message);

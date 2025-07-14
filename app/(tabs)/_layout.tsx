@@ -3,16 +3,17 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // 各タブに対応する画面コンポーネントをインポート
-import ChatListScreen from '../(chat)/chatListScreen';
-import ExploreScreen from '../(home)/ExploreScreen';
-import ReactionsScreen from '../(reactions)/reactionsScreen';
-import SettingScreen from '../(settings)/settingsScreen';
+import ChatListScreen from './chatListScreen';
+import ExploreScreen from './exploreScreen';
+import ReactionsScreen from './reactionsScreen';
+import SettingScreen from './settingsScreen';
 
 
 // BottomTabNavigatorのインスタンスを作成
 const Tab = createBottomTabNavigator();
 
 export default function TabsLayout() {
+  console.log('TabsLayout rendered');
   return (
     <Tab.Navigator
       // 各タブの共通設定をここで定義
@@ -21,10 +22,10 @@ export default function TabsLayout() {
         tabBarIcon: ({ color, size }) => {
           // タブ名とMaterialIconsのアイコン名を紐づけるマップ
           const iconMap: Record<string, keyof typeof MaterialIcons.glyphMap> = {
-            home: 'explore',       // 探すタブ → 探検のアイコン
-            chatList: 'chat',      // チャットタブ → チャット吹き出しのアイコン
-            profile: 'person',     // マイページ → 人のシルエットアイコン
+            explore: 'explore',       // 探すタブ → 探検のアイコン
             reactions: 'favorite', // リアクション → ハートのアイコン
+            chatList: 'chat',      // チャットタブ → チャット吹き出しのアイコン
+            settings: 'settings',     // マイページ → 人のシルエットアイコン
           };
 
           // 現在のルート名に対応したアイコン名を取得。なければ'help-outline'（？マーク）
@@ -37,9 +38,14 @@ export default function TabsLayout() {
     >
       {/* 各タブ画面の登録 */}
       <Tab.Screen
-        name="home" // タブ識別名。画面遷移の際に使う
+        name="explore" // タブ識別名。画面遷移の際に使う
         component={ExploreScreen} // 表示する画面コンポーネント
         options={{ title: '探す' }} // タブバーに表示するタイトル
+      />
+      <Tab.Screen
+        name="reactions"
+        component={ReactionsScreen}
+        options={{ title: 'リアクション' }}
       />
       <Tab.Screen
         name="chatList"
@@ -51,11 +57,7 @@ export default function TabsLayout() {
         component={SettingScreen}
         options={{ title: '設定' }}
       />
-      <Tab.Screen
-        name="reactions"
-        component={ReactionsScreen}
-        options={{ title: 'リアクション' }}
-      />
+
     </Tab.Navigator>
   );
 }

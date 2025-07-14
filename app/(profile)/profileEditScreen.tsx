@@ -22,10 +22,10 @@ export default function ProfileEditScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+  const user = useStrictAuth();
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = useStrictAuth();
       const data = await getUserProfile(user.uid);
       if (data) {
         setProfile({ uid: user.uid, name: data.name || '', bio: data.bio || '' });

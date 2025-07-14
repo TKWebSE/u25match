@@ -1,6 +1,6 @@
 // app/(main)/ReactionsScreen.tsx
+import { useStrictAuth } from '@/src/hooks/useStrictAuth';
 import { getReactionsToCurrentUser } from '@services/firestoreReactions'; // サービス層にて後ほど実装
-import { getAuth } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -15,8 +15,7 @@ type ReactionItem = {
 export default function ReactionsScreen() {
   const [reactions, setReactions] = useState<ReactionItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = useStrictAuth();
 
   useEffect(() => {
     (async () => {

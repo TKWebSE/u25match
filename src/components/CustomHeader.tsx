@@ -1,5 +1,5 @@
 // components/CustomHeader.tsx
-import { ENTRY_SCREEN_PATH, HOME_SCREEN_PATH } from '@constants/routes';
+import { ENTRY_SCREEN_PATH, EXPLORE_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -14,7 +14,7 @@ export default function CustomHeader({ title }: { title: string }) {
 
   const handleLogoPress = () => {
     if (user) {
-      router.push(HOME_SCREEN_PATH);  // ログイン中はHomeScreenへ
+      router.push(EXPLORE_SCREEN_PATH);  // ログイン中はHomeScreenへ
     } else {
       router.push(ENTRY_SCREEN_PATH);  // ログアウト中はentryScreenへ
     }

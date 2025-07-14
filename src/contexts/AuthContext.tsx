@@ -14,9 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Providerコンポーネント（Contextの値を下の子コンポーネントに渡す役割）
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // user状態管理
   const [user, setUser] = useState<any | null>(null);
-  // 認証状態の読み込み中フラグ
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

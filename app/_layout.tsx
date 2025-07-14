@@ -16,7 +16,7 @@ function AuthGate() {
       </View>
     );
   }
-
+  console.log('AuthGate user:', user);
   if (!user) {
     return <LoginScreen />;
   }
