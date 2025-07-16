@@ -1,9 +1,9 @@
 // app/(auth)/signUpScreen.js
-import { signUp } from '@/src/services/auth';
-import { createUserProfile } from '@/src/services/firestoreUserProfile';
-import { showErrorToast, showSuccessToast } from '@/src/utils/showToast';
 import ScreenWrapper from '@components/ScreenWrapper';
 import { EXPLORE_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
+import { signUp } from '@services/auth';
+import { createUserProfile } from '@services/firestoreUserProfile';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {

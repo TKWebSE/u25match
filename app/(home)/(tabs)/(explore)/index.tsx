@@ -1,5 +1,7 @@
 // app/(main)/ExploreScreen.tsx
-import { getUsersList } from '@/src/services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
+import { PROFILE_MODAL_PATH } from '@constants/routes';
+import { getUsersList } from '@services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -14,6 +16,7 @@ type User = {
 export default function ExploreScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -32,17 +35,31 @@ export default function ExploreScreen() {
   }
 
   const renderItem = ({ item }: { item: User }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: item.photoURL }} style={styles.avatar} />
+    <TouchableOpacity style={styles.card} onPress={() => openProfileModal(item.uid)}>
+      <Image
+        source={{ uri: item.photoURL || 'https://placehold.jp/150x150.png' }}
+        style={styles.avatar}
+      />
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.bio} numberOfLines={2}>{item.bio || '自己紹介はありません'}</Text>
+        <Text style={styles.bio} numberOfLines={2}>
+          {item.bio || '自己紹介はありません'}
+        </Text>
       </View>
-      <TouchableOpacity style={styles.likeButton} onPress={() => {/* いいね処理 */ }}>
+      <TouchableOpacity
+        style={styles.likeButton}
+        onPress={() => {
+          // いいね処理
+        }}
+      >
         <Text style={styles.likeText}>💖</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
+
+  function openProfileModal(uid: string) {
+    router.push(PROFILE_MODAL_PATH(uid));
+  }
 
   return (
     <FlatList
