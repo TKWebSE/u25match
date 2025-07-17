@@ -32,6 +32,7 @@ export default function signUpScreen() {
       }
       await createUserProfile(result.user.uid, result.user.email);
       showSuccessToast('登録完了！ようこそ✨');
+      console.log(EXPLORE_SCREEN_PATH);
       router.push(EXPLORE_SCREEN_PATH);
     } catch (error) {
       const message = error instanceof Error ? error.message : '登録に失敗しました';

@@ -6,8 +6,8 @@ export const LOGIN_SCREEN_PATH = '/loginScreen';
 export const SIGN_UP_SCREEN_PATH = '/signUpScreen';
 
 // ホーム（ユーザー探索）
-export const EXPLORE_SCREEN_PATH = '/(home)/(tabs)/explore'; // index.tsx にすれば '/home' でOK
-export const PROFILE_MODAL_PATH = (uid: string) => `/profile/${uid}`;
+export const EXPLORE_SCREEN_PATH = "./explore"; // index.tsx にすれば '/explore'
+export const PROFILE_MODAL_PATH = (uid: string) => "/profile/${uid}";
 
 // チャット
 export const CHAT_LIST_SCREEN_PATH = '/(chat)/chatListScreen'; // index.tsx にすれば '/chat' でOK
