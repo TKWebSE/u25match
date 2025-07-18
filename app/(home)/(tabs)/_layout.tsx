@@ -3,9 +3,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import ChatListScreen from './(chat)';
+import ExploreScreen from './(explore)';
 import ReactionsScreen from './(reactions)';
 import SettingsScreen from './(settings)';
-import ExploreScreen from './explore';
 
 const Tab = createBottomTabNavigator();
 
