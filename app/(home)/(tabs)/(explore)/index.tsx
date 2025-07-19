@@ -1,9 +1,9 @@
 // app/(main)/ExploreScreen.tsx
-import { PROFILE_MODAL_PATH } from '@constants/routes';
 import { getUsersList } from '@services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { PROFILE_MODAL_PATH } from 'src/constants/routes';
 
 // ユーザー型定義
 type User = {
@@ -43,7 +43,7 @@ export default function ExploreScreen() {
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.bio} numberOfLines={2}>
-          {item.bio || '自己紹介はありません'}
+          {item.bio || '自己紹介はありません!!!'}
         </Text>
       </View>
       <TouchableOpacity
@@ -58,7 +58,10 @@ export default function ExploreScreen() {
   );
 
   function openProfileModal(uid: string) {
-    router.push(PROFILE_MODAL_PATH(uid));
+    router.push({
+      pathname: PROFILE_MODAL_PATH,
+      params: { uid },
+    });
   }
 
   return (
