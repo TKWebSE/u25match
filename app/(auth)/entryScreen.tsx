@@ -3,7 +3,7 @@ import { LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function entryScreen() {
+export default function EntryScreen() {
   const router = useRouter();
 
   return (

@@ -1,3 +1,4 @@
+import TagList from '@components/TagList';
 import { mockProfileUser } from '@mock/profileDetail';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -53,14 +54,7 @@ export default function ProfileScreen() {
         <Text style={styles.bio}>{mockUser.bio}</Text>
 
         {/* タグ */}
-        <View style={styles.tagsSection}>
-          {mockUser.tags.map((tag, i) => (
-            <View key={i} style={styles.tagCard}>
-              <Image source={{ uri: tag.image }} style={styles.tagImage} />
-              <Text style={styles.tagText}>{tag.title}</Text>
-            </View>
-          ))}
-        </View>
+        <TagList tags={mockUser.tags} />
 
         {/* 詳細プロフィール */}
         <View style={styles.detailsSection}>

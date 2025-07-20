@@ -1,11 +1,11 @@
 // app/(other)/settingsScreen.js
-import { useStrictAuth } from '@/src/hooks/useStrictAuth';
-import { logOut } from '@/src/services/auth';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
+import { useStrictAuth } from '@hooks/useStrictAuth';
+import { logOut } from '@services/auth';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function settingsScreen() {
+export default function SettingsScreen() {
   const user = useStrictAuth();
   const router = useRouter();
 

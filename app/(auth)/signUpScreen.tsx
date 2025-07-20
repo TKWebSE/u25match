@@ -13,7 +13,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-export default function signUpScreen() {
+export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function signUpScreen() {
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>登録する</Text>
       </TouchableOpacity>
-
+      a
       <TouchableOpacity onPress={() => router.push(LOGIN_SCREEN_PATH)}>
         <Text style={styles.linkText}>
           すでにアカウントをお持ちですか？ ログイン

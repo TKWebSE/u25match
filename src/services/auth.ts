@@ -12,7 +12,7 @@ export const logIn = async (email: string, password: string) => {
     const result = await signInWithEmailAndPassword(auth, email, password);
     return result; // 必要に応じて result.user とか返す
   } catch (error) {
-    throw error; // 上に投げる
+    throw new Error("ログインできませんでした");
   }
 };
 

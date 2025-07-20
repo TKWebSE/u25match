@@ -93,7 +93,6 @@ export default function ProfileEditScreen() {
             {saving ? '保存中...' : '保存する'}
           </Text>
         </TouchableOpacity>
-
         <Toast />
       </ScrollView>
     </KeyboardAvoidingView>

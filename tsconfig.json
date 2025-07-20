@@ -31,6 +31,9 @@
       "@assets/*": [
         "src/assets/*"
       ],
+      "@debug-tools/*": [
+        "src/debug-tools/*"
+      ],
     }
   },
   "include": [

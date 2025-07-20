@@ -1,7 +1,7 @@
 // app/(main)/ChatListScreen.tsx
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 type ChatItem = {
   chatId: string;
@@ -17,9 +17,9 @@ export default function ChatListScreen() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   return (
-    <>
+    <Text>
       Chat List Screen
-    </>
+    </Text>
   );
 }
 

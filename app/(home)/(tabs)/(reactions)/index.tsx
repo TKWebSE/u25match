@@ -1,5 +1,5 @@
 // app/(main)/ReactionsScreen.tsx
-import { useStrictAuth } from '@/src/hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/useStrictAuth';
 import { getReactionsToCurrentUser } from '@services/firestoreReactions'; // サービス層にて後ほど実装
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
