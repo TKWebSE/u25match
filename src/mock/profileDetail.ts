@@ -3,7 +3,7 @@ export const mockProfileUser = {
   uid: '123',
   name: 'さくら',
   age: 28,
-  onlineStatus: '24時間以内',
+  lastActiveAt: new Date('2025-07-21T12:00:00Z'),
   likeCount: 134,
   bio: '音楽と猫が大好きです🐱 ゆっくり話せる人と繋がりたいです。',
   images: [

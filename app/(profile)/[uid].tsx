@@ -1,7 +1,8 @@
 import TagList from '@components/TagList';
 import { mockProfileUser } from '@mock/profileDetail';
+import { getOnlineStatus } from '@utils/getOnlineStatus';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -22,9 +23,20 @@ const mockUser = {
 export default function ProfileScreen() {
   const { uid } = useLocalSearchParams();
   const router = useRouter();
+  const [onlineStatus, setOnlineStatus] = useState('読み込み中...');
+  const [profile, setProfile] = useState(mockUser);
   const [liked, setLiked] = useState(false);
-
   const handleLike = () => setLiked(true);
+
+  useEffect(() => {
+    // FireStorekからユーザーデータを取得する処理を追加
+    // ここではモックデータを使用
+    // 実際のアプリでは、uidを使ってデータベースからユーザー情報を取得する
+    setProfile(mockUser);
+    // ユーザーステータスを取得する
+    const status = getOnlineStatus(profile.lastActiveAt);
+    setOnlineStatus(status);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -44,21 +56,22 @@ export default function ProfileScreen() {
         {/* 名前年齢＋オンライン */}
         <View style={styles.header}>
           <Text style={styles.name}>
-            {mockUser.name}（{mockUser.age}歳）
+            {profile.name}（{profile.age}歳）
           </Text>
-          <Text style={styles.online}>🟢 {mockUser.onlineStatus}</Text>
-          <Text style={styles.likes}>💖 {mockUser.likeCount} いいね</Text>
+          <Text style={styles.online}>{onlineStatus}</Text>
+          <Text style={styles.likes}>💖 {profile.likeCount} いいね</Text>
         </View>
 
         {/* 自己紹介 */}
-        <Text style={styles.bio}>{mockUser.bio}</Text>
+        <Text style={styles.bio}>自己紹介</Text>
+        <Text style={styles.bio}>{profile.bio}</Text>
 
         {/* タグ */}
-        <TagList tags={mockUser.tags} />
+        <TagList tags={profile.tags} />
 
         {/* 詳細プロフィール */}
         <View style={styles.detailsSection}>
-          {Object.entries(mockUser.details).map(([label, value]) => (
+          {Object.entries(profile.details).map(([label, value]) => (
             <View key={label} style={styles.detailRow}>
               <Text style={styles.detailLabel}>{label}</Text>
               <Text style={styles.detailValue}>{value}</Text>

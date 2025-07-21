@@ -1,6 +1,7 @@
+import type { TagKey } from '@/src/my-types/tag-type';
+import { tagDataMap } from '@constants/tagDataMap';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { tagDataMap, TagKey } from '../constants/tagDataMap';
 
 type TagListProps = {
   tags: TagKey[]; // 🔥 型安全なタグキー配列
