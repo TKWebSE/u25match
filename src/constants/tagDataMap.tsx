@@ -1,17 +1,29 @@
-// src/constants/tagData.ts
+// src/constants/tagDataMap.ts
 
 export const tagDataMap = {
-  tag1: {
-    image: require('./assets/tag1.png'),
-    description: 'スポーツ好き',
+  coffee: {
+    image: require('@assets/tag-images/coffee.jpg'),
+    description: 'コーヒー好き',
   },
-  tag2: {
-    image: require('./assets/tag2.png'),
-    description: '読書好き',
+  takoparty: {
+    image: require('@assets/tag-images/takoparty.jpg'),
+    description: 'タコパ好き！',
   },
-  tag3: {
-    image: require('./assets/tag3.png'),
-    description: '音楽マニア',
+  game: {
+    image: require('@assets/tag-images/game.jpg'),
+    description: 'ゲームマニア',
+  },
+  musiclive: {
+    image: require('@assets/tag-images/musiclive.jpg'),
+    description: 'ライブ大好き',
+  },
+  dog: {
+    image: require('@assets/tag-images/dog.jpg'),
+    description: '犬大好き',
+  },
+  cat: {
+    image: require('@assets/tag-images/cat.jpg'),
+    description: '猫大好き',
   },
 } as const;
 

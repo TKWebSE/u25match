@@ -1,5 +1,5 @@
 import TagList from '@components/TagList';
-import { mockProfileUser } from '@mock/profileDetail';
+import { mockProfileUser } from '@mock/profileDetailMock';
 import { getOnlineStatus } from '@utils/getOnlineStatus';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';

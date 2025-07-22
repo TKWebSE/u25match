@@ -1,22 +1,19 @@
-import type { TagKey } from '@/src/my-types/tag-type';
 import { tagDataMap } from '@constants/tagDataMap';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-type TagListProps = {
-  tags: TagKey[]; // 🔥 型安全なタグキー配列
-};
+// const tagMock: TagKeys = ['coffee', 'game', 'musiclive', 'dog', 'cat'];
 
-export default function TagList({ tags }: TagListProps) {
+export default function TagList({ tags }: { tags: string[] }) {
   return (
     <View style={styles.container}>
       {tags.map((tagKey) => {
-        const tagInfo = tagDataMap[tagKey];
+        const tagInfo = tagDataMap[tagKey as keyof typeof tagDataMap];
 
         return (
           <View key={tagKey} style={styles.tagCard}>
-            <Image source={tagInfo.image} style={styles.tagImage} />
-            <Text style={styles.tagText}>{tagInfo.description}</Text>
+            <Image source={tagInfo?.image} style={styles.tagImage} />
+            <Text style={styles.tagText}>{tagInfo?.description}</Text>
           </View>
         );
       })}
@@ -35,7 +32,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginRight: 8,
     marginBottom: 8,
+    width: '100%', // 2 items per row
   },
-  tagImage: { width: 40, height: 40, borderRadius: 8, marginRight: 10 },
-  tagText: { fontSize: 14, fontWeight: '500', color: '#333' },
+  tagImage: { width: 80, height: 80, borderRadius: 8, marginRight: 20 },
+  tagText: { fontSize: 20, fontWeight: '500', color: '#333' },
 });

@@ -1,15 +1,15 @@
 // app/_layout.tsx
 import CustomHeader from '@components/CustomHeader';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
-import CurrentRouteLogger from '@debug-tools/CurrentRouteLogger';
-import { Slot, useSegments } from 'expo-router';
+import { Slot, usePathname } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import LoginScreen from './(auth)/loginScreen';
+import CurrentURLLogger from '../src/debug-tools/CurrentURLLogger';
 
 function AuthGate() {
   const { user, loading } = useAuth();
-  const segments = useSegments();
+  const segments = usePathname();
+  CurrentURLLogger();
 
   if (loading) {
     return (
@@ -18,13 +18,13 @@ function AuthGate() {
       </View>
     );
   }
-  CurrentRouteLogger();
+
   console.log('AuthGate user:', user);
   if (!user) {
-    if (segments[0] === '(auth)') {
+    if (segments == '/' || segments === '/(auth)/loginScreen' || segments === '/(auth)/signUpScreen') {
       return <Slot />;
     }
-    return <LoginScreen />;
+    return <Slot />;
   }
 
   return <Slot />;

@@ -1,4 +1,3 @@
-import { TagKey } from "../constants/tagDataMap";
 export const mockProfileUser = {
   uid: '123',
   name: 'さくら',
@@ -11,7 +10,7 @@ export const mockProfileUser = {
     "https://randomuser.me/api/portraits/women/66.jpg",
     "https://randomuser.me/api/portraits/women/67.jpg",
   ],
-  tags: ["tag1", "tag2", "tag3"] as TagKey[],
+  tags: ['coffee', 'takoparty', 'game', 'musiclive', 'dog', 'cat'],
   details: {
     ニックネーム: 'さくら',
     年齢: '28歳',
