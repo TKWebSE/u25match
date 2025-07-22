@@ -1,3 +1,4 @@
+// app/(profile)/[uid].tsx
 import TagList from '@components/TagList';
 import { mockProfileUser } from '@mock/profileDetailMock';
 import { getOnlineStatus } from '@utils/getOnlineStatus';

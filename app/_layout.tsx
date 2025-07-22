@@ -4,12 +4,11 @@ import { AuthProvider, useAuth } from '@contexts/AuthContext';
 import { Slot, usePathname } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import CurrentURLLogger from '../src/debug-tools/CurrentURLLogger';
+import EntryScreen from './(auth)/entryScreen';
 
 function AuthGate() {
   const { user, loading } = useAuth();
   const segments = usePathname();
-  CurrentURLLogger();
 
   if (loading) {
     return (
@@ -20,11 +19,12 @@ function AuthGate() {
   }
 
   console.log('AuthGate user:', user);
+  console.log("[🔍TEST] 現在のパス:", segments);
   if (!user) {
     if (segments == '/' || segments === '/(auth)/loginScreen' || segments === '/(auth)/signUpScreen') {
       return <Slot />;
     }
-    return <Slot />;
+    return <EntryScreen />;
   }
 
   return <Slot />;

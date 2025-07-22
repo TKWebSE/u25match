@@ -64,7 +64,6 @@ export default function SignUpScreen() {
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>登録する</Text>
       </TouchableOpacity>
-      a
       <TouchableOpacity onPress={() => router.push(LOGIN_SCREEN_PATH)}>
         <Text style={styles.linkText}>
           すでにアカウントをお持ちですか？ ログイン
