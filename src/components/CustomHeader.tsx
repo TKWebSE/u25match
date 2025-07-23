@@ -13,6 +13,7 @@ export default function CustomHeader({ title }: { title: string }) {
   const { user } = useAuth(); // userがnullかどうかでログイン判定
 
   const handleLogoPress = () => {
+    console.log('ロゴがタップされました:', user ? 'ログイン中' : 'ログアウト中');
     if (user) {
       router.push(EXPLORE_SCREEN_PATH);  // ログイン中はHomeScreenへ
     } else {
