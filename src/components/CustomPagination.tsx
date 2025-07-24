@@ -1,7 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const CustomPagination = ({ dotsLength, activeDotIndex }) => {
+type Props = {
+  dotsLength: number;
+  activeDotIndex: number;
+};
+
+const CustomPagination = ({ dotsLength, activeDotIndex }: Props) => {
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
       {Array.from({ length: dotsLength }).map((_, i) => (

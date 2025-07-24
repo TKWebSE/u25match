@@ -1,4 +1,5 @@
 // app/(profile)/[uid].tsx
+import CustomPagination from '@components/CustomPagination';
 import TagList from '@components/TagList';
 import { mockProfileUser } from '@mock/profileDetailMock';
 import { getOnlineStatus } from '@utils/getOnlineStatus';
@@ -8,6 +9,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  NativeScrollEvent, NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,6 +30,7 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState(mockUser);
   const [liked, setLiked] = useState(false);
   const handleLike = () => setLiked(true);
+  const [activeDotIndex, setActiveDotIndex] = useState(0);
 
   useEffect(() => {
     // FireStorekからユーザーデータを取得する処理を追加
@@ -39,6 +42,13 @@ export default function ProfileScreen() {
     setOnlineStatus(status);
   }, []);
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(contentOffsetX / width); // width は画面幅
+    setActiveDotIndex(index);
+  };
+
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
@@ -49,10 +59,12 @@ export default function ProfileScreen() {
           showsHorizontalScrollIndicator={false}
           data={mockUser.images}
           keyExtractor={(_, i) => i.toString()}
+          onScroll={handleScroll}
           renderItem={({ item }) => (
             <Image source={{ uri: item }} style={styles.profileImage} />
           )}
         />
+        <CustomPagination dotsLength={mockUser.images.length} activeDotIndex={activeDotIndex} />
 
         {/* 名前年齢＋オンライン */}
         <View style={styles.header}>
