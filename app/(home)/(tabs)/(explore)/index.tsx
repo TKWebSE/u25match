@@ -1,87 +1,31 @@
-// app/(main)/ExploreScreen.tsx
-import { getUsersList } from '@services/firestoreUserProfile'; // ユーザー一覧取得関数（サービス層で実装予定）
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { PROFILE_MODAL_PATH } from 'src/constants/routes';
-
-// ユーザー型定義
-type User = {
-  uid: string;
-  name: string;
-  bio?: string;
-  photoURL?: string;
-};
+// app/home.tsx など
+import UserCard from '@components/UserCard';
+import React from 'react';
+import { ScrollView } from 'react-native';
 
 export default function ExploreScreen() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      const data = await getUsersList();
-      setUsers(data);
-      setLoading(false);
-    })();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6C63FF" />
-      </View>
-    );
-  }
-
-  const renderItem = ({ item }: { item: User }) => (
-    <TouchableOpacity style={styles.card} onPress={() => openProfileModal(item.uid)}>
-      <Image
-        source={{ uri: item.photoURL || 'https://placehold.jp/150x150.png' }}
-        style={styles.avatar}
-      />
-      <View style={styles.info}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.bio} numberOfLines={2}>
-          {item.bio || '自己紹介はありません!!!'}
-        </Text>
-      </View>
-      <TouchableOpacity
-        style={styles.likeButton}
-        onPress={() => {
-          // いいね処理
-        }}
-      >
-        <Text style={styles.likeText}>💖</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-
-  function openProfileModal(uid: string) {
-    router.push({
-      pathname: PROFILE_MODAL_PATH,
-      params: { uid },
-    });
-  }
+  const users = [
+    {
+      name: 'さくら',
+      age: 24,
+      location: '東京',
+      imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
+      isOnline: true,
+    },
+    {
+      name: 'たけし',
+      age: 28,
+      location: '大阪',
+      imageUrl: 'https://randomuser.me/api/portraits/men/45.jpg',
+      isOnline: false,
+    },
+  ];
 
   return (
-    <FlatList
-      data={users}
-      keyExtractor={(item) => item.uid}
-      renderItem={renderItem}
-      contentContainerStyle={styles.listContainer}
-    />
+    <ScrollView className="p-4">
+      {users.map((user, index) => (
+        <UserCard key={index} {...user} />
+      ))}
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f6f7fb' },
-  listContainer: { padding: 16, maxWidth: 400, alignSelf: 'center' },
-  card: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 12, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, elevation: 4 },
-  avatar: { width: 64, height: 64, borderRadius: 32, marginRight: 16 },
-  info: { flex: 1 },
-  name: { fontSize: 18, fontWeight: '700', color: '#333' },
-  bio: { marginTop: 4, fontSize: 14, color: '#666' },
-  likeButton: { padding: 8 },
-  likeText: { fontSize: 24 },
-});
