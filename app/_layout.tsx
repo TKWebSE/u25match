@@ -1,10 +1,21 @@
 // app/_layout.tsx
 import CustomHeader from '@components/CustomHeader';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
+import { defaultConfig } from '@tamagui/config/v4';
+import { TamaguiProvider, createTamagui } from '@tamagui/core';
 import { Slot, usePathname } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import EntryScreen from './(auth)/entryScreen';
+
+const config = createTamagui(defaultConfig)
+
+type Conf = typeof config
+
+// make imports typed
+declare module '@tamagui/core' {
+  interface TamaguiCustomConfig extends Conf { }
+}
 
 function AuthGate() {
   const { user, loading } = useAuth();
@@ -32,15 +43,17 @@ function AuthGate() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <View style={styles.container}>
-        <CustomHeader title="ログイン" />
-        <View style={styles.content}>
-          <AuthGate />
-          <Toast />
+    <TamaguiProvider config={config}>
+      <AuthProvider>
+        <View style={styles.container}>
+          <CustomHeader title="ログイン" />
+          <View style={styles.content}>
+            <AuthGate />
+            <Toast />
+          </View>
         </View>
-      </View>
-    </AuthProvider>
+      </AuthProvider>
+    </TamaguiProvider>
   );
 }
 

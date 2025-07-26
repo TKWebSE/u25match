@@ -19,12 +19,11 @@ export default function ReactionsScreen() {
 
   useEffect(() => {
     (async () => {
-      if (!user) return;
       const data = await getReactionsToCurrentUser(user.uid);
       setReactions(data);
       setLoading(false);
     })();
-  }, [user]);
+  }, []);
 
   const renderItem = ({ item }: { item: ReactionItem }) => (
     <View style={styles.card}>

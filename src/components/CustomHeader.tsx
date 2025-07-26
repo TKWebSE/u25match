@@ -15,7 +15,7 @@ export default function CustomHeader({ title }: { title: string }) {
   const handleLogoPress = () => {
     console.log('ロゴがタップされました:', user ? 'ログイン中' : 'ログアウト中');
     if (user) {
-      router.push(EXPLORE_SCREEN_PATH);  // ログイン中はHomeScreenへ
+      router.push(EXPLORE_SCREEN_PATH);  // ログイン中はexploreScreenへ
     } else {
       router.push(ENTRY_SCREEN_PATH);  // ログアウト中はentryScreenへ
     }
