@@ -1,33 +1,45 @@
-// app/(explore)/index.tsx
-import { getOnlineStatus } from '@utils/getOnlineStatus';
-import React from 'react';
-import { Image, Text, View } from 'react-native';
+// app/explore.tsx
+import { ScreenWrapper } from '@components/ScreenWrapper';
+import { useAuth } from '@contexts/AuthContext';
+import { mockUsers } from '@mock/users';
+import { MockUser } from '@types/User';
+import { FlatList, Image, Text, View } from 'react-native';
 
-type UserProfile = {
-  uid: string;
-  displayName: string;
-  age: number;
-  gender: string;
-  photoURL: string;
-  lastActive: Date; // toDate() 済み Date
-  location?: string;
-};
+const ExploreScreen = () => {
+  const { user } = useAuth(); // ログインユーザー情報
+  const currentGender = user?.gender ?? 'male'; // 未定義なら仮に'male'
 
-export function UserCard({ user }: { user: UserProfile }) {
-  const onlineStatus = getOnlineStatus(user.lastActive);
+  const filteredUsers = mockUsers.filter(
+    (u: MockUser) => u.gender !== currentGender
+  );
 
-  return (
-    <View className="mb-4 p-4 bg-white rounded-2xl shadow-md">
+  const renderItem = ({ item }: { item: MockUser }) => (
+    <View className="bg-white rounded-2xl p-4 shadow mb-4 flex-row items-center">
       <Image
-        source={{ uri: user.photoURL }}
-        style={{ width: '100%', height: 200, borderRadius: 16 }}
+        source={{ uri: item.imageUrl }}
+        className="w-16 h-16 rounded-full mr-4"
       />
-      <Text className="mt-2 text-lg font-semibold">
-        {user.displayName}（{user.age}歳）
-      </Text>
-      <Text className="text-gray-600">
-        {user.location ?? '未設定'}・{onlineStatus}
-      </Text>
+      <View className="flex-1">
+        <Text className="text-lg font-semibold">
+          {item.name}（{item.age}歳）
+        </Text>
+        <Text className="text-sm text-gray-500">
+          {item.location}・{item.isOnline ? 'オンライン' : 'オフライン'}
+        </Text>
+      </View>
     </View>
   );
-}
+
+  return (
+    <ScreenWrapper>
+      <FlatList
+        data={filteredUsers}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={{ padding: 16 }}
+      />
+    </ScreenWrapper>
+  );
+};
+
+export default ExploreScreen;

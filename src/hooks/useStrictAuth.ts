@@ -1,4 +1,4 @@
-import { useAuth } from '@/src/contexts/AuthContext';
+import { useAuth } from '@contexts/AuthContext';
 
 export function useStrictAuth() {
   const { user } = useAuth();
