@@ -36,6 +36,12 @@
       ],
       "@my-types/*": [
         "src/my-types/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
       ]
     }
   },

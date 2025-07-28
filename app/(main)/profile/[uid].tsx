@@ -1,11 +1,12 @@
 // app/(main)/profile/[uid].tsx
 import CustomPagination from '@components/CustomPagination';
 import TagList from '@components/TagList';
-import { mockProfileUser } from '@mock/profileDetailMock';
+import { ProfileDetail, profileDetailService } from '@services/profileDetailService';
 import { getOnlineStatus } from '@utils/getOnlineStatus';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
@@ -19,35 +20,87 @@ import {
 
 const { width } = Dimensions.get('window');
 
-const mockUser = {
-  ...mockProfileUser,
-};
-
 export default function ProfileScreen() {
   const { uid } = useLocalSearchParams();
   const router = useRouter();
   const [onlineStatus, setOnlineStatus] = useState('読み込み中...');
-  const [profile, setProfile] = useState(mockUser);
+  const [profile, setProfile] = useState<ProfileDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
-  const handleLike = () => setLiked(true);
   const [activeDotIndex, setActiveDotIndex] = useState(0);
 
   useEffect(() => {
-    // FireStorekからユーザーデータを取得する処理を追加
-    // ここではモックデータを使用
-    // 実際のアプリでは、uidを使ってデータベースからユーザー情報を取得する
-    setProfile(mockUser);
-    // ユーザーステータスを取得する
-    const status = getOnlineStatus(profile.lastActiveAt);
-    setOnlineStatus(status);
-  }, []);
+    loadProfileDetail();
+  }, [uid]);
+
+  const loadProfileDetail = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await profileDetailService.getProfileDetail(uid as string);
+
+      if (response.success && response.data) {
+        setProfile(response.data);
+        const status = getOnlineStatus(response.data.lastActiveAt);
+        setOnlineStatus(status);
+      } else {
+        setError(response.error || 'プロフィールの取得に失敗しました');
+      }
+    } catch (err) {
+      setError('プロフィールの取得中にエラーが発生しました');
+      console.error('Profile loading error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const response = await profileDetailService.sendLike(uid as string);
+      if (response.success) {
+        setLiked(true);
+        // いいねカウントを更新
+        if (profile) {
+          setProfile({
+            ...profile,
+            likeCount: profile.likeCount + 1,
+          });
+        }
+      } else {
+        console.error('Like error:', response.error);
+      }
+    } catch (err) {
+      console.error('Like error:', err);
+    }
+  };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(contentOffsetX / width); // width は画面幅
+    const index = Math.round(contentOffsetX / width);
     setActiveDotIndex(index);
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6C63FF" />
+        <Text style={styles.loadingText}>読み込み中...</Text>
+      </View>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error || 'プロフィールが見つかりません'}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={loadProfileDetail}>
+          <Text style={styles.retryButtonText}>再試行</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -57,14 +110,14 @@ export default function ProfileScreen() {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          data={mockUser.images}
+          data={profile.images}
           keyExtractor={(_, i) => i.toString()}
           onScroll={handleScroll}
           renderItem={({ item }) => (
             <Image source={{ uri: item }} style={styles.profileImage} />
           )}
         />
-        <CustomPagination dotsLength={mockUser.images.length} activeDotIndex={activeDotIndex} />
+        <CustomPagination dotsLength={profile.images.length} activeDotIndex={activeDotIndex} />
 
         {/* 名前年齢＋オンライン */}
         <View style={styles.header}>
@@ -112,6 +165,41 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#6C63FF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   profileImage: { width, height: width, resizeMode: 'cover' },
   header: { padding: 16, alignItems: 'center' },
   name: { fontSize: 24, fontWeight: 'bold' },
