@@ -3,7 +3,8 @@ import CustomHeader from '@components/CustomHeader';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
 import { defaultConfig } from '@tamagui/config/v4';
 import { TamaguiProvider, createTamagui } from '@tamagui/core';
-import { Slot, usePathname } from 'expo-router';
+import { Slot, usePathname, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import EntryScreen from './(auth)/entryScreen';
@@ -19,7 +20,15 @@ declare module '@tamagui/core' {
 
 function AuthGate() {
   const { user, loading } = useAuth();
-  const segments = usePathname();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user && pathname === '/') {
+      // 認証済みユーザーがルートにいる場合はメイン画面にリダイレクト
+      router.replace('/(main)/(home)/(tabs)/(explore)');
+    }
+  }, [user, loading, pathname, router]);
 
   if (loading) {
     return (
@@ -30,9 +39,9 @@ function AuthGate() {
   }
 
   console.log('AuthGate user:', user);
-  console.log("[🔍TEST] 現在のパス:", segments);
+  console.log("[🔍TEST] 現在のパス:", pathname);
   if (!user) {
-    if (segments == '/' || segments === '/(auth)/loginScreen' || segments === '/(auth)/signUpScreen') {
+    if (pathname === '/' || pathname === '/(auth)/loginScreen' || pathname === '/(auth)/signUpScreen') {
       return <Slot />;
     }
     return <EntryScreen />;

@@ -1,4 +1,4 @@
-// app/(profile)/[uid].tsx
+// app/(main)/profile/[uid].tsx
 import CustomPagination from '@components/CustomPagination';
 import TagList from '@components/TagList';
 import { mockProfileUser } from '@mock/profileDetailMock';
@@ -167,4 +167,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-});
+}); 

@@ -1,11 +1,11 @@
-// app/(home)/(tabs)/_layout.tsx
+// app/(main)/(home)/(tabs)/_layout.tsx
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import ChatListScreen from './(chat)';
-import ExploreScreen from './(explore)';
-import ReactionsScreen from './(reactions)';
-import SettingsScreen from './(settings)';
+import ChatListScreen from './(chat)/index';
+import ExploreScreen from './(explore)/index';
+import ReactionsScreen from './(reactions)/index';
+import SettingsScreen from './(settings)/index';
 
 const Tab = createBottomTabNavigator();
 
@@ -54,4 +54,4 @@ export default function TabsLayout() {
       />
     </Tab.Navigator>
   );
-}
+} 
