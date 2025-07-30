@@ -13,11 +13,51 @@ let app, auth, db;
 if (isDev) {
   console.log('🎭 DEVモード: モック設定を使用しています');
   
-  // 🔄 ES6 importで正しくモック設定を読み込み
-  const mockConfig = await import('./firebaseConfig.mock.js');
-  app = mockConfig.app;
-  auth = mockConfig.auth;
-  db = mockConfig.db;
+  // モック用のダミーユーザー
+  const mockUser = {
+    uid: 'mock-user-123',
+    email: 'test@example.com',
+    displayName: 'テストユーザー',
+    photoURL: null,
+    emailVerified: true,
+  };
+
+  // モック認証オブジェクト
+  auth = {
+    currentUser: mockUser,
+    onAuthStateChanged: (callback) => {
+      setTimeout(() => callback(mockUser), 100);
+      return () => {};
+    },
+  };
+
+  // モックFirestoreオブジェクト
+  db = {
+    collection: () => ({
+      doc: () => ({
+        get: () => Promise.resolve({
+          exists: true,
+          data: () => ({ name: 'テストデータ' }),
+        }),
+        set: () => Promise.resolve(),
+        update: () => Promise.resolve(),
+        delete: () => Promise.resolve(),
+      }),
+      add: () => Promise.resolve({ id: 'mock-doc-id' }),
+      where: () => ({
+        get: () => Promise.resolve({
+          docs: [],
+          forEach: () => {},
+        }),
+      }),
+    }),
+  };
+
+  // モックアプリ
+  app = {
+    name: 'mock-app',
+    options: {},
+  };
 
 } else {
   console.log('🔥 本番モード: 実際のFirebase設定を使用しています');
