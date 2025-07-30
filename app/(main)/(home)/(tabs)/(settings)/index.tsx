@@ -1,7 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useStrictAuth } from '@hooks/useStrictAuth';
 
 const SettingsScreen = () => {
+  const router = useRouter();
+  const user = useStrictAuth();
+
+  const handleProfilePress = () => {
+    router.push(`/(main)/profile/${user.uid}`);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>設定</Text>
@@ -22,6 +31,10 @@ const SettingsScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>その他</Text>
+
+        <TouchableOpacity style={styles.button} onPress={handleProfilePress}>
+          <Text style={styles.buttonText}>プロフィール詳細</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>プライバシーポリシー</Text>
