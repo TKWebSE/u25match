@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:dev": "EXPO_PUBLIC_DEV_MODE=true expo start",
+    "start:dev-web": "EXPO_PUBLIC_DEV_MODE=true expo start --web",
+    "start:dev-android": "EXPO_PUBLIC_DEV_MODE=true expo start --android",
+    "start:dev-ios": "EXPO_PUBLIC_DEV_MODE=true expo start --ios",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
