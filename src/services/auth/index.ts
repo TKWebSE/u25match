@@ -1,12 +1,28 @@
 // src/services/auth/index.ts
-// 🎯 メインエントリーポイント - 外部からはここだけを使う
+// 🎯 メインエントリーポイント - 判定も生成もここでやる
 
-import { createAuthService } from './factory';
+import Constants from 'expo-constants';
+import { AuthService } from './types';
+import { ProdAuthService } from './prod';
+import { MockAuthService } from './mock';
 
-// 🏭 認証サービスのインスタンスを一度だけ作成（シングルトン）
+// 🏭 環境判定して適切なサービスを作成（factoryの機能をここに統合）
+function createAuthService(): AuthService {
+  const isDev = Constants.expoConfig?.extra?.isDev;
+  
+  if (isDev) {
+    console.log('🎭 モック認証サービスを使用中...');
+    return new MockAuthService();
+  } else {
+    console.log('🔥 本番認証サービスを使用中...');
+    return new ProdAuthService();
+  }
+}
+
+// 🚀 認証サービスのインスタンスを一度だけ作成（シングルトン）
 const authService = createAuthService();
 
-// 🚀 外部からは関数として簡単に使える
+// 🚪 外部からは関数として簡単に使える
 export const signUp = (email: string, password: string) => {
   return authService.signUp(email, password);
 };
