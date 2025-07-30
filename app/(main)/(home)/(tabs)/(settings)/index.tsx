@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { logOut } from '@services/auth';
 
 const SettingsScreen = () => {
   const router = useRouter();
@@ -9,6 +10,32 @@ const SettingsScreen = () => {
 
   const handleProfilePress = () => {
     router.push(`/(main)/profile/${user.uid}`);
+  };
+
+  const handleLogout = async () => {
+    Alert.alert(
+      'ログアウト',
+      'ログアウトしますか？',
+      [
+        {
+          text: 'キャンセル',
+          style: 'cancel',
+        },
+        {
+          text: 'ログアウト',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await logOut();
+              // ログアウト後は認証画面に自動的にリダイレクトされます
+            } catch (error) {
+              console.error('ログアウトエラー:', error);
+              Alert.alert('エラー', 'ログアウトに失敗しました。');
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -46,6 +73,12 @@ const SettingsScreen = () => {
 
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>お問い合わせ</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>ログアウト</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -111,6 +144,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1a1a1a',
     textAlign: 'center',
+  },
+  logoutButton: {
+    backgroundColor: '#dc3545',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
 
