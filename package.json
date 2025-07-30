@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "start:dev": "EXPO_PUBLIC_DEV_MODE=true expo start",
-    "start:dev-web": "EXPO_PUBLIC_DEV_MODE=true expo start --web",
-    "start:dev-android": "EXPO_PUBLIC_DEV_MODE=true expo start --android",
-    "start:dev-ios": "EXPO_PUBLIC_DEV_MODE=true expo start --ios",
+    "start:dev": "cross-env EXPO_PUBLIC_DEV_MODE=true expo start",
+    "start:dev-web": "cross-env EXPO_PUBLIC_DEV_MODE=true expo start --web",
+    "start:dev-android": "cross-env EXPO_PUBLIC_DEV_MODE=true expo start --android",
+    "start:dev-ios": "cross-env EXPO_PUBLIC_DEV_MODE=true expo start --ios",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -53,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "cross-env": "^10.0.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
