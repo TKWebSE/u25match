@@ -1,8 +1,9 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { logOut } from '@services/auth';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SettingsScreen = () => {
   const router = useRouter();
@@ -39,53 +40,59 @@ const SettingsScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>設定</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>設定</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>アプリ情報</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>アプリ情報</Text>
 
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>バージョン</Text>
-          <Text style={styles.infoValue}>1.0.0</Text>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>バージョン</Text>
+            <Text style={styles.infoValue}>1.0.0</Text>
+          </View>
+
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>ビルド番号</Text>
+            <Text style={styles.infoValue}>1</Text>
+          </View>
         </View>
 
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>ビルド番号</Text>
-          <Text style={styles.infoValue}>1</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>その他</Text>
+
+          <TouchableOpacity style={styles.button} onPress={handleProfilePress}>
+            <Text style={styles.buttonText}>プロフィール詳細</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>プライバシーポリシー</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>利用規約</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>お問い合わせ</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>ログアウト</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>その他</Text>
-
-        <TouchableOpacity style={styles.button} onPress={handleProfilePress}>
-          <Text style={styles.buttonText}>プロフィール詳細</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>プライバシーポリシー</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>利用規約</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>お問い合わせ</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>ログアウト</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',

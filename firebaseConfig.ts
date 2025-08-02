@@ -1,18 +1,20 @@
-// firebaseConfig.js
+// firebaseConfig.ts
 import Constants from 'expo-constants';
-import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
+import { Auth, getAuth } from 'firebase/auth';
+import { Firestore, getFirestore } from 'firebase/firestore';
 
 // DEVモードの判定
 const isDev = Constants.expoConfig?.extra?.isDev;
 
 // 🎯 条件分岐を外に出して、常にexportできるようにする
-let app, auth, db;
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
 
 if (isDev) {
   console.log('🎭 DEVモード: モック設定を使用しています');
-  
+
   // モック用のダミーユーザー
   const mockUser = {
     uid: 'mock-user-123',
@@ -25,11 +27,11 @@ if (isDev) {
   // モック認証オブジェクト
   auth = {
     currentUser: mockUser,
-    onAuthStateChanged: (callback) => {
+    onAuthStateChanged: (callback: any) => {
       setTimeout(() => callback(mockUser), 100);
-      return () => {};
+      return () => { };
     },
-  };
+  } as unknown as Auth;
 
   // モックFirestoreオブジェクト
   db = {
@@ -47,21 +49,21 @@ if (isDev) {
       where: () => ({
         get: () => Promise.resolve({
           docs: [],
-          forEach: () => {},
+          forEach: () => { },
         }),
       }),
     }),
-  };
+  } as unknown as Firestore;
 
   // モックアプリ
   app = {
     name: 'mock-app',
     options: {},
-  };
+  } as FirebaseApp;
 
 } else {
   console.log('🔥 本番モード: 実際のFirebase設定を使用しています');
-  
+
   const {
     firebaseApiKey,
     firebaseAuthDomain,
@@ -70,7 +72,7 @@ if (isDev) {
     firebaseMessagingSenderId,
     firebaseAppId,
     firebaseMeasurementId,
-  } = Constants.expoConfig.extra;
+  } = Constants.expoConfig?.extra || {};
 
   const firebaseConfig = {
     apiKey: firebaseApiKey,
@@ -89,5 +91,4 @@ if (isDev) {
 
 // 🚀 条件分岐の外でexport
 export { app, auth, db };
-
 

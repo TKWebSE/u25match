@@ -20,3 +20,17 @@ export function getOnlineStatus(timestamp: Date) {
     return '⚪️ オフライン';
   }
 }
+
+export function getOnlineStatusIcon(timestamp: Date) {
+  const now = new Date();
+  const diffMs = now.getTime() - timestamp.getTime();
+  const diffMinutes = diffMs / (1000 * 60);
+
+  if (diffMinutes <= 60) {
+    return '🟢';
+  } else if (diffMinutes <= 60 * 24) {
+    return '🟠';
+  } else {
+    return '⚪️';
+  }
+}

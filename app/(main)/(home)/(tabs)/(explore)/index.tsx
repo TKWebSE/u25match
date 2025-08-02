@@ -5,7 +5,8 @@ import { useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing, typography } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface User {
   name: string;
@@ -18,6 +19,24 @@ interface User {
 
 const ExploreScreen = () => {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+
+  // 極端に小さな画面でのエラーを防ぐ
+  const safeWidth = Math.max(width, 320); // 最小320pxを確保
+
+  // 列数を計算してkeyとして使用
+  const columnCount = (() => {
+    // 画面幅に基づいて列数を決定
+    if (safeWidth <= 570) {
+      return 1; // 480×837のトグルデバイスシミュレーション
+    } else if (safeWidth <= 960) {
+      return 2; // 570px超
+    } else if (safeWidth <= 1200) {
+      return 3; // 960px超
+    } else {
+      return 4; // 最大4列
+    }
+  })();
   const {
     searchQuery,
     setSearchQuery,
@@ -25,6 +44,8 @@ const ExploreScreen = () => {
     hasSearchResults,
     hasSearchQuery
   } = useUserSearch();
+
+
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
@@ -54,29 +75,36 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>ユーザーを探す</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>ユーザーを探す</Text>
 
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
-      <FlatList
-        data={filteredUsers}
-        renderItem={renderUserItem}
-        keyExtractor={(item) => item.name}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmptyComponent}
-      />
-    </View>
+        <FlatList
+          data={filteredUsers}
+          renderItem={renderUserItem}
+          keyExtractor={(item) => item.name}
+          numColumns={columnCount}
+          key={`flatlist-${columnCount}`}
+          columnWrapperStyle={columnCount > 1 ? styles.row : undefined}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyComponent}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -90,6 +118,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: spacing.lg,
+    paddingHorizontal: spacing.xl, // 左右に余分なスペースを追加
+    paddingRight: spacing.xl + spacing.xl + spacing.xl + spacing.base, // 右側により多くのスペースを追加
   },
   row: {
     justifyContent: 'space-between',

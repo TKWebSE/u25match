@@ -6,6 +6,7 @@ import { TamaguiProvider, createTamagui } from '@tamagui/core';
 import { Slot, usePathname, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import EntryScreen from './(auth)/entryScreen';
 
@@ -52,17 +53,19 @@ function AuthGate() {
 
 export default function RootLayout() {
   return (
-    <TamaguiProvider config={config}>
-      <AuthProvider>
-        <View style={styles.container}>
-          <CustomHeader title="ログイン" />
-          <View style={styles.content}>
-            <AuthGate />
-            <Toast />
+    <SafeAreaProvider>
+      <TamaguiProvider config={config}>
+        <AuthProvider>
+          <View style={styles.container}>
+            <CustomHeader title="ログイン" />
+            <View style={styles.content}>
+              <AuthGate />
+              <Toast />
+            </View>
           </View>
-        </View>
-      </AuthProvider>
-    </TamaguiProvider>
+        </AuthProvider>
+      </TamaguiProvider>
+    </SafeAreaProvider>
   );
 }
 
