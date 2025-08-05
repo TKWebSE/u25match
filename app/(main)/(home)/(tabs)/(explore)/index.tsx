@@ -1,11 +1,12 @@
-import EmptyState from '@components/EmptyState';
-import SearchBar from '@components/SearchBar';
-import UserCard from '@components/UserCard';
+import CustomHeader from '@components/common/CustomHeader';
+import EmptyState from '@components/common/EmptyState';
+import SearchBar from '@components/explore/SearchBar';
+import UserCard from '@components/explore/UserCard';
 import { useUserSearch } from '@hooks/useUserSearch';
-import { colors, spacing, typography } from '@styles/globalStyles';
+import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { FlatList, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface User {
@@ -76,9 +77,10 @@ const ExploreScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.title}>ユーザーを探す</Text>
+      {/* カスタムヘッダー */}
+      <CustomHeader title="探す" />
 
+      <View style={styles.container}>
         <SearchBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -108,13 +110,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  title: {
-    fontSize: typography['3xl'],
-    fontWeight: typography.bold,
-    padding: spacing.xl,
-    textAlign: 'center',
-    color: colors.textPrimary,
   },
   listContainer: {
     padding: spacing.lg,

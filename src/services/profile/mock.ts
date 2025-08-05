@@ -1,15 +1,15 @@
-// src/services/profileDetail/mock.ts
-// 🎭 プロフィール詳細サービスのモック実装
+// src/services/profile/mock.ts
+// 🎭 プロフィールサービスのモック実装
 
 import { mockProfileUser } from '@mock/profileDetailMock';
+import { BaseService } from '../base/BaseService';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
-export class MockProfileDetailService implements ProfileDetailService {
+export class MockProfileService extends BaseService implements ProfileDetailService {
   private useMock: boolean = true;  // モックモードのフラグ
 
   /**
    * 🔄 モックモードを切り替え
-   * 開発時はモックデータ、本番時は実際のAPIを使用
    * @param enabled true: モックモード、false: 本番モード
    */
   setMockMode(enabled: boolean): void {
@@ -26,37 +26,33 @@ export class MockProfileDetailService implements ProfileDetailService {
 
   /**
    * 👤 プロフィール詳細を取得（モック）
-   * 指定されたユーザーIDのプロフィール情報を取得
-   * @param uid 取得したいユーザーのID
-   * @returns プロフィール詳細データ（統一されたレスポンス形式）
+   * @param uid ユーザーID
+   * @returns プロフィール詳細
    */
   async getProfileDetail(uid: string): Promise<ProfileDetailResponse> {
-    // 🎭 モックモード: 開発用のダミーデータを返す
     await this.simulateNetworkDelay();
     return {
       success: true,
       data: {
         ...mockProfileUser,
-        uid,  // 渡されたuidを使用
+        uid, // 渡されたuidで上書き
       },
     };
   }
 
   /**
    * ✏️ プロフィール詳細を更新（モック）
-   * 指定されたユーザーのプロフィール情報を更新
-   * @param uid 更新したいユーザーのID
-   * @param data 更新したいデータ（部分的な更新が可能）
-   * @returns 更新後のプロフィール詳細データ
+   * @param uid ユーザーID
+   * @param data 更新するプロフィール情報
+   * @returns 更新結果
    */
   async updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse> {
-    // 🎭 モックモード: ダミーデータで更新をシミュレート
     await this.simulateNetworkDelay();
     return {
       success: true,
       data: {
         ...mockProfileUser,
-        ...data,  // 新しいデータで上書き
+        ...data,
         uid,
       },
     };
@@ -64,23 +60,11 @@ export class MockProfileDetailService implements ProfileDetailService {
 
   /**
    * ❤️ いいねを送信（モック）
-   * 指定されたユーザーにいいねを送信
-   * @param uid いいねを送信したいユーザーのID
-   * @returns 送信結果（成功/失敗）
+   * @param uid 対象ユーザーID
+   * @returns いいね送信結果
    */
   async sendLike(uid: string): Promise<{ success: boolean; error?: string }> {
-    // 🎭 モックモード: いいね送信をシミュレート
     await this.simulateNetworkDelay();
     return { success: true };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   * 開発時に実際のAPI呼び出しを模擬するために使用
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500); // 500-1500ms
-    });
   }
 } 

@@ -1,7 +1,7 @@
 // src/services/main/chat/factory.ts
 // 🏭 チャットサービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
+import { getDevModeInfo, isDevMode } from '@utils/devMode';
 import { MockChatService } from './mock';
 import { ProdChatService } from './prod';
 import { ChatService } from './types';
@@ -15,9 +15,13 @@ export class ChatServiceFactory {
    * 3. インスタンスの生成
    */
   static createChatService(): ChatService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 チャットサービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モックチャットサービスを生成');
       return new MockChatService();
     } else {

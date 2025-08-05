@@ -1,7 +1,7 @@
 // src/services/main/explore/factory.ts
 // 🏭 探索サービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
+import { getDevModeInfo, isDevMode } from '@utils/devMode';
 import { MockExploreService } from './mock';
 import { ProdExploreService } from './prod';
 import { ExploreService } from './types';
@@ -15,9 +15,13 @@ export class ExploreServiceFactory {
    * 3. インスタンスの生成
    */
   static createExploreService(): ExploreService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 探索サービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モック探索サービスを生成');
       return new MockExploreService();
     } else {

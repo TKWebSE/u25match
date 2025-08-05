@@ -1,7 +1,7 @@
 // src/services/main/reactions/factory.ts
 // 🏭 リアクションサービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
+import { getDevModeInfo, isDevMode } from '@utils/devMode';
 import { MockReactionsService } from './mock';
 import { ProdReactionsService } from './prod';
 import { ReactionsService } from './types';
@@ -15,9 +15,13 @@ export class ReactionsServiceFactory {
    * 3. インスタンスの生成
    */
   static createReactionsService(): ReactionsService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 リアクションサービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モックリアクションサービスを生成');
       return new MockReactionsService();
     } else {

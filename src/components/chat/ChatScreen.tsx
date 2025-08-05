@@ -1,8 +1,8 @@
-import { auth, db } from "@/firebaseConfig";
-import ChatInput from "@components/ChatInput";
 import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { auth, db } from "../../../firebaseConfig";
+import ChatInput from "./ChatInput";
 import ChatList, { ChatMessageType } from "./ChatList";
 
 type ChatScreenProps = {

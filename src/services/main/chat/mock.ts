@@ -2,9 +2,10 @@
 // 🎭 チャットサービスのモック実装
 
 import { mockChatMessages } from '../../../mock/chatMock';
+import { BaseService } from '../../base/BaseService';
 import { ChatResponse, ChatService } from './types';
 
-export class MockChatService implements ChatService {
+export class MockChatService extends BaseService implements ChatService {
   /**
    * 💬 メッセージを送信（モック）
    * @param chatId チャットID
@@ -56,14 +57,5 @@ export class MockChatService implements ChatService {
       success: true,
       data: newChatRoom,
     };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500);
-    });
   }
 } 

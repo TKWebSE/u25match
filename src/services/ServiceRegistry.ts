@@ -3,7 +3,7 @@
 
 import { createAuthService } from './auth/factory';
 import { AuthService } from './auth/types';
-import { createProfileDetailService } from './profile/factory';
+import { createProfileService } from './profile/factory';
 import { ProfileDetailService } from './profile/types';
 
 export class ServiceRegistry {
@@ -39,7 +39,7 @@ export class ServiceRegistry {
     this.register('auth', createAuthService());
 
     // プロフィール詳細サービスの登録
-    this.register('profileDetail', createProfileDetailService());
+    this.register('profileDetail', createProfileService());
 
     // 他のサービスもここで登録
     // this.register('user', createUserService());

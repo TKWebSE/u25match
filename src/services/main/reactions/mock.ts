@@ -2,9 +2,10 @@
 // 🎭 リアクションサービスのモック実装
 
 import { mockReactions } from '../../../mock/reactionsMock';
+import { BaseService } from '../../base/BaseService';
 import { ReactionsResponse, ReactionsService } from './types';
 
-export class MockReactionsService implements ReactionsService {
+export class MockReactionsService extends BaseService implements ReactionsService {
   /**
    * ❤️ リアクションを送信（モック）
    * @param targetUserId 対象ユーザーID
@@ -57,14 +58,5 @@ export class MockReactionsService implements ReactionsService {
       success: true,
       data: userReactions,
     };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500);
-    });
   }
 } 

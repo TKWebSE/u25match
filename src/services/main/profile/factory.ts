@@ -1,7 +1,7 @@
 // src/services/profileDetail/factory.ts
 // 🏭 プロフィール詳細サービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
+import { getDevModeInfo, isDevMode } from '@utils/devMode';
 import { MockProfileDetailService } from './mock';
 import { ProdProfileDetailService } from './prod';
 import { ProfileDetailService } from './types';
@@ -15,9 +15,13 @@ export class ProfileDetailServiceFactory {
    * 3. インスタンスの生成
    */
   static createProfileDetailService(): ProfileDetailService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 プロフィール詳細サービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モックプロフィール詳細サービスを生成');
       return new MockProfileDetailService();
     } else {

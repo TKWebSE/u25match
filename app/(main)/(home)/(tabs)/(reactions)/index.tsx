@@ -1,3 +1,4 @@
+import CustomHeader from '@components/common/CustomHeader';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,8 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const ReactionsScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* カスタムヘッダー */}
+      <CustomHeader title="リアクション" />
+
       <View style={styles.container}>
-        <Text style={styles.title}>リアクション</Text>
         <Text style={styles.subtitle}>リアクション機能は準備中です</Text>
       </View>
     </SafeAreaView>
@@ -23,12 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f8f9fa',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#1a1a1a',
   },
   subtitle: {
     fontSize: 16,

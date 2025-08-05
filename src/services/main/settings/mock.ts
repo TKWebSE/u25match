@@ -2,9 +2,10 @@
 // 🎭 設定サービスのモック実装
 
 import { mockUserSettings } from '../../../mock/settingsMock';
+import { BaseService } from '../../base/BaseService';
 import { SettingsResponse, SettingsService, UserSettings } from './types';
 
-export class MockSettingsService implements SettingsService {
+export class MockSettingsService extends BaseService implements SettingsService {
   /**
    * ⚙️ ユーザー設定を取得（モック）
    * @param userId ユーザーID
@@ -53,14 +54,5 @@ export class MockSettingsService implements SettingsService {
         deletedAt: new Date(),
       },
     };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500);
-    });
   }
 } 

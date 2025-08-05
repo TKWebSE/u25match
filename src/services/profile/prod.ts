@@ -1,6 +1,8 @@
 // src/services/profileDetail/prod.ts
 // 🌐 プロフィール詳細サービスの本番実装
 
+import { doc, getDoc, increment, updateDoc } from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
 export class ProdProfileDetailService implements ProfileDetailService {
@@ -25,24 +27,34 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
   /**
    * 👤 プロフィール詳細を取得（本番）
-   * 実際のAPIからプロフィール情報を取得
+   * Firebaseからプロフィール情報を取得
    * @param uid 取得したいユーザーのID
    * @returns プロフィール詳細データ
    */
   async getProfileDetail(uid: string): Promise<ProfileDetailResponse> {
     try {
-      const response = await fetch(`/api/profile/${uid}`);
+      console.log('🔥 Firebaseからプロフィール詳細を取得中...', { uid });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch profile: ${response.statusText}`);
+      const userDocRef = doc(db, 'users', uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        console.log('❌ ユーザードキュメントが見つかりません:', { uid });
+        return {
+          success: false,
+          error: 'ユーザーが見つかりません',
+        };
       }
 
-      const data = await response.json();
+      const userData = userDoc.data();
+      console.log('✅ Firebaseからプロフィール詳細取得成功:', userData);
+
       return {
         success: true,
-        data,
+        data: userData as ProfileDetail,
       };
     } catch (error) {
+      console.error('💥 Firebaseプロフィール詳細取得エラー:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -52,31 +64,30 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
   /**
    * ✏️ プロフィール詳細を更新（本番）
-   * 実際のAPIでプロフィール情報を更新
+   * Firebaseでプロフィール情報を更新
    * @param uid 更新したいユーザーのID
    * @param data 更新したいデータ
    * @returns 更新後のプロフィール詳細データ
    */
   async updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse> {
     try {
-      const response = await fetch(`/api/profile/${uid}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      console.log('🔥 Firebaseでプロフィール詳細を更新中...', { uid, data });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update profile: ${response.statusText}`);
-      }
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, data);
 
-      const updatedData = await response.json();
+      // 更新後のデータを取得
+      const updatedDoc = await getDoc(userDocRef);
+      const updatedData = updatedDoc.data();
+
+      console.log('✅ Firebaseでプロフィール詳細更新成功:', updatedData);
+
       return {
         success: true,
-        data: updatedData,
+        data: updatedData as ProfileDetail,
       };
     } catch (error) {
+      console.error('💥 Firebaseプロフィール詳細更新エラー:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -86,25 +97,23 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
   /**
    * ❤️ いいねを送信（本番）
-   * 実際のAPIでいいねを送信
+   * Firebaseでいいねを送信
    * @param uid いいねを送信したいユーザーのID
    * @returns 送信結果
    */
   async sendLike(uid: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`/api/profile/${uid}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      console.log('🔥 Firebaseでいいねを送信中...', { uid });
+
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        likeCount: increment(1)
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to send like: ${response.statusText}`);
-      }
-
+      console.log('✅ Firebaseでいいね送信成功');
       return { success: true };
     } catch (error) {
+      console.error('💥 Firebaseいいね送信エラー:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

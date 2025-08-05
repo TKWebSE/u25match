@@ -1,6 +1,7 @@
 // components/CustomHeader.tsx
 import { ENTRY_SCREEN_PATH, EXPLORE_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
+import { isDevMode } from '@utils/devMode';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,6 +12,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default function CustomHeader({ title }: { title: string }) {
   const router = useRouter();
   const { user } = useAuth(); // userがnullかどうかでログイン判定
+  const isDev = isDevMode(); // DEVモードかどうかを判定
 
   const handleLogoPress = () => {
     console.log('ロゴがタップされました:', user ? 'ログイン中' : 'ログアウト中');
@@ -24,7 +26,10 @@ export default function CustomHeader({ title }: { title: string }) {
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={handleLogoPress}>
-        <Text style={styles.logo}>Under25Match</Text>
+        <Text style={styles.logo}>
+          Under25Match
+          {isDev && <Text style={styles.devBadge}> DEV</Text>}
+        </Text>
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>
       <View style={{ width: 80 }} /> {/* 右側の余白 */}
@@ -50,5 +55,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
+  },
+  devBadge: {
+    color: '#FFD700', // 金色
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 });

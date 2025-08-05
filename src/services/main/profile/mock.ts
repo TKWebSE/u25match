@@ -2,9 +2,10 @@
 // 🎭 プロフィール詳細サービスのモック実装
 
 import { mockProfileUser } from '@mock/profileDetailMock';
+import { BaseService } from '../../base/BaseService';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
-export class MockProfileDetailService implements ProfileDetailService {
+export class MockProfileDetailService extends BaseService implements ProfileDetailService {
   private useMock: boolean = true;  // モックモードのフラグ
 
   /**
@@ -72,15 +73,5 @@ export class MockProfileDetailService implements ProfileDetailService {
     // 🎭 モックモード: いいね送信をシミュレート
     await this.simulateNetworkDelay();
     return { success: true };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   * 開発時に実際のAPI呼び出しを模擬するために使用
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500); // 500-1500ms
-    });
   }
 } 

@@ -1,7 +1,7 @@
 // src/services/main/settings/factory.ts
 // 🏭 設定サービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
+import { getDevModeInfo, isDevMode } from '@utils/devMode';
 import { MockSettingsService } from './mock';
 import { ProdSettingsService } from './prod';
 import { SettingsService } from './types';
@@ -15,9 +15,13 @@ export class SettingsServiceFactory {
    * 3. インスタンスの生成
    */
   static createSettingsService(): SettingsService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 設定サービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モック設定サービスを生成');
       return new MockSettingsService();
     } else {

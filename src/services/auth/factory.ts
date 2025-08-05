@@ -1,10 +1,10 @@
 // src/services/auth/factory.ts
 // 🏭 認証サービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
-import { AuthService } from './types';
-import { ProdAuthService } from './prod';
+import { getDevModeInfo, isDevMode } from '../../utils/devMode';
 import { MockAuthService } from './mock';
+import { ProdAuthService } from './prod';
+import { AuthService } from './types';
 
 export class AuthServiceFactory {
   /**
@@ -15,9 +15,13 @@ export class AuthServiceFactory {
    * 3. インスタンスの生成
    */
   static createAuthService(): AuthService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
-    
-    if (isDev) {
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
+
+    console.log('🔧 認証サービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モック認証サービスを生成');
       return new MockAuthService();
     } else {

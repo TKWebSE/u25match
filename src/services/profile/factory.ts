@@ -1,12 +1,12 @@
 // src/services/profileDetail/factory.ts
 // 🏭 プロフィール詳細サービス工場 - 環境判定と生成の責任のみ
 
-import Constants from 'expo-constants';
-import { MockProfileDetailService } from './mock';
+import { getDevModeInfo, isDevMode } from '../../utils/devMode';
+import { MockProfileService } from './mock';
 import { ProdProfileDetailService } from './prod';
 import { ProfileDetailService } from './types';
 
-export class ProfileDetailServiceFactory {
+export class ProfileServiceFactory {
   /**
    * 🎯 環境に応じて適切なプロフィール詳細サービスを生成
    * この関数の責任：
@@ -14,12 +14,16 @@ export class ProfileDetailServiceFactory {
    * 2. 適切な実装クラスの選択
    * 3. インスタンスの生成
    */
-  static createProfileDetailService(): ProfileDetailService {
-    const isDev = Constants.expoConfig?.extra?.isDev;
+  static createProfileService(): ProfileDetailService {
+    const devModeInfo = getDevModeInfo();
+    const isDevelopment = isDevMode();
 
-    if (isDev) {
+    console.log('🔧 プロフィール詳細サービス生成中...');
+    console.log('📋 DEVモード情報:', devModeInfo);
+
+    if (isDevelopment) {
       console.log('🎭 DEVモード: モックプロフィール詳細サービスを生成');
-      return new MockProfileDetailService();
+      return new MockProfileService();
     } else {
       console.log('🌐 本番モード: 本番プロフィール詳細サービスを生成');
       return new ProdProfileDetailService();
@@ -28,6 +32,6 @@ export class ProfileDetailServiceFactory {
 }
 
 // 🚀 簡潔な関数形式も提供
-export function createProfileDetailService(): ProfileDetailService {
-  return ProfileDetailServiceFactory.createProfileDetailService();
+export function createProfileService(): ProfileDetailService {
+  return ProfileServiceFactory.createProfileService();
 } 

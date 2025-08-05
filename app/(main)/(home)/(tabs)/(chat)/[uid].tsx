@@ -1,6 +1,6 @@
 // app/(main)/(home)/(tabs)/(chat)/[uid].tsx
 
-import ChatScreen from "@/src/components/ChatScreen";
+import ChatScreen from "@components/chat/ChatScreen";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Alert } from "react-native";

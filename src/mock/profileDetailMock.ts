@@ -4,11 +4,11 @@ export const mockProfileUser = {
   age: 28,
   lastActiveAt: new Date('2025-07-21T12:00:00Z'),
   likeCount: 134,
-  bio: '音楽と猫が大好きです🐱 ゆっくり話せる人と繋がりたいです。',
+  bio: '音楽と猫が大好きです🐱 ゆっくり話せる人と繋がりたいです。\n\n最近はジャズピアノを習い始めました。毎週末は猫カフェ巡りをしています。コーヒーも大好きで、特にエスプレッソがお気に入りです。\n\n読書も趣味で、最近は村上春樹の作品を読んでいます。旅行も好きで、去年は京都と沖縄に行きました。料理も少しずつ勉強中で、特にイタリアンに挑戦しています。\n\nゆっくりと時間をかけてお互いのことを知り合える関係を大切にしたいです。趣味や価値観が合う人と出会えたら嬉しいです。\n\n一緒に音楽を聴いたり、おいしいご飯を食べに行ったり、猫カフェでまったりしたりできる人を探しています。',
   images: [
-    "https://randomuser.me/api/portraits/women/65.jpg",
-    "https://randomuser.me/api/portraits/women/66.jpg",
-    "https://randomuser.me/api/portraits/women/67.jpg",
+    "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face",
   ],
   tags: ['coffee', 'takoparty', 'game', 'musiclive', 'dog', 'cat'],
   details: {

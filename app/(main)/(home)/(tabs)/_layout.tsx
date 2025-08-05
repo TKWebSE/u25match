@@ -1,7 +1,8 @@
 // app/(main)/(home)/(tabs)/_layout.tsx
+// タブナビゲーションのレイアウト - メインアプリの下部タブを管理
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import ChatListScreen from './(chat)/index';
 import ExploreScreen from './(explore)/index';
@@ -14,33 +15,43 @@ export default function TabsLayout() {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: false, // ヘッダーを非表示
         tabBarStyle: {
           backgroundColor: '#ffffff',
-          borderTopWidth: 1,
-          borderTopColor: '#e0e0e0',
-          height: Platform.OS === 'ios' ? 88 : 60,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+          borderTopWidth: 0, // 上部の境界線を削除
+          height: Platform.OS === 'ios' ? 88 : 60, // プラットフォーム別の高さ
+          paddingBottom: Platform.OS === 'ios' ? 20 : 10, // 下部パディング
           paddingTop: 10,
-          elevation: 8,
+          elevation: 8, // Android用の影
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
+          borderTopLeftRadius: 20, // 上部の角丸
+          borderTopRightRadius: 20,
         },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: '#6C63FF', // アクティブ時の色
+        tabBarInactiveTintColor: '#8E8E93', // 非アクティブ時の色
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+          fontSize: 11,
+          fontWeight: '600',
           marginTop: 4,
         },
         tabBarIconStyle: {
           marginTop: 4,
         },
-        tabBarHideOnKeyboard: true,
+        tabBarHideOnKeyboard: true, // キーボード表示時にタブを隠す
+        tabBarBackground: () => (
+          <View style={{
+            flex: 1,
+            backgroundColor: '#ffffff',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          }} />
+        ),
       }}
     >
+      {/* 探すタブ - ユーザー検索・探索機能 */}
       <Tab.Screen
         name="explore"
         component={ExploreScreen}
@@ -55,6 +66,8 @@ export default function TabsLayout() {
           ),
         }}
       />
+
+      {/* チャットタブ - メッセージ機能 */}
       <Tab.Screen
         name="chatList"
         component={ChatListScreen}
@@ -69,6 +82,8 @@ export default function TabsLayout() {
           ),
         }}
       />
+
+      {/* リアクションタブ - いいね・リアクション機能 */}
       <Tab.Screen
         name="reactions"
         component={ReactionsScreen}
@@ -83,6 +98,8 @@ export default function TabsLayout() {
           ),
         }}
       />
+
+      {/* 設定タブ - アプリ設定・プロフィール管理 */}
       <Tab.Screen
         name="settings"
         component={SettingsScreen}

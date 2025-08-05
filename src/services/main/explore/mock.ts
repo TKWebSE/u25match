@@ -2,9 +2,10 @@
 // 🎭 探索サービスのモック実装
 
 import { mockUserRecommendations } from '../../../mock/exploreMock';
+import { BaseService } from '../../base/BaseService';
 import { ExploreResponse, ExploreService } from './types';
 
-export class MockExploreService implements ExploreService {
+export class MockExploreService extends BaseService implements ExploreService {
   /**
    * 🔍 ユーザーを検索（モック）
    * @param query 検索クエリ
@@ -67,14 +68,5 @@ export class MockExploreService implements ExploreService {
         hasMore: false,
       },
     };
-  }
-
-  /**
-   * ⏱️ ネットワーク遅延をシミュレート
-   */
-  private async simulateNetworkDelay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, Math.random() * 1000 + 500);
-    });
   }
 } 
