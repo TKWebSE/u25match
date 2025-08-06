@@ -5,12 +5,31 @@ export interface ProfileDetail {
   uid: string;                    // ユーザーID
   name: string;                   // ユーザー名
   age: number;                    // 年齢
+  location: string;               // 居住地
   lastActiveAt: Date;             // 最終アクティブ時刻
+  isOnline: boolean;              // オンライン状態
   likeCount: number;              // いいね数
   bio: string;                    // 自己紹介
   images: string[];               // プロフィール画像URL配列
-  tags: string[];                 // 興味タグ配列
-  details: Record<string, string>; // 詳細情報（キー・バリューペア）
+  tags: Array<{                   // 興味タグ配列
+    id: string;
+    name: string;
+    imageUrl: string;
+  }>;
+  details: {                      // 詳細情報
+    height: number;
+    occupation: string;
+    education: string;
+    interests: string[];
+    languages: string[];
+    smoking: boolean;
+    drinking: string;
+    relationshipGoal: string;
+  };
+  isVerified?: boolean;           // 本人確認済みフラグ
+  isEditable?: boolean;           // 編集可能フラグ
+  createdAt?: Date;               // 作成日時
+  updatedAt?: Date;               // 更新日時
 }
 
 export interface ProfileDetailResponse {
@@ -32,6 +51,9 @@ export interface ProfileDetailService {
 
   // プロフィール詳細を取得
   getProfileDetail(uid: string): Promise<ProfileDetailResponse>;
+
+  // ユニークIDでプロフィール詳細を取得
+  getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse>;
 
   // プロフィール詳細を更新
   updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse>;

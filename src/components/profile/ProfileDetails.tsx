@@ -3,7 +3,16 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 interface ProfileDetailsProps {
-  details: Record<string, string>;
+  details: {
+    height: number;
+    occupation: string;
+    education: string;
+    interests: string[];
+    languages: string[];
+    smoking: boolean;
+    drinking: string;
+    relationshipGoal: string;
+  };
 }
 
 /**
@@ -14,12 +23,39 @@ interface ProfileDetailsProps {
 export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
   return (
     <View style={ProfileDetailStyles.detailsSection}>
-      {Object.entries(details).map(([label, value]) => (
-        <View key={label} style={ProfileDetailStyles.detailRow}>
-          <Text style={ProfileDetailStyles.detailLabel}>{label}</Text>
-          <Text style={ProfileDetailStyles.detailValue}>{value}</Text>
-        </View>
-      ))}
+      <Text style={ProfileDetailStyles.detailsTitle}>詳細プロフィール</Text>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>身長</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.height}cm</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>職業</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.occupation}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>学歴</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.education}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>趣味</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.interests.join(', ')}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>言語</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.languages.join(', ')}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>喫煙</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.smoking ? 'はい' : 'いいえ'}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>飲酒</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.drinking}</Text>
+      </View>
+      <View style={ProfileDetailStyles.detailRow}>
+        <Text style={ProfileDetailStyles.detailLabel}>恋愛観</Text>
+        <Text style={ProfileDetailStyles.detailValue}>{details.relationshipGoal}</Text>
+      </View>
     </View>
   );
 }; 

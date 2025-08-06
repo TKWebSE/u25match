@@ -28,7 +28,7 @@ interface UseProfileDetailReturn {
 /**
  * プロフィール詳細のビジネスロジックを管理するカスタムフック
  * 
- * @param uid - プロフィールのユーザーID
+ * @param identifier - プロフィールのユーザーIDまたはユニークID
  * @returns プロフィール詳細の状態とアクション
  * 
  * @example
@@ -44,7 +44,7 @@ interface UseProfileDetailReturn {
  * } = useProfileDetail('user123');
  * ```
  */
-export const useProfileDetail = (uid: string): UseProfileDetailReturn => {
+export const useProfileDetail = (identifier: string): UseProfileDetailReturn => {
   // プロフィール詳細データの状態管理
   const [profile, setProfile] = useState<ProfileDetail | null>(null);
 
@@ -77,10 +77,12 @@ export const useProfileDetail = (uid: string): UseProfileDetailReturn => {
       setLoading(true);
       setError(null);
 
-      console.log('🔍 プロフィール詳細を取得中...', { uid });
+      console.log('🔍 プロフィール詳細を取得中...', { identifier });
 
-      // APIからプロフィールデータを取得
-      const response = await profileDetailService.getProfileDetail(uid);
+      // APIからプロフィールデータを取得（ユニークIDかどうかを判定）
+      const response = identifier.includes('-')
+        ? await profileDetailService.getProfileDetailByUniqueId(identifier)
+        : await profileDetailService.getProfileDetail(identifier);
 
       console.log('📋 プロフィール詳細レスポンス:', response);
 
@@ -112,19 +114,19 @@ export const useProfileDetail = (uid: string): UseProfileDetailReturn => {
    * 
    * この関数は以下の処理を行います：
    * 1. APIにいいねリクエストを送信
-   * 2. 成功時はいいね状態を更新
-   * 3. プロフィールのいいねカウントを更新
+   * 2. 成功時はプロフィールのいいねカウントを即座に更新
+   * 3. ボタン押下時にいいね状態を更新
    */
   const handleLike = async () => {
     try {
+      // ボタン押下時に即座にいいね状態を更新
+      setLiked(true);
+
       // APIにいいねリクエストを送信
-      const response = await profileDetailService.sendLike(uid);
+      const response = await profileDetailService.sendLike(identifier);
 
       if (response.success) {
-        // 成功時：いいね状態とカウントを更新
-        setLiked(true);
-
-        // プロフィールのいいねカウントを更新
+        // プロフィールのいいねカウントを即座に更新
         if (profile) {
           setProfile({
             ...profile,
@@ -151,7 +153,7 @@ export const useProfileDetail = (uid: string): UseProfileDetailReturn => {
   // コンポーネントマウント時にプロフィール詳細を取得
   useEffect(() => {
     loadProfileDetail();
-  }, [uid]);
+  }, [identifier]);
 
   // フックの戻り値
   return {

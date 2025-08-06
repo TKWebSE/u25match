@@ -2,17 +2,19 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
+import { EditButton } from '@components/profile/EditButton';
 import ImageIndicator from '@components/profile/ImageIndicator';
 import { LikeButton } from '@components/profile/LikeButton';
 import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
 import { ProfileBio } from '@components/profile/ProfileBio';
 import { ProfileDetails } from '@components/profile/ProfileDetails';
 import { ProfileInfo } from '@components/profile/ProfileInfo';
+import { ProfileTags } from '@components/profile/ProfileTags';
 import WebImageNavigator from '@components/profile/WebImageNavigator';
 import { useProfileDetail } from '@hooks/useProfileDetail';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { isWeb } from '@utils/platform';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -24,6 +26,10 @@ export default function ProfileScreen() {
   const { uid } = useLocalSearchParams();
   const { width: windowWidth } = useWindowDimensions();
   const [activeDotIndex, setActiveDotIndex] = useState(0);
+  const router = useRouter();
+
+  // URLパラメータからユニークIDを取得
+  const uniqueId = uid as string;
 
   // カスタムフックでビジネスロジックを管理
   const {
@@ -34,7 +40,7 @@ export default function ProfileScreen() {
     onlineStatus,
     handleLike,
     retry,
-  } = useProfileDetail(uid as string);
+  } = useProfileDetail(uniqueId);
 
   // Web版でのコンテンツ幅と余白の計算
   const contentWidth = isWeb ? Math.min(windowWidth * 0.9, 900) : windowWidth;
@@ -89,22 +95,35 @@ export default function ProfileScreen() {
           <ProfileInfo
             name={profile.name}
             age={profile.age}
+            location={profile.location}
             onlineStatus={onlineStatus}
             likeCount={profile.likeCount}
+            isVerified={profile.isVerified}
           />
 
           {/* 自己紹介 */}
           <ProfileBio bio={profile.bio} />
+
+          {/* タグ表示 */}
+          <ProfileTags tags={profile.tags} />
 
           {/* 詳細プロフィール */}
           <ProfileDetails details={profile.details} />
         </View>
       </ScrollView >
 
-      {/* いいねボタン */}
-      <View style={ProfileDetailStyles.likeButtonContainer}>
-        <LikeButton onPress={handleLike} liked={liked} />
-      </View>
+      {/* 自分のプロフィールかどうかを判定 */}
+      {profile.uid === 'my-user-id' ? (
+        // 自分のプロフィールの場合：編集ボタン
+        <View style={ProfileDetailStyles.likeButtonContainer}>
+          <EditButton onPress={() => router.push('/(main)/profile/edit')} />
+        </View>
+      ) : (
+        // 他人のプロフィールの場合：いいねボタン
+        <View style={ProfileDetailStyles.likeButtonContainer}>
+          <LikeButton onPress={handleLike} liked={liked} />
+        </View>
+      )}
     </View >
   );
 } 

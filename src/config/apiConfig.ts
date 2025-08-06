@@ -1,5 +1,5 @@
 // src/config/apiConfig.ts
-import { profileDetailService } from '@services/profileDetailService';
+import { profileDetailService } from '@services/profile';
 
 // モックモードの切り替え
 export const setMockMode = (enabled: boolean) => {

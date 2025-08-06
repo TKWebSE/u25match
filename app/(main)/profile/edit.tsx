@@ -2,6 +2,7 @@
 import { PROFILE_SCREEN_PATH } from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { getUserProfile, updateUserProfile } from '@services/firestoreUserProfile';
+import { generateTimestampId, generateUniqueProfileId } from '@utils/generateUniqueId';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -18,9 +19,15 @@ import {
 import Toast from 'react-native-toast-message';
 
 export default function ProfileEditScreen() {
-  const [profile, setProfile] = useState({ uid: '', name: '', bio: '' });
+  const [profile, setProfile] = useState({
+    uid: '',
+    name: '',
+    bio: '',
+    uniqueId: ''
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [generatedId, setGeneratedId] = useState('');
   const router = useRouter();
   const user = useStrictAuth();
 
@@ -28,17 +35,42 @@ export default function ProfileEditScreen() {
     const fetchProfile = async () => {
       const data = await getUserProfile(user.uid);
       if (data) {
-        setProfile({ uid: user.uid, name: data.name || '', bio: data.bio || '' });
+        setProfile({
+          uid: user.uid,
+          name: data.name || '',
+          bio: data.bio || '',
+          uniqueId: data.uniqueId || ''
+        });
+        // 既存のIDがある場合は表示、ない場合は新規生成
+        if (data.uniqueId) {
+          setGeneratedId(data.uniqueId);
+        } else {
+          const newId = generateUniqueProfileId(data.name || 'ユーザー');
+          setGeneratedId(newId);
+        }
       }
       setLoading(false);
     };
     fetchProfile();
   }, []);
 
+  // 名前が変更されたときにユニークIDを再生成
+  const handleNameChange = (text: string) => {
+    setProfile({ ...profile, name: text });
+    if (text.trim()) {
+      const newId = generateUniqueProfileId(text);
+      setGeneratedId(newId);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateUserProfile(profile.uid, profile);
+      const updatedProfile = {
+        ...profile,
+        uniqueId: generatedId
+      };
+      await updateUserProfile(profile.uid, updatedProfile);
       Toast.show({ type: 'success', text1: 'プロフィールを保存しました！' });
       router.push(PROFILE_SCREEN_PATH)
     } catch {
@@ -68,10 +100,27 @@ export default function ProfileEditScreen() {
         <TextInput
           style={styles.input}
           value={profile.name}
-          onChangeText={(text) => setProfile({ ...profile, name: text })}
+          onChangeText={handleNameChange}
           placeholder="田中角栄"
           placeholderTextColor="#999"
         />
+
+        <Text style={styles.label}>ユニークID</Text>
+        <View style={styles.idContainer}>
+          <Text style={styles.idText}>{generatedId}</Text>
+          <TouchableOpacity
+            style={styles.regenerateButton}
+            onPress={() => {
+              const newId = generateTimestampId();
+              setGeneratedId(newId);
+            }}
+          >
+            <Text style={styles.regenerateButtonText}>🔄 再生成</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.idDescription}>
+          このIDはあなたのプロフィールURLに使用されます。同じ名前のユーザーがいても、このIDにより一意に識別されます。
+        </Text>
 
         <Text style={styles.label}>自己紹介</Text>
         <TextInput
@@ -146,5 +195,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F7F9FC',
+  },
+  idContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  idText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+  },
+  regenerateButton: {
+    backgroundColor: '#6C63FF',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+  },
+  regenerateButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  idDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+    marginBottom: 24,
   },
 });

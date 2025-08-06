@@ -1,0 +1,78 @@
+import { ProfileDetail } from '@services/profile';
+
+/**
+ * 自分のプロフィール詳細用のモックデータ
+ * 
+ * このモックデータは以下の特徴を持ちます：
+ * - 実際のユーザー情報に基づく
+ * - 編集可能な状態
+ * - 複数の画像を含む
+ * - 詳細な自己紹介
+ */
+export const myProfileMock: ProfileDetail = {
+  // 基本情報
+  uid: 'my-user-id',
+  name: '田中 花子',
+  age: 25,
+  location: '東京都渋谷区',
+
+  // 画像情報（複数枚）
+  images: [
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face',
+  ],
+
+  // 自己紹介（詳細版）
+  bio: `こんにちは！田中花子です。🌸
+
+趣味は写真撮影とカフェ巡りです。特に自然風景や街並みの写真を撮るのが好きで、週末はよくカメラを持って出かけています。
+
+最近は新しいカフェを開拓するのにハマっていて、インスタ映えするお店を探すのが楽しみです。お気に入りのカフェがあれば教えてください！
+
+仕事はデザイナーをしていて、主にWebデザインやUI/UXデザインを担当しています。クリエイティブな仕事が大好きで、新しいアイデアを考えるのが得意です。
+
+休日は友達と映画を見に行ったり、美術館巡りをしたりすることが多いです。アートや映画について語り合える人がいたら嬉しいです。
+
+よろしくお願いします！✨`,
+
+  // オンライン状態
+  isOnline: true,
+  lastActiveAt: new Date(),
+
+  // いいね情報
+  likeCount: 42,
+
+  // 詳細情報
+  details: {
+    height: 160,
+    occupation: 'デザイナー',
+    education: '美術大学卒業',
+    interests: ['写真', 'カフェ', 'アート', '映画', '旅行'],
+    languages: ['日本語', '英語'],
+    smoking: false,
+    drinking: '時々',
+    relationshipGoal: '真剣な関係を築きたい',
+  },
+
+  // タグ情報
+  tags: [
+    { id: '1', name: '写真', imageUrl: 'src/assets/mock-assets/tag-images/cat.jpg' },
+    { id: '2', name: 'カフェ', imageUrl: 'src/assets/mock-assets/tag-images/coffee.jpg' },
+    { id: '3', name: 'アート', imageUrl: 'src/assets/mock-assets/tag-images/musiclive.jpg' },
+    { id: '4', name: '映画', imageUrl: 'src/assets/mock-assets/tag-images/game.jpg' },
+    { id: '5', name: '旅行', imageUrl: 'src/assets/mock-assets/tag-images/party.jpg' },
+  ],
+
+  // 本人確認済みフラグ
+  isVerified: true,
+
+  // 編集可能フラグ
+  isEditable: true,
+
+  // 作成・更新日時
+  createdAt: new Date('2024-01-15'),
+  updatedAt: new Date('2024-01-20'),
+}; 
