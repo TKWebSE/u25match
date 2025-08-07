@@ -73,9 +73,9 @@ const SettingsScreen = () => {
             images={user.photoURL ? [user.photoURL] : []}
             email={user.email || undefined}
             name={user.displayName || 'ユーザー'}
-            age={25} // モックデータから取得
-            location="東京都渋谷区" // モックデータから取得
-            isVerified={true} // 本人確認済みフラグ
+            age={user.age || 0}
+            location={user.location || ''}
+            isVerified={user.isVerified || false}
             onPress={handleUserProfilePress}
           />
         </View>
