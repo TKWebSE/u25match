@@ -70,7 +70,7 @@ export const SettingsStyles = StyleSheet.create({
 
   // ユーザー名
   userName: {
-    fontSize: 16,
+    fontSize: 18, // 16から18に変更して少し大きく
     fontWeight: '600',
     color: '#1a1a1a',
   },
@@ -82,21 +82,21 @@ export const SettingsStyles = StyleSheet.create({
   },
   // チェックマーク
   verificationMark: {
-    fontSize: 14,
-    fontWeight: '600',
     marginLeft: 8,
-    backgroundColor: 'white',
+    backgroundColor: '#38A169',
     borderRadius: 12,
-    width: 24,
-    height: 24,
-    textAlign: 'center',
-    lineHeight: 24,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
+    borderColor: '#38A169',
   },
   // 確認済みチェックマーク
   verifiedMark: {
-    color: '#38A169', // 緑色のチェックマーク
-    borderColor: '#38A169', // 緑色の枠線
+    color: 'white', // 白色のチェックマーク
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   // 未確認チェックマーク
   unverifiedMark: {
@@ -190,5 +190,18 @@ export const SettingsStyles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: '600',
+  },
+
+  // アバターコンテナ
+  avatarContainer: {
+    marginRight: 16,
+  },
+
+  // 編集アイコン
+  editIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 'auto',
+    paddingHorizontal: 8,
   },
 }); 

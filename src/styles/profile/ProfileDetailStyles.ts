@@ -276,4 +276,24 @@ export const ProfileDetailStyles = StyleSheet.create({
     color: '#2d3748',
     flex: 1,
   },
+
+  // 編集画面用のスタイル
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+
+  saveButton: {
+    backgroundColor: '#6C63FF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 }); 

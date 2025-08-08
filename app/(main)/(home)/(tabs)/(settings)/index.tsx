@@ -1,12 +1,14 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LogoutButton } from '@components/settings/LogoutButton';
+import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import { useAuth } from '@contexts/AuthContext';
+import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 設定画面コンポーネント - ユーザー設定とアプリ情報を管理
@@ -14,6 +16,7 @@ const SettingsScreen = () => {
   const router = useRouter();
   const user = useStrictAuth(); // 認証済みユーザー情報を取得
   const { logout, loading } = useAuth(); // 認証コンテキストからログアウト機能を取得
+  const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
 
   // プロフィール詳細画面への遷移
   const handleProfilePress = () => {
@@ -58,27 +61,33 @@ const SettingsScreen = () => {
     );
   };
 
+  // 本人確認の開始
+  const handleVerification = () => {
+    router.push('/(main)/verification');
+  };
+
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
       {/* カスタムヘッダー */}
       <CustomHeader title="設定" />
 
-      <View style={SettingsStyles.container}>
+      <ScrollView style={SettingsStyles.container} showsVerticalScrollIndicator={false}>
         {/* アカウント情報セクション */}
         <View style={SettingsStyles.section}>
           <Text style={SettingsStyles.sectionTitle}>アカウント</Text>
 
           {/* ユーザー情報カード */}
           <AccountInfo
-            images={user.photoURL ? [user.photoURL] : []}
-            email={user.email || undefined}
-            name={user.displayName || 'ユーザー'}
-            age={user.age || 0}
-            location={user.location || ''}
-            isVerified={user.isVerified || false}
+            authUser={user}
+            profile={profile || undefined}
             onPress={handleUserProfilePress}
           />
         </View>
+        {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
+        {profile?.isVerified === false && (
+          <VerificationPrompt onPress={handleVerification} />
+        )}
+
 
         {/* アプリ情報セクション */}
         <View style={SettingsStyles.section}>
@@ -131,7 +140,7 @@ const SettingsScreen = () => {
           {/* ログアウトボタン */}
           <LogoutButton loading={loading} onLogout={handleLogout} />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

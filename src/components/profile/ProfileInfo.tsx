@@ -1,3 +1,4 @@
+import { VerificationMark } from '@components/common/VerificationMark';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import React from 'react';
 import { Text, View } from 'react-native';
@@ -35,12 +36,7 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({
         <Text style={ProfileDetailStyles.name}>
           {name}（{age}歳）
         </Text>
-        <Text style={[
-          ProfileDetailStyles.verificationMark,
-          isVerified ? ProfileDetailStyles.verifiedMark : ProfileDetailStyles.unverifiedMark
-        ]}>
-          ✓
-        </Text>
+        <VerificationMark isVerified={isVerified} />
       </View>
       <Text style={ProfileDetailStyles.location}>{location}</Text>
       <Text style={ProfileDetailStyles.online}>{onlineStatus}</Text>
