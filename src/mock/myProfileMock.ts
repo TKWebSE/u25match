@@ -48,13 +48,24 @@ export const myProfileMock: ProfileDetail = {
   // 詳細情報
   details: {
     height: 160,
+    weight: 48,
+    bodyType: '普通',
+    bloodType: 'O型',
+    hometown: '東京都',
     occupation: 'デザイナー',
     education: '美術大学卒業',
-    interests: ['写真', 'カフェ', 'アート', '映画', '旅行'],
+    income: '400-500万円',
+    familyStructure: '一人暮らし',
+    pets: ['なし'],
     languages: ['日本語', '英語'],
     smoking: false,
     drinking: '時々',
-    relationshipGoal: '真剣な関係を築きたい',
+    children: 'なし',
+    travelPreferences: ['土日'],
+    sleepSchedule: '24時頃',
+    marriageHistory: 'なし',
+    marriageIntention: '真剣に考えている',
+    wantChildren: '将来的に欲しい',
   },
 
   // タグ情報

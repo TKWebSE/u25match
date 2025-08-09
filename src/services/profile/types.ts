@@ -17,14 +17,28 @@ export interface ProfileDetail {
     imageUrl: string;
   }>;
   details: {                      // 詳細情報
-    height: number;
-    occupation: string;
-    education: string;
-    interests: string[];
-    languages: string[];
-    smoking: boolean;
-    drinking: string;
-    relationshipGoal: string;
+    height: number;               // 身長（必須）
+    weight?: number;              // 体重（オプション）
+    bodyType?: string;            // 体型（オプション）
+    bloodType?: string;           // 血液型（オプション）
+    hometown?: string;            // 出身地（オプション）
+    occupation: string;           // 職業（必須）
+    education: string;            // 学歴（必須）
+    income?: string;              // 年収（オプション）
+    familyStructure?: string;     // 同居人（オプション）
+    pets?: string[];              // ペット（オプション）
+    languages: string[];          // 言語（必須）
+    smoking: boolean;             // タバコ（必須）
+    drinking: string;             // お酒（必須）
+    children?: string;            // 子供（オプション）
+    travelPreferences?: ('土日' | '平日' | '不定期')[]; // 休日（オプション）
+    sleepSchedule?: string;       // 寝る時間（オプション）
+    marriageTimeline?: string;    // 結婚予定（オプション）
+    marriageViews?: string;       // 結婚観（オプション）
+    livingTogether?: string;      // 同居希望（オプション）
+    marriageHistory?: string;     // 結婚歴（オプション）
+    marriageIntention?: string;   // 結婚の意思（オプション）
+    wantChildren?: string;        // 子供が欲しいか（オプション）
   };
   isVerified?: boolean;           // 本人確認済みフラグ
   isEditable?: boolean;           // 編集可能フラグ

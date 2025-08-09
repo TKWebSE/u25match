@@ -18,11 +18,6 @@ const SettingsScreen = () => {
   const { logout, loading } = useAuth(); // 認証コンテキストからログアウト機能を取得
   const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
 
-  // プロフィール詳細画面への遷移
-  const handleProfilePress = () => {
-    router.push(`/(main)/profile/${user.uid}`);
-  };
-
   // 自分のプロフィール画面への遷移
   const handleUserProfilePress = () => {
     router.push(`/(main)/profile/my-user-id`);
@@ -109,12 +104,6 @@ const SettingsScreen = () => {
         {/* その他の設定セクション */}
         <View style={SettingsStyles.section}>
           <Text style={SettingsStyles.sectionTitle}>その他</Text>
-
-          {/* プロフィール詳細へのリンク */}
-          <TouchableOpacity style={SettingsStyles.button} onPress={handleProfilePress}>
-            <Text style={SettingsStyles.buttonText}>プロフィール詳細</Text>
-            <Text style={SettingsStyles.buttonArrow}>›</Text>
-          </TouchableOpacity>
 
           {/* プライバシーポリシーへのリンク */}
           <TouchableOpacity style={SettingsStyles.button} onPress={handlePrivacyPolicy}>

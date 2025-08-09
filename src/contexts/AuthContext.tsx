@@ -6,12 +6,14 @@
  * - アプリ全体での認証情報の共有
  * - Dev環境でのモックユーザー切り替え
  * - ログイン・ログアウト・サインアップ機能の提供
+ * - プロフィール情報の保持と管理
  * 
  * @example
  * ```typescript
- * const { user, login, logout } = useAuth();
+ * const { user, userProfile, login, logout } = useAuth();
  * if (user) {
  *   console.log('ログイン済み:', user.email);
+ *   console.log('プロフィール:', userProfile?.displayName);
  * }
  * ```
  */
@@ -27,6 +29,7 @@ import { AuthUser } from '../types/user';
  * 
  * この型は以下の情報を提供します：
  * - ユーザー情報（AuthUser型 - 認証に必要な最小限の情報のみ）
+ * - プロフィール情報（Firestoreから取得した詳細情報）
  * - ローディング状態
  * - エラー情報
  * - 認証関連の操作関数
@@ -34,6 +37,8 @@ import { AuthUser } from '../types/user';
 type AuthContextType = {
   /** ログインしているユーザー情報（nullなら未ログイン） */
   user: AuthUser | null;
+  /** ユーザーのプロフィール情報（Firestoreから取得、画面遷移後も保持） */
+  userProfile: any | null;
   /** 認証状態の読み込み中かどうかのフラグ */
   loading: boolean;
   /** エラーメッセージ */
@@ -46,6 +51,8 @@ type AuthContextType = {
   logout: () => Promise<void>;
   /** エラーをクリアする関数 */
   clearError: () => void;
+  /** プロフィール情報を更新する関数 */
+  refreshUserProfile: () => Promise<void>;
 };
 
 /**
@@ -62,6 +69,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * - 認証状態の管理
  * - Dev環境でのモックユーザー切り替え
  * - Firebase Authの状態監視
+ * - プロフィール情報の取得と保持
  * - 子コンポーネントへの認証情報提供
  * 
  * @param children - 子コンポーネント
@@ -69,8 +77,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   /** 認証状態の管理 */
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [userProfile, setUserProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * プロフィール情報を取得・更新する関数
+   * 
+   * この関数は以下の責務を持ちます：
+   * - Firestoreから最新のプロフィール情報を取得
+   * - AuthContextのプロフィール情報を更新
+   * - 画面遷移後も保持される情報を提供
+   */
+  const refreshUserProfile = async () => {
+    if (!user?.uid) return;
+
+    try {
+      const profile = await getUserProfile(user.uid);
+      setUserProfile(profile);
+      console.log('🔐 プロフィール情報を更新しました:', profile);
+    } catch (error) {
+      console.error('🔐 プロフィール情報の取得に失敗しました:', error);
+    }
+  };
 
   /**
    * Firebaseの認証状態監視を開始
@@ -78,7 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * このuseEffectは以下の処理を行います：
    * - Dev環境でのモックユーザー設定
    * - Firebase Authの状態監視
-   * - Firestoreからのプロフィール情報取得
+   * - Firestoreからのプロフィール情報取得（一度だけ）
    * - エラーハンドリング
    * - クリーンアップ処理
    */
@@ -90,6 +119,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (isDev) {
       console.log('🔐 AuthProvider: Dev環境のため、モックユーザーを使用します');
       setUser(mockAuthUser);
+      setUserProfile({
+        displayName: mockAuthUser.displayName,
+        photoURL: mockAuthUser.photoURL,
+        age: 25,
+        bio: 'Dev環境用のモックプロフィール',
+        location: '東京都',
+        // 他のプロフィール情報
+      });
       setLoading(false);
       setError(null);
       return;
@@ -112,26 +149,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         try {
-          // Firestoreからプロフィール情報を取得
+          // Firestoreからプロフィール情報を取得（一度だけ）
           const userProfile = await getUserProfile(user.uid);
           if (userProfile) {
             authUser.displayName = userProfile.displayName || null;
             authUser.photoURL = userProfile.photoURL || null;
+            setUserProfile(userProfile); // ← プロフィール情報を保持（画面遷移後も使用可能）
             console.log('🔐 AuthProvider: Firestoreからプロフィール情報を取得しました', {
               displayName: authUser.displayName,
-              photoURL: authUser.photoURL
+              photoURL: authUser.photoURL,
+              profile: userProfile
             });
           } else {
             console.log('🔐 AuthProvider: Firestoreにプロフィール情報がありません');
+            setUserProfile(null);
           }
         } catch (error) {
           console.error('🔐 AuthProvider: Firestoreからのプロフィール取得エラー:', error);
           // エラーが発生しても基本認証情報は使用可能
+          setUserProfile(null);
         }
 
         setUser(authUser);
       } else {
         setUser(null);
+        setUserProfile(null); // ← ログアウト時にプロフィール情報もクリア
       }
 
       setLoading(false);
@@ -169,6 +211,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Firebase Authを使用してログイン
       await signInWithEmailAndPassword(auth, email, password);
+
       console.log('🔐 ログイン成功');
     } catch (error: any) {
       console.error('🔐 ログインエラー:', error);
@@ -197,6 +240,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Firebase Authを使用してユーザー作成
       await createUserWithEmailAndPassword(auth, email, password);
+
       console.log('🔐 サインアップ成功');
     } catch (error: any) {
       console.error('🔐 サインアップエラー:', error);
@@ -222,6 +266,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Firebase Authを使用してログアウト
       await signOut(auth);
+
       console.log('🔐 ログアウト成功');
     } catch (error: any) {
       console.error('🔐 ログアウトエラー:', error);
@@ -244,18 +289,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * 
    * このオブジェクトには以下の情報が含まれます：
    * - ユーザー情報
+   * - プロフィール情報（画面遷移後も保持）
    * - ローディング状態
    * - エラー情報
    * - 認証関連の操作関数
    */
   const value: AuthContextType = {
     user,
+    userProfile,
     loading,
     error,
     login,
     signup,
     logout,
     clearError,
+    refreshUserProfile,
   };
 
   return (
@@ -278,7 +326,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
  * 
  * @example
  * ```typescript
- * const { user, login, logout } = useAuth();
+ * const { user, userProfile, login, logout } = useAuth();
  * ```
  */
 export function useAuth(): AuthContextType {

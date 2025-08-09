@@ -9,7 +9,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
  * カスタムヘッダーコンポーネント
  * ロゴをタップするとログイン状態に応じて遷移先が変わる
  */
-export default function CustomHeader({ title }: { title: string }) {
+export default function CustomHeader({ title, onBack }: { title: string; onBack?: () => void }) {
   const router = useRouter();
   const { user } = useAuth(); // userがnullかどうかでログイン判定
   const isDev = isDevMode(); // DEVモードかどうかを判定
@@ -25,12 +25,18 @@ export default function CustomHeader({ title }: { title: string }) {
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={handleLogoPress}>
-        <Text style={styles.logo}>
-          Under25Match
-          {isDev && <Text style={styles.devBadge}> DEV</Text>}
-        </Text>
-      </TouchableOpacity>
+      {onBack ? (
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={handleLogoPress}>
+          <Text style={styles.logo}>
+            Under25Match
+            {isDev && <Text style={styles.devBadge}> DEV</Text>}
+          </Text>
+        </TouchableOpacity>
+      )}
       <Text style={styles.title}>{title}</Text>
       <View style={{ width: 80 }} /> {/* 右側の余白 */}
     </View>
@@ -60,5 +66,13 @@ const styles = StyleSheet.create({
     color: '#FFD700', // 金色
     fontWeight: 'bold',
     fontSize: 12,
+  },
+  backButton: {
+    padding: 8,
+  },
+  backButtonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
