@@ -67,11 +67,6 @@ export const AccountInfo: React.FC<AccountInfoProps> = ({
           </Text>
         )}
       </View>
-
-      {/* 編集アイコン（カードの右端） */}
-      <View style={SettingsStyles.editIcon}>
-        <Text style={SettingsStyles.editIconText}>⚙️</Text>
-      </View>
     </TouchableOpacity>
   );
 }; 

@@ -1,6 +1,7 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LogoutButton } from '@components/settings/LogoutButton';
+import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
@@ -8,7 +9,7 @@ import { useStrictAuth } from '@hooks/useStrictAuth';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 設定画面コンポーネント - ユーザー設定とアプリ情報を管理
@@ -31,34 +32,49 @@ const SettingsScreen = () => {
 
   // プライバシーポリシーの表示
   const handlePrivacyPolicy = () => {
-    Alert.alert(
-      'プライバシーポリシー',
-      'プライバシーポリシーは現在準備中です。',
-      [{ text: 'OK' }]
-    );
+    router.push('/(main)/privacy-policy');
   };
 
   // 利用規約の表示
   const handleTermsOfService = () => {
-    Alert.alert(
-      '利用規約',
-      '利用規約は現在準備中です。',
-      [{ text: 'OK' }]
-    );
+    router.push('/(main)/terms-of-service');
   };
 
   // お問い合わせの表示
   const handleContact = () => {
-    Alert.alert(
-      'お問い合わせ',
-      'お問い合わせは現在準備中です。\nサポートにお問い合わせください。',
-      [{ text: 'OK' }]
-    );
+    router.push('/(main)/contact');
+  };
+
+  // お知らせの表示
+  const handleNotifications = () => {
+    router.push('/(main)/notifications');
   };
 
   // 本人確認の開始
   const handleVerification = () => {
     router.push('/(main)/verification');
+  };
+
+  // セールのタップ処理
+  const handleSalePress = (sale: any) => {
+    console.log('セールがタップされました:', sale);
+    if (sale && sale.id) {
+      try {
+        router.push(`/(main)/sales/${sale.id}`);
+      } catch (error) {
+        console.error('遷移エラー:', error);
+        // フォールバック: セール一覧画面に遷移
+        router.push('/(main)/sales');
+      }
+    } else {
+      console.error('セール情報が不正です:', sale);
+    }
+  };
+
+  // セール詳細画面への遷移
+  const handleSalesDetail = () => {
+    console.log('セール詳細画面への遷移を開始します');
+    router.push('/(main)/sales');
   };
 
   return (
@@ -83,6 +99,28 @@ const SettingsScreen = () => {
           <VerificationPrompt onPress={handleVerification} />
         )}
 
+        {/* セールカルーセル */}
+        <SalesCarousel onSalePress={handleSalePress} />
+
+        {/* セール詳細セクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>セール情報</Text>
+          <TouchableOpacity style={SettingsStyles.button} onPress={handleSalesDetail}>
+            <Text style={SettingsStyles.buttonText}>セール詳細</Text>
+            <Text style={SettingsStyles.buttonArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* お知らせセクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>お知らせ</Text>
+
+          {/* お知らせへのリンク */}
+          <TouchableOpacity style={SettingsStyles.button} onPress={handleNotifications}>
+            <Text style={SettingsStyles.buttonText}>お知らせ</Text>
+            <Text style={SettingsStyles.buttonArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* アプリ情報セクション */}
         <View style={SettingsStyles.section}>

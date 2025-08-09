@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { myProfileMock } from '../mock/myProfileMock';
 import { ProfileUser } from '../types/user';
 
 /**
@@ -31,12 +32,12 @@ export const useProfile = (uid: string) => {
 
         // Dev環境ではモックデータを使用
         if (__DEV__) {
-          // モックプロフィールデータ
+          // myProfileMockからデータを取得
           const mockProfile: ProfileUser = {
-            uid: 'my-user-id',
-            age: 25,
-            location: '東京都渋谷区',
-            isVerified: false, // 本人確認プロンプトのテスト用にfalseに変更
+            uid: myProfileMock.uid,
+            age: myProfileMock.age,
+            location: myProfileMock.location,
+            isVerified: myProfileMock.isVerified,
           };
 
           // 少し遅延を入れてローディング状態をシミュレート

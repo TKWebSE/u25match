@@ -78,7 +78,7 @@ export const myProfileMock: ProfileDetail = {
   ],
 
   // 本人確認済みフラグ
-  isVerified: true,
+  isVerified: false,
 
   // 編集可能フラグ
   isEditable: true,
