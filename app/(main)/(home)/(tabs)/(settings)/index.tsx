@@ -1,6 +1,8 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LogoutButton } from '@components/settings/LogoutButton';
+import { MembershipDisplay } from '@components/settings/MembershipDisplay';
+import { RemainingStats } from '@components/settings/RemainingStats';
 import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import { useAuth } from '@contexts/AuthContext';
@@ -77,6 +79,12 @@ const SettingsScreen = () => {
     router.push('/(main)/sales');
   };
 
+  // 会員アップグレードの表示
+  const handleUpgradePress = () => {
+    console.log('会員アップグレードをタップしました');
+    router.push('/(main)/membership-registration');
+  };
+
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
       {/* カスタムヘッダー */}
@@ -94,6 +102,22 @@ const SettingsScreen = () => {
             onPress={handleUserProfilePress}
           />
         </View>
+
+        {/* 会員種別セクション */}
+        <View style={SettingsStyles.section}>
+          <MembershipDisplay
+            membershipType="free"
+            onUpgradePress={handleUpgradePress}
+          />
+        </View>
+
+        {/* 残り数量セクション */}
+        <RemainingStats
+          remainingLikes={profile?.remainingLikes ?? 10}
+          remainingBoosts={profile?.remainingBoosts ?? 5}
+          remainingPoints={profile?.remainingPoints ?? 100}
+        />
+
         {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
         {profile?.isVerified === false && (
           <VerificationPrompt onPress={handleVerification} />

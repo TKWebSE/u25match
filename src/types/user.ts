@@ -37,6 +37,7 @@ export interface AuthUser {
  * この型はプロフィール情報に特化した情報を含みます：
  * - 年齢、出身地、認証状態など
  * - 認証とは独立した情報
+ * - 残いいね数、残ブースト数、残ポイント数など
  */
 export interface ProfileUser {
   /** ユーザーの一意識別子 */
@@ -47,6 +48,12 @@ export interface ProfileUser {
   location?: string;
   /** 本人確認済みかどうか */
   isVerified?: boolean;
+  /** 残いいね数 */
+  remainingLikes?: number;
+  /** 残ブースト数 */
+  remainingBoosts?: number;
+  /** 残ポイント数 */
+  remainingPoints?: number;
 }
 
 /**
