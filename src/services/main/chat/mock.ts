@@ -1,7 +1,7 @@
 // src/services/main/chat/mock.ts
 // 🎭 チャットサービスのモック実装
 
-import { mockChatMessages } from '../../../mock/chatMock';
+import { mockChatMessages, mockChatRooms } from '../../../mock/chatMock';
 import { BaseService } from '../../base/BaseService';
 import { ChatResponse, ChatService } from './types';
 
@@ -56,6 +56,23 @@ export class MockChatService extends BaseService implements ChatService {
     return {
       success: true,
       data: newChatRoom,
+    };
+  }
+
+  /**
+   * 📋 チャット一覧を取得（モック）
+   * @param userId ユーザーID
+   * @returns チャットルーム一覧
+   */
+  async getChatRooms(userId: string): Promise<ChatResponse> {
+    await this.simulateNetworkDelay();
+    // モックデータから該当するユーザーが参加しているチャットルームを取得
+    const userChatRooms = mockChatRooms.filter(room =>
+      room.participants.includes(userId)
+    );
+    return {
+      success: true,
+      data: userChatRooms,
     };
   }
 } 

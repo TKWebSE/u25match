@@ -37,4 +37,7 @@ export interface ChatService {
 
   // チャットルームを作成
   createChat(participants: string[]): Promise<ChatResponse>;
+
+  // チャット一覧を取得
+  getChatRooms(userId: string): Promise<ChatResponse>;
 } 

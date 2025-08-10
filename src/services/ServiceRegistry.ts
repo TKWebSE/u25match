@@ -3,6 +3,8 @@
 
 import { createAuthService } from './auth/factory';
 import { AuthService } from './auth/types';
+import { createChatService } from './main/chat/factory';
+import { ChatService } from './main/chat/types';
 import { createProfileService } from './profile/factory';
 import { ProfileDetailService } from './profile/types';
 
@@ -41,9 +43,11 @@ export class ServiceRegistry {
     // プロフィール詳細サービスの登録
     this.register('profileDetail', createProfileService());
 
+    // チャットサービスの登録
+    this.register('chat', createChatService());
+
     // 他のサービスもここで登録
     // this.register('user', createUserService());
-    // this.register('chat', createChatService());
   }
 
   /**
@@ -94,6 +98,23 @@ export class ServiceRegistry {
    */
   get profileDetail(): ProfileDetailService {
     return this.get<ProfileDetailService>('profileDetail');
+  }
+
+  /**
+   * 💬 チャットサービスの型安全な取得
+   * 型推論が効くため、より安全に使用可能
+   * @returns ChatServiceインスタンス
+   */
+  get chat(): ChatService {
+    return this.get<ChatService>('chat');
+  }
+
+  /**
+   * 💬 チャットサービスの取得（静的メソッド）
+   * @returns ChatServiceインスタンス
+   */
+  static getChatService(): ChatService {
+    return ServiceRegistry.getInstance().chat;
   }
 }
 
