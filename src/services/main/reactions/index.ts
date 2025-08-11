@@ -25,6 +25,10 @@ export const sendSuperLike = (targetUserId: string) => {
   return reactionsService.sendSuperLike(targetUserId);
 };
 
+export const leaveFootprint = (targetUserId: string) => {
+  return reactionsService.leaveFootprint(targetUserId);
+};
+
 export const getReactions = (userId: string) => {
   return reactionsService.getReactions(userId);
 };

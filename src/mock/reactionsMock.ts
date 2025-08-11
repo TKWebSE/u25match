@@ -32,6 +32,27 @@ export const mockReactions = [
     timestamp: new Date(Date.now() - 1000 * 60 * 5),
     message: 'あなたが気になります！',
   },
+  {
+    id: 'reaction_5',
+    fromUserId: 'user5',
+    toUserId: 'current_user',
+    type: 'footprint' as const,
+    timestamp: new Date(Date.now() - 1000 * 60 * 2),
+  },
+  {
+    id: 'reaction_6',
+    fromUserId: 'user6',
+    toUserId: 'current_user',
+    type: 'footprint' as const,
+    timestamp: new Date(Date.now() - 1000 * 60 * 10),
+  },
+  {
+    id: 'reaction_7',
+    fromUserId: 'user7',
+    toUserId: 'current_user',
+    type: 'like' as const,
+    timestamp: new Date(Date.now() - 1000 * 60 * 60),
+  },
 ];
 
 export const mockSentReactions = [
@@ -49,5 +70,12 @@ export const mockSentReactions = [
     type: 'super_like' as const,
     timestamp: new Date(Date.now() - 1000 * 60 * 10),
     message: 'あなたが気になります！',
+  },
+  {
+    id: 'sent_reaction_3',
+    fromUserId: 'current_user',
+    toUserId: 'user7',
+    type: 'footprint' as const,
+    timestamp: new Date(Date.now() - 1000 * 60 * 5),
   },
 ]; 

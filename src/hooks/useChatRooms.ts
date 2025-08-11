@@ -15,14 +15,19 @@ export const useChatRooms = () => {
   const fetchChatRooms = useCallback(async () => {
     try {
       setError(null);
+      console.log('🔍 チャットルーム取得開始 - ユーザーID:', user.uid);
       const response = await chatService.getChatRooms(user.uid);
+      console.log('🔍 チャットルーム取得結果:', response);
 
       if (response.success && response.data) {
+        console.log('✅ チャットルーム取得成功:', response.data);
         setChatRooms(response.data);
       } else {
+        console.log('❌ チャットルーム取得失敗:', response.error);
         setError(response.error || 'チャット一覧の取得に失敗しました');
       }
     } catch (err) {
+      console.log('💥 チャットルーム取得エラー:', err);
       setError('チャット一覧の取得中にエラーが発生しました');
       console.error('Error fetching chat rooms:', err);
     } finally {

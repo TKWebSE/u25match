@@ -10,3 +10,6 @@ export * from './explore';
 // 共通コンポーネント
 export * from './common';
 
+// リアクション関連コンポーネント
+export * from './reactions';
+

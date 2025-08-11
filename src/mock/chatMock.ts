@@ -13,7 +13,7 @@ export const mockChatMessages = [
   {
     id: 'msg_2',
     chatId: 'chat_123',
-    senderId: 'user1',
+    senderId: 'my-user-id',
     content: 'はじめまして！私も音楽が好きです。',
     timestamp: new Date(Date.now() - 1000 * 60 * 25),
     type: 'text' as const,
@@ -45,7 +45,7 @@ export const mockChatMessages = [
   {
     id: 'msg_6',
     chatId: 'chat_789',
-    senderId: 'user1',
+    senderId: 'my-user-id',
     content: '明日は空いています！どこかおすすめの場所はありますか？',
     timestamp: new Date(Date.now() - 1000 * 60 * 45),
     type: 'text' as const,
@@ -61,7 +61,7 @@ export const mockChatMessages = [
   {
     id: 'msg_8',
     chatId: 'chat_101',
-    senderId: 'user1',
+    senderId: 'my-user-id',
     content: 'こちらこそ！またお会いできるのを楽しみにしています。',
     timestamp: new Date(Date.now() - 1000 * 60 * 175),
     type: 'text' as const,
@@ -77,7 +77,7 @@ export const mockChatMessages = [
   {
     id: 'msg_10',
     chatId: 'chat_202',
-    senderId: 'user1',
+    senderId: 'my-user-id',
     content: 'ありがとうございます！とても素敵な写真ですね。',
     timestamp: new Date(Date.now() - 1000 * 60 * 295),
     type: 'text' as const,
@@ -87,35 +87,35 @@ export const mockChatMessages = [
 export const mockChatRooms = [
   {
     id: 'chat_123',
-    participants: ['user1', 'user2'],
+    participants: ['my-user-id', 'user2'],
     lastMessage: mockChatMessages[2], // 最新のメッセージ
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1日前
     updatedAt: new Date(Date.now() - 1000 * 60 * 20),
   },
   {
     id: 'chat_456',
-    participants: ['user1', 'user3'],
+    participants: ['my-user-id', 'user3'],
     lastMessage: mockChatMessages[3],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2日前
     updatedAt: new Date(Date.now() - 1000 * 60 * 120),
   },
   {
     id: 'chat_789',
-    participants: ['user1', 'user4'],
+    participants: ['my-user-id', 'user4'],
     lastMessage: mockChatMessages[5],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72), // 3日前
     updatedAt: new Date(Date.now() - 1000 * 60 * 45),
   },
   {
     id: 'chat_101',
-    participants: ['user1', 'user5'],
+    participants: ['my-user-id', 'user5'],
     lastMessage: mockChatMessages[7],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 96), // 4日前
     updatedAt: new Date(Date.now() - 1000 * 60 * 175),
   },
   {
     id: 'chat_202',
-    participants: ['user1', 'user6'],
+    participants: ['my-user-id', 'user6'],
     lastMessage: mockChatMessages[9],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 120), // 5日前
     updatedAt: new Date(Date.now() - 1000 * 60 * 295),

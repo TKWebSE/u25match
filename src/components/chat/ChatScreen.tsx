@@ -1,9 +1,10 @@
-import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { useStrictAuth } from "@hooks/useStrictAuth";
+import { ChatMessage } from "@services/main/chat/types";
+import { ServiceRegistry } from "@services/ServiceRegistry";
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-import { auth, db } from "../../../firebaseConfig";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
 import ChatInput from "./ChatInput";
-import ChatList, { ChatMessageType } from "./ChatList";
+import ChatList from "./ChatList";
 
 type ChatScreenProps = {
   chatUid: string;
@@ -11,46 +12,54 @@ type ChatScreenProps = {
 };
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
-  const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // チャットメッセージをDBから取得
+  const user = useStrictAuth();
+  const chatService = ServiceRegistry.getChatService();
+
+  // チャットメッセージを取得
   useEffect(() => {
     if (!chatUid) return;
 
-    const q = query(
-      collection(db, "chats", chatUid, "messages"),
-      orderBy("createdAt", "asc")
-    );
+    const fetchMessages = async () => {
+      try {
+        setLoading(true);
+        const response = await chatService.getMessages(chatUid);
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs: ChatMessageType[] = [];
-      snapshot.forEach((doc) => {
-        msgs.push({ id: doc.id, ...doc.data() } as ChatMessageType);
-      });
-      setMessages(msgs);
-    }, (error) => {
-      console.error("チャットメッセージの取得エラー:", error);
-      onError?.("メッセージの取得に失敗しました");
-    });
+        if (response.success && response.data) {
+          setMessages(response.data);
+        } else {
+          onError?.(response.error || 'メッセージの取得に失敗しました');
+        }
+      } catch (error) {
+        console.error("チャットメッセージの取得エラー:", error);
+        onError?.("メッセージの取得に失敗しました");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return unsubscribe;
-  }, [chatUid, onError]);
+    fetchMessages();
+  }, [chatUid, chatService, onError]);
 
   // メッセージ送信
   const handleSend = async () => {
-    if (!input.trim() || sending || !auth.currentUser) return;
+    if (!input.trim() || sending) return;
 
     setSending(true);
     try {
-      await addDoc(collection(db, "chats", chatUid, "messages"), {
-        text: input,
-        createdAt: serverTimestamp(),
-        senderId: auth.currentUser.uid,
-        senderName: auth.currentUser.displayName || "",
-      });
-      setInput("");
+      const response = await chatService.sendMessage(chatUid, input);
+
+      if (response.success && response.data) {
+        // 新しいメッセージをリストに追加
+        setMessages(prev => [...prev, response.data]);
+        setInput("");
+      } else {
+        onError?.(response.error || '送信に失敗しました');
+      }
     } catch (error) {
       console.error("メッセージ送信エラー:", error);
       onError?.("送信に失敗しました");
@@ -59,7 +68,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
     }
   };
 
-  const currentUserId = auth.currentUser?.uid || "";
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>メッセージを読み込み中...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -70,14 +85,14 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
       <View style={styles.chatContainer}>
         <ChatList
           messages={messages}
-          currentUserId={currentUserId}
+          currentUserId={user.uid}
         />
         <ChatInput
           value={input}
           onChangeText={setInput}
           onSend={handleSend}
           sending={sending}
-          disabled={!auth.currentUser}
+          disabled={false}
         />
       </View>
     </KeyboardAvoidingView>
@@ -91,6 +106,16 @@ const styles = StyleSheet.create({
   },
   chatContainer: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
   },
 });
 

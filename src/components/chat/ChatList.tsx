@@ -1,15 +1,8 @@
+import { ChatMessage as ChatMessageType } from "@services/main/chat/types";
 import React, { useEffect, useRef } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import ChatMessage from "./ChatMessage";
+import ChatMessageComponent from "./ChatMessage";
 import EmptyChatMessage from "./EmptyChatMessage";
-
-export type ChatMessageType = {
-  id: string;
-  text: string;
-  createdAt: any;
-  senderId: string;
-  senderName?: string;
-};
 
 type ChatListProps = {
   messages: ChatMessageType[];
@@ -42,13 +35,13 @@ const ChatList: React.FC<ChatListProps> = ({
 
   const renderMessage = ({ item }: { item: ChatMessageType }) => {
     const isMe = item.senderId === currentUserId;
-    const createdAt = item.createdAt?.toDate ? item.createdAt.toDate() : null;
+    const createdAt = item.timestamp;
 
     return (
-      <ChatMessage
-        text={item.text}
+      <ChatMessageComponent
+        text={item.content}
         createdAt={createdAt}
-        senderName={item.senderName}
+        senderName={item.senderId === currentUserId ? '自分' : '相手'}
         isMe={isMe}
       />
     );

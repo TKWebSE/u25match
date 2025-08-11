@@ -14,8 +14,10 @@ const ChatListScreenWrapper = () => {
   const { chatRooms, loading, refreshing, error, refreshChatRooms } = useChatRooms();
 
   const handleChatPress = (chatRoom: ChatRoom) => {
+    console.log('🖱️ チャットタップ:', chatRoom);
     // チャット詳細画面に遷移
-    router.push(`/(main)/(home)/(tabs)/(chat)/${chatRoom.id}`);
+    console.log('🚀 遷移先:', chatRoom.id);
+    router.push(`/(main)/(home)/(tabs)/(chat)/${chatRoom.id}` as any);
   };
 
   const handleRefresh = () => {

@@ -18,6 +18,17 @@ const femaleNames = [
   'かおりん', 'みきりん', 'あきりん', 'ゆきりん', 'まゆりん', 'はるりん', 'あいりん', 'ゆいりん', 'りんりん', 'えみりん'
 ];
 
+// ユーザーの型定義
+interface User {
+  name: string;
+  age: number;
+  location: string;
+  imageUrl: string;
+  isOnline: boolean;
+  lastActiveAt: Date;
+  gender: 'male' | 'female';
+}
+
 // ランダムな年齢を生成（18-35歳）
 const getRandomAge = () => Math.floor(Math.random() * 18) + 18;
 
@@ -32,8 +43,8 @@ const getRandomLastActiveAt = () => {
 };
 
 // 60人分のユーザーデータを生成
-const generateUsers = () => {
-  const users = [];
+const generateUsers = (): User[] => {
+  const users: User[] = [];
 
   for (let i = 0; i < 60; i++) {
     const isMale = Math.random() > 0.5;
@@ -62,3 +73,5 @@ const generateUsers = () => {
 };
 
 export const users = generateUsers();
+export type { User };
+

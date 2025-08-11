@@ -66,7 +66,12 @@ export const SalesCarousel: React.FC<SalesCarouselProps> = ({ onSalePress }) => 
   const autoScrollIntervalRef = useRef<number | null>(null);
   const autoScrollTimeoutRef = useRef<number | null>(null);
 
-  console.log('SalesCarousel: onSalePress prop:', onSalePress);
+  const scrollToIndex = useCallback((index: number) => {
+    scrollViewRef.current?.scrollTo({
+      x: index * (CARD_WIDTH + CARD_MARGIN * 2),
+      animated: true,
+    });
+  }, []);
 
   // 自動スクロール機能
   const startAutoScroll = useCallback(() => {
@@ -81,7 +86,7 @@ export const SalesCarousel: React.FC<SalesCarouselProps> = ({ onSalePress }) => 
         return nextIndex;
       });
     }, 5000); // 5秒ごと
-  }, []);
+  }, [scrollToIndex]);
 
   const stopAutoScroll = useCallback(() => {
     if (autoScrollIntervalRef.current) {
@@ -104,7 +109,7 @@ export const SalesCarousel: React.FC<SalesCarouselProps> = ({ onSalePress }) => 
         clearTimeout(autoScrollTimeoutRef.current);
       }
     };
-  }, [isAutoScrolling, startAutoScroll, stopAutoScroll]);
+  }, [isAutoScrolling]); // startAutoScrollとstopAutoScrollを依存配列から削除
 
   const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
@@ -128,19 +133,9 @@ export const SalesCarousel: React.FC<SalesCarouselProps> = ({ onSalePress }) => 
   };
 
   const handleSalePress = (sale: SaleItem) => {
-    console.log('SalesCarousel: セールがタップされました:', sale);
     if (onSalePress) {
       onSalePress(sale);
-    } else {
-      console.log('SalesCarousel: onSalePressが定義されていません');
     }
-  };
-
-  const scrollToIndex = (index: number) => {
-    scrollViewRef.current?.scrollTo({
-      x: index * (CARD_WIDTH + CARD_MARGIN * 2),
-      animated: true,
-    });
   };
 
   const handleIndicatorPress = (index: number) => {

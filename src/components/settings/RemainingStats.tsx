@@ -1,12 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SectionTitle } from './SectionTitle';
 
 interface RemainingStatsProps {
   remainingLikes: number;
   remainingBoosts: number;
   remainingPoints: number;
+  onLikesPress: () => void;
+  onBoostsPress: () => void;
+  onPointsPress: () => void;
 }
 
 const { width } = Dimensions.get('window');
@@ -15,6 +18,9 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
   remainingLikes,
   remainingBoosts,
   remainingPoints,
+  onLikesPress,
+  onBoostsPress,
+  onPointsPress,
 }) => {
   return (
     <View style={styles.container}>
@@ -23,7 +29,7 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
         <SectionTitle title="残り数量" icon="✨" />
 
         {/* 残いいね数 */}
-        <View style={styles.statItem}>
+        <TouchableOpacity style={styles.statItem} onPress={onLikesPress} activeOpacity={0.7}>
           <LinearGradient
             colors={['#FF6B9D', '#FF8E53']}
             style={styles.statIcon}
@@ -39,10 +45,11 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
               <Text style={styles.unitText}>回</Text>
             </View>
           </View>
-        </View>
+          <Text style={styles.arrowText}>›</Text>
+        </TouchableOpacity>
 
         {/* 残ブースト数 */}
-        <View style={styles.statItem}>
+        <TouchableOpacity style={styles.statItem} onPress={onBoostsPress} activeOpacity={0.7}>
           <LinearGradient
             colors={['#4ECDC4', '#44A08D']}
             style={styles.statIcon}
@@ -58,10 +65,11 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
               <Text style={styles.unitText}>回</Text>
             </View>
           </View>
-        </View>
+          <Text style={styles.arrowText}>›</Text>
+        </TouchableOpacity>
 
         {/* 残ポイント数 */}
-        <View style={styles.statItem}>
+        <TouchableOpacity style={styles.statItem} onPress={onPointsPress} activeOpacity={0.7}>
           <LinearGradient
             colors={['#667eea', '#764ba2', '#667eea']}
             style={styles.statIcon}
@@ -77,7 +85,8 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
               <Text style={styles.unitText}>pt</Text>
             </View>
           </View>
-        </View>
+          <Text style={styles.arrowText}>›</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -109,6 +118,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     marginBottom: 8,
+    borderRadius: 12,
+    paddingHorizontal: 8,
   },
   statIcon: {
     width: 56,
@@ -155,5 +166,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#8E8E93',
     fontWeight: '500',
+  },
+  arrowText: {
+    fontSize: 20,
+    color: '#8E8E93',
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });

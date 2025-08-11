@@ -1,5 +1,6 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { AccountInfo } from '@components/settings/AccountInfo';
+import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
 import { MembershipDisplay } from '@components/settings/MembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
@@ -85,6 +86,30 @@ const SettingsScreen = () => {
     router.push('/(main)/membership-registration');
   };
 
+  // いいね購入画面への遷移
+  const handleLikesPurchase = () => {
+    console.log('いいね購入画面への遷移を開始します');
+    router.push('/(main)/purchase-likes');
+  };
+
+  // ブースト購入画面への遷移
+  const handleBoostsPurchase = () => {
+    console.log('ブースト購入画面への遷移を開始します');
+    router.push('/(main)/purchase-boosts');
+  };
+
+  // ポイント購入画面への遷移
+  const handlePointsPurchase = () => {
+    console.log('ポイント購入画面への遷移を開始します');
+    router.push('/(main)/purchase-points');
+  };
+
+  // いいね履歴画面への遷移
+  const handleLikesHistory = () => {
+    console.log('いいね履歴画面への遷移を開始します');
+    router.push('/(main)/likes-history');
+  };
+
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
       {/* カスタムヘッダー */}
@@ -116,6 +141,9 @@ const SettingsScreen = () => {
           remainingLikes={profile?.remainingLikes ?? 10}
           remainingBoosts={profile?.remainingBoosts ?? 5}
           remainingPoints={profile?.remainingPoints ?? 100}
+          onLikesPress={handleLikesPurchase}
+          onBoostsPress={handleBoostsPurchase}
+          onPointsPress={handlePointsPurchase}
         />
 
         {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
@@ -133,6 +161,12 @@ const SettingsScreen = () => {
             <Text style={SettingsStyles.buttonText}>セール詳細</Text>
             <Text style={SettingsStyles.buttonArrow}>›</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* いいね履歴セクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>いいね履歴</Text>
+          <LikesHistoryButton onPress={handleLikesHistory} />
         </View>
 
         {/* お知らせセクション */}
