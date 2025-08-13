@@ -1,14 +1,13 @@
 // app/(auth)/loginScreen.tsx
 // ログイン画面 - ユーザーの認証を行う
 import ScreenWrapper from '@components/common/ScreenWrapper';
-import { EXPLORE_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
+import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -29,7 +28,7 @@ export default function LoginScreen() {
   // エラーが変更されたらトーストで表示
   useEffect(() => {
     if (error) {
-      showErrorToast(error);
+      // エラーメッセージの表示を削除
       clearError();
     }
   }, [error, clearError]);
@@ -69,11 +68,7 @@ export default function LoginScreen() {
 
   // パスワードを忘れた場合の処理
   const handleForgotPassword = () => {
-    Alert.alert(
-      'パスワードを忘れた場合',
-      'パスワードのリセット機能は現在開発中です。\nサポートにお問い合わせください。',
-      [{ text: 'OK' }]
-    );
+    router.push(FORGOT_PASSWORD_SCREEN_PATH);
   };
 
   return (
@@ -82,6 +77,9 @@ export default function LoginScreen() {
         {/* ヘッダー部分 */}
         <Text style={styles.title}>ログイン</Text>
         <Text style={styles.subtitle}>アカウントにログインしてください</Text>
+
+        {/* 入力説明文 */}
+        <Text style={styles.inputDescription}>メールアドレスとパスワードを入力してください</Text>
 
         <View style={styles.form}>
           {/* メールアドレス入力フィールド */}
@@ -170,6 +168,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 48,
+    textAlign: 'center',
+  },
+  inputDescription: {
+    fontSize: 16,
+    color: '#000',
+    fontWeight: '700',
+    marginBottom: 24,
     textAlign: 'center',
   },
   form: {

@@ -27,6 +27,7 @@ interface User {
   isOnline: boolean;
   lastActiveAt: Date;
   gender: 'male' | 'female';
+  createdAt: Date; // 登録日時を追加
 }
 
 // ランダムな年齢を生成（18-35歳）
@@ -54,6 +55,18 @@ const generateUsers = (): User[] => {
     const location = getRandomCity();
     const lastActiveAt = getRandomLastActiveAt();
 
+    // 登録日時を設定（一番上は今日、他は過去）
+    let createdAt: Date;
+    if (i === 0) {
+      // 一番上に表示されるユーザーは今日登録
+      createdAt = new Date();
+    } else {
+      // 他のユーザーは過去1ヶ月以内に登録
+      const daysAgo = Math.floor(Math.random() * 30) + 1; // 1-30日前
+      createdAt = new Date();
+      createdAt.setDate(createdAt.getDate() - daysAgo);
+    }
+
     // ランダムユーザーAPIの画像ID（1-99）
     const imageId = Math.floor(Math.random() * 99) + 1;
     const gender = isMale ? 'men' : 'women';
@@ -66,6 +79,7 @@ const generateUsers = (): User[] => {
       isOnline: Math.random() > 0.7, // 30%の確率でオンライン
       lastActiveAt,
       gender: isMale ? 'male' : 'female',
+      createdAt,
     });
   }
 

@@ -1,6 +1,6 @@
 import CustomHeader from '@components/common/CustomHeader';
 import { ReactionList, ReactionTabs } from '@components/reactions';
-import { User, users } from '@mock/exploreUserMock';
+import { users } from '@mock/exploreUserMock';
 import { mockReactions } from '@mock/reactionsMock';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -30,7 +30,7 @@ const ReactionsScreen = () => {
   const currentReactions = activeTab === 'likes' ? likeReactions : footprintReactions;
 
   // リアクションカードがタップされた時の処理
-  const handleReactionPress = useCallback((reaction: Reaction, user: User) => {
+  const handleReactionPress = useCallback((reaction: Reaction, user: import('@mock/exploreUserMock').User) => {
     // どちらのタブでも、リアクションを送ったユーザーのプロフィールに遷移
     // いいね: 他のユーザーから自分へのリアクション
     // 足あと: 他のユーザーが自分のプロフィールに残した足あと

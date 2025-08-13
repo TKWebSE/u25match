@@ -20,6 +20,7 @@ interface User {
   isOnline: boolean;
   lastActiveAt: Date;
   gender: 'male' | 'female';
+  createdAt: Date;
 }
 
 interface ReactionListProps {
@@ -41,24 +42,16 @@ const ReactionList: React.FC<ReactionListProps> = ({
 }) => {
   const { width } = useWindowDimensions();
 
-  // 最小カードサイズを定義
-  const MIN_CARD_WIDTH = 140; // 最小カード幅
-
-  // 極端に小さな画面でのエラーを防ぐ
-  const safeWidth = Math.max(width, 320); // 最小320pxを確保
-
   // 画面サイズに応じて列数を動的に調整
   const getResponsiveLayout = () => {
-    const availableWidth = Math.max(safeWidth - 48, 280); // 最小幅を確保
-
     // 画面幅に基づいて列数を決定
     let columns;
-    if (safeWidth <= 570) {
-      columns = 1; // 480×837のトグルデバイスシミュレーション
-    } else if (safeWidth <= 960) {
-      columns = 2; // 570px超
-    } else if (safeWidth <= 1200) {
-      columns = 3; // 960px超
+    if (width <= 570) {
+      columns = 1; // 小さい画面
+    } else if (width <= 960) {
+      columns = 2; // 中程度の画面
+    } else if (width <= 1200) {
+      columns = 3; // 大きい画面
     } else {
       columns = 4; // 最大4列
     }
@@ -67,6 +60,7 @@ const ReactionList: React.FC<ReactionListProps> = ({
   };
 
   const columns = getResponsiveLayout();
+
   const renderReactionCard = ({ item }: { item: Reaction }) => {
     // どちらのタブでも、リアクションを送ったユーザーのIDを使用
     // いいね: 他のユーザーから自分へのリアクション
@@ -120,11 +114,12 @@ const ReactionList: React.FC<ReactionListProps> = ({
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 8,
+    paddingHorizontal: 16, // 左端のパディングを追加
     minHeight: '100%',
   },
   row: {
-    justifyContent: 'space-between', // 行内のカードを均等配置
-    paddingHorizontal: 16,
+    justifyContent: 'flex-start', // 行内のカードを左寄せに変更
+    gap: 12, // カード間の間隔を追加
   },
   emptyState: {
     flex: 1,

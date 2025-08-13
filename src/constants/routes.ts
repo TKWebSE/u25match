@@ -1,9 +1,10 @@
 // src/constants/routes.ts
 
 // 認証
-export const ENTRY_SCREEN_PATH = '/EntryScreen';
-export const LOGIN_SCREEN_PATH = '/LoginScreen';
-export const SIGN_UP_SCREEN_PATH = '/SignUpScreen';
+export const ENTRY_SCREEN_PATH = '/entryScreen';
+export const LOGIN_SCREEN_PATH = '/loginScreen';
+export const SIGN_UP_SCREEN_PATH = '/signUpScreen';
+export const FORGOT_PASSWORD_SCREEN_PATH = '/forgotPasswordScreen';
 
 // メイン（ユーザー探索）
 export const EXPLORE_SCREEN_PATH = "/(main)/(home)/(tabs)/(explore)";

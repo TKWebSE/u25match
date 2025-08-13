@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type ChatInputProps = {
   value: string;
@@ -18,6 +18,16 @@ const ChatInput: React.FC<ChatInputProps> = ({
   disabled = false,
   placeholder = "メッセージを入力"
 }) => {
+  // WebでCtrl+Enter同時押しで送信するためのキーボードイベントハンドラー
+  const handleKeyPress = (e: any) => {
+    if (Platform.OS === 'web' && e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      if (value.trim() && !sending && !disabled) {
+        onSend();
+      }
+    }
+  };
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -25,9 +35,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        placeholderTextColor="#999999"
         editable={!sending && !disabled}
         multiline
         maxLength={1000}
+        onKeyPress={handleKeyPress}
       />
       <TouchableOpacity
         style={[styles.sendButton, (!value.trim() || sending || disabled) && styles.sendButtonDisabled]}

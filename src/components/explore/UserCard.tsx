@@ -10,6 +10,7 @@ interface User {
   imageUrl: string;
   isOnline: boolean;
   lastActiveAt: Date;
+  createdAt?: Date; // 登録日を追加
 }
 
 interface UserCardProps {
@@ -20,6 +21,7 @@ interface UserCardProps {
 const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const { width } = useWindowDimensions();
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const newLabelAnim = useRef(new Animated.Value(0)).current; // NEWラベル用のアニメーション
 
   // 最小カードサイズを定義
   const MIN_CARD_WIDTH = 140; // 最小カード幅
@@ -62,6 +64,14 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const onlineStatusIcon = getOnlineStatusIcon(user.lastActiveAt);
   const isOnline = onlineStatus === '🟢 オンライン';
 
+  // 登録1週間以内かどうかを判定
+  const isNewUser = () => {
+    if (!user.createdAt) return false;
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    return user.createdAt > oneWeekAgo;
+  };
+
   useEffect(() => {
     // 控えめなエントランスアニメーション
     Animated.timing(scaleAnim, {
@@ -69,6 +79,24 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       duration: 300,
       useNativeDriver: true,
     }).start();
+
+    // NEWラベルのアニメーション（新規ユーザーの場合のみ）
+    if (isNewUser()) {
+      Animated.sequence([
+        Animated.timing(newLabelAnim, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+        Animated.spring(newLabelAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 200,
+          friction: 8,
+          delay: 200, // カードのアニメーション後に開始
+        }),
+      ]).start();
+    }
   }, []);
 
   const handlePressIn = () => {
@@ -138,12 +166,39 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       borderWidth: 3,
       borderColor: colors.white,
     },
+    newLabel: {
+      position: 'absolute',
+      top: spacing.sm,
+      left: spacing.sm,
+      backgroundColor: '#FF6B6B', // 目立つ赤色
+      paddingHorizontal: spacing.lg, // 横のパディングをさらに増加
+      paddingVertical: spacing.base, // 縦のパディングをさらに増加
+      borderRadius: borderRadius.base, // 角丸を少し大きく
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 3, // 影を少し強く
+      },
+      shadowOpacity: 0.3, // 影の透明度を上げる
+      shadowRadius: 4.65, // 影の範囲を広げる
+      elevation: 8, // Androidの影を強く
+      borderWidth: 2, // 白い境界線を追加
+      borderColor: '#FFFFFF',
+    },
+    newLabelText: {
+      color: colors.white,
+      fontSize: typography.base, // フォントサイズをさらに大きく
+      fontWeight: typography.bold,
+      textAlign: 'center',
+      letterSpacing: 0.5, // 文字間隔を少し広げる
+    },
     cardContent: {
       padding: spacing.base,
     },
     infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
       gap: spacing.sm,
     },
     userName: {
@@ -161,7 +216,8 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     },
     userLocation: {
       fontSize: typography.base,
-      color: colors.textSecondary,
+      fontWeight: typography.semibold, // 年齢と同じ太さに変更
+      color: colors.textPrimary, // 年齢と同じ濃さに変更
     },
     onlineStatusIcon: {
       fontSize: typography.sm,
@@ -186,6 +242,24 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
         <View style={styles.imageContainer}>
           <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
           {isOnline && <View style={styles.onlineIndicator} />}
+          {isNewUser() && (
+            <Animated.View
+              style={[
+                styles.newLabel,
+                {
+                  opacity: newLabelAnim,
+                  transform: [{
+                    translateY: newLabelAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [10, 0],
+                    })
+                  }],
+                },
+              ]}
+            >
+              <Text style={styles.newLabelText}>NEW</Text>
+            </Animated.View>
+          )}
         </View>
 
         <View style={styles.cardContent}>

@@ -18,8 +18,8 @@ export function showSuccessToast(message: string) {
 export function showErrorToast(message: string) {
   Toast.show({
     type: 'error',
-    text1: 'エラー',
-    text2: message,
+    text1: message,
+    // text2: message,
   });
 }
 

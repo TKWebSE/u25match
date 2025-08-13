@@ -107,7 +107,7 @@ export default function SignUpScreen() {
     <ScreenWrapper>
       <View style={styles.container}>
         {/* ヘッダー部分 */}
-        <Text style={styles.title}>アカウント新規登録 ✨</Text>
+        <Text style={styles.title}>アカウント新規登録</Text>
         <Text style={styles.subtitle}>新しいアカウントを作成してください</Text>
 
         <View style={styles.form}>

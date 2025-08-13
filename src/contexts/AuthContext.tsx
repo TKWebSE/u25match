@@ -17,7 +17,7 @@
  * }
  * ```
  */
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../../firebaseConfig';
 import { mockAuthUser } from '../mock/authMock';
@@ -49,6 +49,8 @@ type AuthContextType = {
   signup: (email: string, password: string) => Promise<void>;
   /** ログアウト関数 */
   logout: () => Promise<void>;
+  /** パスワードリセット関数 */
+  resetPassword: (email: string) => Promise<void>;
   /** エラーをクリアする関数 */
   clearError: () => void;
   /** プロフィール情報を更新する関数 */
@@ -276,6 +278,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /**
+   * パスワードリセット関数
+   * 
+   * 指定されたメールアドレスにパスワードリセットメールを送信します。
+   * 
+   * @param email - パスワードリセット対象のメールアドレス
+   * @throws {Error} パスワードリセットに失敗した場合
+   */
+  const resetPassword = async (email: string) => {
+    try {
+      setError(null);
+      console.log('🔐 パスワードリセット試行:', { email });
+
+      // Firebase Authを使用してパスワードリセットメールを送信
+      await sendPasswordResetEmail(auth, email);
+
+      console.log('🔐 パスワードリセットメール送信成功');
+    } catch (error: any) {
+      console.error('🔐 パスワードリセットエラー:', error);
+      setError(error.message || 'パスワードリセットに失敗しました');
+      throw error;
+    }
+  };
+
+  /**
    * エラーをクリアする関数
    * 
    * エラーメッセージをリセットします。
@@ -302,6 +328,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login,
     signup,
     logout,
+    resetPassword,
     clearError,
     refreshUserProfile,
   };

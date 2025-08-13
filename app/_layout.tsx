@@ -68,17 +68,25 @@ function AuthGate() {
 
   // 未認証の場合 - 認証が必要な画面へのアクセス制御
   if (!user) {
-    // 認証関連の画面はそのまま表示（ログイン、サインアップ、エントリー画面）
+    // 認証関連の画面はそのまま表示（ログイン、サインアップ、エントリー画面、パスワードリセット画面）
     if (pathname === '/' ||
       pathname === '/(auth)/loginScreen' ||
-      pathname === '/(auth)/signUpScreen') {
+      pathname === '/(auth)/signUpScreen' ||
+      pathname === '/(auth)/forgotPasswordScreen') {
       return <Slot />;
     }
     // その他の画面はエントリー画面にリダイレクト
     return <EntryScreen />;
   }
 
-  // 認証済みの場合 - メインアプリの表示
+  // 認証済みの場合 - 認証画面へのアクセスも許可
+  if (pathname === '/(auth)/loginScreen' ||
+    pathname === '/(auth)/signUpScreen' ||
+    pathname === '/(auth)/forgotPasswordScreen') {
+    return <Slot />;
+  }
+
+  // メインアプリの表示
   return <Slot />;
 }
 
