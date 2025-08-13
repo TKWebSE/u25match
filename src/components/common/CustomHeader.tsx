@@ -33,8 +33,10 @@ export default function CustomHeader({ title, onBack }: { title: string; onBack?
         <TouchableOpacity onPress={handleLogoPress}>
           <Text style={styles.logo}>
             Under25Match
-            {isDev && <Text style={styles.devBadge}> DEV</Text>}
           </Text>
+          {isDev && (
+            <Text style={styles.devBadge}> DEV</Text>
+          )}
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{title}</Text>

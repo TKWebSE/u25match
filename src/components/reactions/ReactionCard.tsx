@@ -150,14 +150,18 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress }) 
         {/* ユーザー情報 - explore画面と同じ表示 */}
         <View style={styles.cardContent}>
           <View style={styles.infoRow}>
-            <Text style={styles.onlineStatusIcon}>
-              {getReactionIcon()}
-            </Text>
+            <View style={styles.onlineStatusContainer}>
+              <Text style={styles.onlineStatusIcon}>
+                {getReactionIcon()}
+              </Text>
+            </View>
             <Text style={styles.userName} numberOfLines={1}>
               {user.age}歳
             </Text>
             <View style={styles.locationContainer}>
-              <Text style={styles.locationIcon}>📍</Text>
+              <View style={styles.locationIconContainer}>
+                <Text style={styles.locationIcon}>📍</Text>
+              </View>
               <Text style={styles.userLocation} numberOfLines={1}>
                 {user.location}
               </Text>
@@ -236,6 +240,12 @@ const styles = StyleSheet.create({
   userLocation: {
     fontSize: 14,
     color: '#666',
+  },
+  onlineStatusContainer: {
+    // Add styles for the container if needed
+  },
+  locationIconContainer: {
+    // Add styles for the container if needed
   },
 });
 

@@ -16,7 +16,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <View style={styles.searchIconContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+        </View>
         <TextInput
           style={styles.searchInput}
           placeholder={placeholder}
@@ -44,9 +46,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.base,
     ...shadows.base,
   },
+  searchIconContainer: {
+    marginRight: spacing.base,
+  },
   searchIcon: {
     fontSize: typography.lg,
-    marginRight: spacing.base,
     color: colors.textSecondary,
   },
   searchInput: {

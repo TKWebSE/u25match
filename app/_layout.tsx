@@ -96,12 +96,8 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <TamaguiProvider config={config}>
         <AuthProvider>
-          <View style={styles.container}>
-            <View style={styles.content}>
-              <AuthGate />
-              <Toast />
-            </View>
-          </View>
+          <AuthGate />
+          <Toast />
         </AuthProvider>
       </TamaguiProvider>
     </SafeAreaProvider>

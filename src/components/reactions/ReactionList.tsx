@@ -95,7 +95,7 @@ const ReactionList: React.FC<ReactionListProps> = ({
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
       numColumns={columns} // グリッドレイアウト用
-      columnWrapperStyle={styles.row} // 行のスタイル
+      columnWrapperStyle={columns > 1 ? styles.row : undefined} // 行のスタイル
       refreshControl={
         onRefresh ? (
           <RefreshControl

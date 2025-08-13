@@ -89,10 +89,9 @@ const ExploreScreen = () => {
         <FlatList
           data={filteredUsers}
           renderItem={renderUserItem}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item, index) => `${item.name}-${index}`}
           numColumns={columnCount}
           key={`flatlist-${columnCount}`}
-          columnWrapperStyle={columnCount > 1 ? styles.row : undefined}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmptyComponent}

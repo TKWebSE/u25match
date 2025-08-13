@@ -71,7 +71,9 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
           ]}
         >
           <View style={styles.likeIconBackground}>
-            <Text style={styles.tabIcon}>❤️</Text>
+            <View style={styles.tabIconContainer}>
+              <Text style={styles.tabIcon}>❤️</Text>
+            </View>
           </View>
           <Text style={[
             styles.tabText,
@@ -81,7 +83,9 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
           </Text>
           {activeTab === 'likes' && (
             <View style={[styles.activeIndicator, { backgroundColor: '#FFE5E5' }]}>
-              <Text style={styles.activeIndicatorText}>❤️</Text>
+              <View style={styles.activeIndicatorIconContainer}>
+                <Text style={styles.activeIndicatorText}>❤️</Text>
+              </View>
             </View>
           )}
         </Animated.View>
@@ -103,7 +107,9 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
           ]}
         >
           <View style={styles.footprintIconBackground}>
-            <Text style={styles.tabIcon}>👣</Text>
+            <View style={styles.tabIconContainer}>
+              <Text style={styles.tabIcon}>👣</Text>
+            </View>
           </View>
           <Text style={[
             styles.tabText,
@@ -113,7 +119,9 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
           </Text>
           {activeTab === 'footprints' && (
             <View style={[styles.activeIndicator, { backgroundColor: '#E5F4FF' }]}>
-              <Text style={styles.activeIndicatorText}>👣</Text>
+              <View style={styles.activeIndicatorIconContainer}>
+                <Text style={styles.activeIndicatorText}>👣</Text>
+              </View>
             </View>
           )}
         </Animated.View>
@@ -226,6 +234,16 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     marginRight: 6,
+  },
+  tabIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeIndicatorIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

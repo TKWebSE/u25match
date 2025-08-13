@@ -56,7 +56,7 @@ export default function TabsLayout() {
         name="explore"
         component={ExploreScreen}
         options={{
-          title: '探す',
+          title: 'Explore',
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialIcons
               name={focused ? "explore" : "search"}
@@ -72,7 +72,7 @@ export default function TabsLayout() {
         name="(chat)"
         component={ChatListScreen}
         options={{
-          title: 'チャット',
+          title: 'Chat',
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialIcons
               name={focused ? "chat" : "chat-bubble-outline"}
@@ -88,7 +88,7 @@ export default function TabsLayout() {
         name="reactions"
         component={ReactionsScreen}
         options={{
-          title: 'リアクション',
+          title: 'Reactions',
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialIcons
               name={focused ? "favorite" : "favorite-border"}
@@ -104,7 +104,7 @@ export default function TabsLayout() {
         name="settings"
         component={SettingsScreen}
         options={{
-          title: '設定',
+          title: 'Settings',
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialIcons
               name={focused ? "settings" : "tune"}

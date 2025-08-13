@@ -222,6 +222,14 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     onlineStatusIcon: {
       fontSize: typography.sm,
     },
+    onlineStatusContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    locationIconContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
   });
 
   return (
@@ -264,14 +272,18 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
 
         <View style={styles.cardContent}>
           <View style={styles.infoRow}>
-            <Text style={styles.onlineStatusIcon}>
-              {onlineStatusIcon}
-            </Text>
+            <View style={styles.onlineStatusContainer}>
+              <Text style={styles.onlineStatusIcon}>
+                {onlineStatusIcon}
+              </Text>
+            </View>
             <Text style={styles.userName} numberOfLines={1}>
               {user.age}歳
             </Text>
             <View style={styles.locationContainer}>
-              <Text style={styles.locationIcon}>📍</Text>
+              <View style={styles.locationIconContainer}>
+                <Text style={styles.locationIcon}>📍</Text>
+              </View>
               <Text style={styles.userLocation} numberOfLines={1}>
                 {user.location}
               </Text>
