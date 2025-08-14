@@ -2,6 +2,8 @@
 // タブナビゲーションのレイアウト - メインアプリの下部タブを管理
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { isWeb } from '@utils/platform'; // isWebをインポート
+import { Slot } from 'expo-router'; // Slotをインポート
 import { Platform, View } from 'react-native';
 
 import ChatListScreen from './(chat)/index';
@@ -12,6 +14,12 @@ import SettingsScreen from './(settings)/index';
 const Tab = createBottomTabNavigator();
 
 export default function TabsLayout() {
+  // Webの場合は下タブを非表示
+  if (isWeb) {
+    return <Slot />; // Web: 下タブなし、直接コンテンツ表示
+  }
+
+  // モバイルの場合のみ下タブを表示
   return (
     <Tab.Navigator
       screenOptions={{
