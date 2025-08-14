@@ -71,8 +71,11 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       {/* ロゴ・アプリ名エリア */}
       <View style={[styles.header]}>
-        <Text style={[styles.appName, { color: colors.text }]}>U25Match</Text>
-        <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>25歳以下限定マッチング</Text>
+        <View style={styles.spacer}></View>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.appName, { color: colors.text }]}>U25Match</Text>
+          <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>25歳以下限定マッチング</Text>
+        </View>
       </View>
 
       {/* ナビゲーションメニュー */}
@@ -100,7 +103,7 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
 
       {/* フッターエリア */}
       <View style={[styles.footer]}>
-        <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2024 U25Match</Text>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>© 2025 U25Match</Text>
       </View>
     </View>
   );
@@ -112,6 +115,18 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 24,
+    flexDirection: 'row', // ヘッダー内の要素を横並びに
+    alignItems: 'center', // 縦方向の中央揃え
+  },
+  menuToggleButton: {
+    padding: 8,
+    marginRight: 16,
+  },
+  menuToggleIcon: {
+    fontSize: 24,
+  },
+  titleContainer: {
+    flex: 1, // タイトルコンテナを伸ばして、メニューボタンとの間隔を確保
   },
   appName: {
     fontSize: 24,
@@ -153,5 +168,8 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 12,
     textAlign: 'center',
+  },
+  spacer: {
+    width: 60, // メニューボタンとタイトルの間に空白を追加
   },
 });
