@@ -81,11 +81,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   indicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginRight: 10,
+    width: 12,        // 10px → 12px に拡大
+    height: 12,       // 10px → 12px に拡大
+    borderRadius: 6,  // 5px → 6px に調整
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // より濃い色で視認性向上
+    marginRight: 12,  // 10px → 12px に間隔拡大
     // モダンなシャドウ
     shadowColor: '#000',
     shadowOffset: {
@@ -97,13 +97,16 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   activeIndicator: {
-    backgroundColor: '#FF6B9D', // モダンなピンク色
+    backgroundColor: '#6C63FF', // ピンク → アプリのメインカラーに統一
+    width: 16,                  // アクティブ時は少し大きく
+    height: 16,
+    borderRadius: 8,
     // アクティブ時のシャドウ強化
     shadowOpacity: 0.4,
     shadowRadius: 4,
     // グラデーション効果のためのボーダー
     borderWidth: 1,
-    borderColor: 'rgba(255, 107, 157, 0.3)',
+    borderColor: 'rgba(108, 99, 255, 0.3)', // メインカラーに合わせて調整
   },
   lastIndicator: {
     marginRight: 0,
