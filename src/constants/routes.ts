@@ -21,5 +21,8 @@ export const PROFILE_EDIT_SCREEN_PATH = '/(main)/profile/edit';
 // リアクション
 export const REACTIONS_SCREEN_PATH = '/(main)/(home)/(tabs)/(reactions)';
 
+// オススメ
+export const RECOMMENDATIONS_SCREEN_PATH = '/(main)/(home)/(tabs)/(recommendations)';
+
 // 設定
 export const SETTINGS_SCREEN_PATH = '/(main)/(home)/(tabs)/(settings)'; 

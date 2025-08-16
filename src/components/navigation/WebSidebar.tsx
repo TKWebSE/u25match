@@ -1,4 +1,5 @@
 import { Colors } from '@constants/Colors';
+import { RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { usePathname, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
 
   // ナビゲーションメニューアイテム
   const menuItems = [
+    { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
     { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(tabs)/(explore)' },
     { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(tabs)/(chat)' },
     { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(tabs)/(reactions)' },
@@ -41,6 +43,8 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
       setSelectedMenu('chat');
     } else if (currentPath.includes('/(tabs)/(reactions)')) {
       setSelectedMenu('reactions');
+    } else if (currentPath.includes('/(tabs)/(recommendations)')) {
+      setSelectedMenu('recommendations');
     } else if (currentPath.includes('/(tabs)/(settings)')) {
       setSelectedMenu('settings');
     } else if (currentPath.includes('/(tabs)/(explore)')) {
