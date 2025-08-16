@@ -1,5 +1,10 @@
 import { StyleSheet } from 'react-native';
 
+/**
+ * アプリ全体で使用するグローバルスタイル定義
+ * カラー、タイポグラフィ、スペーシング、ボーダーラジウス、シャドウの設定
+ */
+
 // カラーパレット
 export const colors = {
   // プライマリカラー
@@ -46,7 +51,7 @@ export const colors = {
   recentlyActive: '#FF9800',
 };
 
-// タイポグラフィ
+// タイポグラフィ設定
 export const typography = {
   // フォントサイズ
   xs: 10,
@@ -67,7 +72,7 @@ export const typography = {
   extrabold: '800' as const,
 };
 
-// スペーシング
+// スペーシング設定
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -80,7 +85,7 @@ export const spacing = {
   '5xl': 48,
 };
 
-// ボーダーラジウス
+// ボーダーラジウス設定
 export const borderRadius = {
   sm: 4,
   base: 8,
@@ -90,7 +95,7 @@ export const borderRadius = {
   full: 9999,
 };
 
-// シャドウ
+// シャドウ設定
 export const shadows = {
   sm: {
     shadowColor: colors.black,

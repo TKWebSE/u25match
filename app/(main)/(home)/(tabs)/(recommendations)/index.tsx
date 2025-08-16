@@ -1,110 +1,61 @@
 import ActionButtons from '@components/recommendations/ActionButtons';
-import SwipeableCard, { SwipeableCardRef } from '@components/recommendations/SwipeableCard';
+import { EmptyRecommendationsState } from '@components/recommendations/EmptyRecommendationsState';
+import SwipeableCard from '@components/recommendations/SwipeableCard';
+import { useRecommendations } from '@hooks/useRecommendations';
 import { colors, spacing, typography } from '@styles/globalStyles';
-import React, { useCallback, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
-// モックデータ
-const mockUsers = [
-  {
-    id: '1',
-    name: '田中花子',
-    age: 24,
-    location: '東京',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=600&fit=crop&crop=face',
-    bio: 'カフェ巡りと写真撮影が好きです。新しい出会いを楽しみにしています。',
-    tags: ['カフェ', '写真', '旅行'],
-    isOnline: true,
-    lastActiveAt: new Date(),
-  },
-  {
-    id: '2',
-    name: '佐藤美咲',
-    age: 26,
-    location: '大阪',
-    imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop&crop=face',
-    bio: '音楽ライブに行くのが大好き！一緒に楽しめる人を探しています。',
-    tags: ['音楽', 'ライブ', 'アート'],
-    isOnline: false,
-    lastActiveAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2時間前
-  },
-  {
-    id: '3',
-    name: '山田愛',
-    age: 23,
-    location: '福岡',
-    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop&crop=face',
-    bio: '料理とワインが趣味です。一緒に美味しいものを楽しみましょう。',
-    tags: ['料理', 'ワイン', 'グルメ'],
-    isOnline: true,
-    lastActiveAt: new Date(),
-  },
-];
-
+/**
+ * 推奨ユーザーを表示するメインスクリーン
+ * 現在のカードの裏に背景のように次のカードを配置
+ */
 export default function RecommendationsScreen() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [users, setUsers] = useState(mockUsers);
-  const [likedUsers, setLikedUsers] = useState<string[]>([]);
-  const [passedUsers, setPassedUsers] = useState<string[]>([]);
-  const cardRef = useRef<SwipeableCardRef>(null);
+  // 推奨ユーザーの状態と操作関数を取得
+  const {
+    currentIndex,
+    users,
+    currentUser,
+    handleLike,
+    handlePass,
+  } = useRecommendations();
 
-  // 表示するカードの数（現在のカード + 後ろのカード2枚）
-  const visibleCards = 3;
-  const startIndex = Math.max(0, currentIndex);
-  const endIndex = Math.min(users.length, startIndex + visibleCards);
+  // 次のカードを取得（存在する場合）
+  const nextUser = users[currentIndex + 1];
 
-  // 表示するカードの配列
-  const visibleUsers = users.slice(startIndex, endIndex);
-
-  // 現在のカードを取得
-  const currentUser = users[currentIndex];
-
-  const handleLike = useCallback((userId: string) => {
-    // currentUserが存在し、現在のカードのIDと一致する場合のみ処理
-    if (currentUser && userId === currentUser.id) {
-      console.log('Like:', userId);
-      setLikedUsers(prev => [...prev, userId]);
-      setCurrentIndex(prev => prev + 1);
-    }
-  }, [currentUser]);
-
-  const handlePass = useCallback((userId: string) => {
-    // currentUserが存在し、現在のカードのIDと一致する場合のみ処理
-    if (currentUser && userId === currentUser.id) {
-      console.log('Pass:', userId);
-      setPassedUsers(prev => [...prev, userId]);
-      setCurrentIndex(prev => prev + 1);
-    }
-  }, [currentUser]);
+  // デバッグログ：現在の状態を表示
+  console.log(`🎯 RecommendationsScreen - currentIndex: ${currentIndex}, totalUsers: ${users.length}, currentUser: ${currentUser?.name || 'none'}, nextUser: ${nextUser?.name || 'none'}`);
 
   // すべてのカードをめくった場合の処理
   if (!currentUser) {
+    console.log('❌ カードが存在しません - EmptyRecommendationsStateを表示');
     return (
-      <View style={styles.container}>
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>今日のオススメは終了です</Text>
-          <Text style={styles.emptySubtitle}>明日また新しいオススメをお届けします</Text>
-        </View>
-      </View>
+      <EmptyRecommendationsState />
     );
   }
 
-  // 表示するカードがない場合の処理
-  if (visibleUsers.length === 0) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>カードがありません</Text>
-          <Text style={styles.emptySubtitle}>新しいカードを待っています</Text>
-        </View>
-      </View>
-    );
-  }
+  /**
+   * カードのスワイプ完了時の処理
+   * 右スワイプはいいね、左スワイプはパスとして処理
+   */
+  const handleSwipe = (direction: 'left' | 'right') => {
+    console.log(`🔄 スワイプ完了: ${direction === 'right' ? '右（いいね）' : '左（パス）'} - ユーザー: ${currentUser.name}`);
+
+    if (direction === 'right') {
+      console.log(`❤️ いいね処理開始: ${currentUser.name}`);
+      handleLike(currentUser.id);
+    } else {
+      console.log(`👋 パス処理開始: ${currentUser.name}`);
+      handlePass(currentUser.id);
+    }
+
+    console.log(`📱 次のカードに進みます - 現在: ${currentIndex + 1}/${users.length}`);
+    // currentIndexが更新され、再レンダリングされる
+  };
 
   return (
     <View style={styles.container}>
+      {/* ヘッダー部分：タイトルと進捗表示 */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>今日のオススメ</Text>
         <Text style={styles.headerSubtitle}>
@@ -112,56 +63,48 @@ export default function RecommendationsScreen() {
         </Text>
       </View>
 
+      {/* カードの重ね表示：背景に次のカード、前面に現在のカード */}
       <View style={styles.cardContainer}>
-        {/* 現在のカードのみ操作可能、他のカードは表示のみ */}
-        {visibleUsers.map((user, index) => {
-          // currentIndexに基づいて現在のカードかどうかを判定
-          const isCurrentCard = (startIndex + index) === currentIndex;
+        {/* 背景：次のカード（少し下と右に配置） */}
+        {nextUser && (
+          <View style={styles.backgroundCardWrapper}>
+            <SwipeableCard
+              user={nextUser}
+              onLike={() => { }} // 操作不可
+              onPass={() => { }} // 操作不可
+              onAnimationComplete={undefined}
+              isActive={false} // 非アクティブ
+              cardIndex={currentIndex + 1}
+              currentIndex={currentIndex}
+            />
+          </View>
+        )}
 
-          // デバッグログ
-          console.log(`Rendering card ${user.name}: index=${index}, startIndex=${startIndex}, cardIndex=${startIndex + index}, currentIndex=${currentIndex}, isCurrentCard=${isCurrentCard}`);
-
-          return (
-            <View
-              key={user.id}
-              style={[
-                styles.cardWrapper,
-                {
-                  zIndex: visibleCards - index, // 後ろのカードほどzIndexが低い
-                  position: 'absolute',
-                  top: index * 4, // 後ろのカードを少し下に配置
-                  left: index * 2, // 後ろのカードを少し右に配置
-                }
-              ]}
-            >
-              <SwipeableCard
-                user={user}
-                onLike={isCurrentCard ? handleLike : () => { }} // 現在のカードのみ操作可能
-                onPass={isCurrentCard ? handlePass : () => { }} // 現在のカードのみ操作可能
-                isActive={isCurrentCard} // 現在のカードのみ操作可能
-                cardIndex={startIndex + index} // カードの実際のインデックス
-                currentIndex={currentIndex} // 現在アクティブなカードのインデックス
-                onAnimationComplete={isCurrentCard ? (direction) => {
-                  // 現在のカードのアニメーション完了時の処理
-                  if (currentUser) {
-                    if (direction === 'right') {
-                      handleLike(user.id);
-                    } else {
-                      handlePass(user.id);
-                    }
-                  }
-                } : undefined} // 現在のカードのみにコールバックを設定
-                ref={isCurrentCard ? cardRef : null} // 現在のカードにのみrefを設定
-              />
-            </View>
-          );
-        })}
+        {/* 前面：現在のカード */}
+        <View style={styles.frontCardWrapper}>
+          <SwipeableCard
+            user={currentUser}
+            onLike={handleLike}
+            onPass={handlePass}
+            onAnimationComplete={handleSwipe}
+            isActive={true}
+            cardIndex={currentIndex}
+            currentIndex={currentIndex}
+          />
+        </View>
       </View>
 
+      {/* アクションボタン：いいね・パスボタン */}
       <View style={styles.actionContainer}>
         <ActionButtons
-          onPass={() => handlePass(currentUser.id)}
-          onLike={() => handleLike(currentUser.id)}
+          onPass={() => {
+            console.log(`👆 パスボタンタップ: ${currentUser.name}`);
+            handlePass(currentUser.id);
+          }}
+          onLike={() => {
+            console.log(`👆 いいねボタンタップ: ${currentUser.name}`);
+            handleLike(currentUser.id);
+          }}
         />
       </View>
     </View>
@@ -174,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    paddingTop: spacing.xl, // 最初の位置に戻す
+    paddingTop: spacing.xl,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
     alignItems: 'center',
@@ -193,38 +136,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    marginTop: spacing.xl, // カードを下に移動
+    marginTop: 32,
     position: 'relative', // 子要素の絶対位置指定の基準点
+  },
+  backgroundCardWrapper: {
+    position: 'absolute',
+    zIndex: 1, // 背景（裏面）
+    justifyContent: 'center',
+    alignItems: 'center',
+    // frontCardWrapperと同じスタイルを適用
+  },
+  frontCardWrapper: {
+    position: 'absolute',
+    zIndex: 2, // 前面
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   actionContainer: {
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  emptyTitle: {
-    fontSize: typography.xl,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    fontSize: typography.base,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  cardWrapper: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

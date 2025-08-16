@@ -8,6 +8,10 @@ interface ActionButtonsProps {
   onLike: () => void;
 }
 
+/**
+ * 推奨ユーザーに対するアクションボタンコンポーネント
+ * パス（×）とライク（♥）の2つのボタンを表示
+ */
 const ActionButtons: React.FC<ActionButtonsProps> = ({ onPass, onLike }) => {
   return (
     <View style={styles.container}>
