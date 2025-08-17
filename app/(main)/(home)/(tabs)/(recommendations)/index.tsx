@@ -1,9 +1,9 @@
 import ActionButtons from '@components/recommendations/ActionButtons';
 import { EmptyRecommendationsState } from '@components/recommendations/EmptyRecommendationsState';
-import SwipeableCard from '@components/recommendations/SwipeableCard';
+import SwipeableCard, { SwipeableCardRef } from '@components/recommendations/SwipeableCard';
 import { useRecommendations } from '@hooks/useRecommendations';
 import { colors, spacing, typography } from '@styles/globalStyles';
-import React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 /**
@@ -23,6 +23,9 @@ export default function RecommendationsScreen() {
   // 次のカードを取得（存在する場合）
   const nextUser = users[currentIndex + 1];
 
+  // カードのrefを取得
+  const cardRef = useRef<SwipeableCardRef>(null);
+
   // デバッグログ：現在の状態を表示
   console.log(`🎯 RecommendationsScreen - currentIndex: ${currentIndex}, totalUsers: ${users.length}, currentUser: ${currentUser?.name || 'none'}, nextUser: ${nextUser?.name || 'none'}`);
 
@@ -39,7 +42,7 @@ export default function RecommendationsScreen() {
    * 右スワイプはいいね、左スワイプはパスとして処理
    */
   const handleSwipe = (direction: 'left' | 'right') => {
-    console.log(`🔄 スワイプ完了: ${direction === 'right' ? '右（いいね）' : '左（パス）'} - ユーザー: ${currentUser.name}`);
+    console.log(`🔄 スワイプ完了: ${direction === 'right' ? '右（いいね）' : '左（パス）'} - ユーザー: ${currentUser.name} - 呼び出し回数チェック`);
 
     if (direction === 'right') {
       console.log(`❤️ いいね処理開始: ${currentUser.name}`);
@@ -51,6 +54,20 @@ export default function RecommendationsScreen() {
 
     console.log(`📱 次のカードに進みます - 現在: ${currentIndex + 1}/${users.length}`);
     // currentIndexが更新され、再レンダリングされる
+  };
+
+  /**
+   * ボタンタップ時のアニメーション実行
+   */
+  const handleButtonTap = (direction: 'left' | 'right') => {
+    console.log(`👆 ボタンタップ: ${direction === 'right' ? 'いいね' : 'パス'} - ユーザー: ${currentUser.name}`);
+
+    // カードのアニメーションを実行
+    if (cardRef.current) {
+      cardRef.current.animateCard(direction);
+    }
+
+    // ボタンタップ時は直接状態を更新しない（アニメーション完了後に更新される）
   };
 
   return (
@@ -83,6 +100,7 @@ export default function RecommendationsScreen() {
         {/* 前面：現在のカード */}
         <View style={styles.frontCardWrapper}>
           <SwipeableCard
+            ref={cardRef}
             user={currentUser}
             onLike={handleLike}
             onPass={handlePass}
@@ -97,14 +115,8 @@ export default function RecommendationsScreen() {
       {/* アクションボタン：いいね・パスボタン */}
       <View style={styles.actionContainer}>
         <ActionButtons
-          onPass={() => {
-            console.log(`👆 パスボタンタップ: ${currentUser.name}`);
-            handlePass(currentUser.id);
-          }}
-          onLike={() => {
-            console.log(`👆 いいねボタンタップ: ${currentUser.name}`);
-            handleLike(currentUser.id);
-          }}
+          onPass={() => handleButtonTap('left')}
+          onLike={() => handleButtonTap('right')}
         />
       </View>
     </View>
