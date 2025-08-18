@@ -1,8 +1,8 @@
 import { Colors } from '@constants/Colors';
 import { RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
-import { usePathname, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 interface WebSidebarProps {
@@ -15,59 +15,39 @@ interface WebSidebarProps {
  */
 export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light' as keyof typeof Colors];
   const user = useStrictAuth();
 
-  // 現在選択されているメニューを管理
-  const [selectedMenu, setSelectedMenu] = useState('explore');
-
   // ナビゲーションメニューアイテム
-  const menuItems = [
+  const menuItems = useMemo(() => [
     { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
-    { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(tabs)/(explore)' },
-    { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(tabs)/(chat)' },
-    { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(tabs)/(reactions)' },
-    { id: 'settings', label: '設定', icon: '⚙️', route: '/(main)/(home)/(tabs)/(settings)' },
+    { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(web-screens)/explore' },
+    { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(web-screens)/chat' },
+    { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(web-screens)/reactions' },
+    { id: 'settings', label: '設定', icon: '⚙️', route: '/(main)/(home)/(web-screens)/settings' },
     { id: 'profile', label: 'プロフィール', icon: '👤', route: `/(main)/profile/${user.uid}` },
     { id: 'sales', label: 'セールス', icon: '💰', route: '/(main)/sales' },
-  ];
-
-  // 現在のパスに基づいてメニューの選択状態を更新
-  useEffect(() => {
-    const currentPath = pathname;
-
-    // パスに基づいてメニューIDを特定（より具体的なパスを先に判定）
-    if (currentPath.includes('/(tabs)/(chat)')) {
-      setSelectedMenu('chat');
-    } else if (currentPath.includes('/(tabs)/(reactions)')) {
-      setSelectedMenu('reactions');
-    } else if (currentPath.includes('/(tabs)/(recommendations)')) {
-      setSelectedMenu('recommendations');
-    } else if (currentPath.includes('/(tabs)/(settings)')) {
-      setSelectedMenu('settings');
-    } else if (currentPath.includes('/(tabs)/(explore)')) {
-      setSelectedMenu('explore');
-    } else if (currentPath.includes('/profile/')) {
-      setSelectedMenu('profile');
-    } else if (currentPath.includes('/sales')) {
-      setSelectedMenu('sales');
-    }
-  }, [pathname]);
+  ], [user.uid]);
 
   const handleNavigation = (menuId: string) => {
-    setSelectedMenu(menuId);
-
     // 親コンポーネントに選択されたメニューを通知
     if (onMenuSelect) {
       onMenuSelect(menuId);
     }
 
-    // 実際のルート遷移も試行（Web版では動作しない場合がある）
+    // 実際のルート遷移
     const menuItem = menuItems.find(item => item.id === menuId);
     if (menuItem) {
-      router.push(menuItem.route as any);
+      try {
+        router.push(menuItem.route as any);
+      } catch (error) {
+        console.error('ナビゲーションエラー:', error);
+        // フォールバック: 相対パスでの遷移を試行
+        if (menuItem.route.startsWith('/(main)')) {
+          router.push(menuItem.route.replace('/(main)', '') as any);
+        }
+      }
     }
   };
 
@@ -87,18 +67,12 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
         {menuItems.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={[
-              styles.menuItem,
-              selectedMenu === item.id && styles.selectedMenuItem
-            ]}
+            style={styles.menuItem}
             onPress={() => handleNavigation(item.id)}
             activeOpacity={0.7}
           >
             <Text style={styles.menuIcon}>{item.icon}</Text>
-            <Text style={[
-              styles.menuLabel,
-              { color: selectedMenu === item.id ? '#6C63FF' : colors.text }
-            ]}>
+            <Text style={[styles.menuLabel, { color: colors.text }]}>
               {item.label}
             </Text>
           </TouchableOpacity>
@@ -152,9 +126,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     borderRadius: 12,
     marginBottom: 4,
-  },
-  selectedMenuItem: {
-    backgroundColor: '#f0f0ff',
   },
   menuIcon: {
     fontSize: 20,
