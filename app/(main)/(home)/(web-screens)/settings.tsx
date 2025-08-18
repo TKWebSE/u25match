@@ -180,22 +180,24 @@ export default function WebSettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* アプリ情報セクション */}
-        <View style={SettingsStyles.section}>
-          <Text style={SettingsStyles.sectionTitle}>アプリ情報</Text>
+        {/* アプリ情報セクション（開発環境でのみ表示） */}
+        {__DEV__ && (
+          <View style={SettingsStyles.section}>
+            <Text style={SettingsStyles.sectionTitle}>アプリ情報（開発用）</Text>
 
-          {/* バージョン情報 */}
-          <View style={SettingsStyles.infoItem}>
-            <Text style={SettingsStyles.infoLabel}>バージョン</Text>
-            <Text style={SettingsStyles.infoValue}>1.0.0</Text>
-          </View>
+            {/* バージョン情報 */}
+            <View style={SettingsStyles.infoItem}>
+              <Text style={SettingsStyles.infoLabel}>バージョン</Text>
+              <Text style={SettingsStyles.infoValue}>1.0.0</Text>
+            </View>
 
-          {/* ビルド番号 */}
-          <View style={SettingsStyles.infoItem}>
-            <Text style={SettingsStyles.infoLabel}>ビルド番号</Text>
-            <Text style={SettingsStyles.infoValue}>1</Text>
+            {/* ビルド番号 */}
+            <View style={SettingsStyles.infoItem}>
+              <Text style={SettingsStyles.infoLabel}>ビルド番号</Text>
+              <Text style={SettingsStyles.infoValue}>1</Text>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* その他の設定セクション */}
         <View style={SettingsStyles.section}>
