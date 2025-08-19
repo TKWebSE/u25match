@@ -3,6 +3,7 @@ import EmptyState from '@components/common/EmptyState';
 import SearchBar from '@components/explore/SearchBar';
 import UserCard from '@components/explore/UserCard';
 import { useUserSearch } from '@hooks/useUserSearch';
+import { useSidebar } from '@layouts/WebLayout';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -21,21 +22,25 @@ interface User {
 const ExploreScreen = () => {
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const { isSidebarOpen } = useSidebar(); // ドロワーの状態を取得（Web環境でのみ使用）
 
   // 極端に小さな画面でのエラーを防ぐ
   const safeWidth = Math.max(width, 320); // 最小320pxを確保
 
-  // 列数を計算してkeyとして使用
+  // 列数を計算してkeyとして使用（ドロワーの状態も考慮）
   const columnCount = (() => {
     // 画面幅に基づいて列数を決定
     if (safeWidth <= 570) {
       return 1; // 480×837のトグルデバイスシミュレーション
     } else if (safeWidth <= 960) {
-      return 2; // 570px超
+      // ドロワーの状態に応じて列数を調整（Web環境）
+      return isSidebarOpen ? 2 : 3; // ドロワー開で2列、閉で3列
     } else if (safeWidth <= 1200) {
-      return 3; // 960px超
+      // ドロワーの状態に応じて列数を調整（Web環境）
+      return isSidebarOpen ? 3 : 4; // ドロワー開で3列、閉で4列
     } else {
-      return 4; // 最大4列
+      // ドロワーの状態に応じて列数を調整（Web環境）
+      return isSidebarOpen ? 3 : 4; // ドロワー開で3列、閉で4列
     }
   })();
   const {
@@ -91,7 +96,7 @@ const ExploreScreen = () => {
           renderItem={renderUserItem}
           keyExtractor={(item, index) => `${item.name}-${index}`}
           numColumns={columnCount}
-          key={`flatlist-${columnCount}`}
+          key={`flatlist-${columnCount}-${isSidebarOpen ? 'open' : 'closed'}`} // ドロワーの状態もkeyに含める
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmptyComponent}

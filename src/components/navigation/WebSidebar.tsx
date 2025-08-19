@@ -22,10 +22,10 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
   // ナビゲーションメニューアイテム
   const menuItems = useMemo(() => [
     { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
-    { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(web-screens)/explore' },
-    { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(web-screens)/chat' },
-    { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(web-screens)/reactions' },
-    { id: 'settings', label: '設定', icon: '⚙️', route: '/(main)/(home)/(web-screens)/settings' },
+    { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(tabs)/(explore)' },
+    { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(tabs)/(chat)' },
+    { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(tabs)/(reactions)' },
+    { id: 'settings', label: '設定', icon: '⚙️', route: '/(main)/(home)/(tabs)/(settings)' },
     { id: 'profile', label: 'プロフィール', icon: '👤', route: `/(main)/profile/${user.uid}` },
     { id: 'sales', label: 'セールス', icon: '💰', route: '/(main)/sales' },
   ], [user.uid]);

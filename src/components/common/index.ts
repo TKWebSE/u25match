@@ -4,5 +4,6 @@
 export { default as CustomHeader } from './CustomHeader';
 export { default as CustomPagination } from './CustomPagination';
 export { default as EmptyState } from './EmptyState';
+export { ImageCarousel } from './ImageCarousel';
 export { default as ScreenWrapper } from './ScreenWrapper';
 

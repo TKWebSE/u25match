@@ -23,42 +23,10 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const newLabelAnim = useRef(new Animated.Value(0)).current; // NEWラベル用のアニメーション
 
-  // 最小カードサイズを定義
-  const MIN_CARD_WIDTH = 140; // 最小カード幅
-  const MIN_IMAGE_HEIGHT = 168; // 最小画像高さ（140 * 1.2）- 縦長最適化
-
-  // 極端に小さな画面でのエラーを防ぐ
-  const safeWidth = Math.max(width, 320); // 最小320pxを確保
-
-  // 画面サイズに応じて列数とカードサイズを動的に調整
-  const getResponsiveLayout = () => {
-    const availableWidth = Math.max(safeWidth - 48, 280); // 最小幅を確保
-
-    // 画面幅に基づいて列数を決定
-    let columns;
-    if (safeWidth <= 570) {
-      columns = 1; // 480×837のトグルデバイスシミュレーション
-    } else if (safeWidth <= 960) {
-      columns = 2; // 570px超
-    } else if (safeWidth <= 1200) {
-      columns = 3; // 960px超
-    } else {
-      columns = 4; // 最大4列
-    }
-
-    const cardWidth = Math.max(availableWidth / columns, MIN_CARD_WIDTH); // 最小カード幅を確保
-    const imageHeight = Math.max(cardWidth * 1.2, MIN_IMAGE_HEIGHT); // 縦長最適化（1.2のアスペクト比）
-
-    return {
-      columns,
-      cardWidth,
-      imageHeight,
-    };
-  };
-
-  const layout = getResponsiveLayout();
-  const cardWidth = layout.cardWidth;
-  const imageHeight = layout.imageHeight;
+  // カードサイズを固定（画面幅に関係なく一定のサイズ）
+  const cardWidth = 320; // 固定幅320px（160 * 2）
+  const cardHeight = 400; // 固定高さ400px（下部分を縮小）
+  const imageHeight = 256; // 固定画像高さ256px（128 * 2）
 
   const onlineStatus = getOnlineStatus(user.lastActiveAt);
   const onlineStatusIcon = getOnlineStatusIcon(user.lastActiveAt);
@@ -139,9 +107,10 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
   const styles = StyleSheet.create({
     card: {
       width: cardWidth,
+      height: cardHeight,
       backgroundColor: colors.surface,
       borderRadius: borderRadius.lg,
-      marginBottom: spacing.lg,
+      marginBottom: spacing.base,
       marginLeft: spacing.xs,
       marginRight: 0, // 右側のマージンを削除
       ...shadows.base,
@@ -149,60 +118,63 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     },
     imageContainer: {
       position: 'relative',
+      height: imageHeight,
     },
     cardImage: {
       width: '100%',
-      height: imageHeight,
+      height: '100%',
       resizeMode: 'cover',
     },
     onlineIndicator: {
       position: 'absolute',
-      top: spacing.sm,
-      right: spacing.sm,
-      width: 16,
-      height: 16,
-      borderRadius: 8,
+      top: spacing.xs,
+      right: spacing.xs,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
       backgroundColor: colors.online,
-      borderWidth: 3,
+      borderWidth: 2,
       borderColor: colors.white,
     },
     newLabel: {
       position: 'absolute',
-      top: spacing.sm,
-      left: spacing.sm,
+      top: spacing.xs,
+      left: spacing.xs,
       backgroundColor: '#FF6B6B', // 目立つ赤色
-      paddingHorizontal: spacing.lg, // 横のパディングをさらに増加
-      paddingVertical: spacing.base, // 縦のパディングをさらに増加
-      borderRadius: borderRadius.base, // 角丸を少し大きく
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
+      borderRadius: borderRadius.sm,
       shadowColor: '#000',
       shadowOffset: {
         width: 0,
-        height: 3, // 影を少し強く
+        height: 2,
       },
-      shadowOpacity: 0.3, // 影の透明度を上げる
-      shadowRadius: 4.65, // 影の範囲を広げる
-      elevation: 8, // Androidの影を強く
-      borderWidth: 2, // 白い境界線を追加
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 4,
+      borderWidth: 1,
       borderColor: '#FFFFFF',
     },
     newLabelText: {
       color: colors.white,
-      fontSize: typography.base, // フォントサイズをさらに大きく
+      fontSize: typography.xs,
       fontWeight: typography.bold,
       textAlign: 'center',
-      letterSpacing: 0.5, // 文字間隔を少し広げる
+      letterSpacing: 0.3,
     },
     cardContent: {
-      padding: spacing.base,
+      padding: spacing.sm,
+      flex: 1,
+      justifyContent: 'space-between',
     },
     infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: spacing.sm,
+      justifyContent: 'space-between',
+      gap: spacing.xs,
     },
     userName: {
-      fontSize: typography.base,
+      fontSize: typography.lg, // 年齢を大きく表示
       fontWeight: typography.semibold,
       color: colors.textPrimary,
     },
@@ -212,15 +184,15 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     },
     locationIcon: {
       fontSize: typography.xs,
-      marginRight: 3,
+      marginRight: 2,
     },
     userLocation: {
-      fontSize: typography.base,
-      fontWeight: typography.semibold, // 年齢と同じ太さに変更
-      color: colors.textPrimary, // 年齢と同じ濃さに変更
+      fontSize: typography.base, // 住所を大きく表示
+      fontWeight: typography.medium,
+      color: colors.textSecondary,
     },
     onlineStatusIcon: {
-      fontSize: typography.sm,
+      fontSize: typography.xs,
     },
     onlineStatusContainer: {
       flexDirection: 'row',
@@ -259,7 +231,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
                   transform: [{
                     translateY: newLabelAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [10, 0],
+                      outputRange: [8, 0],
                     })
                   }],
                 },
@@ -272,22 +244,22 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
 
         <View style={styles.cardContent}>
           <View style={styles.infoRow}>
+            <Text style={styles.userName} numberOfLines={1}>
+              {user.age}歳
+            </Text>
             <View style={styles.onlineStatusContainer}>
               <Text style={styles.onlineStatusIcon}>
                 {onlineStatusIcon}
               </Text>
             </View>
-            <Text style={styles.userName} numberOfLines={1}>
-              {user.age}歳
-            </Text>
-            <View style={styles.locationContainer}>
-              <View style={styles.locationIconContainer}>
-                <Text style={styles.locationIcon}>📍</Text>
-              </View>
-              <Text style={styles.userLocation} numberOfLines={1}>
-                {user.location}
-              </Text>
+          </View>
+          <View style={styles.locationContainer}>
+            <View style={styles.locationIconContainer}>
+              <Text style={styles.locationIcon}>📍</Text>
             </View>
+            <Text style={styles.userLocation} numberOfLines={1}>
+              {user.location}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>

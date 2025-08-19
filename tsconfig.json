@@ -42,6 +42,9 @@
       ],
       "@styles/*": [
         "src/styles/*"
+      ],
+      "@layouts/*": [
+        "src/layouts/*"
       ]
     }
   },

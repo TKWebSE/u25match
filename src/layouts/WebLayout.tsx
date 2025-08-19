@@ -1,7 +1,21 @@
 import { WebSidebar } from '@components/navigation/WebSidebar';
 import { Colors } from '@constants/Colors';
-import React, { useRef, useState } from 'react'; // useRefとuseEffectを追加
-import { Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, useWindowDimensions, View } from 'react-native'; // Animatedを追加
+import React, { createContext, useContext, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, useWindowDimensions, View } from 'react-native';
+
+// ドロワーの状態を共有するContext
+interface SidebarContextType {
+  isSidebarOpen: boolean;
+  sidebarWidth: number;
+}
+
+const SidebarContext = createContext<SidebarContextType>({
+  isSidebarOpen: true,
+  sidebarWidth: 280,
+});
+
+// カスタムフックでドロワーの状態を取得
+export const useSidebar = () => useContext(SidebarContext);
 
 interface WebLayoutProps {
   children: React.ReactNode;
@@ -10,8 +24,8 @@ interface WebLayoutProps {
 /**
  * ブラウザ用レイアウト
  * - 左縦サイドナビゲーション（ドロワー式）
- * - メインコンテンツエリア
- * - 左右余白あり
+ * - メインコンテンツエリア（ドロワーの開閉状態に応じて幅を調整）
+ * - レスポンシブ対応
  */
 export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
   const { width } = useWindowDimensions();
@@ -21,7 +35,10 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
 
   // アニメーション用の値
   const sidebarAnimation = useRef(new Animated.Value(1)).current; // 1 = 開いている、0 = 閉じている
+
+  // レスポンシブなサイドバー幅
   const sidebarWidth = width < 768 ? 240 : 280;
+  const minMainContentWidth = 320; // メインコンテンツの最小幅
 
   const toggleSidebar = () => {
     const toValue = isSidebarOpen ? 0 : 1;
@@ -47,35 +64,59 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
     outputRange: [-sidebarWidth, 0],
   });
 
+  // メインコンテンツの幅を動的に計算
+  const mainContentWidth = sidebarAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [width, Math.max(width - sidebarWidth, minMainContentWidth)],
+  });
+
+  // メインコンテンツの左マージンを動的に計算
+  const mainContentMarginLeft = sidebarAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, sidebarWidth],
+  });
+
+  // Contextの値を更新
+  const sidebarContextValue: SidebarContextType = {
+    isSidebarOpen,
+    sidebarWidth,
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* ハンバーガーメニューボタン */}
-      <TouchableOpacity
-        style={[styles.menuButton, { backgroundColor: colors.card }]}
-        onPress={toggleSidebar}
-      >
-        <Text style={[styles.menuButtonText, { color: colors.text }]}>
-          {isSidebarOpen ? '☰' : '☰'}
-        </Text>
-      </TouchableOpacity>
+    <SidebarContext.Provider value={sidebarContextValue}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {/* ハンバーガーメニューボタン */}
+        <TouchableOpacity
+          style={[styles.menuButton, { backgroundColor: colors.card }]}
+          onPress={toggleSidebar}
+        >
+          <Text style={[styles.menuButtonText, { color: colors.text }]}>
+            {isSidebarOpen ? '☰' : '☰'}
+          </Text>
+        </TouchableOpacity>
 
-      {/* 左縦サイドナビゲーション（アニメーション付き） */}
-      <Animated.View style={[styles.sidebar, {
-        width: animatedSidebarWidth,
-        backgroundColor: colors.card,
-        borderRightColor: colors.border,
-        transform: [{ translateX: animatedSidebarTranslateX }],
-      }]}>
-        <WebSidebar />
-      </Animated.View>
+        {/* 左縦サイドナビゲーション（アニメーション付き） */}
+        <Animated.View style={[styles.sidebar, {
+          width: animatedSidebarWidth,
+          backgroundColor: colors.card,
+          borderRightColor: colors.border,
+          transform: [{ translateX: animatedSidebarTranslateX }],
+        }]}>
+          <WebSidebar />
+        </Animated.View>
 
-      {/* メインコンテンツエリア - 左右余白あり */}
-      <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
-        <View style={styles.contentWrapper}>
-          {children}
-        </View>
+        {/* メインコンテンツエリア - 幅を動的に調整 */}
+        <Animated.View style={[styles.mainContent, {
+          backgroundColor: colors.background,
+          width: mainContentWidth,
+          marginLeft: mainContentMarginLeft,
+        }]}>
+          <View style={styles.contentWrapper}>
+            {children}
+          </View>
+        </Animated.View>
       </View>
-    </View>
+    </SidebarContext.Provider>
   );
 };
 
@@ -83,19 +124,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#fff', // 背景色を白に設定
+    backgroundColor: '#fff',
+    position: 'relative',
   },
   sidebar: {
     borderRightWidth: 1,
-    // 固定幅でスクロールしない
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 5,
   },
   mainContent: {
     flex: 1,
+    minWidth: 320, // 最小幅を保証
   },
   contentWrapper: {
     flex: 1,
     paddingHorizontal: 32, // 左右余白あり
-    // paddingVertical: 24, // 上下余白を削除
+    paddingTop: 80, // メニューボタンとの重複を避ける
   },
   menuButton: {
     position: 'absolute',
@@ -107,6 +154,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   menuButtonText: {
     fontSize: 24,
