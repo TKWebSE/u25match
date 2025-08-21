@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import EmptyState from '@components/common/EmptyState';
 import SearchBar from '@components/explore/SearchBar';
 import UserCard from '@components/explore/UserCard';
@@ -82,9 +81,6 @@ const ExploreScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="探す" />
-
       <View style={styles.container}>
         <SearchBar
           searchQuery={searchQuery}

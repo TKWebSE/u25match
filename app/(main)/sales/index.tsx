@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -113,7 +112,6 @@ const SalesScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader title="🔥 限定セール" />
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* ヘッダーセクション */}
         <View style={styles.headerSection}>

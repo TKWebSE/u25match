@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   sidebar: {
-    borderRightWidth: 1,
+    borderRightWidth: 0,
     position: 'absolute',
     left: 0,
     top: 0,

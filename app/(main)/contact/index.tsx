@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -55,9 +54,6 @@ const ContactScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="お問い合わせ" />
-
       <ScrollView
         style={{ flex: 1, padding: 20 }}
         showsVerticalScrollIndicator={false}

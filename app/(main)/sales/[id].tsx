@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -184,7 +183,6 @@ const SaleDetailScreen: React.FC = () => {
   if (!sale) {
     return (
       <SafeAreaView style={styles.container}>
-        <CustomHeader title="セール詳細" />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>セールが見つかりませんでした</Text>
           <TouchableOpacity
@@ -233,7 +231,6 @@ const SaleDetailScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader title="🔥 限定セール詳細" />
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
         {/* 豪華なヘッダーセクション - グラスモーフィズム効果 */}

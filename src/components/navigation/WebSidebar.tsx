@@ -1,6 +1,7 @@
 import { Colors } from '@constants/Colors';
 import { RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { isDevMode } from '@utils/devMode';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
@@ -57,7 +58,12 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
       <View style={[styles.header]}>
         <View style={styles.spacer}></View>
         <View style={styles.titleContainer}>
-          <Text style={[styles.appName, { color: colors.text }]}>U25Match</Text>
+          <View style={styles.appNameContainer}>
+            <Text style={[styles.appName, { color: colors.text }]}>U25Match</Text>
+            {isDevMode() && (
+              <Text style={styles.devBadge}>DEV</Text>
+            )}
+          </View>
           <Text style={[styles.appSubtitle, { color: colors.textSecondary }]}>25歳以下限定マッチング</Text>
         </View>
       </View>
@@ -110,6 +116,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
+  },
+  appNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  devBadge: {
+    color: '#FFD700', // 金色
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginLeft: 8,
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
   appSubtitle: {
     fontSize: 14,

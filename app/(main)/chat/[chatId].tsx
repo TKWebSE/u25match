@@ -1,5 +1,4 @@
 import ChatScreen from "@components/chat/ChatScreen";
-import CustomHeader from "@components/common/CustomHeader";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Alert, StyleSheet } from "react-native";
@@ -34,10 +33,6 @@ export default function ChatDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomHeader
-        title={getChatTitle(chatId as string)}
-        onBack={handleBack}
-      />
       <ChatScreen chatUid={chatId as string} onError={handleError} />
     </SafeAreaView>
   );

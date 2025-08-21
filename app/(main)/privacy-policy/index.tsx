@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
@@ -17,9 +16,6 @@ const PrivacyPolicyScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="プライバシーポリシー" />
-
       <ScrollView
         style={{ flex: 1, padding: 20 }}
         showsVerticalScrollIndicator={false}

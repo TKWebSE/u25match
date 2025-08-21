@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { isWeb } from '@utils/platform';
@@ -135,8 +134,6 @@ const ProfileEditScreen = () => {
 
   return (
     <SafeAreaView style={ProfileDetailStyles.safeArea}>
-      <CustomHeader title="プロフィール編集" onBack={handleBack} />
-
       <ScrollView style={ProfileDetailStyles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* コンテンツ全体に余白を適用 */}
         <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>

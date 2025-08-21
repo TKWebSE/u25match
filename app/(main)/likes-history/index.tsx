@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { Colors } from '@constants/Colors';
 import { users } from '@mock/exploreUserMock';
 import { mockSentReactions } from '@mock/reactionsMock';
@@ -172,9 +171,6 @@ const LikesHistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="いいね履歴" />
-
       {/* いいね履歴一覧 */}
       <FlatList
         data={likesHistory}

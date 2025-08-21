@@ -1,5 +1,4 @@
 // app/(main)/profile/[uid].tsx
-import CustomHeader from '@components/common/CustomHeader';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import { ProfileBio, ProfileDetails, ProfileInfo, ProfileTags } from '@components/profile/detail';
@@ -55,9 +54,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={ProfileDetailStyles.container}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="プロフィール" />
-
       <ScrollView style={ProfileDetailStyles.scrollContainer}>
         {/* コンテンツ全体に余白を適用 */}
         <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>

@@ -1,8 +1,9 @@
 import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
 import { getOnlineStatus, getOnlineStatusIcon } from '@utils/getOnlineStatus';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+// ユーザー情報の型定義
 interface User {
   name: string;
   age: number;
@@ -10,29 +11,37 @@ interface User {
   imageUrl: string;
   isOnline: boolean;
   lastActiveAt: Date;
-  createdAt?: Date; // 登録日を追加
+  createdAt?: Date; // 登録日（新規ユーザー判定用）
 }
 
+// UserCardコンポーネントのProps型定義
 interface UserCardProps {
   user: User;
   onPress: (user: User) => void;
 }
 
+/**
+ * ユーザーカードコンポーネント
+ * エクスプローラ画面でユーザー情報を表示するカード
+ */
 const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
-  const { width } = useWindowDimensions();
+  // アニメーション用の値
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const newLabelAnim = useRef(new Animated.Value(0)).current; // NEWラベル用のアニメーション
+  const newLabelAnim = useRef(new Animated.Value(0)).current;
 
-  // カードサイズを固定（画面幅に関係なく一定のサイズ）
-  const cardWidth = 320; // 固定幅320px（160 * 2）
-  const cardHeight = 400; // 固定高さ400px（下部分を縮小）
-  const imageHeight = 256; // 固定画像高さ256px（128 * 2）
+  // カードサイズの定数
+  const cardWidth = 320;
+  const cardHeight = 800;
+  const imageHeight = 800;
 
-  const onlineStatus = getOnlineStatus(user.lastActiveAt);
+  // オンラインステータスの取得
   const onlineStatusIcon = getOnlineStatusIcon(user.lastActiveAt);
-  const isOnline = onlineStatus === '🟢 オンライン';
+  const isOnline = getOnlineStatus(user.lastActiveAt) === '🟢 オンライン';
 
-  // 登録1週間以内かどうかを判定
+  /**
+   * 登録1週間以内の新規ユーザーかどうかを判定
+   * @returns {boolean} 新規ユーザーの場合true
+   */
   const isNewUser = () => {
     if (!user.createdAt) return false;
     const oneWeekAgo = new Date();
@@ -40,8 +49,9 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     return user.createdAt > oneWeekAgo;
   };
 
+  // コンポーネントマウント時のアニメーション初期化
   useEffect(() => {
-    // 控えめなエントランスアニメーション
+    // カードのエントランスアニメーション
     Animated.timing(scaleAnim, {
       toValue: 1,
       duration: 300,
@@ -61,12 +71,13 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
           useNativeDriver: true,
           tension: 200,
           friction: 8,
-          delay: 200, // カードのアニメーション後に開始
+          delay: 200, // カードアニメーション後に開始
         }),
       ]).start();
     }
   }, []);
 
+  // タッチ開始時のアニメーション
   const handlePressIn = () => {
     Animated.timing(scaleAnim, {
       toValue: 0.98,
@@ -75,6 +86,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     }).start();
   };
 
+  // タッチ終了時のアニメーション
   const handlePressOut = () => {
     Animated.spring(scaleAnim, {
       toValue: 1,
@@ -84,8 +96,9 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     }).start();
   };
 
+  // カードタップ時の処理
   const handlePress = () => {
-    // タップ時の視覚的フィードバック
+    // タップ時の視覚的フィードバックアニメーション
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,
@@ -100,31 +113,36 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       }),
     ]).start();
 
-    // 元のonPressを実行
+    // 親コンポーネントのonPressを実行
     onPress(user);
   };
 
+  // スタイル定義
   const styles = StyleSheet.create({
+    // カード全体のスタイル
     card: {
       width: cardWidth,
-      height: cardHeight,
+      height: cardHeight,//ここのせいでカードの下部に白いところが出ている。画像サイズの方を修正して、様子を見たい
       backgroundColor: colors.surface,
       borderRadius: borderRadius.lg,
       marginBottom: spacing.base,
       marginLeft: spacing.xs,
-      marginRight: 0, // 右側のマージンを削除
+      marginRight: 0,
       ...shadows.base,
       overflow: 'hidden',
     },
+    // 画像コンテナのスタイル
     imageContainer: {
       position: 'relative',
       height: imageHeight,
     },
+    // カード画像のスタイル
     cardImage: {
       width: '100%',
       height: '100%',
       resizeMode: 'cover',
     },
+    // オンラインインジケーター（緑の丸）
     onlineIndicator: {
       position: 'absolute',
       top: spacing.xs,
@@ -136,11 +154,12 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       borderWidth: 2,
       borderColor: colors.white,
     },
+    // NEWラベルのスタイル
     newLabel: {
       position: 'absolute',
       top: spacing.xs,
       left: spacing.xs,
-      backgroundColor: '#FF6B6B', // 目立つ赤色
+      backgroundColor: '#FF6B6B',
       paddingHorizontal: spacing.sm,
       paddingVertical: spacing.xs,
       borderRadius: borderRadius.sm,
@@ -155,6 +174,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       borderWidth: 1,
       borderColor: '#FFFFFF',
     },
+    // NEWラベルのテキストスタイル
     newLabelText: {
       color: colors.white,
       fontSize: typography.xs,
@@ -162,55 +182,63 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
       textAlign: 'center',
       letterSpacing: 0.3,
     },
+    // カードコンテンツエリアのスタイル
     cardContent: {
       padding: spacing.sm,
       flex: 1,
       justifyContent: 'space-between',
     },
+    // 情報行のレイアウト
     infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: spacing.xs,
     },
-    userName: {
-      fontSize: typography.lg, // 年齢を大きく表示
+    // ユーザー情報（年齢と住所）のコンテナ
+    userInfoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    // 年齢テキストのスタイル
+    ageText: {
+      fontSize: typography.lg,
       fontWeight: typography.semibold,
       color: colors.textPrimary,
     },
+    // 住所コンテナのスタイル
     locationContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap: spacing.xs,
     },
+    // 住所アイコン（📍）のスタイル
     locationIcon: {
       fontSize: typography.xs,
-      marginRight: 2,
     },
-    userLocation: {
-      fontSize: typography.base, // 住所を大きく表示
+    // 住所テキストのスタイル
+    locationText: {
+      fontSize: typography.base,
       fontWeight: typography.medium,
       color: colors.textSecondary,
     },
-    onlineStatusIcon: {
-      fontSize: typography.xs,
-    },
+    // オンラインステータスコンテナのスタイル
     onlineStatusContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    locationIconContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
+    // オンラインステータスアイコンのスタイル
+    onlineStatusIcon: {
+      fontSize: typography.xs,
     },
   });
 
   return (
     <Animated.View
-      style={[
-        {
-          transform: [{ scale: scaleAnim }],
-        },
-      ]}
+      style={{
+        transform: [{ scale: scaleAnim }],
+      }}
     >
       <TouchableOpacity
         style={styles.card}
@@ -219,9 +247,12 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
         onPressOut={handlePressOut}
         activeOpacity={0.9}
       >
+        {/* 画像エリア */}
         <View style={styles.imageContainer}>
           <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
+          {/* オンラインインジケーター */}
           {isOnline && <View style={styles.onlineIndicator} />}
+          {/* NEWラベル（新規ユーザーの場合のみ表示） */}
           {isNewUser() && (
             <Animated.View
               style={[
@@ -242,24 +273,27 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
           )}
         </View>
 
+        {/* カード情報エリア */}
         <View style={styles.cardContent}>
           <View style={styles.infoRow}>
-            <Text style={styles.userName} numberOfLines={1}>
-              {user.age}歳
-            </Text>
+            {/* ユーザー情報（年齢と住所） */}
+            <View style={styles.userInfoContainer}>
+              <Text style={styles.ageText} numberOfLines={1}>
+                {user.age}歳
+              </Text>
+              <View style={styles.locationContainer}>
+                <Text style={styles.locationIcon}>📍</Text>
+                <Text style={styles.ageText} numberOfLines={1}>
+                  {user.location}
+                </Text>
+              </View>
+            </View>
+            {/* オンラインステータスアイコン */}
             <View style={styles.onlineStatusContainer}>
               <Text style={styles.onlineStatusIcon}>
                 {onlineStatusIcon}
               </Text>
             </View>
-          </View>
-          <View style={styles.locationContainer}>
-            <View style={styles.locationIconContainer}>
-              <Text style={styles.locationIcon}>📍</Text>
-            </View>
-            <Text style={styles.userLocation} numberOfLines={1}>
-              {user.location}
-            </Text>
           </View>
         </View>
       </TouchableOpacity>

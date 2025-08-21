@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { ReactionList, ReactionTabs } from '@components/reactions';
 import { users } from '@mock/exploreUserMock';
 import { mockReactions } from '@mock/reactionsMock';
@@ -60,9 +59,6 @@ const ReactionsScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="リアクション" />
-
       {/* リアクションタブ */}
       <ReactionTabs
         activeTab={activeTab}

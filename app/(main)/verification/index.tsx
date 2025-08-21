@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -48,9 +47,6 @@ const VerificationScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="本人確認" onBack={handleBack} />
-
       <ScrollView style={styles.container}>
         {/* ヘッダーセクション */}
         <View style={styles.headerSection}>

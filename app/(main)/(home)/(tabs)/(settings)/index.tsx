@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
@@ -112,9 +111,6 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="設定" />
-
       <ScrollView style={SettingsStyles.container} showsVerticalScrollIndicator={false}>
         {/* アカウント情報セクション */}
         <View style={SettingsStyles.section}>

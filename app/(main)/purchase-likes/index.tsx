@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { useRouter } from 'expo-router';
@@ -71,8 +70,6 @@ const PurchaseLikesScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomHeader title="いいね購入" />
-
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* 現在の残りポイント表示 */}
         <View style={styles.currentPointsContainer}>

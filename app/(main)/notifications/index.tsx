@@ -1,4 +1,3 @@
-import CustomHeader from '@components/common/CustomHeader';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -123,9 +122,6 @@ const NotificationsScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="お知らせ" />
-
       <ScrollView
         style={{ flex: 1, padding: 20 }}
         showsVerticalScrollIndicator={false}

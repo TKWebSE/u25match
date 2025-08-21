@@ -1,5 +1,4 @@
 import ChatListScreen from '@components/chat/ChatListScreen';
-import CustomHeader from '@components/common/CustomHeader';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
 import { useChatRooms } from '@hooks/useChatRooms';
@@ -27,7 +26,6 @@ const ChatListScreenWrapper = () => {
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <CustomHeader title="チャット" />
         <LoadingState message="チャット一覧を読み込み中..." />
       </SafeAreaView>
     );
@@ -36,7 +34,6 @@ const ChatListScreenWrapper = () => {
   if (error) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <CustomHeader title="チャット" />
         <ErrorState
           error={error}
           onRetry={handleRefresh}
@@ -47,9 +44,6 @@ const ChatListScreenWrapper = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* カスタムヘッダー */}
-      <CustomHeader title="チャット" />
-
       {/* チャット一覧 */}
       <ChatListScreen
         chatRooms={chatRooms}
