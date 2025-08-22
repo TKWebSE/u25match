@@ -1,11 +1,9 @@
+import { ExploreTabType } from '@hooks/useUserSearch';
 import { colors } from '@styles/globalStyles';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
-
-// タブの種類を定義
-export type ExploreTabType = 'search' | 'recommended' | 'new' | 'nearby';
 
 // タブの設定
 const TAB_CONFIG = {

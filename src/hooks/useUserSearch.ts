@@ -11,40 +11,29 @@ interface User {
   imageUrl: string;    // プロフィール画像URL
   isOnline: boolean;   // オンライン状態
   lastActiveAt: Date;  // 最終アクティブ日時
+  gender: 'male' | 'female'; // 性別
+  createdAt: Date;     // 登録日時
 }
+
+/**
+ * タブの種類を定義
+ */
+export type ExploreTabType = 'search' | 'recommended' | 'new' | 'nearby';
 
 /**
  * ユーザー検索機能を提供するカスタムフック
  * 
  * このフックは以下の責務を持ちます：
  * - 検索クエリの状態管理（外部から渡された場合はそれを使用）
- * - ユーザーリストのフィルタリング
+ * - タブに応じたユーザーリストのフィルタリング
  * - 検索結果の状態管理
  * - 検索機能の状態判定
  * 
  * @param externalSearchQuery 外部から渡される検索クエリ（オプション）
+ * @param activeTab 現在アクティブなタブ（オプション）
  * @returns 検索機能に関連する状態と関数
- * 
- * @example
- * ```typescript
- * // 内部で検索クエリを管理する場合
- * const {
- *   searchQuery,
- *   setSearchQuery,
- *   filteredUsers,
- *   hasSearchResults,
- *   hasSearchQuery,
- * } = useUserSearch();
- * 
- * // 外部から検索クエリを受け取る場合
- * const {
- *   filteredUsers,
- *   hasSearchResults,
- *   hasSearchQuery,
- * } = useUserSearch(externalSearchQuery);
- * ```
  */
-export const useUserSearch = (externalSearchQuery?: string) => {
+export const useUserSearch = (externalSearchQuery?: string, activeTab?: ExploreTabType) => {
   // 検索クエリの状態管理（外部から渡された場合はそれを使用）
   const [internalSearchQuery, setInternalSearchQuery] = useState('');
 
@@ -52,23 +41,80 @@ export const useUserSearch = (externalSearchQuery?: string) => {
   const searchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
   const setSearchQuery = externalSearchQuery !== undefined ? () => { } : setInternalSearchQuery;
 
-  // 検索フィルタリング（メモ化してパフォーマンスを最適化）
+  // タブに応じたフィルタリング（メモ化してパフォーマンスを最適化）
   const filteredUsers = useMemo(() => {
-    // 検索クエリが空の場合は全ユーザーを返す
-    if (!searchQuery.trim()) {
-      return users;
+    let filteredData = users;
+
+    // タブに応じたフィルタリング
+    if (activeTab) {
+      switch (activeTab) {
+        case 'search':
+          // 検索タブ: 検索クエリに基づくフィルタリング
+          if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filteredData = users.filter(user =>
+              user.name.toLowerCase().includes(query) ||
+              user.location.toLowerCase().includes(query) ||
+              user.age.toString().includes(query)
+            );
+          }
+          break;
+
+        case 'recommended':
+          // おすすめタブ: オンラインで最近アクティブなユーザーを優先
+          filteredData = users
+            .filter(user => user.isOnline)
+            .sort((a, b) => b.lastActiveAt.getTime() - a.lastActiveAt.getTime())
+            .slice(0, 30); // 上位30人を表示
+          break;
+
+        case 'new':
+          // 新着タブ: 登録日時順（新しい順）
+          filteredData = users
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .slice(0, 40); // 上位40人を表示
+          break;
+
+        case 'nearby':
+          // 近くタブ: 東京・大阪・名古屋などの主要都市のユーザーを優先
+          const majorCities = ['東京', '大阪', '名古屋', '福岡', '札幌', '横浜', '神戸', '京都'];
+          filteredData = users
+            .filter(user => majorCities.includes(user.location))
+            .sort((a, b) => {
+              // 主要都市を優先し、その中でオンライン状態を優先
+              const aIsMajorCity = majorCities.includes(a.location);
+              const bIsMajorCity = majorCities.includes(b.location);
+
+              if (aIsMajorCity && !bIsMajorCity) return -1;
+              if (!aIsMajorCity && bIsMajorCity) return 1;
+
+              // 同じ都市カテゴリの場合はオンライン状態を優先
+              if (a.isOnline && !b.isOnline) return -1;
+              if (!a.isOnline && b.isOnline) return 1;
+
+              return 0;
+            })
+            .slice(0, 35); // 上位35人を表示
+          break;
+
+        default:
+          // デフォルト: 全ユーザー
+          filteredData = users;
+      }
+    } else {
+      // タブが指定されていない場合は検索クエリのみでフィルタリング
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        filteredData = users.filter(user =>
+          user.name.toLowerCase().includes(query) ||
+          user.location.toLowerCase().includes(query) ||
+          user.age.toString().includes(query)
+        );
+      }
     }
 
-    // 検索クエリを小文字に変換
-    const query = searchQuery.toLowerCase();
-
-    // 名前、居住地、年齢でフィルタリング
-    return users.filter(user =>
-      user.name.toLowerCase().includes(query) ||
-      user.location.toLowerCase().includes(query) ||
-      user.age.toString().includes(query)
-    );
-  }, [searchQuery]);
+    return filteredData;
+  }, [searchQuery, activeTab]);
 
   // 検索結果の有無を判定
   const hasSearchResults = filteredUsers.length > 0;

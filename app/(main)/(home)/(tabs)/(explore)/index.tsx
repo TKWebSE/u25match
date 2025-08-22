@@ -1,9 +1,9 @@
 import EmptyState from '@components/common/EmptyState';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
-import ExploreTabs, { ExploreTabType } from '@components/explore/ExploreTabs';
+import ExploreTabs from '@components/explore/ExploreTabs';
 import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
-import { useUserSearch } from '@hooks/useUserSearch';
+import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { useSidebar } from '@layouts/WebLayout';
 import { colors, spacing } from '@styles/globalStyles';
 import { isWeb } from '@utils/platform';
@@ -44,7 +44,7 @@ const ExploreScreen = () => {
     filteredUsers,
     hasSearchResults,
     hasSearchQuery
-  } = useUserSearch(actualSearchQuery);
+  } = useUserSearch(actualSearchQuery, activeTab);
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
