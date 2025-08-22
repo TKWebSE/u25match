@@ -198,8 +198,8 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
       top: spacing.xs,
       left: spacing.xs,
       backgroundColor: '#FF6B6B',
-      paddingHorizontal: spacing.sm,
-      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.base,  // smからbaseに変更して少し大きく
+      paddingVertical: spacing.sm,      // xsからsmに変更して少し大きく
       borderRadius: borderRadius.sm,
       shadowColor: '#000',
       shadowOffset: {
@@ -215,7 +215,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     // NEWラベルのテキストスタイル
     newLabelText: {
       color: colors.white,
-      fontSize: typography.xs,
+      fontSize: typography.base,  // xsからbaseに変更して少し大きく
       fontWeight: typography.bold,
       textAlign: 'center',
       letterSpacing: 0.3,
