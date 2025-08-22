@@ -17,15 +17,17 @@ interface User {
  * ユーザー検索機能を提供するカスタムフック
  * 
  * このフックは以下の責務を持ちます：
- * - 検索クエリの状態管理
+ * - 検索クエリの状態管理（外部から渡された場合はそれを使用）
  * - ユーザーリストのフィルタリング
  * - 検索結果の状態管理
  * - 検索機能の状態判定
  * 
+ * @param externalSearchQuery 外部から渡される検索クエリ（オプション）
  * @returns 検索機能に関連する状態と関数
  * 
  * @example
  * ```typescript
+ * // 内部で検索クエリを管理する場合
  * const {
  *   searchQuery,
  *   setSearchQuery,
@@ -34,16 +36,21 @@ interface User {
  *   hasSearchQuery,
  * } = useUserSearch();
  * 
- * // 検索クエリを設定
- * setSearchQuery('田中');
- * 
- * // フィルタリングされたユーザーを表示
- * filteredUsers.map(user => <UserCard key={user.name} user={user} />);
+ * // 外部から検索クエリを受け取る場合
+ * const {
+ *   filteredUsers,
+ *   hasSearchResults,
+ *   hasSearchQuery,
+ * } = useUserSearch(externalSearchQuery);
  * ```
  */
-export const useUserSearch = () => {
-  // 検索クエリの状態管理
-  const [searchQuery, setSearchQuery] = useState('');
+export const useUserSearch = (externalSearchQuery?: string) => {
+  // 検索クエリの状態管理（外部から渡された場合はそれを使用）
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
+
+  // 実際に使用する検索クエリを決定
+  const searchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const setSearchQuery = externalSearchQuery !== undefined ? () => { } : setInternalSearchQuery;
 
   // 検索フィルタリング（メモ化してパフォーマンスを最適化）
   const filteredUsers = useMemo(() => {
@@ -71,7 +78,7 @@ export const useUserSearch = () => {
 
   return {
     searchQuery,        // 現在の検索クエリ
-    setSearchQuery,     // 検索クエリを設定する関数
+    setSearchQuery,     // 検索クエリを設定する関数（外部から渡された場合は空関数）
     filteredUsers,      // フィルタリングされたユーザーリスト
     hasSearchResults,   // 検索結果があるかどうか
     hasSearchQuery,     // 検索クエリが入力されているかどうか

@@ -3,6 +3,21 @@
 
 export const mockUserRecommendations = [
   {
+    uid: 'online_user1',
+    name: '高橋愛',
+    age: 22,
+    bio: 'オンラインです！気軽に話しかけてください。',
+    images: [
+      'https://randomuser.me/api/portraits/women/5.jpg',
+      'https://randomuser.me/api/portraits/women/6.jpg',
+    ],
+    tags: ['online', 'chat', 'friendly'],
+    distance: 1.2,
+    compatibility: 95,
+    isOnline: true,
+    lastActiveAt: new Date(), // 現在時刻（オンライン）
+  },
+  {
     uid: 'user1',
     name: '田中太郎',
     age: 25,
@@ -14,6 +29,8 @@ export const mockUserRecommendations = [
     tags: ['music', 'coffee', 'jazz'],
     distance: 2.5,
     compatibility: 85,
+    isOnline: false,
+    lastActiveAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2時間前
   },
   {
     uid: 'user2',
@@ -27,6 +44,8 @@ export const mockUserRecommendations = [
     tags: ['travel', 'photography', 'cafe'],
     distance: 1.8,
     compatibility: 92,
+    isOnline: false,
+    lastActiveAt: new Date(Date.now() - 30 * 60 * 1000), // 30分前
   },
   {
     uid: 'user3',
@@ -40,6 +59,8 @@ export const mockUserRecommendations = [
     tags: ['sports', 'gym', 'soccer'],
     distance: 3.2,
     compatibility: 78,
+    isOnline: false,
+    lastActiveAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1時間前
   },
   {
     uid: 'user4',
@@ -53,6 +74,8 @@ export const mockUserRecommendations = [
     tags: ['cafe', 'food', 'coffee'],
     distance: 0.5,
     compatibility: 88,
+    isOnline: false,
+    lastActiveAt: new Date(Date.now() - 45 * 60 * 1000), // 45分前
   },
 ];
 

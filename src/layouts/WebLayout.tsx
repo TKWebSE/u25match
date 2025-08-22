@@ -1,3 +1,4 @@
+import SearchBar from '@components/explore/SearchBar';
 import { WebSidebar } from '@components/navigation/WebSidebar';
 import { Colors } from '@constants/Colors';
 import React, { createContext, useContext, useRef, useState } from 'react';
@@ -7,11 +8,17 @@ import { Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, useWindow
 interface SidebarContextType {
   isSidebarOpen: boolean;
   sidebarWidth: number;
+  mainContentWidth: number; // メインコンテンツエリアの幅を追加
+  searchQuery: string; // 検索クエリを追加
+  setSearchQuery: (query: string) => void; // 検索クエリ設定関数を追加
 }
 
 const SidebarContext = createContext<SidebarContextType>({
   isSidebarOpen: true,
   sidebarWidth: 280,
+  mainContentWidth: 829, // デフォルト値を設定
+  searchQuery: '', // デフォルトの検索クエリ
+  setSearchQuery: () => { }, // デフォルトの設定関数
 });
 
 // カスタムフックでドロワーの状態を取得
@@ -32,6 +39,13 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light' as keyof typeof Colors];
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // 検索クエリの状態管理
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // 実際の幅を計測するための状態
+  const [actualSidebarWidth, setActualSidebarWidth] = useState(0);
+  const [actualMainContentWidth, setActualMainContentWidth] = useState(0);
 
   // アニメーション用の値
   const sidebarAnimation = useRef(new Animated.Value(1)).current; // 1 = 開いている、0 = 閉じている
@@ -79,7 +93,10 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
   // Contextの値を更新
   const sidebarContextValue: SidebarContextType = {
     isSidebarOpen,
-    sidebarWidth,
+    sidebarWidth: actualSidebarWidth || sidebarWidth, // 実際に計測した値を使用
+    mainContentWidth: actualMainContentWidth || (width - sidebarWidth), // 実際に計測した値を使用
+    searchQuery, // 検索クエリを追加
+    setSearchQuery, // 検索クエリ設定関数を追加
   };
 
   return (
@@ -96,23 +113,45 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
         </TouchableOpacity>
 
         {/* 左縦サイドナビゲーション（アニメーション付き） */}
-        <Animated.View style={[styles.sidebar, {
-          width: animatedSidebarWidth,
-          backgroundColor: colors.card,
-          borderRightColor: colors.border,
-          transform: [{ translateX: animatedSidebarTranslateX }],
-        }]}>
+        <Animated.View
+          style={[styles.sidebar, {
+            width: animatedSidebarWidth,
+            backgroundColor: colors.card,
+            borderRightColor: colors.border,
+            transform: [{ translateX: animatedSidebarTranslateX }],
+          }]}
+          onLayout={(event) => {
+            const { width } = event.nativeEvent.layout;
+            setActualSidebarWidth(width);
+          }}
+        >
           <WebSidebar />
         </Animated.View>
 
         {/* メインコンテンツエリア - 幅を動的に調整 */}
-        <Animated.View style={[styles.mainContent, {
-          backgroundColor: colors.background,
-          width: mainContentWidth,
-          marginLeft: mainContentMarginLeft,
-        }]}>
+        <Animated.View
+          style={[styles.mainContent, {
+            backgroundColor: 'white',//ここがメインコンテンツの外側の黒いところ
+            width: mainContentWidth,
+            marginLeft: mainContentMarginLeft,
+          }]}
+          onLayout={(event) => {
+            const { width } = event.nativeEvent.layout;
+            setActualMainContentWidth(width);
+          }}
+        >
           <View style={styles.contentWrapper}>
-            {children}
+            {/* 検索バーをメインコンテンツエリアの上部に配置 */}
+            <View style={styles.searchBarContainer}>
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </View>
+            {/* メインコンテンツ */}
+            <View style={styles.mainContentArea}>
+              {children}
+            </View>
           </View>
         </Animated.View>
       </View>
@@ -142,7 +181,15 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
     paddingHorizontal: 32, // 左右余白あり
-    paddingTop: 80, // メニューボタンとの重複を避ける
+    paddingTop: 20, // メニューボタンとの重複を避ける
+  },
+  // 検索バーコンテナのスタイル
+  searchBarContainer: {
+    // marginBottom: 8, // 検索バーとメインコンテンツの間隔
+  },
+  // メインコンテンツエリアのスタイル
+  mainContentArea: {
+    flex: 1, // 残りのスペースを全て使用
   },
   menuButton: {
     position: 'absolute',

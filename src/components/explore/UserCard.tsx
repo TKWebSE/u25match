@@ -1,5 +1,6 @@
 import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
 import { getOnlineStatus, getOnlineStatusIcon } from '@utils/getOnlineStatus';
+import { isWeb } from '@utils/platform';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -14,25 +15,49 @@ interface User {
   createdAt?: Date; // 登録日（新規ユーザー判定用）
 }
 
+// レイアウト情報の型定義
+interface CardLayout {
+  cardWidth: number;
+  cardHeight: number;
+  imageHeight: number;
+  cardGap: number;
+  sideMargin: number;
+  containerWidth: number;
+  // 新しいグリッドレイアウト用のプロパティ
+  columnCount: number;
+  gridTemplateColumns?: string;
+  gridGap?: string;
+  mainContentAvailableWidth: number;
+  drawerWidth: number;
+}
+
 // UserCardコンポーネントのProps型定義
 interface UserCardProps {
   user: User;
   onPress: (user: User) => void;
+  layout: CardLayout;
 }
 
 /**
  * ユーザーカードコンポーネント
  * エクスプローラ画面でユーザー情報を表示するカード
  */
-const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
+const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
   // アニメーション用の値
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const newLabelAnim = useRef(new Animated.Value(0)).current;
 
-  // カードサイズの定数
-  const cardWidth = 320;
-  const cardHeight = 800;
-  const imageHeight = 800;
+  // レイアウト情報を分割代入
+  const { cardWidth, cardHeight, imageHeight, gridTemplateColumns, gridGap } = layout;
+
+  // Web環境でのグリッドスタイル
+  const webGridStyle = isWeb ? {
+    width: cardWidth,
+    height: cardHeight,
+    // CSS Gridの設定（親コンテナで使用）
+    gridTemplateColumns,
+    gridGap,
+  } : {};
 
   // オンラインステータスの取得
   const onlineStatusIcon = getOnlineStatusIcon(user.lastActiveAt);
@@ -122,12 +147,11 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     // カード全体のスタイル
     card: {
       width: cardWidth,
-      height: cardHeight,//ここのせいでカードの下部に白いところが出ている。画像サイズの方を修正して、様子を見たい
+      height: cardHeight,
       backgroundColor: colors.surface,
       borderRadius: borderRadius.lg,
-      marginBottom: spacing.base,
-      marginLeft: spacing.xs,
-      marginRight: 0,
+      marginRight: spacing.sm,
+      marginBottom: spacing.sm,
       ...shadows.base,
       overflow: 'hidden',
     },
@@ -145,14 +169,28 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     // オンラインインジケーター（緑の丸）
     onlineIndicator: {
       position: 'absolute',
-      top: spacing.xs,
-      right: spacing.xs,
-      width: 12,
-      height: 12,
-      borderRadius: 6,
+      top: spacing.base,
+      right: spacing.base,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
+      borderRadius: borderRadius.full,
+    },
+    // オンラインインジケーターの緑の丸
+    onlineDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
       backgroundColor: colors.online,
-      borderWidth: 2,
-      borderColor: colors.white,
+      marginRight: spacing.xs,
+    },
+    // オンラインインジケーターのテキスト
+    onlineText: {
+      color: colors.white,
+      fontSize: typography.sm,
+      fontWeight: '600',
     },
     // NEWラベルのスタイル
     newLabel: {
@@ -232,6 +270,35 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
     onlineStatusIcon: {
       fontSize: typography.xs,
     },
+    // カード情報オーバーレイのスタイル
+    cardOverlay: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      padding: spacing.lg,
+    },
+    // オーバーレイ内のユーザー情報コンテナ
+    userInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+    },
+    // オーバーレイ内のユーザー名
+    userName: {
+      fontSize: typography.xl,
+      fontWeight: 'bold',
+      color: colors.white,
+      marginBottom: spacing.xs,
+    },
+    // オーバーレイ内のユーザー住所
+    userLocation: {
+      fontSize: typography.xl,
+      color: colors.white,
+      fontWeight: 'bold',
+    },
   });
 
   return (
@@ -251,7 +318,12 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
         <View style={styles.imageContainer}>
           <Image source={{ uri: user.imageUrl }} style={styles.cardImage} />
           {/* オンラインインジケーター */}
-          {isOnline && <View style={styles.onlineIndicator} />}
+          {isOnline && (
+            <View style={styles.onlineIndicator}>
+              <View style={styles.onlineDot} />
+              <Text style={styles.onlineText}>オンライン</Text>
+            </View>
+          )}
           {/* NEWラベル（新規ユーザーの場合のみ表示） */}
           {isNewUser() && (
             <Animated.View
@@ -271,31 +343,22 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress }) => {
               <Text style={styles.newLabelText}>NEW</Text>
             </Animated.View>
           )}
-        </View>
 
-        {/* カード情報エリア */}
-        <View style={styles.cardContent}>
-          <View style={styles.infoRow}>
-            {/* ユーザー情報（年齢と住所） */}
-            <View style={styles.userInfoContainer}>
-              <Text style={styles.ageText} numberOfLines={1}>
+          {/* カード情報オーバーレイ */}
+          <View style={styles.cardOverlay}>
+            <View style={styles.userInfo}>
+              <Text style={styles.userName}>
                 {user.age}歳
               </Text>
               <View style={styles.locationContainer}>
                 <Text style={styles.locationIcon}>📍</Text>
-                <Text style={styles.ageText} numberOfLines={1}>
-                  {user.location}
-                </Text>
+                <Text style={styles.userLocation}>{user.location}</Text>
               </View>
-            </View>
-            {/* オンラインステータスアイコン */}
-            <View style={styles.onlineStatusContainer}>
-              <Text style={styles.onlineStatusIcon}>
-                {onlineStatusIcon}
-              </Text>
             </View>
           </View>
         </View>
+
+        {/* カード情報エリア（削除） */}
       </TouchableOpacity>
     </Animated.View>
   );

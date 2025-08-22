@@ -1,6 +1,5 @@
-import { borderRadius, colors, shadows, spacing, typography } from '@styles/globalStyles';
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -11,52 +10,35 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   onSearchChange,
-  placeholder = "名前、地域、年齢で検索..."
+  placeholder = "検索"
 }) => {
   return (
     <View style={styles.searchContainer}>
-      <View style={styles.searchInputContainer}>
-        <View style={styles.searchIconContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
-        </View>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={placeholder}
-          placeholderTextColor={colors.textTertiary}
-          value={searchQuery}
-          onChangeText={onSearchChange}
-          clearButtonMode="while-editing"
-        />
-      </View>
+      <TextInput
+        placeholder={placeholder}
+        value={searchQuery}
+        onChangeText={onSearchChange}
+        style={styles.input}
+        clearButtonMode="while-editing"
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   searchContainer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.lg,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.base,
-    ...shadows.base,
-  },
-  searchIconContainer: {
-    marginRight: spacing.base,
-  },
-  searchIcon: {
-    fontSize: typography.lg,
-    color: colors.textSecondary,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.lg,
-    color: colors.textPrimary,
+  input: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    fontSize: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    width: '100%',
   },
 });
 

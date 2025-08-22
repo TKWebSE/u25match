@@ -1,12 +1,14 @@
 import EmptyState from '@components/common/EmptyState';
-import SearchBar from '@components/explore/SearchBar';
+import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import UserCard from '@components/explore/UserCard';
+import WebGridLayout from '@components/explore/WebGridLayout';
 import { useUserSearch } from '@hooks/useUserSearch';
 import { useSidebar } from '@layouts/WebLayout';
 import { colors, spacing } from '@styles/globalStyles';
+import { isWeb } from '@utils/platform';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { FlatList, StyleSheet, View, useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface User {
@@ -20,37 +22,25 @@ interface User {
 
 const ExploreScreen = () => {
   const router = useRouter();
-  const { width } = useWindowDimensions();
-  const { isSidebarOpen } = useSidebar(); // ドロワーの状態を取得（Web環境でのみ使用）
 
-  // 極端に小さな画面でのエラーを防ぐ
-  const safeWidth = Math.max(width, 320); // 最小320pxを確保
+  // カードリストエリアの幅を計測（シンプル化）
+  const [cardListWidth, setCardListWidth] = useState(0);
 
-  // 列数を計算してkeyとして使用（ドロワーの状態も考慮）
-  const columnCount = (() => {
-    // 画面幅に基づいて列数を決定
-    if (safeWidth <= 570) {
-      return 1; // 480×837のトグルデバイスシミュレーション
-    } else if (safeWidth <= 960) {
-      // ドロワーの状態に応じて列数を調整（Web環境）
-      return isSidebarOpen ? 2 : 3; // ドロワー開で2列、閉で3列
-    } else if (safeWidth <= 1200) {
-      // ドロワーの状態に応じて列数を調整（Web環境）
-      return isSidebarOpen ? 3 : 4; // ドロワー開で3列、閉で4列
-    } else {
-      // ドロワーの状態に応じて列数を調整（Web環境）
-      return isSidebarOpen ? 3 : 4; // ドロワー開で3列、閉で4列
-    }
-  })();
+  // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
+  const cardLayout = useCardLayout(cardListWidth);
+
+  // Web環境ではWebLayoutの検索クエリを使用、モバイルではローカル状態を使用
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const { searchQuery: webSearchQuery } = useSidebar();
+
+  // 実際に使用する検索クエリを決定
+  const actualSearchQuery = isWeb ? webSearchQuery : localSearchQuery;
+
   const {
-    searchQuery,
-    setSearchQuery,
     filteredUsers,
     hasSearchResults,
     hasSearchQuery
-  } = useUserSearch();
-
-
+  } = useUserSearch(actualSearchQuery);
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
@@ -58,7 +48,7 @@ const ExploreScreen = () => {
   };
 
   const renderUserItem = ({ item }: { item: User }) => (
-    <UserCard user={item} onPress={handleCardPress} />
+    <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
   );
 
   const renderEmptyComponent = () => {
@@ -67,7 +57,7 @@ const ExploreScreen = () => {
         <EmptyState
           message=""
           showSearchMessage={true}
-          searchQuery={searchQuery}
+          searchQuery={actualSearchQuery}
         />
       );
     }
@@ -79,24 +69,53 @@ const ExploreScreen = () => {
     return null;
   };
 
+  // Web環境用のグリッドレイアウト
+  const renderWebGrid = () => (
+    <ScrollView
+      style={styles.webScrollView}
+      contentContainerStyle={styles.webScrollContent}
+      showsVerticalScrollIndicator={false}
+    >
+      <WebGridLayout
+        gridTemplateColumns={cardLayout.gridTemplateColumns}
+        gridGap={cardLayout.gridGap}
+      >
+        {filteredUsers.map((user, index) => (
+          <UserCard key={`${user.name}-${index}`} user={user} onPress={handleCardPress} layout={cardLayout} />
+        ))}
+      </WebGridLayout>
+    </ScrollView>
+  );
+
+  // モバイル環境用のFlatList
+  const renderMobileList = () => (
+    <FlatList
+      data={filteredUsers}
+      renderItem={renderUserItem}
+      keyExtractor={(item, index) => `${item.name}-${index}`}
+      numColumns={cardLayout.columnCount}
+      key={`flatlist-${cardLayout.columnCount}`}
+      contentContainerStyle={styles.listContainer}
+      showsVerticalScrollIndicator={false}
+      ListEmptyComponent={renderEmptyComponent}
+    />
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-
-        <FlatList
-          data={filteredUsers}
-          renderItem={renderUserItem}
-          keyExtractor={(item, index) => `${item.name}-${index}`}
-          numColumns={columnCount}
-          key={`flatlist-${columnCount}-${isSidebarOpen ? 'open' : 'closed'}`} // ドロワーの状態もkeyに含める
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={renderEmptyComponent}
-        />
+        {/* カードリストエリアの幅を計測 */}
+        <View
+          style={styles.cardListArea}
+          onLayout={(event) => {
+            const { width } = event.nativeEvent.layout;
+            setCardListWidth(width);
+            console.log('🎯 カードリストエリアの幅:', width);
+          }}
+        >
+          {/* プラットフォームに応じてレイアウトを切り替え */}
+          {isWeb ? renderWebGrid() : renderMobileList()}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -109,12 +128,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: 'cyan', // 水色に変更
   },
   listContainer: {
     padding: spacing.lg,
-    paddingHorizontal: spacing.xl, // 左右に余分なスペースを追加
-    paddingRight: spacing.xl + spacing.xl + spacing.xl + spacing.base, // 右側により多くのスペースを追加
+    // paddingHorizontal: spacing.xl, // 左右に余分なスペースを追加
+    // paddingRight: spacing.xl + spacing.xl + spacing.xl + spacing.base, // 右側により多くのスペースを追加
+
+  },
+  cardListArea: {
+    flex: 1,
+    backgroundColor: 'cyan', // カードリストエリア（水色）
+  },
+  // Web環境用のスクロールスタイル
+  webScrollView: {
+    flex: 1,
+  },
+  webScrollContent: {
+    flexGrow: 1,
   },
   row: {
     justifyContent: 'space-between',
