@@ -1,5 +1,7 @@
 import { Colors } from '@constants/Colors';
-import React, { useEffect, useRef } from 'react';
+import { useSidebar } from '@layouts/WebLayout';
+import { isWeb } from '@utils/platform';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -13,16 +15,42 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
   const slideAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    const targetPosition = activeTab === 'likes' ? 0 : screenWidth / 2 - 16;
+  // Web環境でのドロワー状態を取得
+  const { isSidebarOpen, sidebarWidth, mainContentWidth } = useSidebar();
 
+  // ドロワーの状態に応じたタブの幅を計算（useMemoで最適化）
+  const tabWidth = useMemo(() => {
+    if (isWeb) {
+      if (isSidebarOpen) {
+        // ドロワーが開いている場合：メインコンテンツエリアの幅を考慮
+        const availableWidth = mainContentWidth - 32 - 8; // 左右マージン - パディング
+        return availableWidth / 2;
+      } else {
+        // ドロワーが閉じている場合：画面幅全体を使用
+        const availableWidth = screenWidth - 32 - 8; // 左右マージン - パディング
+        return availableWidth / 2;
+      }
+    } else {
+      // モバイル環境：画面幅を使用
+      const availableWidth = screenWidth - 32 - 8; // 左右マージン - パディング
+      return availableWidth / 2;
+    }
+  }, [isWeb, isSidebarOpen, mainContentWidth]);
+
+  // スライディングインジケーターの位置を計算（useMemoで最適化）
+  const targetPosition = useMemo(() => {
+    return activeTab === 'likes' ? 0 : tabWidth;
+  }, [activeTab, tabWidth]);
+
+  useEffect(() => {
+    // ドロワーの状態変更時やタブ変更時にアニメーションを実行
     Animated.spring(slideAnim, {
       toValue: targetPosition,
       useNativeDriver: false,
       tension: 80,
       friction: 10,
     }).start();
-  }, [activeTab, slideAnim]);
+  }, [targetPosition, slideAnim, isSidebarOpen, sidebarWidth, mainContentWidth]);
 
   const handleTabPress = (tab: 'likes' | 'footprints') => {
     // 控えめなスケールアニメーション
@@ -51,6 +79,7 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabChange }) =
           styles.slidingIndicator,
           {
             transform: [{ translateX: slideAnim }],
+            width: tabWidth,
           },
         ]}
       />
@@ -154,8 +183,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 4,
     left: 4,
-    width: (screenWidth - 32) / 2 - 4,
-    height: 52, // 48から52に変更してさらに下のスペースを広く
+    // 幅は動的に計算される（useMemoで計算）
+    height: 52,
     backgroundColor: '#fff',
     borderRadius: 12,
     shadowColor: '#000',
@@ -178,8 +207,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    minHeight: 52, // 48から52に変更してスライディングインジケーターと合わせる
-    flexDirection: 'row', // アイコンとテキストを横並びに
+    minHeight: 52,
+    flexDirection: 'row',
   },
   activeTabContent: {
     backgroundColor: 'transparent',
@@ -198,7 +227,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -2,
     right: 8,
-    backgroundColor: 'transparent', // 動的に設定するため透明に
+    backgroundColor: 'transparent',
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,

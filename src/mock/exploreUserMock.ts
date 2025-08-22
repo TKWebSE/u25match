@@ -43,7 +43,7 @@ const getRandomLastActiveAt = () => {
   return new Date(now - randomMinutes * 60 * 1000);
 };
 
-// 60人分のユーザーデータを生成
+// 60人分のユーザーデータを生成（エクスプローラー画面用）
 const generateUsers = (): User[] => {
   const users: User[] = [];
 
@@ -86,6 +86,52 @@ const generateUsers = (): User[] => {
   return users;
 };
 
+// 20人分のリアクション用ユーザーデータを生成
+const generateReactionUsers = (): User[] => {
+  const reactionUsers: User[] = [];
+
+  for (let i = 0; i < 20; i++) {
+    const isMale = Math.random() > 0.5;
+    const names = isMale ? maleNames : femaleNames;
+    const name = names[Math.floor(Math.random() * names.length)];
+    const age = getRandomAge();
+    const location = getRandomCity();
+    const lastActiveAt = getRandomLastActiveAt();
+
+    // 登録日時を設定（リアクション画面用）
+    let createdAt: Date;
+    if (i < 3) {
+      // 最初の3人は新規ユーザー（1週間以内）
+      const daysAgo = Math.floor(Math.random() * 7); // 0-6日前
+      createdAt = new Date();
+      createdAt.setDate(createdAt.getDate() - daysAgo);
+    } else {
+      // 他のユーザーは過去1ヶ月以内に登録
+      const daysAgo = Math.floor(Math.random() * 30) + 7; // 7-36日前
+      createdAt = new Date();
+      createdAt.setDate(createdAt.getDate() - daysAgo);
+    }
+
+    // ランダムユーザーAPIの画像ID（1-99）
+    const imageId = Math.floor(Math.random() * 99) + 1;
+    const gender = isMale ? 'men' : 'women';
+
+    reactionUsers.push({
+      name,
+      age,
+      location,
+      imageUrl: `https://randomuser.me/api/portraits/${gender}/${imageId}.jpg`,
+      isOnline: Math.random() > 0.6, // 40%の確率でオンライン（リアクション画面では少し高め）
+      lastActiveAt,
+      gender: isMale ? 'male' : 'female',
+      createdAt,
+    });
+  }
+
+  return reactionUsers;
+};
+
 export const users = generateUsers();
+export const reactionUsers = generateReactionUsers(); // リアクション画面用の20人分
 export type { User };
 

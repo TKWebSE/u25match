@@ -1,5 +1,6 @@
 import EmptyState from '@components/common/EmptyState';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
+import ExploreTabs, { ExploreTabType } from '@components/explore/ExploreTabs';
 import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
 import { useUserSearch } from '@hooks/useUserSearch';
@@ -26,6 +27,9 @@ const ExploreScreen = () => {
   // カードリストエリアの幅を計測（シンプル化）
   const [cardListWidth, setCardListWidth] = useState(0);
 
+  // アクティブなタブの状態管理
+  const [activeTab, setActiveTab] = useState<ExploreTabType>('search');
+
   // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
   const cardLayout = useCardLayout(cardListWidth);
 
@@ -45,6 +49,13 @@ const ExploreScreen = () => {
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
     router.push(`/(main)/profile/${userId}`);
+  };
+
+  // タブ切り替えハンドラー
+  const handleTabPress = (tab: ExploreTabType) => {
+    setActiveTab(tab);
+    // タブに応じた処理をここに追加（例：フィルタリング、データ取得など）
+    console.log('🎯 タブ切り替え:', tab);
   };
 
   const renderUserItem = ({ item }: { item: User }) => (
@@ -104,6 +115,13 @@ const ExploreScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        {/* タブエリア */}
+        <ExploreTabs
+          activeTab={activeTab}
+          onTabPress={handleTabPress}
+          cardListWidth={cardListWidth}
+        />
+
         {/* カードリストエリアの幅を計測 */}
         <View
           style={styles.cardListArea}
