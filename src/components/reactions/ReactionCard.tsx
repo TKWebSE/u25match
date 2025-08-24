@@ -364,13 +364,6 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress, la
             </Animated.View>
           )}
 
-          {/* リアクションインジケーター */}
-          <View style={styles.reactionIndicator}>
-            <Text style={styles.reactionIndicatorText}>
-              {getReactionIcon()}
-            </Text>
-          </View>
-
           {/* カード情報オーバーレイ */}
           <View style={styles.cardOverlay}>
             <View style={styles.userInfo}>

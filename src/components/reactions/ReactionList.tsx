@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
   listContainer: {
     padding: spacing.lg,
     paddingHorizontal: spacing.xl,
-    paddingRight: spacing.xl + spacing.xl + spacing.xl + spacing.base,
   },
   emptyListContainer: {
     flex: 1,
