@@ -1,94 +1,84 @@
+import EmptyState from '@components/common/EmptyState';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
+import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
-import { ReactionList, ReactionTabs } from '@components/reactions';
+import ReactionTabs from '@components/reactions/ReactionTabs';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';
 import { isWeb } from '@utils/platform';
-import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// リアクションの型定義
-interface Reaction {
-  id: string;
-  fromUserId: string;
-  toUserId: string;
-  type: 'like' | 'super_like' | 'pass' | 'footprint';
-  timestamp: Date;
-  message?: string;
+interface User {
+  name: string;
+  age: number;
+  location: string;
+  imageUrl: string;
+  isOnline: boolean;
+  lastActiveAt: Date;
 }
 
 const ReactionsScreen = () => {
-  const [activeTab, setActiveTab] = useState<'likes' | 'footprints'>('likes');
-  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+
+  // カードリストエリアの幅を計測（シンプル化）
   const [cardListWidth, setCardListWidth] = useState(0);
 
-  // カードレイアウト情報を取得（エクスプローラー画面と同じ）
+  // アクティブなタブの状態管理
+  const [activeTab, setActiveTab] = useState<'likes' | 'footprints'>('likes');
+
+  // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
   const cardLayout = useCardLayout(cardListWidth);
 
-  // いいねと足あとを分離
-  const likeReactions: Reaction[] = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
-  // 足あと: 他のユーザーが自分のプロフィールに残した足あと
-  const footprintReactions: Reaction[] = mockReactions.filter(r => r.type === 'footprint');
+  // リアクションデータからユーザーリストを生成
+  const getReactionUsers = () => {
+    const likeReactions = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
+    const footprintReactions = mockReactions.filter(r => r.type === 'footprint');
 
-  // 現在のタブに応じたリアクションを取得
-  const currentReactions = activeTab === 'likes' ? likeReactions : footprintReactions;
+    const currentReactions = activeTab === 'likes' ? likeReactions : footprintReactions;
 
-  // リアクションに対応するユーザーを取得する関数
-  const getReactionUsers = useCallback((reactions: Reaction[]) => {
-    return reactions.map((reaction, index) => {
-      // リアクションIDとインデックスに基づいてランダムなユーザーを選択
+    return currentReactions.map((reaction, index) => {
       const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
       const user = { ...reactionUsers[userIndex] };
-
-      // リアクションIDに基づいてランダムな画像URLを生成
       user.imageUrl = getUserImageUrl(reaction.id);
-
       return user;
     });
-  }, [reactionUsers]);
+  };
 
-  // リアクションカードがタップされた時の処理
-  const handleReactionPress = useCallback((reaction: Reaction, user: any) => {
-    const targetUserId = reaction.fromUserId;
+  const filteredUsers = getReactionUsers();
 
-    // プロフィール画面に遷移
-    router.push(`/profile/${targetUserId}`);
-  }, []);
+  const handleCardPress = (user: User) => {
+    const userId = user.name.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/(main)/profile/${userId}`);
+  };
 
-  // プルリフレッシュの処理
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    try {
-      // 実際の実装では、ここでリアクションデータを再取得
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('リアクションの更新に失敗しました:', error);
-    } finally {
-      setRefreshing(false);
-    }
-  }, []);
-
-  // タブ変更の処理
-  const handleTabChange = useCallback((tab: 'likes' | 'footprints') => {
+  // タブ切り替えハンドラー
+  const handleTabPress = (tab: 'likes' | 'footprints') => {
     setActiveTab(tab);
-  }, []);
+    console.log('🎯 リアクションタブ切り替え:', tab);
+  };
 
-  // 空の状態表示
-  const renderEmptyComponent = useCallback(() => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>💫</Text>
-      <Text style={styles.emptyTitle}>まだリアクションがありません</Text>
-      <Text style={styles.emptyMessage}>
-        {activeTab === 'likes'
-          ? 'まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！'
-          : 'まだ足あとがありません。プロフィールを見に来てくれる人がいないかもしれません。'
-        }
-      </Text>
-    </View>
-  ), [activeTab]);
+  const renderUserItem = ({ item }: { item: User }) => (
+    <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
+  );
+
+  const renderEmptyComponent = () => {
+    if (filteredUsers.length === 0) {
+      return (
+        <EmptyState
+          message={
+            activeTab === 'likes'
+              ? 'まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！'
+              : 'まだ足あとがありません。プロフィールを見に来てくれる人がいないかもしれません。'
+          }
+        />
+      );
+    }
+    return null;
+  };
 
   // Web環境用のグリッドレイアウト
   const renderWebGrid = () => (
@@ -101,45 +91,24 @@ const ReactionsScreen = () => {
         gridTemplateColumns={cardLayout.gridTemplateColumns}
         gridGap={cardLayout.gridGap}
       >
-        {currentReactions.map((reaction, index) => {
-          // リアクションIDとインデックスに基づいてランダムなユーザーを選択
-          const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-          const user = { ...reactionUsers[userIndex] };
-
-          // リアクションIDに基づいてランダムな画像URLを生成
-          user.imageUrl = getUserImageUrl(reaction.id);
-
-          return (
-            <ReactionList
-              key={`${reaction.id}-${index}`}
-              reactions={[reaction]}
-              users={[user]}
-              onReactionPress={handleReactionPress}
-              onRefresh={handleRefresh}
-              refreshing={refreshing}
-              cardLayout={cardLayout}
-              emptyMessage=""
-            />
-          );
-        })}
+        {filteredUsers.map((user, index) => (
+          <UserCard key={`${user.name}-${index}`} user={user} onPress={handleCardPress} layout={cardLayout} />
+        ))}
       </WebGridLayout>
     </ScrollView>
   );
 
   // モバイル環境用のFlatList
   const renderMobileList = () => (
-    <ReactionList
-      reactions={currentReactions}
-      users={getReactionUsers(currentReactions)}
-      onReactionPress={handleReactionPress}
-      onRefresh={handleRefresh}
-      refreshing={refreshing}
-      cardLayout={cardLayout}
-      emptyMessage={
-        activeTab === 'likes'
-          ? 'まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！'
-          : 'まだ足あとがありません。プロフィールを見に来てくれる人がいないかもしれません。'
-      }
+    <FlatList
+      data={filteredUsers}
+      renderItem={renderUserItem}
+      keyExtractor={(item, index) => `${item.name}-${index}`}
+      numColumns={cardLayout.columnCount}
+      key={`flatlist-${cardLayout.columnCount}`}
+      contentContainerStyle={styles.listContainer}
+      showsVerticalScrollIndicator={false}
+      ListEmptyComponent={renderEmptyComponent}
     />
   );
 
@@ -149,7 +118,7 @@ const ReactionsScreen = () => {
         {/* リアクションタブ */}
         <ReactionTabs
           activeTab={activeTab}
-          onTabChange={handleTabChange}
+          onTabPress={handleTabPress}
         />
 
         {/* カードリストエリアの幅を計測（エクスプローラー画面と同じ） */}
@@ -178,6 +147,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  listContainer: {
+    padding: spacing.lg,
+  },
   cardListArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -188,29 +160,6 @@ const styles = StyleSheet.create({
   },
   webScrollContent: {
     flexGrow: 1,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: spacing['2xl'],
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptyMessage: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: 32,
   },
 });
 

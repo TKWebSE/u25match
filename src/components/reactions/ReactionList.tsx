@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: spacing.lg,
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.lg,
   },
   emptyListContainer: {
     flex: 1,

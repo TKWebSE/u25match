@@ -368,7 +368,6 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
                 </Text>
               </View>
               <View style={styles.locationContainer}>
-                <Text style={styles.locationIcon}>📍</Text>
                 <Text style={styles.userLocation}>{user.location}</Text>
               </View>
             </View>

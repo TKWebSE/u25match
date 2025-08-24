@@ -317,6 +317,17 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress, la
       fontSize: typography.xl,
       marginRight: spacing.xs,
     },
+    // 年齢コンテナのスタイル
+    ageContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    // 年齢オンラインインジケーターのスタイル
+    ageOnlineIndicator: {
+      fontSize: typography.base,
+      marginRight: spacing.xs,
+    },
   });
 
   return (
@@ -367,11 +378,16 @@ const ReactionCard: React.FC<ReactionCardProps> = ({ reaction, user, onPress, la
           {/* カード情報オーバーレイ */}
           <View style={styles.cardOverlay}>
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>
-                {user.age}歳
-              </Text>
+              <View style={styles.ageContainer}>
+                {/* 年齢の左側にオンラインステータス表示（絵文字アイコン） */}
+                <Text style={styles.ageOnlineIndicator}>
+                  {getOnlineStatusIcon(user.lastActiveAt)}
+                </Text>
+                <Text style={styles.userName}>
+                  {user.age}歳
+                </Text>
+              </View>
               <View style={styles.locationContainer}>
-                <Text style={styles.locationIcon}>📍</Text>
                 <Text style={styles.userLocation}>{user.location}</Text>
               </View>
             </View>
