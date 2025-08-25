@@ -95,7 +95,6 @@ export const RemainingStats: React.FC<RemainingStatsProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
-    paddingHorizontal: 20,
     marginBottom: 24,
   },
   statsContainer: {

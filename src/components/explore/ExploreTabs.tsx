@@ -115,7 +115,6 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
             key={tabKey}
             style={[styles.tab, {
               width: tabWidth,
-              // タブ間のギャップをなくし、横幅いっぱいに配置
               marginHorizontal: 0,
             }]}
             onPress={() => handleTabPress(tabKey as ExploreTabType)}
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   tabText: {
-    fontSize: 13,
+    fontSize: 20,
     fontWeight: '500',
     color: '#6c757d',
     letterSpacing: 0.3,

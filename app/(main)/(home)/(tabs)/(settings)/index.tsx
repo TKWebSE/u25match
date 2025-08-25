@@ -39,7 +39,7 @@ const SettingsScreen = () => {
 
   // 利用規約の表示
   const handleTermsOfService = () => {
-    router.push('/(main)/terms-of-service');
+    router.push('/(main)/privacy-policy');
   };
 
   // お問い合わせの表示
