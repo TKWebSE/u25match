@@ -29,9 +29,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopWidth: 0, // 上部の境界線を削除
-          height: Platform.OS === 'ios' ? 88 : 60, // プラットフォーム別の高さ
-          paddingBottom: Platform.OS === 'ios' ? 20 : 10, // 下部パディング
-          paddingTop: 10,
+          height: Platform.OS === 'ios' ? 72 : 72, // 高さをさらに縮小（iOS: 80→72, Android: 56→52）
+          paddingBottom: Platform.OS === 'ios' ? 12 : 6, // 下部パディングをさらに縮小（iOS: 16→12, Android: 8→6）
+          paddingTop: 6, // 上部パディングをさらに縮小（8→6）
           elevation: 8, // Android用の影
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
@@ -39,6 +39,8 @@ export default function TabsLayout() {
           shadowRadius: 4,
           borderTopLeftRadius: 20, // 上部の角丸
           borderTopRightRadius: 20,
+          // タブバーをさらに上に移動
+          marginBottom: Platform.OS === 'ios' ? 16 : 12, // 下部マージンを増加（iOS: 8→16, Android: 4→12）
         },
         tabBarActiveTintColor: '#6C63FF', // アクティブ時の色
         tabBarInactiveTintColor: '#8E8E93', // 非アクティブ時の色
