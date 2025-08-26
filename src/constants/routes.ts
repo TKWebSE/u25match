@@ -23,7 +23,7 @@ export const getProfilePath = (uid: string) => `/profile/${uid}`;
 export const REACTIONS_SCREEN_PATH = '/(home)/(tabs)/reactions';
 
 // オススメ
-export const RECOMMENDATIONS_SCREEN_PATH = '/(home)/(tabs)/recommendations';
+export const RECOMMENDATIONS_SCREEN_PATH = '/recommendations';
 
 // 設定
 export const SETTINGS_SCREEN_PATH = '/(home)/(tabs)/settings';

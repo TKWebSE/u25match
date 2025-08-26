@@ -7,7 +7,7 @@ import React, { useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 /**
- * 推奨ユーザーを表示するメインスクリーン
+ * 推奨ユーザーを表示するメインスクリーン（モバイル版）
  * 現在のカードの裏に背景のように次のカードを配置
  */
 export default function RecommendationsScreen() {
@@ -26,15 +26,9 @@ export default function RecommendationsScreen() {
   // カードのrefを取得
   const cardRef = useRef<SwipeableCardRef>(null);
 
-  // デバッグログ：現在の状態を表示
-  console.log(`🎯 RecommendationsScreen - currentIndex: ${currentIndex}, totalUsers: ${users.length}, currentUser: ${currentUser?.name || 'none'}, nextUser: ${nextUser?.name || 'none'}`);
-
   // すべてのカードをめくった場合の処理
   if (!currentUser) {
-    console.log('❌ カードが存在しません - EmptyRecommendationsStateを表示');
-    return (
-      <EmptyRecommendationsState />
-    );
+    return <EmptyRecommendationsState />;
   }
 
   /**
@@ -42,17 +36,11 @@ export default function RecommendationsScreen() {
    * 右スワイプはいいね、左スワイプはパスとして処理
    */
   const handleSwipe = (direction: 'left' | 'right') => {
-    console.log(`🔄 スワイプ完了: ${direction === 'right' ? '右（いいね）' : '左（パス）'} - ユーザー: ${currentUser.name} - 呼び出し回数チェック`);
-
     if (direction === 'right') {
-      console.log(`❤️ いいね処理開始: ${currentUser.name}`);
       handleLike(currentUser.id);
     } else {
-      console.log(`👋 パス処理開始: ${currentUser.name}`);
       handlePass(currentUser.id);
     }
-
-    console.log(`📱 次のカードに進みます - 現在: ${currentIndex + 1}/${users.length}`);
     // currentIndexが更新され、再レンダリングされる
   };
 
@@ -60,13 +48,10 @@ export default function RecommendationsScreen() {
    * ボタンタップ時のアニメーション実行
    */
   const handleButtonTap = (direction: 'left' | 'right') => {
-    console.log(`👆 ボタンタップ: ${direction === 'right' ? 'いいね' : 'パス'} - ユーザー: ${currentUser.name}`);
-
     // カードのアニメーションを実行
     if (cardRef.current) {
       cardRef.current.animateCard(direction);
     }
-
     // ボタンタップ時は直接状態を更新しない（アニメーション完了後に更新される）
   };
 

@@ -204,4 +204,151 @@ export const SettingsStyles = StyleSheet.create({
     marginLeft: 'auto',
     paddingHorizontal: 8,
   },
+
+  // 導線セクション用スタイル
+  // 新機能案内カード
+  guideCard: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: '#6C63FF',
+  },
+
+  // 新機能案内ヘッダー
+  guideHeader: {
+    marginBottom: 16,
+  },
+
+  // 新機能案内タイトル
+  guideTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 8,
+  },
+
+  // 新機能案内サブタイトル
+  guideSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+  },
+
+  // 新機能案内ボタン
+  guideButton: {
+    backgroundColor: '#6C63FF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+
+  // 新機能案内ボタンテキスト
+  guideButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // クイックアクションコンテナ
+  quickActionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+
+  // クイックアクションボタン
+  quickActionButton: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    minHeight: 80,
+    justifyContent: 'center',
+  },
+
+  // クイックアクションアイコン
+  quickActionIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+
+  // クイックアクションテキスト
+  quickActionText: {
+    fontSize: 12,
+    color: '#1a1a1a',
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+
+  // 推奨画面への導線用スタイル
+  // 推奨画面への導線カード
+  recommendationsCard: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6B6B',
+  },
+
+  // 推奨画面への導線コンテンツ
+  recommendationsContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  // 推奨画面への導線アイコンコンテナ
+  recommendationsIconContainer: {
+    marginRight: 16,
+  },
+
+  // 推奨画面への導線アイコン
+  recommendationsIcon: {
+    fontSize: 32,
+  },
+
+  // 推奨画面への導線テキストコンテナ
+  recommendationsTextContainer: {
+    flex: 1,
+  },
+
+  // 推奨画面への導線タイトル
+  recommendationsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 4,
+  },
+
+  // 推奨画面への導線サブタイトル
+  recommendationsSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 18,
+  },
+
+  // 推奨画面への導線矢印
+  recommendationsArrow: {
+    fontSize: 20,
+    color: '#ccc',
+    fontWeight: 'bold',
+  },
 }); 

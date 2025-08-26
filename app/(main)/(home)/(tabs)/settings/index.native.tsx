@@ -121,6 +121,26 @@ const SettingsScreen = () => {
     router.push(LIKES_HISTORY_SCREEN_PATH as any);
   };
 
+  // 推奨画面への遷移
+  const handleRecommendations = () => {
+    try {
+      // 相対パスでの遷移を試行
+      router.push('../../recommendations' as any);
+    } catch (error: any) {
+      // フォールバック: 絶対パスで試行
+      try {
+        router.push('/(main)/recommendations' as any);
+      } catch (fallbackError: any) {
+        // 最後のフォールバック: ルートからの相対パス
+        try {
+          router.push('../../../recommendations' as any);
+        } catch (finalError: any) {
+          console.error('推奨画面への遷移でエラーが発生しました:', finalError);
+        }
+      }
+    }
+  };
+
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
       <ScrollView
@@ -137,6 +157,59 @@ const SettingsScreen = () => {
             profile={profile || undefined}
             onPress={handleUserProfilePress}
           />
+        </View>
+
+        {/* 導線セクション - 新機能案内とクイックアクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>🚀 新機能・おすすめ</Text>
+
+          {/* 新機能案内カード */}
+          <View style={SettingsStyles.guideCard}>
+            <View style={SettingsStyles.guideHeader}>
+              <Text style={SettingsStyles.guideTitle}>✨ 新機能が追加されました！</Text>
+              <Text style={SettingsStyles.guideSubtitle}>AIマッチングでより良い出会いを</Text>
+            </View>
+            <TouchableOpacity style={SettingsStyles.guideButton}>
+              <Text style={SettingsStyles.guideButtonText}>詳しく見る</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* クイックアクション */}
+          <View style={SettingsStyles.quickActionsContainer}>
+            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleVerification}>
+              <Text style={SettingsStyles.quickActionIcon}>🔐</Text>
+              <Text style={SettingsStyles.quickActionText}>本人確認</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleUpgradePress}>
+              <Text style={SettingsStyles.quickActionIcon}>⭐</Text>
+              <Text style={SettingsStyles.quickActionText}>プレミアム</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleLikesPurchase}>
+              <Text style={SettingsStyles.quickActionIcon}>❤️</Text>
+              <Text style={SettingsStyles.quickActionText}>いいね追加</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 推奨画面への導線セクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>💫 今日のオススメ</Text>
+
+          {/* 推奨画面への導線カード */}
+          <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleRecommendations}>
+            <View style={SettingsStyles.recommendationsContent}>
+              <View style={SettingsStyles.recommendationsIconContainer}>
+                <Text style={SettingsStyles.recommendationsIcon}>🎯</Text>
+              </View>
+              <View style={SettingsStyles.recommendationsTextContainer}>
+                <Text style={SettingsStyles.recommendationsTitle}>新しい出会いを見つけよう</Text>
+                <Text style={SettingsStyles.recommendationsSubtitle}>あなたに合うユーザーをAIが厳選</Text>
+              </View>
+              <Text style={SettingsStyles.recommendationsArrow}>›</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* 会員種別セクション */}

@@ -9,6 +9,7 @@ export default function MainLayout() {
     <PlatformLayout> {/* PlatformLayoutでラップ */}
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="recommendations" />
         <Stack.Screen name="profile/[uid]" />
         <Stack.Screen name="profile/edit" />
         <Stack.Screen name="chat/[chatId]" />
