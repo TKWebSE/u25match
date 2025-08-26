@@ -1,4 +1,5 @@
 import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
+import { getProfilePath } from '@constants/routes';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { isWeb } from '@utils/platform';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
@@ -96,7 +97,7 @@ const ProfileEditScreen = () => {
               setOriginalProfileData(profileData);
 
               // 自分のプロフィール画面に遷移
-              router.push('/(main)/profile/my-user-id');
+              router.push(getProfilePath('my-user-id') as any);
             } catch (error) {
               console.error('保存エラー:', error);
               Alert.alert('エラー', '保存に失敗しました');

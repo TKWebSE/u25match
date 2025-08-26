@@ -1,8 +1,16 @@
+import { PURCHASE_POINTS_SCREEN_PATH } from '@constants/routes';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // いいね購入プランの型定義
@@ -45,7 +53,7 @@ const PurchaseLikesScreen = () => {
         '購入に必要なポイントが不足しています。ポイントを追加で購入してください。',
         [
           { text: 'キャンセル', style: 'cancel' },
-          { text: 'ポイント購入', onPress: () => router.push('/(main)/purchase-points') }
+          { text: 'ポイント購入', onPress: () => router.push(PURCHASE_POINTS_SCREEN_PATH as any) }
         ]
       );
       return;

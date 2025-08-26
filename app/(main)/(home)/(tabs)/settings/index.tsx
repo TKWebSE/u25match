@@ -5,6 +5,20 @@ import { MembershipDisplay } from '@components/settings/MembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
 import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
+import {
+  CONTACT_SCREEN_PATH,
+  getProfilePath,
+  getSalesDetailPath,
+  LIKES_HISTORY_SCREEN_PATH,
+  MEMBERSHIP_REGISTRATION_SCREEN_PATH,
+  NOTIFICATIONS_SCREEN_PATH,
+  PRIVACY_POLICY_SCREEN_PATH,
+  PURCHASE_BOOSTS_SCREEN_PATH,
+  PURCHASE_LIKES_SCREEN_PATH,
+  PURCHASE_POINTS_SCREEN_PATH,
+  SALES_SCREEN_PATH,
+  VERIFICATION_SCREEN_PATH
+} from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
@@ -23,7 +37,7 @@ const SettingsScreen = () => {
 
   // 自分のプロフィール画面への遷移
   const handleUserProfilePress = () => {
-    router.push(`/(main)/profile/my-user-id`);
+    router.push(getProfilePath('my-user-id') as any);
   };
 
   // ログアウト処理
@@ -34,27 +48,27 @@ const SettingsScreen = () => {
 
   // プライバシーポリシーの表示
   const handlePrivacyPolicy = () => {
-    router.push('/(main)/privacy-policy');
+    router.push(PRIVACY_POLICY_SCREEN_PATH as any);
   };
 
   // 利用規約の表示
   const handleTermsOfService = () => {
-    router.push('/(main)/privacy-policy');
+    router.push(PRIVACY_POLICY_SCREEN_PATH as any);
   };
 
   // お問い合わせの表示
   const handleContact = () => {
-    router.push('/(main)/contact');
+    router.push(CONTACT_SCREEN_PATH as any);
   };
 
   // お知らせの表示
   const handleNotifications = () => {
-    router.push('/(main)/notifications');
+    router.push(NOTIFICATIONS_SCREEN_PATH as any);
   };
 
   // 本人確認の開始
   const handleVerification = () => {
-    router.push('/(main)/verification');
+    router.push(VERIFICATION_SCREEN_PATH as any);
   };
 
   // セールのタップ処理
@@ -62,11 +76,11 @@ const SettingsScreen = () => {
     console.log('セールがタップされました:', sale);
     if (sale && sale.id) {
       try {
-        router.push(`/(main)/sales/${sale.id}`);
+        router.push(getSalesDetailPath(sale.id) as any);
       } catch (error) {
         console.error('遷移エラー:', error);
         // フォールバック: セール一覧画面に遷移
-        router.push('/(main)/sales');
+        router.push(SALES_SCREEN_PATH as any);
       }
     } else {
       console.error('セール情報が不正です:', sale);
@@ -76,37 +90,37 @@ const SettingsScreen = () => {
   // セール詳細画面への遷移
   const handleSalesDetail = () => {
     console.log('セール詳細画面への遷移を開始します');
-    router.push('/(main)/sales');
+    router.push(SALES_SCREEN_PATH as any);
   };
 
   // 会員アップグレードの表示
   const handleUpgradePress = () => {
     console.log('会員アップグレードをタップしました');
-    router.push('/(main)/membership-registration');
+    router.push(MEMBERSHIP_REGISTRATION_SCREEN_PATH as any);
   };
 
   // いいね購入画面への遷移
   const handleLikesPurchase = () => {
     console.log('いいね購入画面への遷移を開始します');
-    router.push('/(main)/purchase-likes');
+    router.push(PURCHASE_LIKES_SCREEN_PATH as any);
   };
 
   // ブースト購入画面への遷移
   const handleBoostsPurchase = () => {
     console.log('ブースト購入画面への遷移を開始します');
-    router.push('/(main)/purchase-boosts');
+    router.push(PURCHASE_BOOSTS_SCREEN_PATH as any);
   };
 
   // ポイント購入画面への遷移
   const handlePointsPurchase = () => {
     console.log('ポイント購入画面への遷移を開始します');
-    router.push('/(main)/purchase-points');
+    router.push(PURCHASE_POINTS_SCREEN_PATH as any);
   };
 
   // いいね履歴画面への遷移
   const handleLikesHistory = () => {
     console.log('いいね履歴画面への遷移を開始します');
-    router.push('/(main)/likes-history');
+    router.push(LIKES_HISTORY_SCREEN_PATH as any);
   };
 
   return (

@@ -6,10 +6,10 @@ import { isWeb } from '@utils/platform'; // isWebをインポート
 import { Slot } from 'expo-router'; // Slotをインポート
 import { Platform, View } from 'react-native';
 
-import ChatListScreen from './(chat)/index';
-import ExploreScreen from './(explore)/index';
-import ReactionsScreen from './(reactions)/index';
-import SettingsScreen from './(settings)/index';
+import ChatListScreen from './chat/index';
+import ExploreScreen from './explore/index';
+import ReactionsScreen from './reactions/index';
+import SettingsScreen from './settings/index';
 
 const Tab = createBottomTabNavigator();
 
@@ -77,7 +77,7 @@ export default function TabsLayout() {
 
       {/* チャットタブ - メッセージ機能 */}
       <Tab.Screen
-        name="(chat)"
+        name="chat"
         component={ChatListScreen}
         options={{
           title: 'Chat',

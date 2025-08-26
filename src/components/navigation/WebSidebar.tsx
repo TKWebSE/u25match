@@ -1,5 +1,13 @@
 import { Colors } from '@constants/Colors';
-import { RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
+import {
+  CHAT_LIST_SCREEN_PATH,
+  EXPLORE_SCREEN_PATH,
+  getProfilePath,
+  REACTIONS_SCREEN_PATH,
+  RECOMMENDATIONS_SCREEN_PATH,
+  SALES_SCREEN_PATH,
+  SETTINGS_SCREEN_PATH
+} from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { isDevMode } from '@utils/devMode';
 import { useRouter } from 'expo-router';
@@ -23,12 +31,12 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
   // ナビゲーションメニューアイテム
   const menuItems = useMemo(() => [
     { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
-    { id: 'explore', label: '探す', icon: '🔍', route: '/(main)/(home)/(tabs)/(explore)' },
-    { id: 'chat', label: 'チャット', icon: '💬', route: '/(main)/(home)/(tabs)/(chat)' },
-    { id: 'reactions', label: 'リアクション', icon: '❤️', route: '/(main)/(home)/(tabs)/(reactions)' },
-    { id: 'settings', label: '設定', icon: '⚙️', route: '/(main)/(home)/(tabs)/(settings)' },
-    { id: 'profile', label: 'プロフィール', icon: '👤', route: `/(main)/profile/${user.uid}` },
-    { id: 'sales', label: 'セールス', icon: '💰', route: '/(main)/sales' },
+    { id: 'explore', label: '探す', icon: '🔍', route: EXPLORE_SCREEN_PATH },
+    { id: 'chat', label: 'チャット', icon: '💬', route: CHAT_LIST_SCREEN_PATH },
+    { id: 'reactions', label: 'リアクション', icon: '❤️', route: REACTIONS_SCREEN_PATH },
+    { id: 'settings', label: '設定', icon: '⚙️', route: SETTINGS_SCREEN_PATH },
+    { id: 'profile', label: 'プロフィール', icon: '👤', route: getProfilePath(user.uid) },
+    { id: 'sales', label: 'セールス', icon: '💰', route: SALES_SCREEN_PATH },
   ], [user.uid]);
 
   const handleNavigation = (menuId: string) => {
@@ -45,8 +53,8 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
       } catch (error) {
         console.error('ナビゲーションエラー:', error);
         // フォールバック: 相対パスでの遷移を試行
-        if (menuItem.route.startsWith('/(main)')) {
-          router.push(menuItem.route.replace('/(main)', '') as any);
+        if (menuItem.route.startsWith('/main')) {
+          router.push(menuItem.route.replace('/main', '') as any);
         }
       }
     }

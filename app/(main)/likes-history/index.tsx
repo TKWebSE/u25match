@@ -1,4 +1,5 @@
 import { Colors } from '@constants/Colors';
+import { getProfilePath } from '@constants/routes';
 import { users } from '@mock/exploreUserMock';
 import { mockSentReactions } from '@mock/reactionsMock';
 import { useRouter } from 'expo-router';
@@ -94,7 +95,7 @@ const LikesHistoryScreen = () => {
 
   // ユーザープロフィール画面への遷移
   const handleUserPress = (userId: string) => {
-    router.push(`/(main)/profile/${userId}`);
+    router.push(getProfilePath(userId) as any);
   };
 
   // リアクションタイプの表示テキストを取得

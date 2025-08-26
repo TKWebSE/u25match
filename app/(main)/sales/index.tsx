@@ -1,3 +1,4 @@
+import { getSalesDetailPath } from '@constants/routes';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -98,7 +99,7 @@ const SalesScreen: React.FC = () => {
   const router = useRouter();
 
   const handleSalePress = (sale: SaleItem) => {
-    router.push(`/(main)/sales/${sale.id}`);
+    router.push(getSalesDetailPath(sale.id) as any);
   };
 
   const formatDate = (dateString: string) => {

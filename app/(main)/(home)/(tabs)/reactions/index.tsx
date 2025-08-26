@@ -3,6 +3,7 @@ import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
 import ReactionTabs from '@components/reactions/ReactionTabs';
+import { getProfilePath } from '@constants/routes';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';
@@ -52,7 +53,7 @@ const ReactionsScreen = () => {
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/(main)/profile/${userId}`);
+    router.push(getProfilePath(userId));
   };
 
   // タブ切り替えハンドラー

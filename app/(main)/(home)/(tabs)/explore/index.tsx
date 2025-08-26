@@ -3,6 +3,7 @@ import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
 import UserCard from '@components/explore/UserCard';
 import WebGridLayout from '@components/explore/WebGridLayout';
+import { getProfilePath } from '@constants/routes';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { useSidebar } from '@layouts/WebLayout';
 import { colors, spacing } from '@styles/globalStyles';
@@ -48,7 +49,7 @@ const ExploreScreen = () => {
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/(main)/profile/${userId}`);
+    router.push(getProfilePath(userId) as any);
   };
 
   // タブ切り替えハンドラー

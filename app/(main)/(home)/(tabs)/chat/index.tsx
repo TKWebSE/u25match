@@ -1,6 +1,7 @@
 import ChatListScreen from '@components/chat/ChatListScreen';
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
+import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
 import { useChatRooms } from '@hooks/useChatRooms';
 import { ChatRoom } from '@services/main/chat/types';
 import { useRouter } from 'expo-router';
@@ -16,7 +17,7 @@ const ChatListScreenWrapper = () => {
     console.log('🖱️ チャットタップ:', chatRoom);
     // チャット詳細画面に遷移
     console.log('🚀 遷移先:', chatRoom.id);
-    router.push(`/chat/${chatRoom.id}`);
+    router.push(CHAT_ROOM_SCREEN_PATH(chatRoom.id) as any);
   };
 
   const handleRefresh = () => {
