@@ -7,7 +7,7 @@ export const SIGN_UP_SCREEN_PATH = '/signUpScreen';
 export const FORGOT_PASSWORD_SCREEN_PATH = '/forgotPasswordScreen';
 
 // メイン（ユーザー探索）
-export const EXPLORE_SCREEN_PATH = "/(main)/(home)/(tabs)/explore";
+export const EXPLORE_SCREEN_PATH = "/(main)/explore";
 export const PROFILE_MODAL_PATH = "/(main)/profile/[uid]";
 
 // チャット

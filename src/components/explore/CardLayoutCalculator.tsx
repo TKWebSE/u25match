@@ -33,16 +33,16 @@ export const useCardLayout = (containerWidth: number) => {
     const cardHeight = cardWidth * LAYOUT_CONFIG.CARD_ASPECT_RATIO;
 
     // デバッグ用のログ（開発時のみ）
-    if (__DEV__) {
-      console.log('🎯 グリッドレイアウト計算結果:', {
-        containerWidth: `${containerWidth}px`,
-        cardWidth: `${cardWidth}px`,
-        cardHeight: `${cardHeight}px`,
-        columnCount,
-        cardGap: `${LAYOUT_CONFIG.CARD_GAP}px`,
-        gridTemplateColumns: `repeat(${columnCount}, minmax(${LAYOUT_CONFIG.MIN_CARD_WIDTH}px, 1fr))`,
-      });
-    }
+    // if (__DEV__) {
+    //   console.log('🎯 グリッドレイアウト計算結果:', {
+    //     containerWidth: `${containerWidth}px`,
+    //     cardWidth: `${cardWidth}px`,
+    //     cardHeight: `${cardHeight}px`,
+    //     columnCount,
+    //     cardGap: `${LAYOUT_CONFIG.CARD_GAP}px`,
+    //     gridTemplateColumns: `repeat(${columnCount}, minmax(${LAYOUT_CONFIG.MIN_CARD_WIDTH}px, 1fr))`,
+    //   });
+    // }
 
     return {
       cardWidth,

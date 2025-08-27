@@ -3,7 +3,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { isWeb } from '@utils/platform'; // isWebをインポート
-import { Slot } from 'expo-router'; // Slotをインポート
+import { Slot, usePathname } from 'expo-router'; // SlotとusePathnameをインポート
 import { Platform, View } from 'react-native';
 
 import ChatListScreen from './chat/index';
@@ -14,8 +14,10 @@ import SettingsScreen from './settings/index';
 const Tab = createBottomTabNavigator();
 
 export default function TabsLayout() {
-  // Webの場合は下タブを非表示
+  const pathname = usePathname();
+  // Webの場合は下タブを非表示(これがないと、ドロワーが動かなくなる)
   if (isWeb) {
+    console.log('tabのレイアウトpathnameは：', pathname);
     return <Slot />; // Web: 下タブなし、直接コンテンツ表示
   }
 

@@ -49,6 +49,10 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
     const menuItem = menuItems.find(item => item.id === menuId);
     if (menuItem) {
       try {
+        console.log('🌐 WebSidebar: ナビゲーション開始', {
+          menuId,
+          route: menuItem.route
+        });
         router.push(menuItem.route as any);
       } catch (error) {
         console.error('ナビゲーションエラー:', error);

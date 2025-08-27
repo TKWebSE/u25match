@@ -1,5 +1,6 @@
 // app/_layout.tsx
 // アプリのルートレイアウト - 認証状態の管理とナビゲーション制御
+import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
 import { defaultConfig } from '@tamagui/config/v4';
 import { TamaguiProvider, createTamagui } from '@tamagui/core';
@@ -33,11 +34,11 @@ function AuthGate() {
       loading,
       pathname
     });
-
+    console.log('AuthGateのpathnameは：', pathname);
     // 認証済みユーザーがルートにいる場合はメイン画面にリダイレクト
     if (!loading && user && pathname === '/') {
       console.log('🔐 AuthGate: 認証済みユーザーをメイン画面にリダイレクト');
-      router.replace('/(main)/(home)/(tabs)/(explore)');
+      router.replace(EXPLORE_SCREEN_PATH as any);
     }
   }, [user, loading, pathname, router]);
 
@@ -70,9 +71,9 @@ function AuthGate() {
   if (!user) {
     // 認証関連の画面はそのまま表示（ログイン、サインアップ、エントリー画面、パスワードリセット画面）
     if (pathname === '/' ||
-      pathname === '/(auth)/loginScreen' ||
-      pathname === '/(auth)/signUpScreen' ||
-      pathname === '/(auth)/forgotPasswordScreen') {
+      pathname === LOGIN_SCREEN_PATH ||
+      pathname === SIGN_UP_SCREEN_PATH ||
+      pathname === FORGOT_PASSWORD_SCREEN_PATH) {
       return <Slot />;
     }
     // その他の画面はエントリー画面にリダイレクト
@@ -80,9 +81,9 @@ function AuthGate() {
   }
 
   // 認証済みの場合 - 認証画面へのアクセスも許可
-  if (pathname === '/(auth)/loginScreen' ||
-    pathname === '/(auth)/signUpScreen' ||
-    pathname === '/(auth)/forgotPasswordScreen') {
+  if (pathname === LOGIN_SCREEN_PATH ||
+    pathname === SIGN_UP_SCREEN_PATH ||
+    pathname === FORGOT_PASSWORD_SCREEN_PATH) {
     return <Slot />;
   }
 
