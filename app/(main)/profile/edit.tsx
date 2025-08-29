@@ -1,5 +1,6 @@
 import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
 import { getProfilePath } from '@constants/routes';
+import { useAuth } from '@contexts/AuthContext';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { isWeb } from '@utils/platform';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
@@ -19,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const ProfileEditScreen = () => {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
+  const { user } = useAuth();
 
   // プロフィール情報の状態管理
   const [originalProfileData, setOriginalProfileData] = useState<ProfileData>({
@@ -97,7 +99,12 @@ const ProfileEditScreen = () => {
               setOriginalProfileData(profileData);
 
               // 自分のプロフィール画面に遷移
-              router.push(getProfilePath('my-user-id') as any);
+              if (user?.uid) {
+                router.push(getProfilePath(user.uid) as any);
+              } else {
+                // ユーザーIDが取得できない場合は前の画面に戻る
+                router.back();
+              }
             } catch (error) {
               console.error('保存エラー:', error);
               Alert.alert('エラー', '保存に失敗しました');
