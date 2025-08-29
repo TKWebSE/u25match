@@ -7,6 +7,7 @@ import ImageIndicator from '@components/profile/ImageIndicator';
 import { LikeButton } from '@components/profile/LikeButton';
 import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
 import WebImageNavigator from '@components/profile/WebImageNavigator';
+import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { isWeb } from '@utils/platform';
@@ -109,7 +110,7 @@ export default function ProfileScreen() {
       {profile.uid === 'my-user-id' ? (
         // 自分のプロフィールの場合：編集ボタン
         <View style={ProfileDetailStyles.likeButtonContainer}>
-          <EditButton onPress={() => router.push('/(main)/profile/edit')} />
+          <EditButton onPress={() => router.push(PROFILE_EDIT_SCREEN_PATH)} />
         </View>
       ) : (
         // 他人のプロフィールの場合：いいねボタン

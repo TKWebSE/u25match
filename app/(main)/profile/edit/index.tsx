@@ -1,90 +1,33 @@
-import { getProfilePath } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
-import { mockProfileData } from '@mock/UserEditMock';
-import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert } from 'react-native';
+// app/(main)/profile/edit/index.tsx
 
 /**
- * プロフィール編集画面
+ * フォールバックファイル（Expo Routerのプラットフォーム自動解決のため必要）
  * 
- * この画面は以下の責務を持ちます：
- * - エントリーポイント
- * - 共通のビジネスロジック管理
- * - データの状態管理
- * - プラットフォーム別のUIコンポーネントの自動解決
+ * 【重要】このファイルの役割について：
  * 
- * プラットフォーム固有の実装は以下のファイルで管理されます：
- * - Edit.web.tsx: Web版専用UI（自動的に選択される）
- * - Edit.native.tsx: モバイル版専用UI（自動的に選択される）
+ * 1. プラットフォーム自動解決の仕組み
+ *    - index.web.tsx が存在する場合 → Web版では index.web.tsx が実行される
+ *    - index.native.tsx が存在する場合 → モバイル版では index.native.tsx が実行される
+ *    - この index.tsx は、プラットフォーム別ファイルが存在しない場合の「フォールバック」として機能
+ * 
+ * 2. なぜこのファイルが必要なのか
+ *    - Expo Routerは、プラットフォーム別ファイル（.web.tsx, .native.tsx）が存在する場合、
+ *      必ずベースファイル（index.tsx）も存在することを要求する
+ *    - これは、プラットフォーム別ファイルが読み込めない環境での安全性を確保するため
+ * 
+ * 3. このファイルに書いたロジックは無視される
+ *    - プラットフォーム別ファイルが存在する場合、このファイルの内容は実行されない
+ *    - そのため、ビジネスロジックやUIは index.web.tsx と index.native.tsx に書く必要がある
+ *    - このファイルは「存在するだけ」で十分
+ * 
+ * 4. 実際の実装
+ *    - ビジネスロジック: index.web.tsx と index.native.tsx の両方に記述
+ *    - UI表示: プラットフォーム別に最適化された内容を各ファイルに記述
+ *    - 状態管理: 各ファイル内で独立して管理
  */
-const ProfileEditScreen = () => {
-  const router = useRouter();
-  const { user } = useAuth();
 
-  // プロフィール情報の状態管理
-  const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
-
-  // 保存処理
-  const handleSave = async (newProfileData: ProfileData) => {
-    try {
-      // 変更されたフィールドを取得
-      const changes = getProfileDiff(mockProfileData, newProfileData);
-      const changeSummary = getChangeSummary(mockProfileData, newProfileData);
-
-      console.log('変更されたフィールド:', changeSummary);
-      console.log('保存する差分データ:', changes);
-
-      // TODO: 実際の保存処理を実装
-      // await updateProfile(changes);
-
-      Alert.alert('保存完了', 'プロフィールを保存しました');
-
-      // 自分のプロフィール画面に遷移
-      if (user?.uid) {
-        router.push(getProfilePath(user.uid) as any);
-      } else {
-        // ユーザーIDが取得できない場合は前の画面に戻る
-        router.back();
-      }
-    } catch (error) {
-      console.error('保存エラー:', error);
-      Alert.alert('エラー', '保存に失敗しました');
-    }
-  };
-
-  // 戻る処理（キャンセル処理）
-  const handleBack = () => {
-    // 変更がある場合のみ確認ダイアログを表示
-    if (hasProfileChanges(mockProfileData, profileData)) {
-      Alert.alert(
-        '編集内容を破棄しますか？',
-        '保存していない変更があります',
-        [
-          { text: '続行', style: 'cancel' },
-          {
-            text: '破棄',
-            onPress: () => {
-              router.back();
-            }
-          }
-        ]
-      );
-    } else {
-      // 変更がない場合は直接戻る
-      router.back();
-    }
-  };
-
-  // プラットフォーム自動解決によるUI表示
-  // React Native/Expoが自動的に以下を選択：
-  // - Web版: index.web.tsx
-  // - モバイル版: index.native.tsx
-  // 
-  // このファイル（index.tsx）は、プラットフォーム別のファイルで上書きされる
-  // フォールバック用のデフォルト実装として機能する
+export default function Placeholder() {
+  // この関数は実行されません（プラットフォーム別ファイルが存在するため）
+  // ただし、Expo Routerの要件を満たすために必要
   return null;
-};
-
-export default ProfileEditScreen;
+}

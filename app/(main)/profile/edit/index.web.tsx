@@ -1,8 +1,12 @@
 import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
+import { getProfilePath } from '@constants/routes';
+import { useAuth } from '@contexts/AuthContext';
+import { mockProfileData } from '@mock/UserEditMock';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
-import { ProfileData } from '@utils/profileDiff';
+import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /**
@@ -12,32 +16,79 @@ import { SafeAreaView } from 'react-native-safe-area-context';
  * - デスクトップに最適化されたレイアウト
  * - サイドバー付きの編集インターフェース
  * - より詳細な編集オプション
- * - UI表示のみ（ビジネスロジックは親から受け取る）
+ * - ビジネスロジックとUI表示の両方
  */
-interface EditProps {
-  originalProfileData: ProfileData;
-  onSave: (profileData: ProfileData) => void;
-  onBack: () => void;
-}
-
-const Edit: React.FC<EditProps> = ({
-  originalProfileData,
-  onSave,
-  onBack
-}) => {
+const ProfileEditScreen = () => {
+  const router = useRouter();
+  const { user } = useAuth();
   const { width: windowWidth } = useWindowDimensions();
 
   // プロフィール情報の状態管理
-  const [profileData, setProfileData] = useState<ProfileData>(originalProfileData);
+  const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
+
+  // デバッグ用ログ
+  console.log('🔍 index.web.tsx - mockProfileData:', mockProfileData);
+  console.log('🔍 index.web.tsx - profileData:', profileData);
+
+  // 保存処理
+  const handleSave = async (newProfileData: ProfileData) => {
+    try {
+      // 変更されたフィールドを取得
+      const changes = getProfileDiff(mockProfileData, newProfileData);
+      const changeSummary = getChangeSummary(mockProfileData, newProfileData);
+
+      console.log('変更されたフィールド:', changeSummary);
+      console.log('保存する差分データ:', changes);
+
+      // TODO: 実際の保存処理を実装
+      // await updateProfile(changes);
+
+      Alert.alert('保存完了', 'プロフィールを保存しました');
+
+      // 元のデータを更新
+      setProfileData(newProfileData);
+
+      // 自分のプロフィール画面に遷移
+      if (user?.uid) {
+        router.push(getProfilePath(user.uid) as any);
+      } else {
+        // ユーザーIDが取得できない場合は前の画面に戻る
+        router.back();
+      }
+    } catch (error) {
+      console.error('保存エラー:', error);
+      Alert.alert('エラー', '保存に失敗しました');
+    }
+  };
+
+  // 戻る処理（キャンセル処理）
+  const handleBack = () => {
+    // 変更がある場合のみ確認ダイアログを表示
+    if (hasProfileChanges(mockProfileData, profileData)) {
+      Alert.alert(
+        '編集内容を破棄しますか？',
+        '保存していない変更があります',
+        [
+          { text: '続行', style: 'cancel' },
+          {
+            text: '破棄',
+            onPress: () => {
+              router.back();
+            }
+          }
+        ]
+      );
+    } else {
+      // 変更がない場合は直接戻る
+      router.back();
+    }
+  };
 
   // Web版用の設定
   const contentWidth = Math.min(windowWidth * 0.9, 1200);
   const contentMargin = (windowWidth - contentWidth) / 2;
 
-  // 保存処理（親から受け取った関数を呼び出し）
-  const handleSave = () => {
-    onSave(profileData);
-  };
+
 
   // Web版用のヘッダー
   const WebHeader = () => (
@@ -202,7 +253,7 @@ const Edit: React.FC<EditProps> = ({
         zIndex: 1000
       }}>
         <TouchableOpacity
-          onPress={handleSave}
+          onPress={() => handleSave(profileData)}
           style={{
             backgroundColor: '#10B981',
             paddingHorizontal: 32,
@@ -229,4 +280,4 @@ const Edit: React.FC<EditProps> = ({
   );
 };
 
-export default Edit;
+export default ProfileEditScreen;
