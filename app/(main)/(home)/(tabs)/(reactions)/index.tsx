@@ -1,4 +1,4 @@
-// app/(main)/(home)/(tabs)/reactions/index.tsx
+// app/(main)/(home)/(tabs)/(reactions)/index.tsx
 
 /**
  * フォールバックファイル（Expo Routerのプラットフォーム自動解決のため必要）
@@ -27,10 +27,7 @@
  */
 
 export default function Placeholder() {
-  console.log('🎯 フォールバックファイル index.tsx が実行されています！');
-  console.log('🎯 これは予期しない動作です。プラットフォーム別ファイルが正しく認識されていません。');
-
   // この関数は実行されません（プラットフォーム別ファイルが存在するため）
   // ただし、Expo Routerの要件を満たすために必要
   return null;
-} 
+}
