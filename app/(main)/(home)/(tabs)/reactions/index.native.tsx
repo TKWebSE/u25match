@@ -7,8 +7,8 @@ import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 interface User {
   name: string;
@@ -33,66 +33,37 @@ const ReactionsScreen = () => {
 
   // リアクションデータからユーザーリストを生成
   const getReactionUsers = () => {
-    console.log('🎯 getReactionUsers 実行開始');
-    console.log('🎯 activeTab:', activeTab);
-    console.log('🎯 mockReactions:', mockReactions);
-    console.log('🎯 reactionUsers:', reactionUsers);
-
     const likeReactions = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
     const footprintReactions = mockReactions.filter(r => r.type === 'footprint');
 
-    console.log('🎯 likeReactions:', likeReactions);
-    console.log('🎯 footprintReactions:', footprintReactions);
-
     const currentReactions = activeTab === 'likes' ? likeReactions : footprintReactions;
-    console.log('🎯 currentReactions:', currentReactions);
 
-    const users = currentReactions.map((reaction, index) => {
+    return currentReactions.map((reaction, index) => {
       const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
       const user = { ...reactionUsers[userIndex] };
       user.imageUrl = getUserImageUrl(reaction.id);
-      console.log('🎯 生成されたユーザー:', user);
       return user;
     });
-
-    console.log('🎯 最終的なユーザーリスト:', users);
-    return users;
   };
 
   const filteredUsers = getReactionUsers();
 
-  // デバッグ用のuseEffect
-  useEffect(() => {
-    console.log('🎯 ReactionsScreen マウント完了');
-    console.log('🎯 cardListWidth:', cardListWidth);
-    console.log('🎯 cardLayout:', cardLayout);
-    console.log('🎯 filteredUsers:', filteredUsers);
-    console.log('🎯 filteredUsers.length:', filteredUsers.length);
-  }, [cardListWidth, cardLayout, filteredUsers]);
-
   const handleCardPress = (user: User) => {
-    console.log('🎯 カードタップ:', user);
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
     router.push(getProfilePath(userId) as any);
   };
 
   // タブ切り替えハンドラー
   const handleTabPress = (tab: 'likes' | 'footprints') => {
-    console.log('🎯 リアクションタブ切り替え:', tab);
     setActiveTab(tab);
   };
 
-  const renderUserItem = ({ item }: { item: User }) => {
-    console.log('🎯 renderUserItem 実行:', item);
-    return (
-      <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
-    );
-  };
+  const renderUserItem = ({ item }: { item: User }) => (
+    <UserCard user={item} onPress={handleCardPress} layout={cardLayout} />
+  );
 
   const renderEmptyComponent = () => {
-    console.log('🎯 renderEmptyComponent 実行');
     if (filteredUsers.length === 0) {
-      console.log('🎯 EmptyState を表示');
       return (
         <EmptyState
           message={
@@ -103,18 +74,11 @@ const ReactionsScreen = () => {
         />
       );
     }
-    console.log('🎯 EmptyState は表示しない');
     return null;
   };
 
-  console.log('🎯 ReactionsScreen レンダリング開始');
-  console.log('🎯 filteredUsers.length:', filteredUsers.length);
-  console.log('🎯 cardLayout.columnCount:', cardLayout.columnCount);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.debugText}>🎯 ReactionsScreen レンダリング中</Text>
-
       {/* リアクションタブ */}
       <ReactionTabs
         activeTab={activeTab}
@@ -126,14 +90,9 @@ const ReactionsScreen = () => {
         style={styles.cardListArea}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
-          console.log('🎯 onLayout 実行, width:', width);
           setCardListWidth(width);
         }}
       >
-        <Text style={styles.debugText}>🎯 カードリストエリア幅: {cardListWidth}px</Text>
-        <Text style={styles.debugText}>🎯 列数: {cardLayout.columnCount}</Text>
-        <Text style={styles.debugText}>🎯 ユーザー数: {filteredUsers.length}</Text>
-
         {/* モバイル環境用のFlatList */}
         {filteredUsers.length > 0 ? (
           <FlatList
@@ -145,11 +104,9 @@ const ReactionsScreen = () => {
             contentContainerStyle={styles.listContainer}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={renderEmptyComponent}
-            onLayout={() => console.log('🎯 FlatList onLayout 実行')}
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.debugText}>🎯 FlatList は表示しない（ユーザーが0人）</Text>
             {renderEmptyComponent()}
           </View>
         )}
@@ -169,12 +126,6 @@ const styles = StyleSheet.create({
   cardListArea: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  debugText: {
-    color: 'red',
-    fontSize: 12,
-    padding: 4,
-    backgroundColor: 'yellow',
   },
   emptyContainer: {
     flex: 1,

@@ -1,66 +1,68 @@
-import ChatListScreen from '@components/chat/ChatListScreen';
-import { ErrorState } from '@components/common/ErrorState';
-import { LoadingState } from '@components/common/LoadingState';
-import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
-import { useChatRooms } from '@hooks/useChatRooms';
-import { ChatRoom } from '@services/main/chat/types';
-import { useRouter } from 'expo-router';
+// app/(main)/(home)/(tabs)/chat/index.tsx
+
+/**
+ * フォールバックファイル（Expo Routerのプラットフォーム自動解決のため必要）
+ * 
+ * 【重要】このファイルの役割について：
+ * 
+ * 1. プラットフォーム自動解決の仕組み
+ *    - index.web.tsx が存在する場合 → Web版では index.web.tsx が実行される
+ *    - index.native.tsx が存在する場合 → モバイル版では index.native.tsx が実行される
+ *    - この index.tsx は、プラットフォーム別ファイルが存在しない場合の「フォールバック」として機能
+ * 
+ * 2. なぜこのファイルが必要なのか
+ *    - Expo Routerは、プラットフォーム別ファイル（.web.tsx, .native.tsx）が存在する場合、
+ *      必ずベースファイル（index.tsx）も存在することを要求する
+ *    - これは、プラットフォーム別ファイルが読み込めない環境での安全性を確保するため
+ * 
+ * 3. このファイルに書いたロジックは無視される
+ *    - プラットフォーム別ファイルが存在する場合、このファイルの内容は実行されない
+ *    - そのため、ビジネスロジックやUIは index.web.tsx と index.native.tsx に書く必要がある
+ *    - このファイルは「存在するだけ」で十分
+ * 
+ * 4. 実際の実装
+ *    - ビジネスロジック: index.web.tsx と index.native.tsx の両方に記述
+ *    - UI表示: プラットフォーム別に最適化された内容を各ファイルに記述
+ *    - 状態管理: 各ファイル内で独立して管理
+ */
+
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 
-const ChatListScreenWrapper = () => {
-  const router = useRouter();
-  const { chatRooms, loading, refreshing, error, refreshChatRooms } = useChatRooms();
-
-  const handleChatPress = (chatRoom: ChatRoom) => {
-    console.log('🖱️ チャットタップ:', chatRoom);
-    // チャット詳細画面に遷移
-    console.log('🚀 遷移先:', chatRoom.id);
-    router.push(CHAT_ROOM_SCREEN_PATH(chatRoom.id) as any);
-  };
-
-  const handleRefresh = () => {
-    refreshChatRooms();
-  };
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <LoadingState message="チャット一覧を読み込み中..." />
-      </SafeAreaView>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <ErrorState
-          error={error}
-          onRetry={handleRefresh}
-        />
-      </SafeAreaView>
-    );
-  }
+export default function Placeholder() {
+  console.log('💬 フォールバックファイル index.tsx が実行されています！');
+  console.log('💬 これは予期しない動作です。プラットフォーム別ファイルが正しく認識されていません。');
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* チャット一覧 */}
-      <ChatListScreen
-        chatRooms={chatRooms}
-        onChatPress={handleChatPress}
-        onRefresh={handleRefresh}
-        refreshing={refreshing}
-      />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.text}>
+        💬 フォールバックファイルが実行されています！
+      </Text>
+      <Text style={styles.subText}>
+        プラットフォーム別ファイルが正しく認識されていません
+      </Text>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'red',
+    padding: 20,
   },
-});
-
-export default ChatListScreenWrapper; 
+  text: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  subText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+}); 

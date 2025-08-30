@@ -37,118 +37,92 @@ const SettingsScreen = () => {
 
   // デバッグ用のuseEffect
   useEffect(() => {
-    console.log('🎯 SettingsScreen マウント完了');
-    console.log('🎯 user:', user);
-    console.log('🎯 profile:', profile);
-    console.log('🎯 profileLoading:', profileLoading);
+    // ログを削除
   }, [user, profile, profileLoading]);
 
   // 自分のプロフィール画面への遷移
   const handleUserProfilePress = () => {
-    console.log('🎯 プロフィール画面への遷移');
     router.push(getProfilePath('my-user-id') as any);
   };
 
   // ログアウト処理
   const handleLogout = async () => {
-    console.log('🎯 ログアウト処理開始');
     await logout();
     // ログアウト後は認証画面に自動的にリダイレクトされます
   };
 
   // プライバシーポリシーの表示
   const handlePrivacyPolicy = () => {
-    console.log('🎯 プライバシーポリシー画面への遷移');
     router.push(PRIVACY_POLICY_SCREEN_PATH as any);
   };
 
   // 利用規約の表示
   const handleTermsOfService = () => {
-    console.log('🎯 利用規約画面への遷移');
     router.push(PRIVACY_POLICY_SCREEN_PATH as any);
   };
 
   // お問い合わせの表示
   const handleContact = () => {
-    console.log('🎯 お問い合わせ画面への遷移');
     router.push(CONTACT_SCREEN_PATH as any);
   };
 
   // お知らせの表示
   const handleNotifications = () => {
-    console.log('🎯 お知らせ画面への遷移');
     router.push(NOTIFICATIONS_SCREEN_PATH as any);
   };
 
   // 本人確認の開始
   const handleVerification = () => {
-    console.log('🎯 本人確認画面への遷移');
     router.push(VERIFICATION_SCREEN_PATH as any);
   };
 
   // セールのタップ処理
   const handleSalePress = (sale: any) => {
-    console.log('🎯 セールがタップされました:', sale);
     if (sale && sale.id) {
       try {
         router.push(getSalesDetailPath(sale.id) as any);
       } catch (error) {
-        console.error('🎯 遷移エラー:', error);
+        console.error('遷移エラー:', error);
         // フォールバック: セール一覧画面に遷移
         router.push(SALES_SCREEN_PATH as any);
       }
     } else {
-      console.error('🎯 セール情報が不正です:', sale);
+      console.error('セール情報が不正です:', sale);
     }
   };
 
   // セール詳細画面への遷移
   const handleSalesDetail = () => {
-    console.log('🎯 セール詳細画面への遷移を開始します');
     router.push(SALES_SCREEN_PATH as any);
   };
 
   // 会員アップグレードの表示
   const handleUpgradePress = () => {
-    console.log('🎯 会員アップグレードをタップしました');
     router.push(MEMBERSHIP_REGISTRATION_SCREEN_PATH as any);
   };
 
   // いいね購入画面への遷移
   const handleLikesPurchase = () => {
-    console.log('🎯 いいね購入画面への遷移を開始します');
     router.push(PURCHASE_LIKES_SCREEN_PATH as any);
   };
 
   // ブースト購入画面への遷移
   const handleBoostsPurchase = () => {
-    console.log('🎯 ブースト購入画面への遷移を開始します');
     router.push(PURCHASE_BOOSTS_SCREEN_PATH as any);
   };
 
   // ポイント購入画面への遷移
   const handlePointsPurchase = () => {
-    console.log('🎯 ポイント購入画面への遷移を開始します');
     router.push(PURCHASE_POINTS_SCREEN_PATH as any);
   };
 
   // いいね履歴画面への遷移
   const handleLikesHistory = () => {
-    console.log('🎯 いいね履歴画面への遷移を開始します');
     router.push(LIKES_HISTORY_SCREEN_PATH as any);
   };
 
-  console.log('🎯 SettingsScreen レンダリング開始');
-
   return (
     <SafeAreaView style={SettingsStyles.safeArea}>
-      {/* テスト用の赤いテキストを追加 */}
-      <View style={{ padding: 20, backgroundColor: 'red' }}>
-        <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>
-          🎯 設定画面が表示されています！
-        </Text>
-      </View>
-
       <ScrollView
         style={[SettingsStyles.container, { paddingHorizontal: 0 }]}
         showsVerticalScrollIndicator={false}
