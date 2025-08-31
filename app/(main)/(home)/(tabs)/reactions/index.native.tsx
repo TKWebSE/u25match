@@ -20,8 +20,8 @@ const ReactionsScreen = () => {
   // タブの状態管理
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'likes', title: 'いいね' },
-    { key: 'footprints', title: '足あと' },
+    { key: 'likes', title: '💕 いいね' },
+    { key: 'footprints', title: '👣 足あと' },
   ]);
 
   // 統一カードサイズを取得

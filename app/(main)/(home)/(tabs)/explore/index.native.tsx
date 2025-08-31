@@ -140,6 +140,7 @@ const ExploreScreen = () => {
           subtitle={`${recommendedUsers.length}人のユーザー`}
           users={recommendedUsers}
           onCardPress={handleCardPress}
+          isHighlighted={true}
         />
 
         {/* オンラインユーザー */}
@@ -220,11 +221,12 @@ const ExploreScreen = () => {
         {/* メインコンテンツ */}
         {renderMainContent()}
 
-        {/* 検索FAB */}
+        {/* 検索FAB - 非活性 */}
         <TouchableOpacity
-          style={styles.fab}
-          onPress={handleOpenSearch}
-          activeOpacity={0.8}
+          style={[styles.fab, styles.fabDisabled]}
+          onPress={() => { }}
+          activeOpacity={1}
+          disabled={true}
         >
           <MaterialIcons
             name="search"
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: spacing.xl, // スクロール時の下部パディング
+    paddingBottom: spacing.sm, // スクロール時の下部パディングをさらに縮小
   },
   emptyStateContainer: {
     flex: 1,
@@ -321,6 +323,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  fabDisabled: {
+    backgroundColor: colors.gray400,
+    opacity: 0.5,
   },
 });
 

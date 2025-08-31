@@ -12,6 +12,7 @@ interface UserSwipeSectionProps {
   subtitle: string;
   users: User[];
   onCardPress: (user: User) => void;
+  isHighlighted?: boolean;
 }
 
 /**
@@ -22,7 +23,8 @@ const UserSwipeSection: React.FC<UserSwipeSectionProps> = ({
   title,
   subtitle,
   users,
-  onCardPress
+  onCardPress,
+  isHighlighted = false
 }) => {
   // 統一カードサイズを取得
   const cardSize = useCardSize('swiper');
@@ -58,15 +60,15 @@ const UserSwipeSection: React.FC<UserSwipeSectionProps> = ({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isHighlighted && styles.highlightedContainer]}>
       {/* セクションタイトル */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+      <View style={[styles.titleContainer, isHighlighted && styles.highlightedTitleContainer]}>
+        <Text style={[styles.title, isHighlighted && styles.highlightedTitle]}>{title}</Text>
+        <Text style={[styles.subtitle, isHighlighted && styles.highlightedSubtitle]}>{subtitle}</Text>
       </View>
 
       {/* ユーザーカードスワイプエリア */}
-      <View style={styles.carouselContainer}>
+      <View style={[styles.carouselContainer, isHighlighted && styles.highlightedCarouselContainer]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -116,8 +118,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   carouselContainer: {
-    height: 400, // 固定の高さでエラーを回避
-    marginTop: spacing.sm,
+    height: 320, // 高さを削減
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
@@ -132,6 +135,27 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.lg,
     color: colors.textSecondary,
+  },
+  // 強調表示用のスタイル
+  highlightedContainer: {
+    backgroundColor: '#FFF9C4', // 薄い黄色
+    marginHorizontal: spacing.sm,
+    borderRadius: 12,
+    paddingVertical: spacing.sm,
+    marginVertical: spacing.xs,
+  },
+  highlightedTitleContainer: {
+    paddingHorizontal: spacing.lg,
+  },
+  highlightedTitle: {
+    color: '#B8860B', // ダークゴールド
+    fontWeight: '800',
+  },
+  highlightedSubtitle: {
+    color: '#DAA520', // ゴールド
+  },
+  highlightedCarouselContainer: {
+    marginTop: spacing.xs,
   },
 });
 
