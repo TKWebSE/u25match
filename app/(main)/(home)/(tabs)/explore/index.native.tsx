@@ -1,4 +1,5 @@
 import EmptyState from '@components/common/EmptyState';
+import { UserCarousel } from '@components/explore';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
 import UserCard from '@components/explore/UserCard';
@@ -7,7 +8,7 @@ import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface User {
@@ -73,17 +74,11 @@ const ExploreScreen = () => {
     return null;
   };
 
-  // モバイル環境用のFlatList
-  const renderMobileList = () => (
-    <FlatList
-      data={filteredUsers}
-      renderItem={renderUserItem}
-      keyExtractor={(item, index) => `${item.name}-${index}`}
-      numColumns={cardLayout.columnCount}
-      key={`flatlist-${cardLayout.columnCount}`}
-      contentContainerStyle={styles.listContainer}
-      showsVerticalScrollIndicator={false}
-      ListEmptyComponent={renderEmptyComponent}
+  // モバイル環境用のカルーセル
+  const renderMobileCarousel = () => (
+    <UserCarousel
+      users={filteredUsers}
+      onCardPress={handleCardPress}
     />
   );
 
@@ -105,8 +100,8 @@ const ExploreScreen = () => {
             setCardListWidth(width);
           }}
         >
-          {/* モバイル環境用のFlatList */}
-          {renderMobileList()}
+          {/* モバイル環境用のカルーセル */}
+          {renderMobileCarousel()}
         </View>
       </View>
     </SafeAreaView>

@@ -150,8 +150,8 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
       height: cardHeight,
       backgroundColor: colors.surface,
       borderRadius: borderRadius.lg,
-      marginRight: spacing.sm,
-      marginBottom: spacing.sm,
+      marginRight: spacing.xs, // モバイル用に小さく
+      marginBottom: spacing.xs, // モバイル用に小さく
       ...shadows.base,
       overflow: 'hidden',
     },
@@ -169,27 +169,27 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     // オンラインインジケーター（緑の丸）
     onlineIndicator: {
       position: 'absolute',
-      top: spacing.base,
-      right: spacing.base,
+      top: spacing.xs, // モバイル用に小さく
+      right: spacing.xs, // モバイル用に小さく
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      paddingHorizontal: spacing.sm,
-      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.xs, // モバイル用に小さく
+      paddingVertical: spacing.xs, // モバイル用に小さく
       borderRadius: borderRadius.full,
     },
     // オンラインインジケーターの緑の丸
     onlineDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
+      width: 6, // モバイル用に小さく
+      height: 6, // モバイル用に小さく
+      borderRadius: 3, // モバイル用に小さく
       backgroundColor: colors.online,
       marginRight: spacing.xs,
     },
     // オンラインインジケーターのテキスト
     onlineText: {
       color: colors.white,
-      fontSize: typography.sm,
+      fontSize: typography.xs, // モバイル用に小さく
       fontWeight: '600',
     },
     // NEWラベルのスタイル
@@ -198,8 +198,8 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
       top: spacing.xs,
       left: spacing.xs,
       backgroundColor: '#FF6B6B',
-      paddingHorizontal: spacing.base,  // smからbaseに変更して少し大きく
-      paddingVertical: spacing.sm,      // xsからsmに変更して少し大きく
+      paddingHorizontal: spacing.sm, // モバイル用に調整
+      paddingVertical: spacing.xs, // モバイル用に調整
       borderRadius: borderRadius.sm,
       shadowColor: '#000',
       shadowOffset: {
@@ -215,14 +215,14 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     // NEWラベルのテキストスタイル
     newLabelText: {
       color: colors.white,
-      fontSize: typography.base,  // xsからbaseに変更して少し大きく
+      fontSize: typography.sm, // モバイル用に小さく
       fontWeight: typography.bold,
       textAlign: 'center',
       letterSpacing: 0.3,
     },
     // カードコンテンツエリアのスタイル
     cardContent: {
-      padding: spacing.sm,
+      padding: spacing.xs, // モバイル用に小さく
       flex: 1,
       justifyContent: 'space-between',
     },
@@ -241,7 +241,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     },
     // 年齢テキストのスタイル
     ageText: {
-      fontSize: typography.lg,
+      fontSize: typography.base, // モバイル用に小さく
       fontWeight: typography.semibold,
       color: colors.textPrimary,
     },
@@ -257,7 +257,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     },
     // 住所テキストのスタイル
     locationText: {
-      fontSize: typography.base,
+      fontSize: typography.sm, // モバイル用に小さく
       fontWeight: typography.medium,
       color: colors.textSecondary,
     },
@@ -277,7 +277,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
       left: 0,
       right: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      padding: spacing.lg,
+      padding: spacing.md, // モバイル用に調整
     },
     // オーバーレイ内のユーザー情報コンテナ
     userInfo: {
@@ -288,14 +288,14 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     },
     // オーバーレイ内のユーザー名
     userName: {
-      fontSize: typography.xl,
+      fontSize: typography.lg, // モバイル用に小さく
       fontWeight: 'bold',
       color: colors.white,
       marginBottom: spacing.xs,
     },
     // オーバーレイ内のユーザー住所
     userLocation: {
-      fontSize: typography.xl,
+      fontSize: typography.lg, // モバイル用に小さく
       color: colors.white,
       fontWeight: 'bold',
     },
@@ -307,7 +307,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onPress, layout }) => {
     },
     // 年齢オンラインインジケーターのスタイル
     ageOnlineIndicator: {
-      fontSize: typography.base,
+      fontSize: typography.sm, // モバイル用に小さく
       marginRight: spacing.xs,
     },
   });

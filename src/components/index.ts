@@ -13,3 +13,7 @@ export * from './common';
 // リアクション関連コンポーネント
 export * from './reactions';
 
+// セールス関連コンポーネント
+export * from './sales';
+export { SalesCarousel } from './sales';
+
