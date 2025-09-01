@@ -43,7 +43,7 @@ const ChatListScreenWrapper = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       {/* チャット一覧 */}
       <ChatListScreen
         chatRooms={chatRooms}

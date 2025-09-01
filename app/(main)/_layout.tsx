@@ -10,7 +10,7 @@ export default function MainLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(home)" />
         <Stack.Screen name="recommendations" />
-        <Stack.Screen name="profile/[uid]" />
+        <Stack.Screen name="profile/detail/[uid]" />
         <Stack.Screen name="profile/edit" />
         <Stack.Screen name="chat/[chatId]" />
         <Stack.Screen name="sales/[id]" />

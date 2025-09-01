@@ -58,7 +58,7 @@ interface ProfileDetailsProps {
 }
 
 /**
- * 詳細プロフィールコンポーネント
+ * Web版詳細プロフィールコンポーネント
  * 
  * ユーザーの詳細なプロフィール情報を表示するコンポーネントです。
  * 情報は以下のセクションに分けて表示されます：
@@ -74,10 +74,10 @@ interface ProfileDetailsProps {
  * 
  * @example
  * ```tsx
- * <ProfileDetails details={userProfileDetails} />
+ * <WebProfileDetails details={userProfileDetails} />
  * ```
  */
-export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
+export const WebProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
   return (
     <View style={ProfileDetailStyles.detailsSection}>
       {/* メインタイトル */}
@@ -150,11 +150,13 @@ export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
           </View>
         )}
 
-        {/* 休日（オプション項目） - 土日/平日/不定期から選択 */}
+        {/* 休日（オプション項目） */}
         {details.travelPreferences && details.travelPreferences.length > 0 && (
           <View style={ProfileDetailStyles.detailRow}>
             <Text style={ProfileDetailStyles.detailLabel}>休日</Text>
-            <Text style={ProfileDetailStyles.detailValue}>{details.travelPreferences.join(', ')}</Text>
+            <Text style={ProfileDetailStyles.detailValue}>
+              {details.travelPreferences.join('、')}
+            </Text>
           </View>
         )}
       </View>
@@ -183,9 +185,19 @@ export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
         {details.pets && details.pets.length > 0 && (
           <View style={ProfileDetailStyles.detailRow}>
             <Text style={ProfileDetailStyles.detailLabel}>ペット</Text>
-            <Text style={ProfileDetailStyles.detailValue}>{details.pets.join(', ')}</Text>
+            <Text style={ProfileDetailStyles.detailValue}>
+              {details.pets.join('、')}
+            </Text>
           </View>
         )}
+
+        {/* 言語（必須項目） */}
+        <View style={ProfileDetailStyles.detailRow}>
+          <Text style={ProfileDetailStyles.detailLabel}>言語</Text>
+          <Text style={ProfileDetailStyles.detailValue}>
+            {details.languages.join('、')}
+          </Text>
+        </View>
       </View>
 
       {/* 生活習慣セクション */}
@@ -195,7 +207,9 @@ export const ProfileDetails: React.FC<ProfileDetailsProps> = ({ details }) => {
         {/* タバコ（必須項目） */}
         <View style={ProfileDetailStyles.detailRow}>
           <Text style={ProfileDetailStyles.detailLabel}>タバコ</Text>
-          <Text style={ProfileDetailStyles.detailValue}>{details.smoking ? 'はい' : 'いいえ'}</Text>
+          <Text style={ProfileDetailStyles.detailValue}>
+            {details.smoking ? '吸う' : '吸わない'}
+          </Text>
         </View>
 
         {/* お酒（必須項目） */}

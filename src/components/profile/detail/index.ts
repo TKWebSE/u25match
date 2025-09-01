@@ -1,5 +1,6 @@
-export { ProfileBio } from './ProfileBio';
-export { ProfileDetails } from './ProfileDetails';
-export { ProfileInfo } from './ProfileInfo';
-export { ProfileTags } from './ProfileTags';
+// Web版コンポーネント
+export { WebProfileBio, WebProfileDetails, WebProfileInfo, WebProfileTags } from './web';
+
+// モバイル版コンポーネント
+export { MobileProfileBio, MobileProfileDetails, MobileProfileInfo, MobileProfileTags } from './mobile';
 

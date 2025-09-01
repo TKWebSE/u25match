@@ -142,7 +142,7 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={SettingsStyles.safeArea}>
+    <SafeAreaView style={SettingsStyles.safeArea} edges={['top']}>
       <ScrollView
         style={[SettingsStyles.container, { paddingHorizontal: 0 }]}
         showsVerticalScrollIndicator={false}

@@ -1,14 +1,14 @@
 import EmptyState from '@components/common/EmptyState';
-import { UserCarousel } from '@components/explore';
 import { useCardLayout } from '@components/explore/CardLayoutCalculator';
 import ExploreTabs from '@components/explore/ExploreTabs';
+import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import UserCard from '@components/explore/UserCard';
 import { getProfilePath } from '@constants/routes';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface User {
@@ -76,14 +76,24 @@ const ExploreScreen = () => {
 
   // モバイル環境用のカルーセル
   const renderMobileCarousel = () => (
-    <UserCarousel
-      users={filteredUsers}
-      onCardPress={handleCardPress}
-    />
+    <>
+      <UserSwipeSection
+        title="おすすめユーザー"
+        subtitle={`${filteredUsers.length}人のユーザー`}
+        users={filteredUsers}
+        onCardPress={handleCardPress}
+      />
+      <UserSwipeSection
+        title="新着ユーザー"
+        subtitle={`${filteredUsers.length}人のユーザー`}
+        users={filteredUsers}
+        onCardPress={handleCardPress}
+      />
+    </>
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
         {/* タブエリア */}
         <ExploreTabs
@@ -93,16 +103,14 @@ const ExploreScreen = () => {
         />
 
         {/* カードリストエリアの幅を計測 */}
-        <View
+        <ScrollView
           style={styles.cardListArea}
-          onLayout={(event) => {
-            const { width } = event.nativeEvent.layout;
-            setCardListWidth(width);
-          }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
         >
           {/* モバイル環境用のカルーセル */}
           {renderMobileCarousel()}
-        </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -122,6 +130,9 @@ const styles = StyleSheet.create({
   },
   cardListArea: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: spacing.xl, // スクロール時の下部パディング
   },
 });
 

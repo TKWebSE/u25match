@@ -1,5 +1,4 @@
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
-import { isWeb } from '@utils/platform';
 import React, { useState } from 'react';
 import { Animated, Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -73,24 +72,6 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
     }).start();
   };
 
-  const handleHoverIn = () => {
-    if (isWeb) {
-      Animated.spring(scaleAnim, {
-        toValue: 1.02,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const handleHoverOut = () => {
-    if (isWeb) {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
   const handleImageError = () => {
     console.warn(`タグ画像の読み込みに失敗しました: ${tag.name}`);
     setImageError(true);
@@ -98,46 +79,39 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
 
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      style={ProfileDetailStyles.tagItem}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      {...(isWeb && { onMouseEnter: handleHoverIn, onMouseLeave: handleHoverOut })}
+      activeOpacity={0.8}
     >
-      <Animated.View
-        style={[
-          ProfileDetailStyles.tagItem,
-          { transform: [{ scale: scaleAnim }] }
-        ]}
-      >
-        {/* タグ画像 */}
-        {!imageError ? (
-          <Image
-            source={getTagImage(tag.name)}
-            style={ProfileDetailStyles.tagImage}
-            resizeMode="cover"
-            onError={handleImageError}
-          />
-        ) : (
-          <View style={[ProfileDetailStyles.tagImage, { backgroundColor: '#E2E8F0', justifyContent: 'center', alignItems: 'center' }]}>
-            <Text style={{ fontSize: 16, color: '#718096' }}>🏷️</Text>
-          </View>
-        )}
-        {/* タグ名 */}
-        <Text style={ProfileDetailStyles.tagText}>{tag.name}</Text>
+      <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]}>
+        <Image
+          source={getTagImage(tag.name)}
+          style={ProfileDetailStyles.tagImage}
+          onError={handleImageError}
+        />
+        <View style={ProfileDetailStyles.tagOverlay}>
+          <Text style={ProfileDetailStyles.tagText}>{tag.name}</Text>
+        </View>
       </Animated.View>
     </TouchableOpacity>
   );
 };
 
-export const ProfileTags: React.FC<ProfileTagsProps> = ({ tags }) => {
+/**
+ * モバイル版タグ表示コンポーネント
+ * 
+ * @param tags - タグ配列
+ */
+export const MobileProfileTags: React.FC<ProfileTagsProps> = ({ tags }) => {
   if (!tags || tags.length === 0) {
     return null;
   }
 
   return (
-    <View style={ProfileDetailStyles.tagsSection}>
+    <View style={ProfileDetailStyles.tagsContainer}>
       <Text style={ProfileDetailStyles.tagsTitle}>興味・趣味</Text>
-      <View style={ProfileDetailStyles.tagsContainer}>
+      <View style={ProfileDetailStyles.tagsGrid}>
         {tags.map((tag) => (
           <TagItem key={tag.id} tag={tag} />
         ))}

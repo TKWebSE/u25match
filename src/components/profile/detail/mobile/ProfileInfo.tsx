@@ -6,14 +6,14 @@ import { Text, View } from 'react-native';
 interface ProfileInfoProps {
   name: string;
   age: number;
-  location: string; // 出身地を追加
+  location: string;
   onlineStatus: string;
   likeCount: number;
-  isVerified?: boolean; // 本人確認済みフラグ
+  isVerified?: boolean;
 }
 
 /**
- * プロフィール情報コンポーネント
+ * モバイル版プロフィール情報コンポーネント
  * 
  * @param name - ユーザー名
  * @param age - 年齢
@@ -22,7 +22,7 @@ interface ProfileInfoProps {
  * @param likeCount - いいね数
  * @param isVerified - 本人確認済みかどうか
  */
-export const ProfileInfo: React.FC<ProfileInfoProps> = ({
+export const MobileProfileInfo: React.FC<ProfileInfoProps> = ({
   name,
   age,
   location,

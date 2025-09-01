@@ -8,16 +8,16 @@ export const FORGOT_PASSWORD_SCREEN_PATH = '/forgotPasswordScreen';
 
 // メイン（ユーザー探索）
 export const EXPLORE_SCREEN_PATH = "/explore";
-export const PROFILE_MODAL_PATH = "/profile/[uid]";
+export const PROFILE_MODAL_PATH = "/profile/detail/[uid]";
 
 // チャット
 export const CHAT_LIST_SCREEN_PATH = '/(home)/(tabs)/chat';
 export const CHAT_ROOM_SCREEN_PATH = (chatId: string) => `/chat/${chatId}`;
 
 // プロフィール
-export const PROFILE_SCREEN_PATH = '/profile/[uid]';
+export const PROFILE_SCREEN_PATH = '/profile/detail/[uid]';
 export const PROFILE_EDIT_SCREEN_PATH = '/profile/edit';
-export const getProfilePath = (uid: string) => `/profile/${uid}`;
+export const getProfilePath = (uid: string) => `/profile/detail/${uid}`;
 
 // リアクション
 export const REACTIONS_SCREEN_PATH = '/(home)/(tabs)/reactions';

@@ -1,2 +1,2 @@
-export { default as UserCarousel } from './UserCarousel';
+export { default as UserSwipeSection } from './UserSwipeSection';
 

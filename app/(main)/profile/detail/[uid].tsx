@@ -1,7 +1,16 @@
-// app/(main)/profile/[uid].tsx
+// app/(main)/profile/detail/[uid].tsx
 import { ErrorState } from '@components/common/ErrorState';
 import { LoadingState } from '@components/common/LoadingState';
-import { ProfileBio, ProfileDetails, ProfileInfo, ProfileTags } from '@components/profile/detail';
+import {
+  MobileProfileBio,
+  MobileProfileDetails,
+  MobileProfileInfo,
+  MobileProfileTags,
+  WebProfileBio,
+  WebProfileDetails,
+  WebProfileInfo,
+  WebProfileTags
+} from '@components/profile/detail';
 import { EditButton } from '@components/profile/EditButton';
 import ImageIndicator from '@components/profile/ImageIndicator';
 import { LikeButton } from '@components/profile/LikeButton';
@@ -86,23 +95,46 @@ export default function ProfileScreen() {
           />
 
           {/* プロフィール情報 */}
-          <ProfileInfo
-            name={profile.name}
-            age={profile.age}
-            location={profile.location}
-            onlineStatus={onlineStatus}
-            likeCount={profile.likeCount}
-            isVerified={profile.isVerified}
-          />
+          {isWeb ? (
+            <WebProfileInfo
+              name={profile.name}
+              age={profile.age}
+              location={profile.location}
+              onlineStatus={onlineStatus}
+              likeCount={profile.likeCount}
+              isVerified={profile.isVerified}
+            />
+          ) : (
+            <MobileProfileInfo
+              name={profile.name}
+              age={profile.age}
+              location={profile.location}
+              onlineStatus={onlineStatus}
+              likeCount={profile.likeCount}
+              isVerified={profile.isVerified}
+            />
+          )}
 
           {/* 自己紹介 */}
-          <ProfileBio bio={profile.bio} />
+          {isWeb ? (
+            <WebProfileBio bio={profile.bio} />
+          ) : (
+            <MobileProfileBio bio={profile.bio} />
+          )}
 
           {/* タグ表示 */}
-          <ProfileTags tags={profile.tags} />
+          {isWeb ? (
+            <WebProfileTags tags={profile.tags} />
+          ) : (
+            <MobileProfileTags tags={profile.tags} />
+          )}
 
           {/* 詳細プロフィール */}
-          <ProfileDetails details={profile.details} />
+          {isWeb ? (
+            <WebProfileDetails details={profile.details} />
+          ) : (
+            <MobileProfileDetails details={profile.details} />
+          )}
         </View>
       </ScrollView >
 
@@ -120,4 +152,4 @@ export default function ProfileScreen() {
       )}
     </View >
   );
-} 
+}

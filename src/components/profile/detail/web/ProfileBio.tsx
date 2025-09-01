@@ -7,11 +7,11 @@ interface ProfileBioProps {
 }
 
 /**
- * 自己紹介コンポーネント
+ * Web版自己紹介コンポーネント
  * 
  * @param bio - 自己紹介テキスト
  */
-export const ProfileBio: React.FC<ProfileBioProps> = ({ bio }) => {
+export const WebProfileBio: React.FC<ProfileBioProps> = ({ bio }) => {
   return (
     <View style={ProfileDetailStyles.bioContainer}>
       <Text style={ProfileDetailStyles.bioTitle}>自己紹介</Text>

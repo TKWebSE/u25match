@@ -25,23 +25,30 @@ interface User {
   createdAt?: Date;
 }
 
-// カルーセルのProps型定義
-interface UserCarouselProps {
+// UserSwipeSectionのProps型定義
+interface UserSwipeSectionProps {
+  title: string;
+  subtitle: string;
   users: User[];
   onCardPress: (user: User) => void;
 }
 
 /**
- * スマホ用ユーザーカードカルーセルコンポーネント
- * 横スクロールでユーザーカードを表示
+ * ユーザーカードスワイプセクションコンポーネント
+ * タイトルと横スクロールでユーザーカードを表示
  */
-const UserCarousel: React.FC<UserCarouselProps> = ({ users, onCardPress }) => {
+const UserSwipeSection: React.FC<UserSwipeSectionProps> = ({
+  title,
+  subtitle,
+  users,
+  onCardPress
+}) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // カードのサイズ設定
   const CARD_WIDTH = screenWidth * 0.6; // 画面幅の60%（小さく）
-  const CARD_HEIGHT = CARD_WIDTH * 1.1; // 縦横比1.1（Webと同様の比率）
+  const CARD_HEIGHT = CARD_WIDTH * 1.25; // 縦横比1.25（今日のオススメ画面と同じ比率）
   const CARD_MARGIN = spacing.lg;
   const CARD_SPACING = CARD_WIDTH + CARD_MARGIN * 2;
 
@@ -122,10 +129,10 @@ const UserCarousel: React.FC<UserCarouselProps> = ({ users, onCardPress }) => {
 
   return (
     <View style={styles.container}>
-      {/* カルーセルタイトル */}
+      {/* セクションタイトル */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>おすすめユーザー</Text>
-        <Text style={styles.subtitle}>{users.length}人のユーザー</Text>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
 
       {/* ユーザーカードスワイプエリア */}
@@ -161,7 +168,6 @@ const UserCarousel: React.FC<UserCarouselProps> = ({ users, onCardPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.lg,
     backgroundColor: colors.background,
   },
   titleContainer: {
@@ -169,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   title: {
     fontSize: typography.xl,
@@ -236,11 +243,11 @@ const styles = StyleSheet.create({
     left: spacing.sm,
     backgroundColor: '#FF6B6B',
     borderRadius: spacing.xs,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
   },
   newLabelText: {
-    fontSize: typography.sm,
+    fontSize: typography.base,
     color: colors.white,
     fontWeight: 'bold',
   },
@@ -256,7 +263,7 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   ageContainer: {
@@ -292,4 +299,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserCarousel;
+export default UserSwipeSection;
