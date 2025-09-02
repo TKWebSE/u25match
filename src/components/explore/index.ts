@@ -4,6 +4,7 @@
 // 共通exploreコンポーネント
 export * from './CardLayoutCalculator';
 export * from './ExploreTabs';
+export { default as SearchBar } from './SearchBar';
 export * from './TagList';
 export * from './UserCard';
 
