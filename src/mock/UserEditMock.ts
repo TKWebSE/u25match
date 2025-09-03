@@ -8,6 +8,11 @@ export const mockProfileData: ProfileData = {
   age: 25,
   location: '東京都',
   bio: 'こんにちは！趣味は読書と映画鑑賞です。よろしくお願いします。',
+  images: [
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+  ],
   tags: [
     { id: '1', name: 'コーヒー', imageUrl: '' },
     { id: '2', name: '読書', imageUrl: '' },

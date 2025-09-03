@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#6C63FF', // 下タブと同じ色
+    backgroundColor: colors.primary, // 下タブと同じ色
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',

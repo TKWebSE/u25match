@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -306,7 +307,7 @@ const NotificationsScreen = () => {
 
             <TouchableOpacity
               style={{
-                backgroundColor: '#6C63FF',
+                backgroundColor: colors.primary,
                 padding: 12,
                 borderRadius: 8,
                 alignItems: 'center'

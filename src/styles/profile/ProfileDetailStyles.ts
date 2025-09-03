@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import { getPlatformValue } from '@utils/platform';
 import { Dimensions, StyleSheet } from 'react-native';
 
@@ -310,7 +311,7 @@ export const ProfileDetailStyles = StyleSheet.create({
   },
 
   saveButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,

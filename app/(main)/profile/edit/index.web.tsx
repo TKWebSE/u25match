@@ -1,4 +1,4 @@
-import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
+import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
@@ -142,6 +142,22 @@ const ProfileEditScreen = () => {
           color: '#6B7280',
           marginBottom: 8
         }}>
+          プロフィール画像
+        </Text>
+        <Text style={{
+          fontSize: 12,
+          color: '#9CA3AF'
+        }}>
+          最大6枚まで追加可能
+        </Text>
+      </View>
+
+      <View style={{ marginBottom: 20 }}>
+        <Text style={{
+          fontSize: 14,
+          color: '#6B7280',
+          marginBottom: 8
+        }}>
           基本情報
         </Text>
         <Text style={{
@@ -212,6 +228,13 @@ const ProfileEditScreen = () => {
             <WebSidebar />
 
             <View style={{ flex: 1, padding: 20 }}>
+              {/* プロフィール画像編集 */}
+              <ProfileImageEdit
+                images={profileData.images}
+                onImagesChange={(images) => setProfileData(prev => ({ ...prev, images }))}
+                maxImages={6}
+              />
+
               {/* プロフィール情報編集 */}
               <ProfileInfoEdit
                 name={profileData.name}

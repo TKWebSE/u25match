@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     height: 3,
-    backgroundColor: '#6C63FF', // 下タブと同じ色
+    backgroundColor: colors.primary, // 下タブと同じ色
     borderRadius: 2,
   },
   tab: {

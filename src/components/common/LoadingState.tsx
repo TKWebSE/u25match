@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
@@ -8,7 +9,7 @@ interface LoadingStateProps {
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
   message = '読み込み中...',
-  color = '#6C63FF'
+  color = colors.primary
 }) => {
   return (
     <View style={styles.loadingContainer}>

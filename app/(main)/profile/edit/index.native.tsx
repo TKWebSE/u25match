@@ -1,4 +1,4 @@
-import { ProfileBioEdit, ProfileDetailsEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
+import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
@@ -106,6 +106,13 @@ const ProfileEditScreen = () => {
           </View>
 
           <View style={{ padding: 20 }}>
+            {/* プロフィール画像編集 */}
+            <ProfileImageEdit
+              images={profileData.images}
+              onImagesChange={(images) => setProfileData(prev => ({ ...prev, images }))}
+              maxImages={6}
+            />
+
             {/* プロフィール情報編集 */}
             <ProfileInfoEdit
               name={profileData.name}

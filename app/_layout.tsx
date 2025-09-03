@@ -2,6 +2,7 @@
 // アプリのルートレイアウト - 認証状態の管理とナビゲーション制御
 import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
+import { colors } from '@styles/globalStyles';
 import { defaultConfig } from '@tamagui/config/v4';
 import { TamaguiProvider, createTamagui } from '@tamagui/core';
 import { Slot, usePathname, useRouter } from 'expo-router';
@@ -46,7 +47,7 @@ function AuthGate() {
   if (loading) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#6C63FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>認証状態を確認中...</Text>
       </View>
     );

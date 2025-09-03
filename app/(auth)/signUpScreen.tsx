@@ -4,6 +4,7 @@ import ScreenWrapper from '@components/common/ScreenWrapper';
 import { EXPLORE_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { createUserProfile } from '@services/firestoreUserProfile';
+import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -266,14 +267,14 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
     width: '100%',
   },
   loginButtonText: {
-    color: '#6C63FF',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },

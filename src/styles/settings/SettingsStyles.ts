@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import { StyleSheet } from 'react-native';
 
 /**
@@ -50,7 +51,7 @@ export const SettingsStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -218,7 +219,7 @@ export const SettingsStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderLeftWidth: 4,
-    borderLeftColor: '#6C63FF',
+    borderLeftColor: colors.primary,
   },
 
   // 新機能案内ヘッダー
@@ -243,7 +244,7 @@ export const SettingsStyles = StyleSheet.create({
 
   // 新機能案内ボタン
   guideButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

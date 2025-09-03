@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -65,11 +66,11 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   activeProgressBar: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     height: 4,
   },
   passedProgressBar: {
-    backgroundColor: 'rgba(108, 99, 255, 0.7)',
+    backgroundColor: `${colors.primary}70`, // 70% opacity
   },
   lastProgressBar: {
     marginRight: 0,

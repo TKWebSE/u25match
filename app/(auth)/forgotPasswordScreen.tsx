@@ -3,6 +3,7 @@
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
+import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   resetButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   backButtonText: {
-    color: '#6C63FF',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },

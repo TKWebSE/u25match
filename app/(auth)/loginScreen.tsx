@@ -3,6 +3,7 @@
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
+import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   loginButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   forgotPasswordText: {
-    color: '#6C63FF',
+    color: colors.primary,
     fontSize: 14,
   },
   divider: {
@@ -233,14 +234,14 @@ const styles = StyleSheet.create({
   },
   signupButton: {
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
     width: '100%',
   },
   signupButtonText: {
-    color: '#6C63FF',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },

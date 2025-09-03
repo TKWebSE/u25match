@@ -8,7 +8,7 @@ import { StyleSheet } from 'react-native';
 // カラーパレット
 export const colors = {
   // プライマリカラー
-  primary: '#6C63FF',
+  primary: '#4CAF50',
   primaryLight: '#8B7FFF',
   primaryDark: '#5A52E0',
 

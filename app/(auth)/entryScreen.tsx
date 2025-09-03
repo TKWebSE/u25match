@@ -1,6 +1,7 @@
 // app/(auth)/entryScreen.tsx
 // エントリー画面 - アプリの最初の画面、ログインまたは新規登録への導線
 import { LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
+import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -95,11 +96,11 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#6C63FF',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -170,11 +171,11 @@ const styles = StyleSheet.create({
   },
   // プライマリボタン（新規登録）
   primaryButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: '#6C63FF',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   // セカンダリボタン（ログイン）
   secondaryButton: {
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
   },
   // セカンダリボタンテキスト
   secondaryButtonText: {
-    color: '#6C63FF',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '600',
   },

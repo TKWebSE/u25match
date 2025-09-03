@@ -2,6 +2,7 @@
 // タブナビゲーションのレイアウト - メインアプリの下部タブを管理
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { colors } from '@styles/globalStyles';
 import { isWeb } from '@utils/platform'; // isWebをインポート
 import { Slot, usePathname } from 'expo-router'; // SlotとusePathnameをインポート
 import { Platform, View } from 'react-native';
@@ -42,7 +43,7 @@ export default function TabsLayout() {
           // タブバーをさらに上に移動
           marginBottom: Platform.OS === 'ios' ? 16 : 12, // 下部マージンを増加（iOS: 8→16, Android: 4→12）
         },
-        tabBarActiveTintColor: '#6C63FF', // アクティブ時の色
+        tabBarActiveTintColor: colors.primary, // アクティブ時の色
         tabBarInactiveTintColor: '#8E8E93', // 非アクティブ時の色
         tabBarLabelStyle: {
           fontSize: 11,

@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -173,7 +174,7 @@ const ContactScreen = () => {
             {/* 送信ボタン */}
             <TouchableOpacity
               style={{
-                backgroundColor: '#6C63FF',
+                backgroundColor: colors.primary,
                 padding: 16,
                 borderRadius: 8,
                 alignItems: 'center',

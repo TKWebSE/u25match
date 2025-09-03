@@ -35,12 +35,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAnimating, setIsAnimating] = useState(false);
   const expandAnim = React.useRef(new Animated.Value(0)).current;
   const textInputRef = React.useRef<TextInput>(null);
 
   // 外部からの制御に対応
   React.useEffect(() => {
-    if (isVisible && !isExpanded) {
+    if (isVisible && !isExpanded && !isAnimating) {
       setIsExpanded(true);
       Animated.timing(expandAnim, {
         toValue: 1,
@@ -54,7 +55,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           }, 100);
         }
       });
-    } else if (!isVisible && isExpanded) {
+    } else if (!isVisible && isExpanded && !isAnimating) {
+      setIsAnimating(true);
       Animated.timing(expandAnim, {
         toValue: 0,
         duration: 200,
@@ -63,17 +65,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
         setIsExpanded(false);
         setSearchQuery('');
         onSearch('');
+        setIsAnimating(false);
       });
     }
-  }, [isVisible, isExpanded, expandAnim, onSearch, autoFocus]);
+  }, [isVisible, isExpanded, expandAnim, onSearch, autoFocus, isAnimating]);
 
   const handleSearchIconPress = () => {
     if (onToggle) {
       onToggle();
     } else {
       // フォールバック処理
-      if (isExpanded) {
+      if (isExpanded && !isAnimating) {
         // 検索バーを閉じる
+        setIsAnimating(true);
         Animated.timing(expandAnim, {
           toValue: 0,
           duration: 200,
@@ -82,8 +86,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
           setIsExpanded(false);
           setSearchQuery('');
           onSearch('');
+          setIsAnimating(false);
         });
-      } else {
+      } else if (!isExpanded && !isAnimating) {
         // 検索バーを開く
         setIsExpanded(true);
         Animated.timing(expandAnim, {
@@ -100,23 +105,61 @@ const SearchBar: React.FC<SearchBarProps> = ({
     onSearch(text);
   };
 
+  const handleBlur = () => {
+    // アニメーション中は何もしない
+    if (isAnimating) return;
+
+    // フォーカスアウト時にアニメーションで閉じる
+    if (isExpanded) {
+      setIsAnimating(true);
+      Animated.timing(expandAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => {
+        setIsExpanded(false);
+        setSearchQuery('');
+        onSearch('');
+        setIsAnimating(false);
+        // 外部の状態も更新
+        if (onClose) {
+          onClose();
+        }
+      });
+    }
+    // 外部のonBlurコールバックも呼び出し
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
   const handleClear = () => {
+    // アニメーション中は何もしない
+    if (isAnimating) return;
+
     setSearchQuery('');
     onSearch('');
-    // フォーカスを外して初期状態に戻す
+
+    // フォーカスを外す
     textInputRef.current?.blur();
-    // 外部の状態も更新
-    if (onClose) {
-      onClose();
-    }
-    // 検索バーを閉じる
-    Animated.timing(expandAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsExpanded(false);
-    });
+
+    // 少し遅延してからアニメーション開始
+    setTimeout(() => {
+      setIsAnimating(true);
+      // 検索バーを閉じる
+      Animated.timing(expandAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => {
+        setIsExpanded(false);
+        setIsAnimating(false);
+        // 外部の状態も更新
+        if (onClose) {
+          onClose();
+        }
+      });
+    }, 50);
   };
 
   return (
@@ -130,7 +173,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <MaterialIcons
           name={isExpanded ? "close" : "search"}
           size={24}
-          color={colors.textPrimary}
+          color={colors.primary}
         />
       </TouchableOpacity>
 
@@ -155,12 +198,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={searchQuery}
           onChangeText={handleSearch}
           onFocus={onFocus}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           autoFocus={autoFocus && isExpanded}
           returnKeyType="search"
         />
 
-        {searchQuery.length > 0 && (
+        {searchQuery.length > 0 && isExpanded && (
           <TouchableOpacity
             style={styles.clearButton}
             onPress={handleClear}

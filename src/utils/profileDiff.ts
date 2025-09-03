@@ -7,6 +7,7 @@ export interface ProfileData {
   age: number;
   location: string;
   bio: string;
+  images: string[]; // プロフィール画像の配列
   tags: Array<{ id: string; name: string; imageUrl: string }>;
   details: {
     height: number;
@@ -59,6 +60,11 @@ export const getProfileDiff = (original: ProfileData, current: ProfileData): Par
 
   if (original.bio !== current.bio) {
     changes.bio = current.bio;
+  }
+
+  // 画像の差分チェック（配列の内容を比較）
+  if (!arraysEqual(original.images, current.images)) {
+    changes.images = current.images;
   }
 
   // タグの差分チェック（配列の内容を比較）
