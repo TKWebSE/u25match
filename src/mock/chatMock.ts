@@ -2,6 +2,7 @@
 // 💬 チャットサービスのモックデータ
 
 export const mockChatMessages = [
+  // 今日のメッセージ
   {
     id: 'msg_1',
     chatId: 'chat_123',
@@ -24,6 +25,108 @@ export const mockChatMessages = [
     senderId: 'user2',
     content: '素敵ですね！どんな音楽がお好きですか？',
     timestamp: new Date(Date.now() - 1000 * 60 * 20),
+    type: 'text' as const,
+  },
+  // 昨日のメッセージ
+  {
+    id: 'msg_1_yesterday',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: '昨日はありがとうございました！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 30), // 昨日の23:30頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_yesterday',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: 'こちらこそ！またお話ししましょう。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 15), // 昨日の23:45頃
+    type: 'text' as const,
+  },
+  // 一昨日のメッセージ
+  {
+    id: 'msg_1_day_before',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: 'おはようございます！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48 + 1000 * 60 * 60 * 9), // 一昨日の9:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_day_before',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: 'おはようございます！今日もよろしくお願いします。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48 + 1000 * 60 * 60 * 9 + 1000 * 60 * 5), // 一昨日の9:05頃
+    type: 'text' as const,
+  },
+  // 一週間前のメッセージ
+  {
+    id: 'msg_1_week_ago',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: '先週はありがとうございました！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7 - 1000 * 60 * 60 * 2), // 一週間前の22:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_week_ago',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: 'こちらこそ！また今度お話ししましょう。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7 - 1000 * 60 * 60 * 1), // 一週間前の23:00頃
+    type: 'text' as const,
+  },
+  // 二週間前のメッセージ
+  {
+    id: 'msg_1_two_weeks_ago',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: '二週間前の約束、覚えていますか？',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14 + 1000 * 60 * 60 * 15), // 二週間前の15:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_two_weeks_ago',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: 'もちろん覚えています！楽しみです。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14 + 1000 * 60 * 60 * 15 + 1000 * 60 * 10), // 二週間前の15:10頃
+    type: 'text' as const,
+  },
+  // 一ヶ月前のメッセージ
+  {
+    id: 'msg_1_month_ago',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: '一ヶ月前からお話ししていますね！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 + 1000 * 60 * 60 * 10), // 一ヶ月前の10:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_month_ago',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: 'そうですね！時間が経つのは早いですね。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 + 1000 * 60 * 60 * 10 + 1000 * 60 * 5), // 一ヶ月前の10:05頃
+    type: 'text' as const,
+  },
+  // 一年前のメッセージ
+  {
+    id: 'msg_1_year_ago',
+    chatId: 'chat_123',
+    senderId: 'my-user-id',
+    content: '一年前の今日、初めてお話ししましたね！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 + 1000 * 60 * 60 * 14), // 一年前の14:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_2_year_ago',
+    chatId: 'chat_123',
+    senderId: 'user2',
+    content: '本当ですね！懐かしいです。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 + 1000 * 60 * 60 * 14 + 1000 * 60 * 15), // 一年前の14:15頃
     type: 'text' as const,
   },
   {
@@ -88,6 +191,74 @@ export const mockChatMessages = [
     senderId: 'user7',
     content: '映画好きなんですね！おすすめの作品はありますか？',
     timestamp: new Date(Date.now() - 1000 * 60 * 90),
+    type: 'text' as const,
+  },
+  // chat_303の昨日のメッセージ
+  {
+    id: 'msg_303_yesterday_1',
+    chatId: 'chat_303',
+    senderId: 'my-user-id',
+    content: '昨日の映画、とても面白かったです！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 60 * 2), // 昨日の22:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_303_yesterday_2',
+    chatId: 'chat_303',
+    senderId: 'user7',
+    content: '良かったです！また一緒に見に行きましょう。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 60 * 1), // 昨日の23:00頃
+    type: 'text' as const,
+  },
+  // chat_303の一昨日のメッセージ
+  {
+    id: 'msg_303_day_before_1',
+    chatId: 'chat_303',
+    senderId: 'user7',
+    content: '明日の映画の予約、取れました！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48 + 1000 * 60 * 60 * 14), // 一昨日の14:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_303_day_before_2',
+    chatId: 'chat_303',
+    senderId: 'my-user-id',
+    content: 'ありがとうございます！楽しみです。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48 + 1000 * 60 * 60 * 14 + 1000 * 60 * 10), // 一昨日の14:10頃
+    type: 'text' as const,
+  },
+  // chat_303の一週間前のメッセージ
+  {
+    id: 'msg_303_week_ago_1',
+    chatId: 'chat_303',
+    senderId: 'my-user-id',
+    content: '先週の映画、どうでしたか？',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7 + 1000 * 60 * 60 * 20), // 一週間前の20:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_303_week_ago_2',
+    chatId: 'chat_303',
+    senderId: 'user7',
+    content: 'とても面白かったです！また見に行きましょう。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7 + 1000 * 60 * 60 * 20 + 1000 * 60 * 5), // 一週間前の20:05頃
+    type: 'text' as const,
+  },
+  // chat_303の一ヶ月前のメッセージ
+  {
+    id: 'msg_303_month_ago_1',
+    chatId: 'chat_303',
+    senderId: 'user7',
+    content: '一ヶ月前から映画の話をしていますね！',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 + 1000 * 60 * 60 * 16), // 一ヶ月前の16:00頃
+    type: 'text' as const,
+  },
+  {
+    id: 'msg_303_month_ago_2',
+    chatId: 'chat_303',
+    senderId: 'my-user-id',
+    content: 'そうですね！映画好き同士で良かったです。',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30 + 1000 * 60 * 60 * 16 + 1000 * 60 * 10), // 一ヶ月前の16:10頃
     type: 'text' as const,
   },
   {

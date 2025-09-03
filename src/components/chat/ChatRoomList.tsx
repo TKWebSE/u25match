@@ -1,3 +1,9 @@
+// チャットルーム一覧を表示するコンポーネント
+// - チャットルームのリスト表示
+// - プルトゥリフレッシュ機能
+// - 空状態の表示
+// - チャット詳細画面への遷移
+
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { ChatRoom } from '@services/main/chat/types';
 import React from 'react';
@@ -5,11 +11,12 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import ChatListItem from './ChatListItem';
 import EmptyChatMessage from './EmptyChatMessage';
 
+// チャットルームリストのプロパティ型定義
 interface ChatRoomListProps {
-  chatRooms: ChatRoom[];
-  onChatPress: (chatRoom: ChatRoom) => void;
-  onRefresh?: () => void;
-  refreshing?: boolean;
+  chatRooms: ChatRoom[];                    // 表示するチャットルームの配列
+  onChatPress: (chatRoom: ChatRoom) => void; // チャットルームタップ時の処理
+  onRefresh?: () => void;                   // プルトゥリフレッシュ時の処理
+  refreshing?: boolean;                     // リフレッシュ状態
 }
 
 const ChatRoomList: React.FC<ChatRoomListProps> = ({
@@ -20,6 +27,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
 }) => {
   const user = useStrictAuth();
 
+  // 各チャットルームアイテムのレンダリング関数
   const renderChatItem = ({ item }: { item: ChatRoom }) => (
     <ChatListItem
       chatRoom={item}
@@ -28,6 +36,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
     />
   );
 
+  // 空状態の表示コンポーネント
   const renderEmptyComponent = () => (
     <EmptyChatMessage
       title="チャットがありません"
@@ -36,6 +45,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({
     />
   );
 
+  // アイテム間の区切り線
   const renderSeparator = () => <View style={styles.separator} />;
 
   return (

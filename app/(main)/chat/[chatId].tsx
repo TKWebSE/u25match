@@ -1,39 +1,69 @@
-import ChatScreen from "@components/chat/ChatScreen";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { Alert, StyleSheet } from "react-native";
+import { MobileChatContainer } from "@components/chat/mobile";
+import { WebChatContainer } from "@components/chat/web";
+import { useChatInput } from "@hooks/useChatInput";
+import { useChatMessages } from "@hooks/useChatMessages";
+import { useKeyboard } from "@hooks/useKeyboard";
+import { useStrictAuth } from "@hooks/useStrictAuth";
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback } from "react";
+import { Alert, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatDetailScreen() {
   const { chatId } = useLocalSearchParams();
-  const router = useRouter();
+  const user = useStrictAuth();
 
-  console.log('💬 チャット詳細画面 - chatId:', chatId);
+  console.log('💬 チャット詳細画面 - chatId:', chatId, 'Platform:', Platform.OS);
 
-  const handleError = (error: string) => {
+  const handleError = useCallback((error: string) => {
     Alert.alert("エラー", error);
+  }, []);
+
+  // カスタムフックを使用して状態管理
+  const { messages, loading, sendMessage } = useChatMessages(chatId as string, handleError);
+  const { input, setInput, sending, clearInput, setSendingState } = useChatInput();
+  const { keyboardHeight } = useKeyboard();
+
+  // メッセージ送信処理
+  const handleSend = async () => {
+    if (!input.trim() || sending) return;
+
+    setSendingState(true);
+    try {
+      const result = await sendMessage(input, user.uid);
+      if (result.success) {
+        clearInput();
+      }
+    } finally {
+      setSendingState(false);
+    }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
+  // ローディング状態の表示
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>メッセージを読み込み中...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
-  // チャットIDからチャット相手の情報を取得（簡易的な実装）
-  const getChatTitle = (chatId: string) => {
-    // 実際のアプリでは、チャットルームの情報から相手の名前を取得する
-    const chatTitles: { [key: string]: string } = {
-      'chat_123': '佐藤花子',
-      'chat_456': '鈴木一郎',
-      'chat_789': '高橋美咲',
-      'chat_101': '伊藤健太',
-      'chat_202': '渡辺愛',
-    };
-    return chatTitles[chatId] || 'チャット';
-  };
+  // プラットフォームに応じて適切なコンテナを選択
+  const ChatContainer = Platform.OS === 'web' ? WebChatContainer : MobileChatContainer;
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ChatScreen chatUid={chatId as string} onError={handleError} />
+      <ChatContainer
+        messages={messages}
+        currentUserId={user.uid}
+        input={input}
+        setInput={setInput}
+        sending={sending}
+        onSend={handleSend}
+        keyboardHeight={keyboardHeight}
+      />
     </SafeAreaView>
   );
 }
@@ -42,5 +72,15 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
   },
 });

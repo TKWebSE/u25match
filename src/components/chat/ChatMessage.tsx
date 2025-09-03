@@ -1,13 +1,12 @@
 
 
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 // チャットメッセージのプロパティ型定義
 type ChatMessageProps = {
   text: string;                    // メッセージの内容
   createdAt?: Date | null;         // 送信日時
-  senderName?: string;             // 送信者名（現在は使用していない）
   isMe?: boolean;                  // 自分のメッセージかどうか
   otherUserImageUrl?: string;      // 相手の画像URL（現在は使用していない）
 };
@@ -15,7 +14,6 @@ type ChatMessageProps = {
 const ChatMessage: React.FC<ChatMessageProps> = ({
   text,
   createdAt,
-  senderName,
   isMe = false,
   otherUserImageUrl,
 }) => {
@@ -29,25 +27,47 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       {/* 相手のメッセージの場合のみアバターを表示 */}
       {!isMe && (
         <View style={styles.avatarContainer}>
-          <View style={styles.avatar} />
+          {otherUserImageUrl ? (
+            <Image source={{ uri: otherUserImageUrl }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatar} />
+          )}
         </View>
       )}
 
-      {/* チャットバブル */}
-      <View style={[styles.bubble, isMe ? styles.myBubble : styles.otherBubble]}>
-        <View style={styles.bubbleContent}>
-          <Text style={[styles.messageText, isMe && styles.myMessageText]}>{text}</Text>
-        </View>
-      </View>
+      {/* チャットバブルと送信時間を横並びで表示 */}
+      <View style={[
+        styles.bubbleAndTimeContainer,
+        isMe && styles.myBubbleAndTimeContainer // 自分のメッセージ用のスタイル
+      ]}>
+        {/* 自分のメッセージの場合は時分を左側に表示 */}
+        {isMe && (
+          <Text style={styles.timeTextRight}>
+            {createdAt
+              ? createdAt instanceof Date
+                ? `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}` // 時:分形式で表示
+                : ""
+              : ""}
+          </Text>
+        )}
 
-      {/* 送信時間（バブルの下側に表示） */}
-      <Text style={[styles.timeText, isMe ? styles.timeTextLeft : styles.timeTextLeft]}>
-        {createdAt
-          ? createdAt instanceof Date
-            ? createdAt.toLocaleTimeString() // 日付を時間形式で表示
-            : ""
-          : ""}
-      </Text>
+        <View style={[styles.bubble, isMe ? styles.myBubble : styles.otherBubble]}>
+          <View style={styles.bubbleContent}>
+            <Text style={[styles.messageText, isMe && styles.myMessageText]}>{text}</Text>
+          </View>
+        </View>
+
+        {/* 相手のメッセージの場合は時分を右側に表示 */}
+        {!isMe && (
+          <Text style={styles.timeTextLeft}>
+            {createdAt
+              ? createdAt instanceof Date
+                ? `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}` // 時:分形式で表示
+                : ""
+              : ""}
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -72,7 +92,6 @@ const styles = StyleSheet.create({
 
   // チャットバブルの基本スタイル
   bubble: {
-    maxWidth: "75%",
     padding: 10,
     borderRadius: 12,
     marginHorizontal: 8,
@@ -81,6 +100,20 @@ const styles = StyleSheet.create({
   // バブル内のコンテンツエリア
   bubbleContent: {
     flex: 1,
+  },
+
+  // バブルと送信時間のコンテナ
+  bubbleAndTimeContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    maxWidth: "75%",
+  },
+
+  // 自分のメッセージ用のバブルと時間コンテナ（時分表示スペースを確保）
+  myBubbleAndTimeContainer: {
+    maxWidth: "84%", // 変な折り返しを防ぐため元の幅に戻す
+    alignSelf: "flex-end",
+    marginRight: 20, // 時分表示のスペースを確保するため右マージンを大きくする
   },
 
   // 相手のアバターコンテナ
@@ -101,6 +134,7 @@ const styles = StyleSheet.create({
   myBubble: {
     backgroundColor: "#DCF8C6", // LINE風の緑色
     alignSelf: "flex-end",
+    marginRight: 20,
   },
 
   // 相手のメッセージバブル（グレー）
@@ -109,37 +143,24 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
 
-  // 送信者名（現在は使用していない）
-  senderName: {
-    fontSize: 10,
-    color: "#888",
-    marginBottom: 2,
-  },
-
   // メッセージテキスト
   messageText: {
     fontSize: 16,
     color: "#222",
   },
 
-  // 送信時間の基本スタイル
-  timeText: {
-    fontSize: 10,
-    color: "#aaa",
-    marginTop: 8,        // バブルとの間隔
-    alignSelf: "flex-end", // 右寄せ
-  },
-
-  // 右寄せ用の時間スタイル（現在は使用していない）
+  // 右寄せ用の時間スタイル（自分のメッセージ - 左側に表示）
   timeTextRight: {
-    alignSelf: "flex-end",
-    marginLeft: 8,
+    fontSize: 12,
+    color: "#aaa",
+    marginBottom: 2,
   },
 
-  // 左寄せ用の時間スタイル（現在は使用していない）
+  // 左寄せ用の時間スタイル（相手のメッセージ - 右側に表示）
   timeTextLeft: {
-    alignSelf: "flex-start",
-    marginRight: 8,
+    fontSize: 12,
+    color: "#aaa",
+    marginBottom: 2,
   },
 
   // 自分のメッセージテキスト（黒文字）

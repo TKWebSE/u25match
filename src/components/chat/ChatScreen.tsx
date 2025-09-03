@@ -2,23 +2,47 @@ import { useStrictAuth } from "@hooks/useStrictAuth";
 import { ChatMessage } from "@services/main/chat/types";
 import { ServiceRegistry } from "@services/ServiceRegistry";
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 import ChatInput from "./ChatInput";
 import ChatList from "./ChatList";
 
-type ChatScreenProps = {
+type ChatContainerProps = {
   chatUid: string;
   onError?: (error: string) => void;
 };
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
+const ChatContainer: React.FC<ChatContainerProps> = ({ chatUid, onError }) => {
+  // チャットメッセージの状態管理
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  // キーボードの高さを管理（フォーカス時の位置調整用）
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const user = useStrictAuth();
   const chatService = ServiceRegistry.getChatService();
+
+  // キーボードの高さを監視（フォーカス時の位置ずれを防ぐため）
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   // チャットメッセージを取得
   useEffect(() => {
@@ -45,7 +69,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
     fetchMessages();
   }, [chatUid, chatService, onError]);
 
-  // メッセージ送信
+  // メッセージ送信処理
   const handleSend = async () => {
     if (!input.trim() || sending) return;
 
@@ -68,6 +92,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
     }
   };
 
+  // ローディング状態の表示
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -77,12 +102,9 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={80}
-    >
-      <View style={styles.chatContainer}>
+    <View style={styles.container}>
+      {/* キーボードの高さ分だけpaddingBottomを調整してテキストフィールドの位置を制御 */}
+      <View style={[styles.chatContainer, { paddingBottom: keyboardHeight }]}>
         <ChatList
           messages={messages}
           currentUserId={user.uid}
@@ -95,7 +117,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ chatUid, onError }) => {
           disabled={false}
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -119,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen; 
+export default ChatContainer; 

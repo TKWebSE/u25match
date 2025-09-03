@@ -64,10 +64,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#eee",
     backgroundColor: "#fff",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   input: {
     flex: 1,
