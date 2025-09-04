@@ -1,12 +1,12 @@
-import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, ProfileTagsEdit } from '@components/profile/edit';
+import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, ProfileInfoEditRef, ProfileTagsEdit } from '@components/profile/edit';
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Alert, Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /**
@@ -24,6 +24,14 @@ const ProfileEditScreen = () => {
 
   // プロフィール情報の状態管理
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
+
+  // スクロール制御用のref
+  const scrollViewRef = useRef<ScrollView>(null);
+  const profileInfoRef = useRef<ProfileInfoEditRef>(null);
+
+  // ボタンアニメーション用のstate
+  const [saveButtonScale] = useState(new Animated.Value(1));
+  const [cancelButtonScale] = useState(new Animated.Value(1));
 
   // デバッグ用ログ
   console.log('🔍 index.native.tsx - mockProfileData:', mockProfileData);
@@ -60,6 +68,37 @@ const ProfileEditScreen = () => {
     }
   };
 
+  // フィールドフォーカス時のスクロール処理
+  const handleFieldFocus = (fieldName: string) => {
+    // 少し遅延を入れてキーボードの表示を待つ
+    setTimeout(() => {
+      if (scrollViewRef.current) {
+        // 基本情報セクションの位置にスクロール
+        scrollViewRef.current.scrollTo({
+          y: 200, // プロフィール画像の下あたり
+          animated: true,
+        });
+      }
+    }, 100);
+  };
+
+  // ボタンホバー効果
+  const handleButtonPressIn = (buttonScale: Animated.Value) => {
+    Animated.timing(buttonScale, {
+      toValue: 0.95,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleButtonPressOut = (buttonScale: Animated.Value) => {
+    Animated.timing(buttonScale, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
   // 戻る処理（キャンセル処理）
   const handleBack = () => {
     // 変更がある場合のみ確認ダイアログを表示
@@ -84,102 +123,83 @@ const ProfileEditScreen = () => {
   };
 
   return (
-    <SafeAreaView style={ProfileDetailStyles.safeArea}>
-      <ScrollView style={ProfileDetailStyles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={ProfileDetailStyles.contentContainer}>
-          {/* モバイル版用のヘッダー */}
-          <View style={{
-            padding: 20,
-            borderBottomWidth: 1,
-            borderBottomColor: '#E5E7EB',
-            backgroundColor: 'white',
-            marginBottom: 20
-          }}>
-            <Text style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              color: '#1F2937',
-              textAlign: 'center'
-            }}>
-              プロフィール編集
-            </Text>
-          </View>
+    <SafeAreaView style={ProfileEditStyles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={ProfileEditStyles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* モバイル版用のヘッダー */}
+        <View style={ProfileEditStyles.header}>
+          <Text style={ProfileEditStyles.headerTitle}>プロフィール編集</Text>
+          <Text style={ProfileEditStyles.headerSubtitle}>
+            あなたの魅力を最大限にアピールしましょう
+          </Text>
+        </View>
 
-          <View style={{ padding: 20 }}>
-            {/* プロフィール画像編集 */}
-            <ProfileImageEdit
-              images={profileData.images}
-              onImagesChange={(images) => setProfileData(prev => ({ ...prev, images }))}
-              maxImages={6}
-            />
+        {/* プロフィール画像編集 */}
+        <ProfileImageEdit
+          images={profileData.images}
+          onImagesChange={(images) => setProfileData(prev => ({ ...prev, images }))}
+          maxImages={4}
+        />
 
-            {/* プロフィール情報編集 */}
-            <ProfileInfoEdit
-              name={profileData.name}
-              age={profileData.age}
-              location={profileData.location}
-              isVerified={true}
-              onNameChange={(name) => setProfileData(prev => ({ ...prev, name }))}
-              onAgeChange={(age) => setProfileData(prev => ({ ...prev, age }))}
-              onLocationChange={(location) => setProfileData(prev => ({ ...prev, location }))}
-            />
+        {/* プロフィール情報編集 */}
+        <ProfileInfoEdit
+          ref={profileInfoRef}
+          name={profileData.name}
+          location={profileData.location}
+          isVerified={true}
+          onNameChange={(name) => setProfileData(prev => ({ ...prev, name }))}
+          onLocationChange={(location) => setProfileData(prev => ({ ...prev, location }))}
+          onFocus={handleFieldFocus}
+        />
 
-            {/* 自己紹介編集 */}
-            <ProfileBioEdit
-              bio={profileData.bio}
-              onBioChange={(bio) => setProfileData(prev => ({ ...prev, bio }))}
-            />
+        {/* 自己紹介編集 */}
+        <ProfileBioEdit
+          bio={profileData.bio}
+          onBioChange={(bio) => setProfileData(prev => ({ ...prev, bio }))}
+        />
 
-            {/* タグ編集 */}
-            <ProfileTagsEdit
-              tags={profileData.tags}
-              onTagsChange={(tags) => setProfileData(prev => ({ ...prev, tags }))}
-            />
+        {/* タグ編集 */}
+        <ProfileTagsEdit
+          tags={profileData.tags}
+          onTagsChange={(tags) => setProfileData(prev => ({ ...prev, tags }))}
+        />
 
-            {/* 詳細プロフィール編集 */}
-            <ProfileDetailsEdit
-              details={profileData.details}
-              onDetailsChange={(details) => setProfileData(prev => ({ ...prev, details }))}
-            />
+        {/* 詳細プロフィール編集 */}
+        <ProfileDetailsEdit
+          details={profileData.details}
+          onDetailsChange={(details) => setProfileData(prev => ({ ...prev, details }))}
+        />
 
-            {/* モバイル版用のボタン */}
-            <View style={{ marginTop: 30, gap: 15 }}>
+        {/* モバイル版用のボタン */}
+        <View style={ProfileEditStyles.footer}>
+          <View style={ProfileEditStyles.footerButtons}>
+            <Animated.View style={{ transform: [{ scale: saveButtonScale }], flex: 1 }}>
               <TouchableOpacity
                 onPress={() => handleSave(profileData)}
-                style={{
-                  backgroundColor: '#10B981',
-                  paddingVertical: 16,
-                  borderRadius: 12,
-                  alignItems: 'center'
-                }}
+                onPressIn={() => handleButtonPressIn(saveButtonScale)}
+                onPressOut={() => handleButtonPressOut(saveButtonScale)}
+                style={[ProfileEditStyles.button, ProfileEditStyles.footerButton]}
+                activeOpacity={0.8}
               >
-                <Text style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: 16
-                }}>
-                  保存
-                </Text>
+                <Text style={ProfileEditStyles.buttonText}>保存</Text>
               </TouchableOpacity>
+            </Animated.View>
 
+            <Animated.View style={{ transform: [{ scale: cancelButtonScale }], flex: 1 }}>
               <TouchableOpacity
                 onPress={handleBack}
-                style={{
-                  backgroundColor: '#6B7280',
-                  paddingVertical: 16,
-                  borderRadius: 12,
-                  alignItems: 'center'
-                }}
+                onPressIn={() => handleButtonPressIn(cancelButtonScale)}
+                onPressOut={() => handleButtonPressOut(cancelButtonScale)}
+                style={[ProfileEditStyles.button, ProfileEditStyles.buttonSecondary, ProfileEditStyles.footerButton]}
+                activeOpacity={0.8}
               >
-                <Text style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: 16
-                }}>
-                  キャンセル
-                </Text>
+                <Text style={[ProfileEditStyles.buttonText, ProfileEditStyles.buttonSecondaryText]}>キャンセル</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           </View>
         </View>
       </ScrollView>

@@ -1,5 +1,5 @@
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
-import React from 'react';
+import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 interface ProfileBioEditProps {
@@ -14,18 +14,58 @@ interface ProfileBioEditProps {
  * @param onBioChange - 自己紹介変更時のコールバック
  */
 export const ProfileBioEdit: React.FC<ProfileBioEditProps> = ({ bio, onBioChange }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const [localBio, setLocalBio] = useState(bio);
+  const maxLength = 500;
+
+  // デバウンス処理（500ms後に親に通知）
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (localBio !== bio) {
+        onBioChange(localBio);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [localBio, bio, onBioChange]);
+
+  // 外部からbioが変更された場合はローカル状態を更新
+  useEffect(() => {
+    setLocalBio(bio);
+  }, [bio]);
+
+  const handleTextChange = useCallback((text: string) => {
+    setLocalBio(text);
+  }, []);
+
   return (
-    <View style={ProfileDetailStyles.bioContainer}>
-      <Text style={ProfileDetailStyles.bioTitle}>自己紹介</Text>
-      <TextInput
-        style={[ProfileDetailStyles.bio, { borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, minHeight: 100 }]}
-        value={bio}
-        onChangeText={onBioChange}
-        placeholder="自己紹介を入力してください"
-        placeholderTextColor="#9CA3AF"
-        multiline
-        textAlignVertical="top"
-      />
+    <View style={ProfileEditStyles.section}>
+      <Text style={ProfileEditStyles.sectionTitle}>自己紹介</Text>
+
+      <View style={ProfileEditStyles.inputContainer}>
+        <Text style={ProfileEditStyles.inputLabel}>
+          あなたの魅力を伝える文章を書いてください
+        </Text>
+        <TextInput
+          style={[
+            ProfileEditStyles.input,
+            ProfileEditStyles.inputMultiline,
+            isFocused && ProfileEditStyles.inputFocused
+          ]}
+          value={localBio}
+          onChangeText={handleTextChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder="自己紹介を入力してください。趣味、性格、将来の目標など、あなたらしさを表現してみてください。"
+          placeholderTextColor="#9CA3AF"
+          multiline
+          textAlignVertical="top"
+          maxLength={maxLength}
+        />
+        <Text style={ProfileEditStyles.inputHelperText}>
+          {localBio.length}/{maxLength} 文字
+        </Text>
+      </View>
     </View>
   );
 };

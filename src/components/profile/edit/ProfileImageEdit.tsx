@@ -1,7 +1,7 @@
-import { colors } from '@styles/globalStyles';
+import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileImageEditProps {
   images: string[];
@@ -16,7 +16,7 @@ interface ProfileImageEditProps {
 export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
   images,
   onImagesChange,
-  maxImages = 6
+  maxImages = 4
 }) => {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -45,7 +45,7 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1],
+        aspect: [2, 3], // UserCardと同じ比率（2:3）
         quality: 0.8,
         allowsMultipleSelection: true,
         selectionLimit: maxImages - images.length
@@ -81,7 +81,7 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
 
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
-        aspect: [1, 1],
+        aspect: [2, 3], // UserCardと同じ比率（2:3）
         quality: 0.8
       });
 
@@ -118,22 +118,22 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>プロフィール画像</Text>
-      <Text style={styles.subtitle}>
+    <View style={ProfileEditStyles.section}>
+      <Text style={ProfileEditStyles.sectionTitle}>プロフィール画像</Text>
+      <Text style={ProfileEditStyles.inputLabel}>
         最大{maxImages}枚まで追加できます（{images.length}/{maxImages}）
       </Text>
 
-      <View style={styles.imageGrid}>
+      <View style={ProfileEditStyles.imageGrid}>
         {/* 既存の画像を表示 */}
         {images.map((imageUri, index) => (
-          <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.image} />
+          <View key={index} style={ProfileEditStyles.imageContainer}>
+            <Image source={{ uri: imageUri }} style={ProfileEditStyles.image} />
             <TouchableOpacity
-              style={styles.removeButton}
+              style={ProfileEditStyles.imageRemoveButton}
               onPress={() => removeImage(index)}
             >
-              <Text style={styles.removeButtonText}>×</Text>
+              <Text style={ProfileEditStyles.imageRemoveButtonText}>×</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -141,21 +141,21 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
         {/* 画像追加ボタン */}
         {images.length < maxImages && (
           <TouchableOpacity
-            style={[styles.imageContainer, styles.addButton]}
+            style={[ProfileEditStyles.imageContainer, ProfileEditStyles.imageAddButton]}
             onPress={showImageOptions}
             disabled={isUploading}
           >
-            <Text style={styles.addButtonText}>
+            <Text style={ProfileEditStyles.imageAddButtonText}>
               {isUploading ? 'アップロード中...' : '+'}
             </Text>
-            <Text style={styles.addButtonSubtext}>画像を追加</Text>
+            <Text style={ProfileEditStyles.imageAddButtonSubtext}>画像を追加</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {images.length === 0 && (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>
+        <View style={ProfileEditStyles.emptyState}>
+          <Text style={ProfileEditStyles.emptyStateText}>
             プロフィール画像を追加して、あなたの魅力をアピールしましょう！
           </Text>
         </View>
@@ -164,83 +164,4 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 16,
-  },
-  imageGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  imageContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  removeButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  removeButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: colors.gray100,
-    borderWidth: 2,
-    borderColor: colors.gray300,
-    borderStyle: 'dashed',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonText: {
-    fontSize: 24,
-    color: colors.textSecondary,
-    fontWeight: 'bold',
-  },
-  addButtonSubtext: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  emptyState: {
-    marginTop: 20,
-    padding: 20,
-    backgroundColor: colors.gray100,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  emptyStateText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-});
+

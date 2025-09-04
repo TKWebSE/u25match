@@ -18,10 +18,10 @@ import { Text, View } from 'react-native';
  * @property {string} [details.familyStructure] - 同居人（オプション）
  * @property {string[]} [details.pets] - ペット（オプション）
  * @property {string[]} details.languages - 言語（必須）
- * @property {boolean} details.smoking - 喫煙（必須）
+ * @property {string} details.smoking - 喫煙（必須）
  * @property {string} details.drinking - 飲酒（必須）
- * @property {string} [details.children] - 子供（オプション）
- * @property {('土日' | '平日' | '不定期')[]} [details.travelPreferences] - 休日（オプション）
+ * @property {string} [details.children] - 子供の有無（オプション）
+ * @property {string[]} [details.holidayPreferences] - 休日（オプション）
  * @property {string} [details.sleepSchedule] - 寝る時間（オプション）
  * @property {string} [details.marriageTimeline] - 結婚予定（オプション）
  * @property {string} [details.marriageViews] - 結婚観（オプション）
@@ -43,10 +43,10 @@ interface ProfileDetailsProps {
     familyStructure?: string;
     pets?: string[];
     languages: string[];
-    smoking: boolean;
+    smoking: string;
     drinking: string;
     children?: string;
-    travelPreferences?: ('土日' | '平日' | '不定期')[];
+    holidayPreferences?: string[];
     sleepSchedule?: string;
     marriageTimeline?: string;
     marriageViews?: string;
@@ -151,11 +151,11 @@ export const MobileProfileDetails: React.FC<ProfileDetailsProps> = ({ details })
         )}
 
         {/* 休日（オプション項目） */}
-        {details.travelPreferences && details.travelPreferences.length > 0 && (
+        {details.holidayPreferences && details.holidayPreferences.length > 0 && (
           <View style={ProfileDetailStyles.detailRow}>
             <Text style={ProfileDetailStyles.detailLabel}>休日</Text>
             <Text style={ProfileDetailStyles.detailValue}>
-              {details.travelPreferences.join('、')}
+              {details.holidayPreferences.join('、')}
             </Text>
           </View>
         )}
@@ -207,9 +207,7 @@ export const MobileProfileDetails: React.FC<ProfileDetailsProps> = ({ details })
         {/* タバコ（必須項目） */}
         <View style={ProfileDetailStyles.detailRow}>
           <Text style={ProfileDetailStyles.detailLabel}>タバコ</Text>
-          <Text style={ProfileDetailStyles.detailValue}>
-            {details.smoking ? '吸う' : '吸わない'}
-          </Text>
+          <Text style={ProfileDetailStyles.detailValue}>{details.smoking}</Text>
         </View>
 
         {/* お酒（必須項目） */}

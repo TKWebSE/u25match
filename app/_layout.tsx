@@ -8,6 +8,7 @@ import { TamaguiProvider, createTamagui } from '@tamagui/core';
 import { Slot, usePathname, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import EntryScreen from './(auth)/entryScreen';
@@ -95,14 +96,16 @@ function AuthGate() {
 // ルートレイアウトコンポーネント - アプリ全体の構造を定義
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <TamaguiProvider config={config}>
-        <AuthProvider>
-          <AuthGate />
-          <Toast />
-        </AuthProvider>
-      </TamaguiProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <TamaguiProvider config={config}>
+          <AuthProvider>
+            <AuthGate />
+            <Toast />
+          </AuthProvider>
+        </TamaguiProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

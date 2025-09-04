@@ -2,11 +2,11 @@ import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, 
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Alert, Animated, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 /**
@@ -25,6 +25,9 @@ const ProfileEditScreen = () => {
 
   // プロフィール情報の状態管理
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
+
+  // ボタンアニメーション用のstate
+  const [saveButtonScale] = useState(new Animated.Value(1));
 
   // デバッグ用ログ
   console.log('🔍 index.web.tsx - mockProfileData:', mockProfileData);
@@ -61,6 +64,24 @@ const ProfileEditScreen = () => {
     }
   };
 
+  // ボタンホバー効果
+  const handleButtonPressIn = () => {
+    Animated.timing(saveButtonScale, {
+      toValue: 0.95,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleButtonPressOut = () => {
+    Animated.timing(saveButtonScale, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+
   // 戻る処理（キャンセル処理）
   const handleBack = () => {
     // 変更がある場合のみ確認ダイアログを表示
@@ -92,27 +113,9 @@ const ProfileEditScreen = () => {
 
   // Web版用のヘッダー
   const WebHeader = () => (
-    <View style={{
-      padding: 20,
-      borderBottomWidth: 1,
-      borderBottomColor: '#E5E7EB',
-      backgroundColor: 'white',
-      marginBottom: 20
-    }}>
-      <Text style={{
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1F2937',
-        textAlign: 'center'
-      }}>
-        プロフィール編集
-      </Text>
-      <Text style={{
-        fontSize: 14,
-        color: '#6B7280',
-        textAlign: 'center',
-        marginTop: 8
-      }}>
+    <View style={ProfileEditStyles.header}>
+      <Text style={ProfileEditStyles.headerTitle}>プロフィール編集</Text>
+      <Text style={ProfileEditStyles.headerSubtitle}>
         あなたの魅力を最大限にアピールしましょう
       </Text>
     </View>
@@ -120,98 +123,40 @@ const ProfileEditScreen = () => {
 
   // Web版用のサイドバー
   const WebSidebar = () => (
-    <View style={{
-      width: 250,
-      padding: 20,
-      backgroundColor: '#F9FAFB',
-      borderRightWidth: 1,
-      borderRightColor: '#E5E7EB'
-    }}>
-      <Text style={{
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 16
-      }}>
-        編集項目
-      </Text>
+    <View style={ProfileEditStyles.webSidebar}>
+      <Text style={ProfileEditStyles.webSidebarTitle}>編集項目</Text>
 
-      <View style={{ marginBottom: 20 }}>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginBottom: 8
-        }}>
-          プロフィール画像
-        </Text>
-        <Text style={{
-          fontSize: 12,
-          color: '#9CA3AF'
-        }}>
-          最大6枚まで追加可能
+      <View style={ProfileEditStyles.webSidebarItem}>
+        <Text style={ProfileEditStyles.webSidebarItemTitle}>プロフィール画像</Text>
+        <Text style={ProfileEditStyles.webSidebarItemDescription}>
+          最大4枚まで追加可能
         </Text>
       </View>
 
-      <View style={{ marginBottom: 20 }}>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginBottom: 8
-        }}>
-          基本情報
-        </Text>
-        <Text style={{
-          fontSize: 12,
-          color: '#9CA3AF'
-        }}>
-          名前、年齢、居住地
+      <View style={ProfileEditStyles.webSidebarItem}>
+        <Text style={ProfileEditStyles.webSidebarItemTitle}>基本情報</Text>
+        <Text style={ProfileEditStyles.webSidebarItemDescription}>
+          名前、居住地
         </Text>
       </View>
 
-      <View style={{ marginBottom: 20 }}>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginBottom: 8
-        }}>
-          自己紹介
-        </Text>
-        <Text style={{
-          fontSize: 12,
-          color: '#9CA3AF'
-        }}>
+      <View style={ProfileEditStyles.webSidebarItem}>
+        <Text style={ProfileEditStyles.webSidebarItemTitle}>自己紹介</Text>
+        <Text style={ProfileEditStyles.webSidebarItemDescription}>
           あなたの魅力を伝える文章
         </Text>
       </View>
 
-      <View style={{ marginBottom: 20 }}>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginBottom: 8
-        }}>
-          タグ
-        </Text>
-        <Text style={{
-          fontSize: 12,
-          color: '#9CA3AF'
-        }}>
+      <View style={ProfileEditStyles.webSidebarItem}>
+        <Text style={ProfileEditStyles.webSidebarItemTitle}>タグ</Text>
+        <Text style={ProfileEditStyles.webSidebarItemDescription}>
           趣味や興味を表すタグ
         </Text>
       </View>
 
-      <View style={{ marginBottom: 20 }}>
-        <Text style={{
-          fontSize: 14,
-          color: '#6B7280',
-          marginBottom: 8
-        }}>
-          詳細情報
-        </Text>
-        <Text style={{
-          fontSize: 12,
-          color: '#9CA3AF'
-        }}>
+      <View style={ProfileEditStyles.webSidebarItem}>
+        <Text style={ProfileEditStyles.webSidebarItemTitle}>詳細情報</Text>
+        <Text style={ProfileEditStyles.webSidebarItemDescription}>
           身長、体重、職業など
         </Text>
       </View>
@@ -219,9 +164,9 @@ const ProfileEditScreen = () => {
   );
 
   return (
-    <SafeAreaView style={ProfileDetailStyles.safeArea}>
-      <ScrollView style={ProfileDetailStyles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>
+    <SafeAreaView style={ProfileEditStyles.container}>
+      <ScrollView style={ProfileEditStyles.content} showsVerticalScrollIndicator={false}>
+        <View style={[ProfileEditStyles.webContainer, { marginHorizontal: contentMargin }]}>
           <WebHeader />
 
           <View style={{ flexDirection: 'row' }}>
@@ -232,17 +177,15 @@ const ProfileEditScreen = () => {
               <ProfileImageEdit
                 images={profileData.images}
                 onImagesChange={(images) => setProfileData(prev => ({ ...prev, images }))}
-                maxImages={6}
+                maxImages={4}
               />
 
               {/* プロフィール情報編集 */}
               <ProfileInfoEdit
                 name={profileData.name}
-                age={profileData.age}
                 location={profileData.location}
                 isVerified={true}
                 onNameChange={(name) => setProfileData(prev => ({ ...prev, name }))}
-                onAgeChange={(age) => setProfileData(prev => ({ ...prev, age }))}
                 onLocationChange={(location) => setProfileData(prev => ({ ...prev, location }))}
               />
 
@@ -275,29 +218,17 @@ const ProfileEditScreen = () => {
         right: 20,
         zIndex: 1000
       }}>
-        <TouchableOpacity
-          onPress={() => handleSave(profileData)}
-          style={{
-            backgroundColor: '#10B981',
-            paddingHorizontal: 32,
-            paddingVertical: 16,
-            borderRadius: 25,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.15,
-            shadowRadius: 8,
-            elevation: 5,
-          }}
-        >
-          <Text style={{
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: 16,
-            textAlign: 'center'
-          }}>
-            保存
-          </Text>
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ scale: saveButtonScale }] }}>
+          <TouchableOpacity
+            onPress={() => handleSave(profileData)}
+            onPressIn={handleButtonPressIn}
+            onPressOut={handleButtonPressOut}
+            style={ProfileEditStyles.button}
+            activeOpacity={0.8}
+          >
+            <Text style={ProfileEditStyles.buttonText}>保存</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );

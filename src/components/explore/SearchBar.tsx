@@ -12,15 +12,29 @@ import {
 
 const { width: screenWidth } = Dimensions.get('window');
 
+/**
+ * 検索バーコンポーネント
+ * 
+ * アニメーション付きの検索入力フィールドを提供します。
+ * 虫眼鏡アイコンをタップすると検索バーが展開し、
+ * テキスト入力中はクリアボタン（バツ）が表示されます。
+ * 
+ * 主な機能：
+ * - 検索バーの展開/収縮アニメーション
+ * - テキスト入力とリアルタイム検索
+ * - クリアボタンによる入力内容の削除
+ * - 親コンポーネントからの開閉制御
+ * - フォーカス外し時の自動閉じ
+ */
 interface SearchBarProps {
-  onSearch: (query: string) => void;
-  placeholder?: string;
-  isVisible?: boolean;
-  onToggle?: () => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  onClose?: () => void;
-  autoFocus?: boolean;
+  onSearch: (query: string) => void; // 検索クエリが変更された時のコールバック
+  placeholder?: string; // プレースホルダーテキスト
+  isVisible?: boolean; // 親コンポーネントからの開閉制御
+  onToggle?: () => void; // 検索アイコンのタップ時のコールバック
+  onFocus?: () => void; // テキストフィールドにフォーカスが当たった時のコールバック
+  onBlur?: () => void; // テキストフィールドからフォーカスが外れた時のコールバック
+  onClose?: () => void; // 検索バーが閉じられた時のコールバック
+  autoFocus?: boolean; // 検索バー展開時に自動フォーカスするかどうか
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -33,138 +47,76 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onClose,
   autoFocus = false
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAnimating, setIsAnimating] = useState(false);
-  const expandAnim = React.useRef(new Animated.Value(0)).current;
-  const textInputRef = React.useRef<TextInput>(null);
+  // 状態管理
+  const [isExpanded, setIsExpanded] = useState(false); // 検索バーが展開されているか
+  const [searchQuery, setSearchQuery] = useState(''); // 検索クエリ
 
-  // 外部からの制御に対応
-  React.useEffect(() => {
-    if (isVisible && !isExpanded && !isAnimating) {
-      setIsExpanded(true);
-      Animated.timing(expandAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => {
-        // アニメーション完了後にフォーカス
-        if (autoFocus && textInputRef.current) {
-          setTimeout(() => {
-            textInputRef.current?.focus();
-          }, 100);
-        }
-      });
-    } else if (!isVisible && isExpanded && !isAnimating) {
-      setIsAnimating(true);
-      Animated.timing(expandAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => {
+  // アニメーションとリファレンス
+  const expandAnim = React.useRef(new Animated.Value(0)).current; // 展開アニメーション（0: 閉じる, 1: 開く）
+  const textInputRef = React.useRef<TextInput>(null); // テキスト入力フィールドのリファレンス
+
+  // 検索バーを閉じる（アニメーション付き）
+  const closeSearchBar = () => {
+    Animated.timing(expandAnim, {
+      toValue: 0, // 0にアニメーション（閉じる）
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => {
+      // アニメーション完了後に状態を更新
+      requestAnimationFrame(() => {
         setIsExpanded(false);
-        setSearchQuery('');
-        onSearch('');
-        setIsAnimating(false);
+        setSearchQuery(''); // テキストをクリア（バツボタンも消える）
+        onSearch(''); // 親コンポーネントに空文字を通知
+        if (onClose) onClose(); // 閉じたことを親に通知
       });
-    }
-  }, [isVisible, isExpanded, expandAnim, onSearch, autoFocus, isAnimating]);
+    });
+  };
 
-  const handleSearchIconPress = () => {
-    if (onToggle) {
-      onToggle();
-    } else {
-      // フォールバック処理
-      if (isExpanded && !isAnimating) {
-        // 検索バーを閉じる
-        setIsAnimating(true);
-        Animated.timing(expandAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: false,
-        }).start(() => {
-          setIsExpanded(false);
-          setSearchQuery('');
-          onSearch('');
-          setIsAnimating(false);
-        });
-      } else if (!isExpanded && !isAnimating) {
-        // 検索バーを開く
-        setIsExpanded(true);
-        Animated.timing(expandAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: false,
-        }).start();
+  // 検索バーを開く（アニメーション付き）
+  const openSearchBar = () => {
+    setIsExpanded(true);
+    Animated.timing(expandAnim, {
+      toValue: 1, // 1にアニメーション（開く）
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => {
+      // アニメーション完了後に自動フォーカス
+      if (autoFocus && textInputRef.current) {
+        setTimeout(() => textInputRef.current?.focus(), 100);
       }
+    });
+  };
+
+  // 親コンポーネントからの開閉制御（isVisibleプロパティの変更を監視）
+  React.useEffect(() => {
+    if (isVisible && !isExpanded) {
+      openSearchBar();
+    } else if (!isVisible && isExpanded) {
+      closeSearchBar();
     }
+  }, [isVisible]);
+
+  // 検索アイコン（虫眼鏡）のタップ処理
+  const handleSearchIconPress = () => {
+    openSearchBar(); // 検索バーを開く
   };
 
-  const handleSearch = (text: string) => {
-    setSearchQuery(text);
-    onSearch(text);
-  };
-
+  // テキストフィールドからフォーカスが外れた時の処理
   const handleBlur = () => {
-    // アニメーション中は何もしない
-    if (isAnimating) return;
-
-    // フォーカスアウト時にアニメーションで閉じる
     if (isExpanded) {
-      setIsAnimating(true);
-      Animated.timing(expandAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => {
-        setIsExpanded(false);
-        setSearchQuery('');
-        onSearch('');
-        setIsAnimating(false);
-        // 外部の状態も更新
-        if (onClose) {
-          onClose();
-        }
-      });
+      closeSearchBar(); // バツボタン押下時と同じ処理
     }
-    // 外部のonBlurコールバックも呼び出し
-    if (onBlur) {
-      onBlur();
-    }
+    if (onBlur) onBlur(); // 外部のコールバックも呼び出し
   };
 
+  // クリアボタン（バツ）のタップ処理
   const handleClear = () => {
-    // アニメーション中は何もしない
-    if (isAnimating) return;
-
-    setSearchQuery('');
-    onSearch('');
-
-    // フォーカスを外す
-    textInputRef.current?.blur();
-
-    // 少し遅延してからアニメーション開始
-    setTimeout(() => {
-      setIsAnimating(true);
-      // 検索バーを閉じる
-      Animated.timing(expandAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => {
-        setIsExpanded(false);
-        setIsAnimating(false);
-        // 外部の状態も更新
-        if (onClose) {
-          onClose();
-        }
-      });
-    }, 50);
+    closeSearchBar(); // フォーカス外し時と同じ処理
   };
 
   return (
     <View style={styles.container}>
-      {/* 検索アイコン */}
+      {/* 検索アイコン（虫眼鏡） */}
       <TouchableOpacity
         style={styles.searchIcon}
         onPress={handleSearchIconPress}
@@ -177,7 +129,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         />
       </TouchableOpacity>
 
-      {/* 検索バー */}
+      {/* アニメーション付き検索バー */}
       <Animated.View
         style={[
           styles.searchBar,
@@ -190,19 +142,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
           },
         ]}
       >
+        {/* テキスト入力フィールド */}
         <TextInput
           ref={textInputRef}
           style={styles.textInput}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={searchQuery}
-          onChangeText={handleSearch}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            onSearch(text);
+          }}
           onFocus={onFocus}
           onBlur={handleBlur}
           autoFocus={autoFocus && isExpanded}
           returnKeyType="search"
         />
 
+        {/* クリアボタン（テキストがある時のみ表示） */}
         {searchQuery.length > 0 && isExpanded && (
           <TouchableOpacity
             style={styles.clearButton}
@@ -222,6 +179,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 };
 
 const styles = StyleSheet.create({
+  // メインコンテナ（右寄せで配置）
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -229,6 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
+  // 検索アイコン（虫眼鏡）のスタイル
   searchIcon: {
     width: 40,
     height: 40,
@@ -246,6 +205,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
+  // 検索バー（アニメーション付き）のスタイル
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -262,12 +222,14 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
+  // テキスト入力フィールドのスタイル
   textInput: {
     flex: 1,
     fontSize: 16,
     color: colors.textPrimary,
     paddingVertical: 4,
   },
+  // クリアボタン（バツ）のスタイル
   clearButton: {
     padding: 4,
     marginLeft: 8,

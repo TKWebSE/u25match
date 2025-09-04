@@ -27,4 +27,4 @@ export const EditButton: React.FC<EditButtonProps> = ({ onPress }) => {
       <Text style={ProfileDetailStyles.editButtonText}>✏️ プロフィールを編集</Text>
     </TouchableOpacity>
   );
-}; 
+};
