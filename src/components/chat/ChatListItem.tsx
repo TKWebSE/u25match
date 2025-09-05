@@ -1,5 +1,6 @@
 import { mockUsers } from '@mock/chatMock';
 import { ChatRoom } from '@services/main/chat/types';
+import { router } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -47,6 +48,11 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, on
     ? formatTime(chatRoom.lastMessage.timestamp)
     : '';
 
+  // アバタータップ時のプロフィール画面遷移処理
+  const handleAvatarPress = () => {
+    router.push(`/profile/detail/${otherParticipantId}`);
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -54,14 +60,18 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, on
       activeOpacity={0.7}
     >
       {/* アバター */}
-      <View style={styles.avatarContainer}>
+      <TouchableOpacity
+        style={styles.avatarContainer}
+        onPress={handleAvatarPress}
+        activeOpacity={0.7}
+      >
         <Image
           source={{ uri: otherUser.avatar }}
           style={styles.avatar}
         />
         {/* オンラインステータスインジケーター */}
         {otherUser.isOnline && <View style={styles.onlineIndicator} />}
-      </View>
+      </TouchableOpacity>
 
       {/* チャット情報 */}
       <View style={styles.contentContainer}>

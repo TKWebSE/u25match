@@ -2,7 +2,7 @@ import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, 
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
-import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
+import { ProfileEditMobile } from '@styles/profile/mobile';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
@@ -21,6 +21,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const ProfileEditScreen = () => {
   const router = useRouter();
   const { user } = useAuth();
+
+  // モバイル専用のスタイルを使用
+  const ProfileEditStyles = ProfileEditMobile;
 
   // プロフィール情報の状態管理
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
@@ -129,6 +132,7 @@ const ProfileEditScreen = () => {
         style={ProfileEditStyles.content}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        contentContainerStyle={ProfileEditStyles.scrollContent}
       >
         {/* モバイル版用のヘッダー */}
         <View style={ProfileEditStyles.header}>
@@ -173,36 +177,36 @@ const ProfileEditScreen = () => {
           details={profileData.details}
           onDetailsChange={(details) => setProfileData(prev => ({ ...prev, details }))}
         />
-
-        {/* モバイル版用のボタン */}
-        <View style={ProfileEditStyles.footer}>
-          <View style={ProfileEditStyles.footerButtons}>
-            <Animated.View style={{ transform: [{ scale: saveButtonScale }], flex: 1 }}>
-              <TouchableOpacity
-                onPress={() => handleSave(profileData)}
-                onPressIn={() => handleButtonPressIn(saveButtonScale)}
-                onPressOut={() => handleButtonPressOut(saveButtonScale)}
-                style={[ProfileEditStyles.button, ProfileEditStyles.footerButton]}
-                activeOpacity={0.8}
-              >
-                <Text style={ProfileEditStyles.buttonText}>保存</Text>
-              </TouchableOpacity>
-            </Animated.View>
-
-            <Animated.View style={{ transform: [{ scale: cancelButtonScale }], flex: 1 }}>
-              <TouchableOpacity
-                onPress={handleBack}
-                onPressIn={() => handleButtonPressIn(cancelButtonScale)}
-                onPressOut={() => handleButtonPressOut(cancelButtonScale)}
-                style={[ProfileEditStyles.button, ProfileEditStyles.buttonSecondary, ProfileEditStyles.footerButton]}
-                activeOpacity={0.8}
-              >
-                <Text style={[ProfileEditStyles.buttonText, ProfileEditStyles.buttonSecondaryText]}>キャンセル</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
-        </View>
       </ScrollView>
+
+      {/* 固定ボタンエリア */}
+      <View style={ProfileEditStyles.fixedFooter}>
+        <View style={ProfileEditStyles.footerButtons}>
+          <Animated.View style={{ transform: [{ scale: saveButtonScale }], flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => handleSave(profileData)}
+              onPressIn={() => handleButtonPressIn(saveButtonScale)}
+              onPressOut={() => handleButtonPressOut(saveButtonScale)}
+              style={[ProfileEditStyles.button, ProfileEditStyles.footerButton]}
+              activeOpacity={0.8}
+            >
+              <Text style={ProfileEditStyles.buttonText}>保存</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          <Animated.View style={{ transform: [{ scale: cancelButtonScale }], flex: 1 }}>
+            <TouchableOpacity
+              onPress={handleBack}
+              onPressIn={() => handleButtonPressIn(cancelButtonScale)}
+              onPressOut={() => handleButtonPressOut(cancelButtonScale)}
+              style={[ProfileEditStyles.button, ProfileEditStyles.buttonSecondary, ProfileEditStyles.footerButton]}
+              activeOpacity={0.8}
+            >
+              <Text style={[ProfileEditStyles.buttonText, ProfileEditStyles.buttonSecondaryText]}>キャンセル</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

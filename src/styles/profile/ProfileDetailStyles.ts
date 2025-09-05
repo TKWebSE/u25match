@@ -4,7 +4,36 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * プロフィール詳細画面専用のスタイル定義（レガシー）
+ * 
+ * 注意: このファイルは後方互換性のために残存しています。
+ * 新しいコードでは platformStyles.ts の使用を推奨します。
+ * 
+ * このファイルは以下の責務を持ちます：
+ * - プロフィール詳細画面の全体的なレイアウト
+ * - 画像スライダー、プロフィール情報、自己紹介、タグ、詳細情報のスタイル
+ * - モバイルに最適化されたデザイン
+ * - ガラスモーフィズム効果とフラットデザインの組み合わせ
+ * 
+ * 推奨される使用方法：
+ * ```typescript
+ * // 新しいコード（推奨）
+ * import { getProfileDetailStyles } from '@styles/profile/platformStyles';
+ * const styles = getProfileDetailStyles();
+ * 
+ * // レガシーコード（非推奨）
+ * import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+ * ```
+ * 
+ * アーキテクチャの変更：
+ * - プラットフォーム固有スタイルは mobile/ と web/ フォルダに分割
+ * - 共通スタイルは common/ フォルダに集約
+ * - プラットフォーム選択は platformStyles.ts で自動化
+ */
 export const ProfileDetailStyles = StyleSheet.create({
+  // ===== メインコンテナ =====
+  // 画面全体のレイアウトとスクロール設定
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa', // モダンな背景色
@@ -16,6 +45,8 @@ export const ProfileDetailStyles = StyleSheet.create({
   contentContainer: {
     // コンテンツ全体のスタイル
   },
+  // ===== 画像スライダー =====
+  // プロフィール画像のカルーセル表示
   imageContainer: {
     width: '100%',
     height: getPlatformValue(600, width), // 高さを少し調整
@@ -39,6 +70,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     resizeMode: 'cover', // containからcoverに変更してより良い表示
     borderRadius: 20,
   },
+  // ===== プロフィール情報 =====
+  // 名前、年齢、場所、オンライン状態、いいね数の表示
   header: {
     padding: 24,
     alignItems: 'center',
@@ -111,6 +144,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     marginTop: 8,
     fontWeight: '600', // 500から600に変更
   },
+  // ===== 自己紹介 =====
+  // ユーザーの自己紹介テキストの表示
   bioContainer: {
     marginTop: 16,
     // ガラスモーフィズム効果
@@ -134,6 +169,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     color: '#4a5568',
     fontWeight: '400',
   },
+  // ===== 詳細プロフィール =====
+  // 身長、体重、職業、学歴などの詳細情報の表示
   detailsSection: {
     paddingHorizontal: 16,
     marginTop: 16,
@@ -189,6 +226,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
   },
+  // ===== アクションボタン =====
+  // いいねボタン、編集ボタンの表示
   likeButtonContainer: {
     position: 'absolute',
     bottom: 24,
@@ -221,7 +260,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.5,
   },
-  // タグ表示用スタイル
+  // ===== タグ表示 =====
+  // 興味・趣味タグの表示
   tagsSection: {
     marginBottom: 16,
     marginHorizontal: 24, // 自己紹介や詳細プロフィールと同じ幅に調整
@@ -277,7 +317,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     flex: 1,
   },
 
-  // 編集画面用のスタイル
+  // ===== 編集画面用スタイル =====
+  // プロフィール編集画面で使用されるスタイル（互換性のため残存）
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f9fa',

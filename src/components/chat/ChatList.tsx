@@ -95,6 +95,7 @@ const ChatList: React.FC<ChatListProps> = ({
         createdAt={createdAt}
         isMe={isMe}
         otherUserImageUrl={otherUserImageUrl}
+        otherUserId={message.senderId}
       />
     );
   };

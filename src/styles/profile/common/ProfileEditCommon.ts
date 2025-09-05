@@ -2,36 +2,39 @@ import { borderRadius, colors, spacing, typography } from '@styles/globalStyles'
 import { StyleSheet } from 'react-native';
 
 /**
- * プロフィール編集画面専用のスタイル定義（レガシー）
- * 
- * 注意: このファイルは後方互換性のために残存しています。
- * 新しいコードでは platformStyles.ts の使用を推奨します。
+ * プロフィール編集画面の共通スタイル定義
  * 
  * このファイルは以下の責務を持ちます：
- * - プロフィール編集画面の全体的なレイアウト
- * - 入力フィールド、ボタン、セクションのスタイル
- * - モバイルとWeb両対応のレスポンシブデザイン
- * - 固定フッター（保存・キャンセルボタン）のスタイル
+ * - モバイルとWebで共通する編集画面のスタイル定義
+ * - 入力フィールド、ボタン、セクションの基本スタイル
+ * - プラットフォーム固有でないUI要素の統一
+ * - 編集画面特有のインタラクション要素の定義
+ * - デザインシステムの一貫性の維持
  * 
- * 推奨される使用方法：
+ * 設計思想：
+ * - 編集操作に最適化されたUI要素の提供
+ * - プラットフォーム間で一貫した編集体験を実現
+ * - アクセシビリティを考慮したスタイル設計
+ * - 再利用可能なコンポーネントスタイルの定義
+ * 
+ * 含まれるスタイルカテゴリ：
+ * - セクション: 編集セクションの基本レイアウト
+ * - 入力フィールド: テキスト入力、セレクターのスタイル
+ * - ボタン: 保存、キャンセル、追加ボタンのスタイル
+ * - タグ: 興味・趣味タグの編集・表示スタイル
+ * - 詳細情報: プロフィール詳細の編集スタイル
+ * - 画像: プロフィール画像の編集・表示スタイル
+ * - 空状態: データがない場合の表示スタイル
+ * - ヘッダー・フッター: 画面のヘッダー・フッタースタイル
+ * 
+ * 使用例：
  * ```typescript
- * // 新しいコード（推奨）
- * import { getProfileEditStyles } from '@styles/profile/platformStyles';
- * const styles = getProfileEditStyles();
- * 
- * // レガシーコード（非推奨）
- * import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
+ * import { ProfileEditCommon } from '@styles/profile/common';
+ * // 共通スタイルを継承してプラットフォーム固有スタイルを作成
  * ```
- * 
- * アーキテクチャの変更：
- * - プラットフォーム固有スタイルは mobile/ と web/ フォルダに分割
- * - 共通スタイルは common/ フォルダに集約
- * - プラットフォーム選択は platformStyles.ts で自動化
- * - レスポンシブデザインは各プラットフォーム専用ファイルで最適化
  */
-export const ProfileEditStyles = StyleSheet.create({
-  // ===== セクション共通スタイル =====
-  // 各編集セクション（基本情報、詳細情報など）の共通スタイル
+export const ProfileEditCommon = StyleSheet.create({
+  // ===== 共通セクションスタイル =====
   section: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
@@ -49,8 +52,7 @@ export const ProfileEditStyles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
 
-  // ===== 入力フィールド共通スタイル =====
-  // テキスト入力、セレクターなどの入力要素のスタイル
+  // ===== 共通入力フィールドスタイル =====
   inputContainer: {
     marginBottom: spacing.lg,
   },
@@ -100,8 +102,7 @@ export const ProfileEditStyles = StyleSheet.create({
     marginTop: spacing.xs,
   },
 
-  // ===== ボタンスタイル =====
-  // 保存、キャンセル、追加などのボタンのスタイル
+  // ===== 共通ボタンスタイル =====
   button: {
     backgroundColor: colors.primary,
     borderRadius: borderRadius.base,
@@ -136,20 +137,7 @@ export const ProfileEditStyles = StyleSheet.create({
     opacity: 0.6,
   },
 
-  // ホバー効果用スタイル（Web版）
-  buttonHover: {
-    transform: [{ scale: 1.02 }],
-    opacity: 0.9,
-  },
-
-  buttonSecondaryHover: {
-    backgroundColor: colors.gray200,
-    transform: [{ scale: 1.02 }],
-    opacity: 0.9,
-  },
-
-  // ===== タグ関連スタイル =====
-  // 興味・趣味タグの追加、削除、表示のスタイル
+  // ===== 共通タグスタイル =====
   tagInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -213,7 +201,7 @@ export const ProfileEditStyles = StyleSheet.create({
     fontWeight: typography.bold,
   },
 
-  // 詳細情報スタイル
+  // ===== 共通詳細情報スタイル =====
   detailSection: {
     marginBottom: spacing.xl,
   },
@@ -256,7 +244,7 @@ export const ProfileEditStyles = StyleSheet.create({
     minHeight: 36,
   },
 
-  // 画像関連スタイル
+  // ===== 共通画像スタイル =====
   imageSection: {
     marginBottom: spacing.xl,
   },
@@ -321,7 +309,7 @@ export const ProfileEditStyles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // 空状態スタイル
+  // ===== 共通空状態スタイル =====
   emptyState: {
     backgroundColor: colors.gray50,
     borderRadius: borderRadius.lg,
@@ -337,7 +325,7 @@ export const ProfileEditStyles = StyleSheet.create({
     lineHeight: 22,
   },
 
-  // ヘッダースタイル
+  // ===== 共通ヘッダースタイル =====
   header: {
     backgroundColor: colors.surface,
     padding: spacing.xl,
@@ -346,7 +334,6 @@ export const ProfileEditStyles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
 
-  // セレクターモーダル用ヘッダー（隙間なし）
   modalHeader: {
     backgroundColor: colors.surface,
     padding: spacing.xl,
@@ -368,40 +355,13 @@ export const ProfileEditStyles = StyleSheet.create({
     marginTop: spacing.xs,
   },
 
-  // フッタースタイル
+  // ===== 共通フッタースタイル =====
   footer: {
     backgroundColor: colors.surface,
     padding: spacing.xl,
     borderTopWidth: 1,
     borderTopColor: colors.gray200,
     marginTop: spacing.xl,
-  },
-
-  // 固定フッタースタイル
-  fixedFooter: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.surface,
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray200,
-    // 影を追加して浮いているように見せる
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-
-  // スクロールコンテンツ用スタイル
-  scrollContent: {
-    paddingBottom: 100, // 固定フッターの高さ分の余白を追加
   },
 
   footerButtons: {
@@ -411,53 +371,5 @@ export const ProfileEditStyles = StyleSheet.create({
 
   footerButton: {
     flex: 1,
-  },
-
-  // レスポンシブ対応
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-
-  content: {
-    padding: spacing.lg,
-  },
-
-  // Web版専用スタイル
-  webContainer: {
-    maxWidth: 800,
-    marginHorizontal: 'auto',
-  },
-
-  webSidebar: {
-    width: 250,
-    backgroundColor: colors.gray50,
-    padding: spacing.xl,
-    borderRightWidth: 1,
-    borderRightColor: colors.gray200,
-  },
-
-  webSidebarTitle: {
-    fontSize: typography.lg,
-    fontWeight: typography.semibold,
-    color: colors.textPrimary,
-    marginBottom: spacing.lg,
-  },
-
-  webSidebarItem: {
-    marginBottom: spacing.lg,
-  },
-
-  webSidebarItemTitle: {
-    fontSize: typography.base,
-    fontWeight: typography.medium,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-
-  webSidebarItemDescription: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-    lineHeight: 18,
   },
 });

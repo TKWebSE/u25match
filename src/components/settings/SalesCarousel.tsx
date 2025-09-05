@@ -1,3 +1,4 @@
+import { colors } from '@styles/globalStyles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
@@ -241,8 +242,8 @@ export const SalesCarousel: React.FC<SalesCarouselProps> = ({ onSalePress }) => 
             style={[
               styles.indicator,
               {
-                backgroundColor: index === activeIndex ? '#6C63FF' : 'transparent',
-                borderColor: index === activeIndex ? '#6C63FF' : '#d1d5db',
+                backgroundColor: index === activeIndex ? colors.primary : 'transparent',
+                borderColor: index === activeIndex ? colors.primary : '#d1d5db',
               },
             ]}
             onPress={() => handleIndicatorPress(index)}

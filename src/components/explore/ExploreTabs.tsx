@@ -1,6 +1,6 @@
 import { ExploreTabType } from '@hooks/useUserSearch';
 import { colors } from '@styles/globalStyles';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
@@ -11,7 +11,7 @@ const TAB_CONFIG = {
   search: { label: '検索' },
   recommended: { label: 'おすすめ' },
   new: { label: '新着' },
-  nearby: { label: '近く' },
+  tags: { label: 'タグ' },
 } as const;
 
 interface ExploreTabsProps {
@@ -32,11 +32,14 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
   // タブの幅と位置を計算
   const getTabLayout = () => {
     const containerWidth = cardListWidth || Math.min(screenWidth - 32, 1200);
-    const tabWidth = containerWidth / 4;
+    const minTabWidth = 80; // 最小タブ幅を設定
+    const calculatedTabWidth = containerWidth / 4;
+    const tabWidth = Math.max(calculatedTabWidth, minTabWidth);
+    const actualContainerWidth = tabWidth * 4;
     const containerMargin = cardListWidth ? (screenWidth - cardListWidth) / 2 : 16;
 
     return {
-      containerWidth,
+      containerWidth: actualContainerWidth,
       tabWidth,
       containerMargin,
     };
@@ -57,8 +60,8 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
       const { tabWidth } = getTabLayout();
 
       // 超超超高速反応の閾値設定
-      const threshold = 5; // 5px以上スワイプ
-      const shouldSwitch = Math.abs(translationX) > threshold || Math.abs(velocityX) > 50;
+      const threshold = 3; // 3px以上スワイプ（より敏感に）
+      const shouldSwitch = Math.abs(translationX) > threshold || Math.abs(velocityX) > 30;
 
       console.log('🔄 スワイプ判定:', {
         translationX,
@@ -85,7 +88,7 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
       // アニメーションをリセット（超超超高速化）
       Animated.timing(translateX, {
         toValue: 0,
-        duration: 10,
+        duration: 5,
         useNativeDriver: true,
       }).start();
     }
@@ -97,17 +100,38 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
     const activeIndex = Object.keys(TAB_CONFIG).indexOf(activeTab);
     const targetPosition = activeIndex * tabWidth;
 
-    // アニメーションなしで即座に移動
-    slideAnim.setValue(targetPosition);
+    // 超高速アニメーション（50ms）
+    Animated.timing(slideAnim, {
+      toValue: targetPosition,
+      duration: 50,
+      useNativeDriver: true,
+    }).start();
   }, [activeTab, slideAnim, cardListWidth]);
 
   const { containerWidth, tabWidth, containerMargin } = getTabLayout();
+
+  // タブプレスハンドラーをメモ化（超高速化）
+  const handleTabPress = useCallback((tabKey: string) => {
+    console.log('🚀 タブプレス:', tabKey);
+    onTabPress(tabKey as ExploreTabType);
+  }, [onTabPress]);
+
+  // デバッグ用ログ
+  console.log('🔍 ExploreTabs レンダリング:', {
+    containerWidth,
+    tabWidth,
+    containerMargin,
+    activeTab,
+    tabCount: Object.keys(TAB_CONFIG).length,
+    tabs: Object.keys(TAB_CONFIG)
+  });
 
   return (
     <PanGestureHandler
       onGestureEvent={onGestureEvent}
       onHandlerStateChange={onHandlerStateChange}
-      activeOffsetX={[-1, 1]}
+      activeOffsetX={[-0.5, 0.5]}
+      minDist={1}
     >
       <Animated.View style={[styles.container, {
         width: containerWidth,
@@ -132,8 +156,10 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
             <TouchableOpacity
               key={tabKey}
               style={[styles.tab, { width: tabWidth }]}
-              onPress={() => onTabPress(tabKey as ExploreTabType)}
-              activeOpacity={0.7}
+              onPress={() => handleTabPress(tabKey)}
+              activeOpacity={0.3}
+              delayPressIn={0}
+              delayPressOut={0}
             >
               <Text style={[
                 styles.tabText,
@@ -166,12 +192,13 @@ const styles = StyleSheet.create({
   },
   tab: {
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
+    minWidth: 60,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
     color: '#606060',
     textAlign: 'center',

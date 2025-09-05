@@ -2,7 +2,7 @@ import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, 
 import { getProfilePath } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
 import { mockProfileData } from '@mock/UserEditMock';
-import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
+import { ProfileEditWeb } from '@styles/profile/web';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -22,6 +22,9 @@ const ProfileEditScreen = () => {
   const router = useRouter();
   const { user } = useAuth();
   const { width: windowWidth } = useWindowDimensions();
+
+  // Web専用のスタイルを使用
+  const ProfileEditStyles = ProfileEditWeb;
 
   // プロフィール情報の状態管理
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);

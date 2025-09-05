@@ -1,7 +1,8 @@
 
 
+import { router } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // チャットメッセージのプロパティ型定義
 type ChatMessageProps = {
@@ -9,6 +10,7 @@ type ChatMessageProps = {
   createdAt?: Date | null;         // 送信日時
   isMe?: boolean;                  // 自分のメッセージかどうか
   otherUserImageUrl?: string;      // 相手の画像URL（現在は使用していない）
+  otherUserId?: string;            // 相手のユーザーID（プロフィール遷移用）
 };
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -16,7 +18,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   createdAt,
   isMe = false,
   otherUserImageUrl,
+  otherUserId,
 }) => {
+  // アバタータップ時のプロフィール画面遷移処理
+  const handleAvatarPress = () => {
+    if (otherUserId) {
+      router.push(`/profile/detail/${otherUserId}`);
+    }
+  };
   return (
     <View
       style={[
@@ -26,13 +35,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     >
       {/* 相手のメッセージの場合のみアバターを表示 */}
       {!isMe && (
-        <View style={styles.avatarContainer}>
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={handleAvatarPress}
+          activeOpacity={0.7}
+        >
           {otherUserImageUrl ? (
             <Image source={{ uri: otherUserImageUrl }} style={styles.avatar} />
           ) : (
             <View style={styles.avatar} />
           )}
-        </View>
+        </TouchableOpacity>
       )}
 
       {/* チャットバブルと送信時間を横並びで表示 */}

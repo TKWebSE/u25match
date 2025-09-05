@@ -1,19 +1,19 @@
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
+import ExploreTabs from '@components/explore/ExploreTabs';
 import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCardSize } from '@hooks/useCardSize';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
-import { useUserSearch } from '@hooks/useUserSearch';
+import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { Animated, Dimensions, FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
 // User型はUnifiedUserCardからインポート済み
 const { width: screenWidth } = Dimensions.get('window');
@@ -25,13 +25,12 @@ const ExploreScreen = () => {
   // カードリストエリアの幅を計測
   const [cardListWidth, setCardListWidth] = useState(300); // 初期値を設定
 
-  // タブの状態管理
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'search', title: '検索' },
-    { key: 'recommendations', title: 'おすすめ' },
-    { key: 'nearby', title: '近くの人' },
-  ]);
+  // タブの状態管理（ExploreTabs用）
+  const [activeTab, setActiveTab] = useState<ExploreTabType>('search');
+
+  // タブの表示/非表示制御
+  const tabTranslateY = useRef(new Animated.Value(0)).current;
+  const [isTabVisible, setIsTabVisible] = useState(true);
 
   // カードレイアウト情報を削除（不要になったため）
 
@@ -48,16 +47,7 @@ const ExploreScreen = () => {
   const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
 
   // 現在のタブに応じたユーザー検索
-  const getCurrentTab = (index: number) => {
-    switch (index) {
-      case 0: return 'search';
-      case 1: return 'recommended';
-      case 2: return 'nearby';
-      default: return 'search';
-    }
-  };
-
-  const currentTab = getCurrentTab(index);
+  const currentTab = activeTab;
   const {
     filteredUsers,
     hasSearchResults,
@@ -79,20 +69,50 @@ const ExploreScreen = () => {
   const handleOpenSearch = () => {
     setIsSearchVisible(true);
     setIsSearchFocused(true);
+    // タブを上に隠す
+    hideTabs();
   };
 
   // 検索フィールドのフォーカス状態を管理
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
+    // タブを上に隠す
+    hideTabs();
   };
 
   const handleSearchBlur = () => {
     setIsSearchFocused(false);
+    // タブを表示に戻す
+    showTabs();
     // フォーカスが外れたら検索フィールドを非表示にする
     setTimeout(() => {
       setIsSearchVisible(false);
       setLocalSearchQuery('');
     }, 100);
+  };
+
+  // タブを隠すアニメーション
+  const hideTabs = () => {
+    if (isTabVisible) {
+      setIsTabVisible(false);
+      Animated.timing(tabTranslateY, {
+        toValue: -60, // タブの高さ分上に移動
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  // タブを表示するアニメーション
+  const showTabs = () => {
+    if (!isTabVisible) {
+      setIsTabVisible(true);
+      Animated.timing(tabTranslateY, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   // 統一カードを使用したレンダリング（メモ化）
@@ -175,12 +195,12 @@ const ExploreScreen = () => {
     );
   }, [filteredUsers, handleCardPress]);
 
-  // 近くの人タブのレンダリング
-  const renderNearbyTab = useCallback(() => {
+  // 新着タブのレンダリング
+  const renderNewTab = useCallback(() => {
     if (filteredUsers.length === 0) {
       return (
         <View style={styles.emptyStateContainer}>
-          <EmptyState message="近くにユーザーが見つかりません" />
+          <EmptyState message="新着ユーザーが見つかりません" />
         </View>
       );
     }
@@ -188,7 +208,7 @@ const ExploreScreen = () => {
     return (
       <ScrollView style={styles.scrollContainer}>
         <UserSwipeSection
-          title="近くの人"
+          title="新着ユーザー"
           subtitle={`${filteredUsers.length}人のユーザー`}
           users={filteredUsers}
           onCardPress={handleCardPress}
@@ -197,12 +217,28 @@ const ExploreScreen = () => {
     );
   }, [filteredUsers, handleCardPress]);
 
-  // シーン定義
-  const renderScene = SceneMap({
-    search: renderSearchTab,
-    recommendations: renderRecommendationsTab,
-    nearby: renderNearbyTab,
-  });
+  // タグタブのレンダリング
+  const renderTagsTab = useCallback(() => {
+    if (filteredUsers.length === 0) {
+      return (
+        <View style={styles.emptyStateContainer}>
+          <EmptyState message="タグを持つユーザーが見つかりません" />
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView style={styles.scrollContainer}>
+        <UserSwipeSection
+          title="タグユーザー"
+          subtitle={`${filteredUsers.length}人のユーザー`}
+          users={filteredUsers}
+          onCardPress={handleCardPress}
+        />
+      </ScrollView>
+    );
+  }, [filteredUsers, handleCardPress]);
+
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -219,7 +255,7 @@ const ExploreScreen = () => {
         )}
 
         {/* 検索バー（検索タブがアクティブで検索が表示されている時） */}
-        {index === 0 && isSearchVisible && (
+        {activeTab === 'search' && isSearchVisible && (
           <View style={styles.searchContainer}>
             <SearchBar
               onSearch={handleSearch}
@@ -230,38 +266,37 @@ const ExploreScreen = () => {
                 setIsSearchVisible(false);
                 setIsSearchFocused(false);
                 setLocalSearchQuery('');
+                // タブを表示に戻す
+                showTabs();
               }}
               autoFocus={true}
             />
           </View>
         )}
 
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: screenWidth }}
-          animationEnabled={true}
-          swipeEnabled={true}
-          lazy={false}
-          renderTabBar={(props) => (
-            <TabBar
-              {...props}
-              style={styles.tabBar}
-              tabStyle={styles.tabStyle}
-              indicatorStyle={styles.tabIndicator}
-              activeColor={colors.primary}
-              inactiveColor={colors.textSecondary}
-              scrollEnabled={false}
-              pressColor="transparent"
-              pressOpacity={0.8}
-              indicatorContainerStyle={styles.indicatorContainer}
-            />
-          )}
-        />
+        {/* カスタムタブコンポーネント */}
+        <Animated.View
+          style={{
+            transform: [{ translateY: tabTranslateY }],
+          }}
+        >
+          <ExploreTabs
+            activeTab={activeTab}
+            onTabPress={setActiveTab}
+            cardListWidth={cardListWidth}
+          />
+        </Animated.View>
+
+        {/* タブコンテンツ */}
+        <View style={styles.tabContent}>
+          {activeTab === 'search' && renderSearchTab()}
+          {activeTab === 'recommended' && renderRecommendationsTab()}
+          {activeTab === 'new' && renderNewTab()}
+          {activeTab === 'tags' && renderTagsTab()}
+        </View>
 
         {/* 検索タブがアクティブな時だけ表示するFAB */}
-        {index === 0 && (
+        {activeTab === 'search' && (
           <TouchableOpacity
             style={styles.fab}
             onPress={handleOpenSearch}
@@ -292,28 +327,8 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
   },
-  tabBar: {
-    backgroundColor: colors.background,
-    elevation: 0,
-    shadowOpacity: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    position: 'relative',
-  },
-  tabStyle: {
-    paddingVertical: 12,
-  },
-  tabIndicator: {
-    backgroundColor: colors.primary,
-    height: 3,
-  },
-  indicatorContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 3,
-    zIndex: 1,
+  tabContent: {
+    flex: 1,
   },
   scrollContainer: {
     flex: 1,

@@ -13,7 +13,7 @@ import { LikeButton } from '@components/profile/LikeButton';
 import WebImageNavigator from '@components/profile/WebImageNavigator';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailWeb } from '@styles/profile/web';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -30,6 +30,9 @@ export default function ProfileScreen() {
   const { width: windowWidth } = useWindowDimensions();
   const [activeDotIndex, setActiveDotIndex] = useState(0);
   const router = useRouter();
+
+  // Web専用のスタイルを使用
+  const ProfileDetailStyles = ProfileDetailWeb;
 
   // URLパラメータからユニークIDを取得
   const uniqueId = uid as string;

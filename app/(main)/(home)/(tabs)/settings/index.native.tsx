@@ -159,39 +159,6 @@ const SettingsScreen = () => {
           />
         </View>
 
-        {/* 導線セクション - 新機能案内とクイックアクション */}
-        <View style={SettingsStyles.section}>
-          <Text style={SettingsStyles.sectionTitle}>🚀 新機能・おすすめ</Text>
-
-          {/* 新機能案内カード */}
-          <View style={SettingsStyles.guideCard}>
-            <View style={SettingsStyles.guideHeader}>
-              <Text style={SettingsStyles.guideTitle}>✨ 新機能が追加されました！</Text>
-              <Text style={SettingsStyles.guideSubtitle}>AIマッチングでより良い出会いを</Text>
-            </View>
-            <TouchableOpacity style={SettingsStyles.guideButton}>
-              <Text style={SettingsStyles.guideButtonText}>詳しく見る</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* クイックアクション */}
-          <View style={SettingsStyles.quickActionsContainer}>
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleVerification}>
-              <Text style={SettingsStyles.quickActionIcon}>🔐</Text>
-              <Text style={SettingsStyles.quickActionText}>本人確認</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleUpgradePress}>
-              <Text style={SettingsStyles.quickActionIcon}>⭐</Text>
-              <Text style={SettingsStyles.quickActionText}>プレミアム</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={SettingsStyles.quickActionButton} onPress={handleLikesPurchase}>
-              <Text style={SettingsStyles.quickActionIcon}>❤️</Text>
-              <Text style={SettingsStyles.quickActionText}>いいね追加</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* 推奨画面への導線セクション */}
         <View style={SettingsStyles.section}>

@@ -18,7 +18,7 @@ interface User {
 /**
  * タブの種類を定義
  */
-export type ExploreTabType = 'search' | 'recommended' | 'new' | 'nearby';
+export type ExploreTabType = 'search' | 'recommended' | 'new' | 'tags';
 
 /**
  * ユーザー検索機能を提供するカスタムフック
@@ -75,26 +75,16 @@ export const useUserSearch = (externalSearchQuery?: string, activeTab?: ExploreT
             .slice(0, 40); // 上位40人を表示
           break;
 
-        case 'nearby':
-          // 近くタブ: 東京・大阪・名古屋などの主要都市のユーザーを優先
-          const majorCities = ['東京', '大阪', '名古屋', '福岡', '札幌', '横浜', '神戸', '京都'];
+        case 'tags':
+          // タグタブ: 特定のタグを持つユーザーを表示（モックデータでは全ユーザーを表示）
           filteredData = users
-            .filter(user => majorCities.includes(user.location))
             .sort((a, b) => {
-              // 主要都市を優先し、その中でオンライン状態を優先
-              const aIsMajorCity = majorCities.includes(a.location);
-              const bIsMajorCity = majorCities.includes(b.location);
-
-              if (aIsMajorCity && !bIsMajorCity) return -1;
-              if (!aIsMajorCity && bIsMajorCity) return 1;
-
-              // 同じ都市カテゴリの場合はオンライン状態を優先
+              // オンライン状態を優先し、その中で最近アクティブな順
               if (a.isOnline && !b.isOnline) return -1;
               if (!a.isOnline && b.isOnline) return 1;
-
-              return 0;
+              return b.lastActiveAt.getTime() - a.lastActiveAt.getTime();
             })
-            .slice(0, 35); // 上位35人を表示
+            .slice(0, 40); // 上位40人を表示
           break;
 
         default:

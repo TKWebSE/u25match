@@ -13,7 +13,7 @@ import { LikeButton } from '@components/profile/LikeButton';
 import { MobileImageCarousel } from '@components/profile/MobileImageCarousel';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailMobile } from '@styles/profile/mobile';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -28,6 +28,9 @@ export default function ProfileScreen() {
   const { uid } = useLocalSearchParams();
   const [activeDotIndex, setActiveDotIndex] = useState(0);
   const router = useRouter();
+
+  // モバイル専用のスタイルを使用
+  const ProfileDetailStyles = ProfileDetailMobile;
 
   // URLパラメータからユニークIDを取得
   const uniqueId = uid as string;
