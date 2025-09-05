@@ -10,6 +10,7 @@ import { Platform, View } from 'react-native';
 import ChatListScreen from './chat/index';
 import ExploreScreen from './explore/index';
 import ReactionsScreen from './reactions/index';
+import SearchScreen from './search/index';
 import SettingsScreen from './settings/index';
 
 const Tab = createBottomTabNavigator();
@@ -73,6 +74,22 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialIcons
               name={focused ? "explore" : "search"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      {/* 検索タブ - 検索機能 */}
+      <Tab.Screen
+        name="search"
+        component={SearchScreen}
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons
+              name={focused ? "search" : "search"}
               size={size}
               color={color}
             />
