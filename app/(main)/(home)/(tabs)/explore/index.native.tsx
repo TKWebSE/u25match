@@ -1,22 +1,22 @@
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
-import { useCardLayout } from '@components/explore/CardLayoutCalculator';
-import ExploreTabs from '@components/explore/ExploreTabs';
 import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCardSize } from '@hooks/useCardSize';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
-import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
+import { useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
 // User型はUnifiedUserCardからインポート済み
+const { width: screenWidth } = Dimensions.get('window');
 
 // 探索画面コンポーネント - ユーザー検索・探索機能（モバイル版）
 const ExploreScreen = () => {
@@ -25,11 +25,15 @@ const ExploreScreen = () => {
   // カードリストエリアの幅を計測
   const [cardListWidth, setCardListWidth] = useState(300); // 初期値を設定
 
-  // アクティブなタブの状態管理
-  const [activeTab, setActiveTab] = useState<ExploreTabType>('search');
+  // タブの状態管理
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'search', title: '検索' },
+    { key: 'recommendations', title: 'おすすめ' },
+    { key: 'nearby', title: '近くの人' },
+  ]);
 
-  // カードレイアウト情報を取得
-  const cardLayout = useCardLayout(cardListWidth);
+  // カードレイアウト情報を削除（不要になったため）
 
   // 統一カードサイズを取得
   const gridCardSize = useCardSize('grid');
@@ -43,33 +47,28 @@ const ExploreScreen = () => {
   // 今日のおすすめバナーの状態管理
   const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
 
+  // 現在のタブに応じたユーザー検索
+  const getCurrentTab = (index: number) => {
+    switch (index) {
+      case 0: return 'search';
+      case 1: return 'recommended';
+      case 2: return 'nearby';
+      default: return 'search';
+    }
+  };
+
+  const currentTab = getCurrentTab(index);
   const {
     filteredUsers,
     hasSearchResults,
     hasSearchQuery
-  } = useUserSearch(localSearchQuery, activeTab);
+  } = useUserSearch(localSearchQuery, currentTab);
 
-  // デバッグ用ログ
-  const screenWidth = Dimensions.get('window').width;
-  console.log('ExploreScreen Debug:', {
-    activeTab,
-    filteredUsersLength: filteredUsers.length,
-    hasSearchResults,
-    hasSearchQuery,
-    cardListWidth,
-    screenWidth,
-    calculatedCardWidth: (screenWidth - spacing.lg * 2 - spacing.sm) / 2
-  });
-
-  const handleCardPress = (user: User) => {
+  // カードタップハンドラーをメモ化
+  const handleCardPress = useCallback((user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
     router.push(getProfilePath(userId) as any);
-  };
-
-  // タブ切り替えハンドラー
-  const handleTabPress = (tab: ExploreTabType) => {
-    setActiveTab(tab);
-  };
+  }, [router]);
 
   // 検索ハンドラー
   const handleSearch = (query: string) => {
@@ -96,8 +95,8 @@ const ExploreScreen = () => {
     }, 100);
   };
 
-  // 統一カードを使用したレンダリング
-  const renderUserItem = ({ item, index }: { item: User; index: number }) => {
+  // 統一カードを使用したレンダリング（メモ化）
+  const renderUserItem = useCallback(({ item, index }: { item: User; index: number }) => {
     return (
       <UnifiedUserCard
         key={`${item.name}-${index}`}
@@ -107,29 +106,10 @@ const ExploreScreen = () => {
         layout="grid"
       />
     );
-  };
+  }, [gridCardSize, handleCardPress]);
 
-  const renderEmptyComponent = () => {
-    if (hasSearchQuery && !hasSearchResults) {
-      return (
-        <EmptyState
-          message=""
-          showSearchMessage={true}
-          searchQuery={localSearchQuery}
-        />
-      );
-    }
-
-    if (!hasSearchQuery && !hasSearchResults) {
-      return <EmptyState message="ユーザーが見つかりません" />;
-    }
-
-    return null;
-  };
-
-  // 検索タブ用のグリッドレイアウト
-  const renderSearchGrid = () => {
-    // 検索クエリがあるが結果がない場合
+  // 検索タブのレンダリング
+  const renderSearchTab = useCallback(() => {
     if (hasSearchQuery && !hasSearchResults) {
       return (
         <View style={styles.emptyStateContainer}>
@@ -142,46 +122,87 @@ const ExploreScreen = () => {
       );
     }
 
-    // 検索結果がある場合はグリッドレイアウトで表示
     if (filteredUsers.length > 0) {
       return (
         <FlatList
           data={filteredUsers}
           renderItem={renderUserItem}
-          keyExtractor={(item, index) => `${item.name}-${index}`}
+          keyExtractor={(item, index) => `search-${item.name}-${index}`}
           numColumns={2}
           contentContainerStyle={styles.gridContainer}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
+          // パフォーマンス最適化
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          initialNumToRender={6}
+          getItemLayout={(data, index) => ({
+            length: gridCardSize.height,
+            offset: gridCardSize.height * Math.floor(index / 2),
+            index,
+          })}
         />
       );
     }
 
-    // デフォルトでEmptyStateを表示
     return (
       <View style={styles.emptyStateContainer}>
         <EmptyState message="ユーザーを検索してみましょう" />
       </View>
     );
-  };
+  }, [filteredUsers, hasSearchQuery, hasSearchResults, localSearchQuery, renderUserItem, gridCardSize]);
 
-  // その他のタブ用のスワイパーセクション
-  const renderOtherTabsCarousel = () => (
-    <>
-      <UserSwipeSection
-        title="おすすめユーザー"
-        subtitle={filteredUsers.length + "人のユーザー"}
-        users={filteredUsers}
-        onCardPress={handleCardPress}
-      />
-      <UserSwipeSection
-        title="新着ユーザー"
-        subtitle={filteredUsers.length + "人のユーザー"}
-        users={filteredUsers}
-        onCardPress={handleCardPress}
-      />
-    </>
-  );
+  // おすすめタブのレンダリング
+  const renderRecommendationsTab = useCallback(() => {
+    if (filteredUsers.length === 0) {
+      return (
+        <View style={styles.emptyStateContainer}>
+          <EmptyState message="おすすめユーザーが見つかりません" />
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView style={styles.scrollContainer}>
+        <UserSwipeSection
+          title="おすすめユーザー"
+          subtitle={`${filteredUsers.length}人のユーザー`}
+          users={filteredUsers}
+          onCardPress={handleCardPress}
+        />
+      </ScrollView>
+    );
+  }, [filteredUsers, handleCardPress]);
+
+  // 近くの人タブのレンダリング
+  const renderNearbyTab = useCallback(() => {
+    if (filteredUsers.length === 0) {
+      return (
+        <View style={styles.emptyStateContainer}>
+          <EmptyState message="近くにユーザーが見つかりません" />
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView style={styles.scrollContainer}>
+        <UserSwipeSection
+          title="近くの人"
+          subtitle={`${filteredUsers.length}人のユーザー`}
+          users={filteredUsers}
+          onCardPress={handleCardPress}
+        />
+      </ScrollView>
+    );
+  }, [filteredUsers, handleCardPress]);
+
+  // シーン定義
+  const renderScene = SceneMap({
+    search: renderSearchTab,
+    recommendations: renderRecommendationsTab,
+    nearby: renderNearbyTab,
+  });
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -198,7 +219,7 @@ const ExploreScreen = () => {
         )}
 
         {/* 検索バー（検索タブがアクティブで検索が表示されている時） */}
-        {activeTab === 'search' && isSearchVisible && (
+        {index === 0 && isSearchVisible && (
           <View style={styles.searchContainer}>
             <SearchBar
               onSearch={handleSearch}
@@ -215,33 +236,32 @@ const ExploreScreen = () => {
           </View>
         )}
 
-        {/* タブエリア（検索フィールドが表示されている時は非表示） */}
-        {!(activeTab === 'search' && isSearchVisible) && (
-          <ExploreTabs
-            activeTab={activeTab}
-            onTabPress={handleTabPress}
-            cardListWidth={cardListWidth}
-          />
-        )}
-
-        {/* カードリストエリアの幅を計測 */}
-        <View style={styles.cardListArea}>
-          {activeTab === 'search' ? (
-            // 検索タブの場合はグリッドレイアウト
-            renderSearchGrid()
-          ) : (
-            // その他のタブの場合はスワイパーセクション
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-            >
-              {renderOtherTabsCarousel()}
-            </ScrollView>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: screenWidth }}
+          animationEnabled={true}
+          swipeEnabled={true}
+          lazy={false}
+          renderTabBar={(props) => (
+            <TabBar
+              {...props}
+              style={styles.tabBar}
+              tabStyle={styles.tabStyle}
+              indicatorStyle={styles.tabIndicator}
+              activeColor={colors.primary}
+              inactiveColor={colors.textSecondary}
+              scrollEnabled={false}
+              pressColor="transparent"
+              pressOpacity={0.8}
+              indicatorContainerStyle={styles.indicatorContainer}
+            />
           )}
-        </View>
+        />
 
         {/* 検索タブがアクティブな時だけ表示するFAB */}
-        {activeTab === 'search' && (
+        {index === 0 && (
           <TouchableOpacity
             style={styles.fab}
             onPress={handleOpenSearch}
@@ -272,10 +292,30 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
   },
-  listContainer: {
-    padding: spacing.lg,
+  tabBar: {
+    backgroundColor: colors.background,
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+    position: 'relative',
   },
-  cardListArea: {
+  tabStyle: {
+    paddingVertical: 12,
+  },
+  tabIndicator: {
+    backgroundColor: colors.primary,
+    height: 3,
+  },
+  indicatorContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+    zIndex: 1,
+  },
+  scrollContainer: {
     flex: 1,
   },
   scrollContent: {

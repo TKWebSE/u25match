@@ -1,7 +1,8 @@
 import { ExploreTabType } from '@hooks/useUserSearch';
 import { colors } from '@styles/globalStyles';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ interface ExploreTabsProps {
  */
 const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardListWidth }) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
 
   // タブの幅と位置を計算
   const getTabLayout = () => {
@@ -40,58 +42,110 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
     };
   };
 
+  // スワイプジェスチャーハンドラー
+  const onGestureEvent = Animated.event(
+    [{ nativeEvent: { translationX: translateX } }],
+    { useNativeDriver: true }
+  );
+
+  const onHandlerStateChange = (event: any) => {
+    const { state, translationX, velocityX } = event.nativeEvent;
+
+    console.log('🔄 ExploreTabs ジェスチャー状態:', state, 'translationX:', translationX);
+
+    if (state === State.END) {
+      const { tabWidth } = getTabLayout();
+
+      // 超超超高速反応の閾値設定
+      const threshold = 5; // 5px以上スワイプ
+      const shouldSwitch = Math.abs(translationX) > threshold || Math.abs(velocityX) > 50;
+
+      console.log('🔄 スワイプ判定:', {
+        translationX,
+        threshold,
+        shouldSwitch,
+        activeTab
+      });
+
+      if (shouldSwitch) {
+        const tabKeys = Object.keys(TAB_CONFIG) as ExploreTabType[];
+        const currentIndex = tabKeys.indexOf(activeTab);
+
+        if (translationX > 0 && currentIndex > 0) {
+          // 右スワイプ：前のタブへ
+          console.log('🔄 右スワイプ: 前のタブへ', tabKeys[currentIndex - 1]);
+          onTabPress(tabKeys[currentIndex - 1]);
+        } else if (translationX < 0 && currentIndex < tabKeys.length - 1) {
+          // 左スワイプ：次のタブへ
+          console.log('🔄 左スワイプ: 次のタブへ', tabKeys[currentIndex + 1]);
+          onTabPress(tabKeys[currentIndex + 1]);
+        }
+      }
+
+      // アニメーションをリセット（超超超高速化）
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 10,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   // タブ切り替え時のスライドアニメーション
   useEffect(() => {
     const { tabWidth } = getTabLayout();
     const activeIndex = Object.keys(TAB_CONFIG).indexOf(activeTab);
     const targetPosition = activeIndex * tabWidth;
 
-    Animated.spring(slideAnim, {
-      toValue: targetPosition,
-      useNativeDriver: false,
-      tension: 100,
-      friction: 8,
-    }).start();
+    // アニメーションなしで即座に移動
+    slideAnim.setValue(targetPosition);
   }, [activeTab, slideAnim, cardListWidth]);
 
   const { containerWidth, tabWidth, containerMargin } = getTabLayout();
 
   return (
-    <View style={[styles.container, {
-      width: containerWidth,
-      marginHorizontal: containerMargin
-    }]}>
-      {/* YouTube風の赤いインジケーター */}
-      <Animated.View
-        style={[
-          styles.indicator,
-          {
-            width: tabWidth,
-            transform: [{ translateX: slideAnim }],
-          },
-        ]}
-      />
+    <PanGestureHandler
+      onGestureEvent={onGestureEvent}
+      onHandlerStateChange={onHandlerStateChange}
+      activeOffsetX={[-1, 1]}
+    >
+      <Animated.View style={[styles.container, {
+        width: containerWidth,
+        marginHorizontal: containerMargin,
+        transform: [{ translateX }]
+      }]}>
+        {/* YouTube風の赤いインジケーター */}
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              width: tabWidth,
+              transform: [{ translateX: slideAnim }],
+            },
+          ]}
+        />
 
-      {/* タブコンテンツ */}
-      {Object.entries(TAB_CONFIG).map(([tabKey, config]) => {
-        const isActive = activeTab === tabKey;
-        return (
-          <TouchableOpacity
-            key={tabKey}
-            style={[styles.tab, { width: tabWidth }]}
-            onPress={() => onTabPress(tabKey as ExploreTabType)}
-            activeOpacity={0.7}
-          >
-            <Text style={[
-              styles.tabText,
-              isActive && styles.activeTabText,
-            ]}>
-              {config.label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
+        {/* タブコンテンツ */}
+        {Object.entries(TAB_CONFIG).map(([tabKey, config]) => {
+          const isActive = activeTab === tabKey;
+          return (
+            <TouchableOpacity
+              key={tabKey}
+              style={[styles.tab, { width: tabWidth }]}
+              onPress={() => onTabPress(tabKey as ExploreTabType)}
+              activeOpacity={0.7}
+            >
+              <Text style={[
+                styles.tabText,
+                isActive && styles.activeTabText,
+              ]}>
+                {config.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </Animated.View>
+    </PanGestureHandler>
   );
 };
 

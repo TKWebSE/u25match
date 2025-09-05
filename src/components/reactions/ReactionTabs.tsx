@@ -39,9 +39,9 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabPress }) =>
       const { tabWidth } = getTabLayout();
       const { translationX, velocityX } = event.nativeEvent;
 
-      // スワイプの閾値（タブ幅の30%以上または速度が十分な場合）
-      const threshold = tabWidth * 0.3;
-      const shouldSwitch = Math.abs(translationX) > threshold || Math.abs(velocityX) > 500;
+      // 超超超超高速反応の閾値設定
+      const threshold = 2; // 2px以上スワイプ
+      const shouldSwitch = Math.abs(translationX) > threshold || Math.abs(velocityX) > 20;
 
       if (shouldSwitch) {
         // スワイプ方向に応じてタブを切り替え
@@ -54,12 +54,11 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabPress }) =>
         }
       }
 
-      // アニメーションをリセット
-      Animated.spring(translateX, {
+      // アニメーションをリセット（超超超超高速化）
+      Animated.timing(translateX, {
         toValue: 0,
+        duration: 5,
         useNativeDriver: true,
-        tension: 100,
-        friction: 8,
       }).start();
     }
   };
@@ -70,12 +69,8 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabPress }) =>
     const activeIndex = activeTab === 'likes' ? 0 : 1;
     const targetPosition = activeIndex * tabWidth;
 
-    Animated.spring(slideAnim, {
-      toValue: targetPosition,
-      useNativeDriver: false,
-      tension: 100,
-      friction: 8,
-    }).start();
+    // アニメーションなしで即座に移動（超高速化）
+    slideAnim.setValue(targetPosition);
   }, [activeTab, slideAnim]);
 
   const { containerWidth, tabWidth, containerMargin } = getTabLayout();
@@ -84,7 +79,7 @@ const ReactionTabs: React.FC<ReactionTabsProps> = ({ activeTab, onTabPress }) =>
     <PanGestureHandler
       onGestureEvent={onGestureEvent}
       onHandlerStateChange={onHandlerStateChange}
-      activeOffsetX={[-10, 10]} // 横方向のスワイプのみを検出
+      activeOffsetX={[-0.5, 0.5]} // 横方向のスワイプのみを検出（超敏感）
     >
       <Animated.View style={[styles.container, {
         width: containerWidth,
