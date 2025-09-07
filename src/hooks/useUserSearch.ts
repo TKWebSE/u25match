@@ -18,7 +18,7 @@ interface User {
 /**
  * タブの種類を定義
  */
-export type ExploreTabType = 'search' | 'recommended' | 'new' | 'nearby';
+export type ExploreTabType = 'search' | 'recommended' | 'online' | 'nearby' | 'beginner' | 'popular';
 
 /**
  * ユーザー検索機能を提供するカスタムフック
@@ -68,11 +68,12 @@ export const useUserSearch = (externalSearchQuery?: string, activeTab?: ExploreT
             .slice(0, 30); // 上位30人を表示
           break;
 
-        case 'new':
-          // 新着タブ: 登録日時順（新しい順）
+        case 'online':
+          // オンラインユーザー: 現在オンラインのユーザーを優先
           filteredData = users
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .slice(0, 40); // 上位40人を表示
+            .filter(user => user.isOnline)
+            .sort((a, b) => b.lastActiveAt.getTime() - a.lastActiveAt.getTime())
+            .slice(0, 30); // 上位30人を表示
           break;
 
         case 'nearby':
@@ -95,6 +96,23 @@ export const useUserSearch = (externalSearchQuery?: string, activeTab?: ExploreT
               return 0;
             })
             .slice(0, 35); // 上位35人を表示
+          break;
+
+        case 'beginner':
+          // ビギナータブ: 登録から1週間以内の新規ユーザー
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          filteredData = users
+            .filter(user => user.createdAt > oneWeekAgo)
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .slice(0, 25); // 上位25人を表示
+          break;
+
+        case 'popular':
+          // 人気タブ: いいね数が多いユーザー（モックデータではランダムにソート）
+          filteredData = users
+            .sort(() => Math.random() - 0.5) // ランダムソート（実際の実装ではいいね数でソート）
+            .slice(0, 30); // 上位30人を表示
           break;
 
         default:
