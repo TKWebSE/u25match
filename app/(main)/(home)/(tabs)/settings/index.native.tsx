@@ -166,6 +166,15 @@ const SettingsScreen = () => {
     }
   };
 
+  // タグリスト画面への遷移
+  const handleTagsList = () => {
+    try {
+      router.push('/(main)/tags' as any);
+    } catch (error: any) {
+      console.error('タグリスト画面への遷移でエラーが発生しました:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={SettingsStyles.safeArea} edges={['top']}>
       <ScrollView
@@ -198,6 +207,25 @@ const SettingsScreen = () => {
               <View style={SettingsStyles.recommendationsTextContainer}>
                 <Text style={SettingsStyles.recommendationsTitle}>新しい出会いを見つけよう</Text>
                 <Text style={SettingsStyles.recommendationsSubtitle}>あなたに合うユーザーをAIが厳選</Text>
+              </View>
+              <Text style={SettingsStyles.recommendationsArrow}>›</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* タグ管理セクション */}
+        <View style={SettingsStyles.section}>
+          <Text style={SettingsStyles.sectionTitle}>🏷️ タグ管理</Text>
+
+          {/* タグリストへの導線カード */}
+          <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleTagsList}>
+            <View style={SettingsStyles.recommendationsContent}>
+              <View style={SettingsStyles.recommendationsIconContainer}>
+                <Text style={SettingsStyles.recommendationsIcon}>🏷️</Text>
+              </View>
+              <View style={SettingsStyles.recommendationsTextContainer}>
+                <Text style={SettingsStyles.recommendationsTitle}>タグを探す・追加する</Text>
+                <Text style={SettingsStyles.recommendationsSubtitle}>興味のあるタグを見つけてプロフィールに追加</Text>
               </View>
               <Text style={SettingsStyles.recommendationsArrow}>›</Text>
             </View>

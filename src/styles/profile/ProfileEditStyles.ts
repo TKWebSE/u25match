@@ -147,26 +147,64 @@ export const ProfileEditStyles = StyleSheet.create({
   },
 
   tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+    flexDirection: 'column',
+    gap: 12,
   },
 
   tagItem: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.full,
-    paddingHorizontal: spacing.base,
-    paddingVertical: spacing.xs,
-    flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    width: '100%',
+    alignSelf: 'stretch',
     marginBottom: spacing.sm,
   },
 
+  tagContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  tagImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    marginRight: 12,
+  },
+
   tagText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2d3748',
+    flex: 1,
+  },
+
+  addTagButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: spacing.base,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  addTagButtonText: {
     color: colors.white,
-    fontSize: typography.sm,
-    fontWeight: typography.medium,
-    marginRight: spacing.xs,
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   tagRemoveButton: {

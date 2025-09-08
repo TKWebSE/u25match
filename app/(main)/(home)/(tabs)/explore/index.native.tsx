@@ -4,14 +4,13 @@ import { SearchBar } from '@components/explore';
 import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useCardSize } from '@hooks/useCardSize';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
 import { useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // User型はUnifiedUserCardからインポート済み
@@ -220,20 +219,6 @@ const ExploreScreen = () => {
 
         {/* メインコンテンツ */}
         {renderMainContent()}
-
-        {/* 検索FAB - 非活性 */}
-        <TouchableOpacity
-          style={[styles.fab, styles.fabDisabled]}
-          onPress={() => { }}
-          activeOpacity={1}
-          disabled={true}
-        >
-          <MaterialIcons
-            name="search"
-            size={24}
-            color="#FFFFFF"
-          />
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -305,29 +290,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   // 統一カードコンポーネントを使用するため、カード関連のスタイルは削除
-  fab: {
-    position: 'absolute',
-    bottom: 20, // 下タブの少し上に配置
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary, // 下タブと同じ色
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  fabDisabled: {
-    backgroundColor: colors.gray400,
-    opacity: 0.5,
-  },
 });
 
 export default ExploreScreen;
