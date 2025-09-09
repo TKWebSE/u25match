@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   selectedIndicator: {
     position: 'absolute',
-    top: 16,
+    top: 32,
     right: 16,
   },
   // 購入ボタン
