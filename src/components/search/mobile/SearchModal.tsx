@@ -31,10 +31,6 @@ const SearchModal: React.FC<SearchModalProps> = ({
   // 会員種別の判定
   const membershipType = getMembershipType(profile || undefined);
 
-  // デバッグ用ログ
-  console.log('🔍 SearchModal - profile:', profile);
-  console.log('🔍 SearchModal - membershipType:', membershipType);
-
   // ユーザーの設定タグから動的にカテゴリを生成
   const getUserTagCategories = (): SearchCategory[] => {
     const userTags = myProfileMock.tags || [];
