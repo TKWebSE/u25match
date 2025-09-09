@@ -15,11 +15,14 @@ export const mockUserSettings = {
     showDistance: true,
   },
   preferences: {
+    // 年齢範囲の設定（最小・最大年齢）
     ageRange: {
       min: 18,
-      max: 35,
+      max: 25,
     },
+    // 最大検索距離（km）
     maxDistance: 50,
+    // 興味のある性別（both: 両方, male: 男性, female: 女性）
     interestedIn: 'both' as const,
   },
 };
