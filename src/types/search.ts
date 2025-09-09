@@ -14,6 +14,7 @@ export interface SearchCategory {
   key: string;
   title: string;
   icon: string;
+  isPremiumRequired?: boolean; // プレミアム会員限定かどうか
 }
 
 export type ReactionTabType = 'likes' | 'footprints';

@@ -2,10 +2,13 @@
 // 検索モーダルコンポーネント
 
 import { MaterialIcons } from '@expo/vector-icons';
+import { useProfile } from '@hooks/useProfile';
+import { useStrictAuth } from '@hooks/useStrictAuth';
 import { myProfileMock } from '@mock/myProfileMock';
 import { colors, spacing } from '@styles/globalStyles';
+import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SearchCategory } from '../../../types/search';
 
@@ -22,6 +25,16 @@ const SearchModal: React.FC<SearchModalProps> = ({
   onClose,
   onCategorySelect,
 }) => {
+  const user = useStrictAuth();
+  const { profile } = useProfile(user.uid);
+
+  // 会員種別の判定
+  const membershipType = getMembershipType(profile || undefined);
+
+  // デバッグ用ログ
+  console.log('🔍 SearchModal - profile:', profile);
+  console.log('🔍 SearchModal - membershipType:', membershipType);
+
   // ユーザーの設定タグから動的にカテゴリを生成
   const getUserTagCategories = (): SearchCategory[] => {
     const userTags = myProfileMock.tags || [];
@@ -29,20 +42,44 @@ const SearchModal: React.FC<SearchModalProps> = ({
       key: `tag-${tag.id}`,
       title: `🏷️ ${tag.name}`,
       icon: 'favorite',
+      isPremiumRequired: true, // タグ系はプレミアム限定
     }));
   };
 
   // 基本的なカテゴリ（指定された順序）
   const basicCategories: SearchCategory[] = [
-    { key: 'recommended', title: '⭐ おすすめ', icon: 'star' },
-    { key: 'online', title: '🟢 オンライン', icon: 'circle' },
-    { key: 'beginner', title: '🌱 ビギナー', icon: 'new-releases' },
-    { key: 'popular', title: '🔥 人気', icon: 'whatshot' },
-    { key: 'nearby', title: '📍 近くの人', icon: 'location-on' },
-    { key: 'student', title: '🎓 学生', icon: 'school' },
-    { key: 'working', title: '💼 社会人', icon: 'work' },
-    { key: 'marriage', title: '💍 結婚したい', icon: 'favorite' },
+    { key: 'recommended', title: '⭐ おすすめ', icon: 'star', isPremiumRequired: false },
+    { key: 'online', title: '🟢 オンライン', icon: 'circle', isPremiumRequired: false },
+    { key: 'beginner', title: '🌱 ビギナー', icon: 'new-releases', isPremiumRequired: false },
+    { key: 'popular', title: '🔥 人気', icon: 'whatshot', isPremiumRequired: false },
+    { key: 'nearby', title: '📍 近くの人', icon: 'location-on', isPremiumRequired: false },
+    { key: 'student', title: '🎓 学生', icon: 'school', isPremiumRequired: true },
+    { key: 'working', title: '💼 社会人', icon: 'work', isPremiumRequired: true },
+    { key: 'marriage', title: '💍 結婚したい', icon: 'favorite', isPremiumRequired: true },
   ];
+
+  // カテゴリ選択時の処理
+  const handleCategorySelect = (category: SearchCategory) => {
+    // プレミアム限定カテゴリで無料会員の場合はアラートを表示
+    if (category.isPremiumRequired && membershipType !== 'premium') {
+      Alert.alert(
+        'プレミアム会員限定機能',
+        'この検索機能をご利用いただくには、プレミアム会員への登録が必要です。',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              // アラートを閉じるだけ
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    // 通常のカテゴリ選択処理
+    onCategorySelect(category.key);
+  };
 
   // ユーザータグカテゴリと基本カテゴリを結合（ユーザータグを最後に配置）
   const searchCategories = [...basicCategories, ...getUserTagCategories()];
@@ -72,29 +109,64 @@ const SearchModal: React.FC<SearchModalProps> = ({
         <View style={styles.categoryContainer}>
           <Text style={styles.categoryTitle}>カテゴリで絞り込み</Text>
           <View style={styles.categoryGrid}>
-            {searchCategories.map((category) => (
-              <TouchableOpacity
-                key={category.key}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category.key && styles.categoryButtonSelected
-                ]}
-                onPress={() => onCategorySelect(category.key)}
-                activeOpacity={0.7}
-              >
-                <MaterialIcons
-                  name={category.icon as any}
-                  size={28}
-                  color={selectedCategory === category.key ? '#FFFFFF' : colors.primary}
-                />
-                <Text style={[
-                  styles.categoryButtonText,
-                  selectedCategory === category.key && styles.categoryButtonTextSelected
-                ]}>
-                  {category.title}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {searchCategories.map((category) => {
+              const isDisabled = category.isPremiumRequired && membershipType !== 'premium';
+
+              // プレミアム限定で無料会員の場合はグレーアウトしたViewを表示
+              if (isDisabled) {
+                return (
+                  <View
+                    key={category.key}
+                    style={[
+                      styles.categoryButton,
+                      styles.categoryButtonDisabled
+                    ]}
+                  >
+                    <MaterialIcons
+                      name={category.icon as any}
+                      size={28}
+                      color={colors.gray400}
+                    />
+                    <Text style={[
+                      styles.categoryButtonText,
+                      styles.categoryButtonTextDisabled
+                    ]}>
+                      {category.title}
+                    </Text>
+                    <Text style={styles.premiumBadge}>⭐</Text>
+                  </View>
+                );
+              }
+
+              // 通常のTouchableOpacityを表示
+              return (
+                <TouchableOpacity
+                  key={category.key}
+                  style={[
+                    styles.categoryButton,
+                    selectedCategory === category.key && styles.categoryButtonSelected
+                  ]}
+                  onPress={() => handleCategorySelect(category)}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons
+                    name={category.icon as any}
+                    size={28}
+                    color={
+                      selectedCategory === category.key
+                        ? '#FFFFFF'
+                        : colors.primary
+                    }
+                  />
+                  <Text style={[
+                    styles.categoryButtonText,
+                    selectedCategory === category.key && styles.categoryButtonTextSelected
+                  ]}>
+                    {category.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </SafeAreaView>
@@ -168,6 +240,20 @@ const styles = StyleSheet.create({
   },
   categoryButtonTextSelected: {
     color: '#FFFFFF',
+  },
+  categoryButtonDisabled: {
+    backgroundColor: colors.gray100,
+    borderColor: colors.gray300,
+    opacity: 0.6,
+  },
+  categoryButtonTextDisabled: {
+    color: colors.gray400,
+  },
+  premiumBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    fontSize: 16,
   },
 });
 

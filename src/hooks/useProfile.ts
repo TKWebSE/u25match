@@ -41,6 +41,8 @@ export const useProfile = (uid: string) => {
             remainingLikes: myProfileMock.remainingLikes,
             remainingBoosts: myProfileMock.remainingBoosts,
             remainingPoints: myProfileMock.remainingPoints,
+            membershipType: myProfileMock.membershipType,
+            planName: myProfileMock.planName,
           };
 
           // 少し遅延を入れてローディング状態をシミュレート

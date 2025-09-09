@@ -45,6 +45,10 @@ export interface ProfileDetail {
   remainingLikes?: number;        // 残いいね数
   remainingBoosts?: number;       // 残ブースト数
   remainingPoints?: number;       // 残ポイント数
+  membershipType?: 'free' | 'premium'; // 会員種別
+  planName?: string;              // プラン名
+  membershipExpiryDate?: string;  // 会員有効期限（YYYY-MM-DD形式）
+  membershipStartDate?: string;   // 会員開始日（YYYY-MM-DD形式）
   createdAt?: Date;               // 作成日時
   updatedAt?: Date;               // 更新日時
 }

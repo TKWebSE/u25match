@@ -13,7 +13,7 @@ export const getMembershipType = (profile?: ProfileUser): 'free' | 'premium' => 
   }
 
   // membershipTypeが明示的に設定されている場合はそれを使用
-  if (profile.membershipType) {
+  if (profile.membershipType !== undefined) {
     return profile.membershipType;
   }
 
