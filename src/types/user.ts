@@ -54,6 +54,10 @@ export interface ProfileUser {
   remainingBoosts?: number;
   /** 残ポイント数 */
   remainingPoints?: number;
+  /** 会員種別 */
+  membershipType?: 'free' | 'premium';
+  /** プラン名（有料会員の場合） */
+  planName?: string;
 }
 
 /**

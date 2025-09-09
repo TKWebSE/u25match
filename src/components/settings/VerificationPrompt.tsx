@@ -18,15 +18,15 @@ export const VerificationPrompt: React.FC<VerificationPromptProps> = ({
   onPress,
 }) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.title}>本人確認</Text>
       <Text style={styles.description}>
         本人確認を完了すると、より多くのユーザーとマッチングできます。
       </Text>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <View style={styles.button}>
         <Text style={styles.buttonText}>本人確認を開始</Text>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -58,7 +58,7 @@ const styles = {
     lineHeight: 20,
   },
   button: {
-    backgroundColor: '#3182CE', // 紫系から水色系に変更
+    backgroundColor: '#3182CE',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,

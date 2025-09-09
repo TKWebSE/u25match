@@ -1,7 +1,8 @@
 import { AccountInfo } from '@components/settings/AccountInfo';
+import { FreeMembershipDisplay } from '@components/settings/FreeMembershipDisplay';
 import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
-import { MembershipDisplay } from '@components/settings/MembershipDisplay';
+import { PremiumMembershipDisplay } from '@components/settings/PremiumMembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
 import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
@@ -24,6 +25,7 @@ import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
+import { getMembershipType, getPlanName } from '@utils/membershipUtils';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -517,56 +519,23 @@ const SettingsScreen = () => {
           </View>
 
 
-          {/* 推奨画面への導線セクション */}
-          <View style={SettingsStyles.section}>
-            <Text style={SettingsStyles.sectionTitle}>💫 今日のオススメ</Text>
-
-            {/* 推奨画面への導線カード */}
-            <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleRecommendations}>
-              <View style={SettingsStyles.recommendationsContent}>
-                <View style={SettingsStyles.recommendationsIconContainer}>
-                  <Text style={SettingsStyles.recommendationsIcon}>🎯</Text>
-                </View>
-                <View style={SettingsStyles.recommendationsTextContainer}>
-                  <Text style={SettingsStyles.recommendationsTitle}>新しい出会いを見つけよう</Text>
-                  <Text style={SettingsStyles.recommendationsSubtitle}>あなたに合うユーザーをAIが厳選</Text>
-                </View>
-                <Text style={SettingsStyles.recommendationsArrow}>›</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* タグ管理セクション */}
-          <View style={SettingsStyles.section}>
-            <Text style={SettingsStyles.sectionTitle}>🏷️ タグ管理</Text>
-
-            {/* タグリストへの導線カード */}
-            <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleTagsList}>
-              <View style={SettingsStyles.recommendationsContent}>
-                <View style={SettingsStyles.recommendationsIconContainer}>
-                  <Text style={SettingsStyles.recommendationsIcon}>🏷️</Text>
-                </View>
-                <View style={SettingsStyles.recommendationsTextContainer}>
-                  <Text style={SettingsStyles.recommendationsTitle}>タグを探す・追加する</Text>
-                  <Text style={SettingsStyles.recommendationsSubtitle}>興味のあるタグを見つけてプロフィールに追加</Text>
-                </View>
-                <Text style={SettingsStyles.recommendationsArrow}>›</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* 会員種別セクション */}
-          <View style={SettingsStyles.section}>
-            <MembershipDisplay
-              membershipType="free"
-              onUpgradePress={handleUpgradePress}
-            />
-          </View>
-
           {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
           {profile?.isVerified === false && (
             <VerificationPrompt onPress={handleVerification} />
           )}
+
+          {/* 会員種別セクション */}
+          <View style={SettingsStyles.section}>
+            {getMembershipType(profile || undefined) === 'premium' ? (
+              <PremiumMembershipDisplay
+                planName={getPlanName(profile || undefined)}
+              />
+            ) : (
+              <FreeMembershipDisplay
+                onUpgradePress={handleUpgradePress}
+              />
+            )}
+          </View>
 
           {/* ブースト実行セクション */}
           <View style={SettingsStyles.section}>
@@ -683,6 +652,44 @@ const SettingsScreen = () => {
             onPointsPress={handlePointsPurchase}
           />
 
+          {/* 推奨画面への導線セクション */}
+          <View style={SettingsStyles.section}>
+            <Text style={SettingsStyles.sectionTitle}>💫 今日のオススメ</Text>
+
+            {/* 推奨画面への導線カード */}
+            <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleRecommendations}>
+              <View style={SettingsStyles.recommendationsContent}>
+                <View style={SettingsStyles.recommendationsIconContainer}>
+                  <Text style={SettingsStyles.recommendationsIcon}>🎯</Text>
+                </View>
+                <View style={SettingsStyles.recommendationsTextContainer}>
+                  <Text style={SettingsStyles.recommendationsTitle}>新しい出会いを見つけよう</Text>
+                  <Text style={SettingsStyles.recommendationsSubtitle}>あなたに合うユーザーをAIが厳選</Text>
+                </View>
+                <Text style={SettingsStyles.recommendationsArrow}>›</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* タグ管理セクション */}
+          <View style={SettingsStyles.section}>
+            <Text style={SettingsStyles.sectionTitle}>🏷️ タグ管理</Text>
+
+            {/* タグリストへの導線カード */}
+            <TouchableOpacity style={SettingsStyles.recommendationsCard} onPress={handleTagsList}>
+              <View style={SettingsStyles.recommendationsContent}>
+                <View style={SettingsStyles.recommendationsIconContainer}>
+                  <Text style={SettingsStyles.recommendationsIcon}>🏷️</Text>
+                </View>
+                <View style={SettingsStyles.recommendationsTextContainer}>
+                  <Text style={SettingsStyles.recommendationsTitle}>タグを探す・追加する</Text>
+                  <Text style={SettingsStyles.recommendationsSubtitle}>興味のあるタグを見つけてプロフィールに追加</Text>
+                </View>
+                <Text style={SettingsStyles.recommendationsArrow}>›</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
           {/* セールカルーセル */}
           <SalesCarousel onSalePress={handleSalePress} />
 
@@ -759,16 +766,18 @@ const SettingsScreen = () => {
             {/* ログアウトボタン */}
             <LogoutButton loading={loading} onLogout={handleLogout} />
 
+            {/* スペーサー */}
+            <View style={{ height: 24 }} />
+
             {/* アカウント削除ボタン */}
             <TouchableOpacity
-              style={[SettingsStyles.button, SettingsStyles.dangerButton, { marginTop: 12 }]}
+              style={[SettingsStyles.button, SettingsStyles.dangerButton, { justifyContent: 'center' }]}
               onPress={handleDeleteAccount}
               activeOpacity={0.7}
             >
               <Text style={[SettingsStyles.buttonText, SettingsStyles.dangerButtonText]}>
                 アカウントを削除
               </Text>
-              <Text style={[SettingsStyles.buttonArrow, SettingsStyles.dangerButtonArrow]}>›</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
