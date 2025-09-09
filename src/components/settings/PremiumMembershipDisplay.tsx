@@ -1,9 +1,7 @@
 import { EMOJIS } from '@constants/emojis';
-import { MEMBERSHIP_STATUS_SCREEN_PATH } from '@constants/routes';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 /**
  * 有料会員表示コンポーネントのプロパティ
@@ -28,12 +26,6 @@ export const PremiumMembershipDisplay: React.FC<PremiumMembershipDisplayProps> =
   planName = 'プレミアム会員',
   expiryDate
 }) => {
-  const router = useRouter();
-
-  const handlePress = () => {
-    router.push(MEMBERSHIP_STATUS_SCREEN_PATH);
-  };
-
   // 有効期限のフォーマット関数
   const formatExpiryDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -50,11 +42,7 @@ export const PremiumMembershipDisplay: React.FC<PremiumMembershipDisplayProps> =
   };
 
   return (
-    <TouchableOpacity
-      style={styles.membershipContainer}
-      onPress={handlePress}
-      activeOpacity={0.8}
-    >
+    <View style={styles.membershipContainer}>
       {/* メインコンテンツ */}
       <LinearGradient
         colors={['#667EEA', '#764BA2']}
@@ -69,35 +57,19 @@ export const PremiumMembershipDisplay: React.FC<PremiumMembershipDisplayProps> =
             <Text style={styles.membershipTitle}>{planName}</Text>
             <Text style={styles.membershipSubtitle}>Premium Member</Text>
           </View>
-          <View style={styles.arrowContainer}>
-            <Text style={styles.arrowIcon}>›</Text>
-          </View>
         </View>
 
-        {/* 機能説明 */}
-        <View style={styles.membershipFeatures}>
-          <Text style={styles.featureText}>
-            ✨ 無制限いいね ・ 🚀 ブースト機能 ・ 💎 プレミアム機能
-          </Text>
-        </View>
 
-        {/* 有効期限とステータス */}
-        <View style={styles.footerContainer}>
-          {expiryDate && (
-            <View style={styles.expiryContainer}>
-              <Text style={styles.expiryText}>
-                {formatExpiryDate(expiryDate)}
-              </Text>
-            </View>
-          )}
-          <View style={styles.statusContainer}>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>アクティブ</Text>
-            </View>
+        {/* 有効期限 */}
+        {expiryDate && (
+          <View style={styles.expiryContainer}>
+            <Text style={styles.expiryText}>
+              {formatExpiryDate(expiryDate)}
+            </Text>
           </View>
-        </View>
+        )}
       </LinearGradient>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -166,46 +138,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  // 矢印コンテナ
-  arrowContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 
-  // 矢印アイコン
-  arrowIcon: {
-    fontSize: 20,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-
-  // 機能説明セクション
-  membershipFeatures: {
-    marginBottom: 16,
-  },
-
-  // 機能テキスト
-  featureText: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
-    lineHeight: 20,
-    fontWeight: '500',
-  },
-
-  // フッターコンテナ
-  footerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
 
   // 有効期限コンテナ
   expiryContainer: {
-    flex: 1,
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    alignSelf: 'flex-end',
   },
 
   // 有効期限テキスト
@@ -213,25 +155,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: 'rgba(255, 255, 255, 0.8)',
     fontWeight: '500',
-  },
-
-  // ステータスコンテナ
-  statusContainer: {
-    alignItems: 'flex-end',
-  },
-
-  // ステータスバッジ
-  statusBadge: {
-    backgroundColor: 'rgba(34, 197, 94, 0.9)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-
-  // ステータステキスト
-  statusText: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    fontWeight: '600',
   },
 });

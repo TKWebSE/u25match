@@ -130,9 +130,6 @@ export default function MembershipStatusScreen() {
                 <Text style={styles.membershipTitle}>{planName}</Text>
                 <Text style={styles.membershipSubtitle}>Premium Member</Text>
               </View>
-              <View style={styles.statusBadge}>
-                <Text style={styles.statusText}>アクティブ</Text>
-              </View>
             </View>
 
             <View style={styles.membershipDetails}>

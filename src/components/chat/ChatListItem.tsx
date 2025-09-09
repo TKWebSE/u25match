@@ -1,7 +1,9 @@
+import { useProfile } from '@hooks/useProfile';
 import { mockUsers } from '@mock/chatMock';
 import { ChatRoom } from '@services/main/chat/types';
+import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ChatListItemProps {
   chatRoom: ChatRoom;
@@ -10,6 +12,12 @@ interface ChatListItemProps {
 }
 
 const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, onPress }) => {
+  // プロフィール情報を取得
+  const { profile } = useProfile(currentUserId);
+
+  // 会員種別の判定
+  const membershipType = getMembershipType(profile || undefined);
+
   // 相手のユーザーIDを取得（自分以外の参加者）
   const otherParticipantId = chatRoom.participants.find(id => id !== currentUserId) || '';
 
@@ -47,10 +55,33 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, on
     ? formatTime(chatRoom.lastMessage.timestamp)
     : '';
 
+  // チャットアイテムが押下されたときの処理
+  const handlePress = () => {
+    // 無料会員の場合はアラートを表示
+    if (membershipType !== 'premium') {
+      Alert.alert(
+        'プレミアム会員限定機能',
+        'チャット機能をご利用いただくには、プレミアム会員への登録が必要です。',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              // アラートを閉じるだけ
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    // プレミアム会員の場合は通常通りチャット詳細画面に遷移
+    onPress(chatRoom);
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => onPress(chatRoom)}
+      onPress={handlePress}
       activeOpacity={0.7}
     >
       {/* アバター */}
