@@ -1,10 +1,10 @@
 // src/components/search/mobile/UserGrid.tsx
 // ユーザーグリッド表示コンポーネント
 
+import { User as SearchUser } from '@/src/my-types/search';
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard from '@components/common/mobile/UnifiedUserCard';
 import { useCardSize } from '@hooks/useCardSize';
-import { User as SearchUser } from '@types/search';
 import React, { useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 

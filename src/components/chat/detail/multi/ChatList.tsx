@@ -2,7 +2,7 @@ import { mockUsers } from "@mock/chatMock";
 import { ChatMessage as ChatMessageType } from "@services/main/chat/types";
 import React, { useEffect, useRef } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import ChatMessageComponent from "./ChatMessage";
+import ChatMessage from "./ChatMessage";
 import DateSeparator from "./DateSeparator";
 import EmptyChatMessage from "./EmptyChatMessage";
 
@@ -90,7 +90,7 @@ const ChatList: React.FC<ChatListProps> = ({
     const otherUserImageUrl = otherUser?.avatar;
 
     return (
-      <ChatMessageComponent
+      <ChatMessage
         text={message.content}
         createdAt={createdAt}
         isMe={isMe}
@@ -132,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatList; 
+export default ChatList;

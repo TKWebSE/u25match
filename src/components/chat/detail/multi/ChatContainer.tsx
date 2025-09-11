@@ -28,7 +28,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      {/* キーボードの高さ分だけpaddingBottomを調整してテキストフィールドの位置を制御 */}
       <View style={[styles.chatContainer, { paddingBottom: keyboardHeight }]}>
         <ChatList
           messages={messages}
@@ -56,4 +55,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatContainer; 
+export default ChatContainer;

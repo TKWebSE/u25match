@@ -2,15 +2,31 @@ import { Tag, TagList } from '@components/tags';
 import { TagCategory } from '@constants/tagDataMap';
 import React from 'react';
 
+/**
+ * モバイルSceneRendererのプロパティ定義
+ */
 interface SceneRendererProps {
-  routeKey: string;
-  allTags: Tag[];
-  categorizedTags: Record<TagCategory, Tag[]>;
-  onTagPress: (tag: Tag) => void;
-  selectedTagIds?: string[];
-  isMaxReached?: boolean;
+  routeKey: string;                                    // 現在のルートキー（タブの識別子）
+  allTags: Tag[];                                      // 全タグの配列
+  categorizedTags: Record<TagCategory, Tag[]>;         // カテゴリ別に分類されたタグ
+  onTagPress: (tag: Tag) => void;                      // タグがタップされた時のコールバック
+  selectedTagIds?: string[];                           // 選択されているタグのID配列
+  isMaxReached?: boolean;                              // 最大選択数に達しているかどうか
 }
 
+/**
+ * モバイル用シーンレンダラーコンポーネント
+ * 
+ * タブのルートキーに応じて適切なタグリストを表示するモバイル専用コンポーネント。
+ * カテゴリ別のタグ表示を管理し、選択状態を各タグリストに渡す。
+ * 
+ * 主な機能：
+ * - ルートキーに基づくタグリストの切り替え
+ * - カテゴリ別タグの表示
+ * - 選択状態の管理と伝播
+ * - 最大選択数の制御
+ * - デフォルトフォールバック（全タグ表示）
+ */
 const SceneRenderer: React.FC<SceneRendererProps> = ({
   routeKey,
   allTags,
@@ -19,6 +35,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
   selectedTagIds = [],
   isMaxReached = false,
 }) => {
+  // ルートキーに応じて適切なタグリストを返す
   switch (routeKey) {
     case 'all':
       return <TagList tags={allTags} category="all" onTagPress={onTagPress} selectedTagIds={selectedTagIds} isMaxReached={isMaxReached} />;
@@ -43,6 +60,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
     case 'business':
       return <TagList tags={categorizedTags.business} category="business" onTagPress={onTagPress} selectedTagIds={selectedTagIds} isMaxReached={isMaxReached} />;
     default:
+      // 未知のルートキーの場合は全タグを表示（フォールバック）
       return <TagList tags={allTags} category="all" onTagPress={onTagPress} selectedTagIds={selectedTagIds} isMaxReached={isMaxReached} />;
   }
 };

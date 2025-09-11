@@ -4,7 +4,6 @@ import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
 import { PremiumMembershipDisplay } from '@components/settings/PremiumMembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
-import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import {
   CONTACT_SCREEN_PATH,
@@ -692,17 +691,17 @@ const SettingsScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* セールカルーセル */}
-          <SalesCarousel onSalePress={handleSalePress} />
+          {/* セールカルーセル - 非活性 */}
+          {/* <SalesCarousel onSalePress={handleSalePress} /> */}
 
-          {/* セール詳細セクション */}
-          <View style={SettingsStyles.section}>
+          {/* セール詳細セクション - 非活性 */}
+          {/* <View style={SettingsStyles.section}>
             <Text style={SettingsStyles.sectionTitle}>セール情報</Text>
             <TouchableOpacity style={SettingsStyles.button} onPress={handleSalesDetail}>
               <Text style={SettingsStyles.buttonText}>セール詳細</Text>
               <Text style={SettingsStyles.buttonArrow}>›</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           {/* いいね履歴セクション */}
           <View style={SettingsStyles.section}>

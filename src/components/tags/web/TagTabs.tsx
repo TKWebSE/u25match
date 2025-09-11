@@ -16,6 +16,10 @@ interface TagTabsProps {
   screenWidth: number;
 }
 
+/**
+ * タグ選択用のタブコンポーネント（Web版）
+ * 横スクロール可能なタブとコンテンツ表示エリアを提供
+ */
 const TagTabs: React.FC<TagTabsProps> = ({
   index,
   routes,
@@ -25,6 +29,7 @@ const TagTabs: React.FC<TagTabsProps> = ({
 }) => {
   return (
     <View style={styles.container}>
+      {/* 横スクロール可能なタブナビゲーション */}
       <TabScroll
         routes={routes}
         activeIndex={index}
@@ -32,6 +37,7 @@ const TagTabs: React.FC<TagTabsProps> = ({
         screenWidth={screenWidth}
       />
 
+      {/* 選択されたタブのコンテンツ表示エリア */}
       <View style={styles.content}>
         {renderScene({ route: routes[index] })}
       </View>

@@ -1,4 +1,4 @@
-import { AuthUser, ExtendedUser } from '../types/user';
+import { AuthUser, ExtendedUser } from '../my-types/user';
 
 /**
  * Dev環境用のシンプルな認証ユーザーモック

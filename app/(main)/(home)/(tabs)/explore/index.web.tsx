@@ -1,9 +1,9 @@
 import EmptyState from '@components/common/EmptyState';
-import { useCardLayout } from '@components/explore/CardLayoutCalculator';
+import UserCard from '@components/common/UserCard';
+import WebGridLayout from '@components/common/WebGridLayout';
 import ExploreTabs from '@components/explore/ExploreTabs';
-import UserCard from '@components/explore/UserCard';
-import WebGridLayout from '@components/explore/WebGridLayout';
 import { getProfilePath } from '@constants/routes';
+import { useCardLayout } from '@hooks/useCardLayout';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
 import { ExploreTabType, useUserSearch } from '@hooks/useUserSearch';
 import { useSidebar } from '@layouts/WebLayout';

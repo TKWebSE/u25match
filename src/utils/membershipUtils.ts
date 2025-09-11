@@ -1,4 +1,4 @@
-import { ProfileUser } from '../types/user';
+import { ProfileUser } from '../my-types/user';
 
 /**
  * 会員種別を判定するユーティリティ関数

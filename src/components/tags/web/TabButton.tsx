@@ -32,12 +32,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 80,
     marginHorizontal: 4,
-    // Web特有のスタイル
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-    ':hover': {
-      backgroundColor: colors.gray100,
-    },
   },
   activeTabButton: {
     backgroundColor: colors.primary + '20',

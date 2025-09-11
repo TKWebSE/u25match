@@ -10,7 +10,7 @@ import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
 import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SearchCategory } from '../../../types/search';
+import { SearchCategory } from '../../../my-types/search';
 
 interface SearchModalProps {
   visible: boolean;

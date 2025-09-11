@@ -1,5 +1,5 @@
 // 検索画面用のモックデータ
-import { User } from '../types/user';
+import { User } from '../my-types/user';
 
 // 検索カテゴリ別のユーザーデータ
 export const searchUsersMock: Record<string, User[]> = {

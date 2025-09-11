@@ -21,8 +21,8 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEm
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../../firebaseConfig';
 import { mockAuthUser } from '../mock/authMock';
+import { AuthUser } from '../my-types/user';
 import { getUserProfile } from '../services/firestoreUserProfile';
-import { AuthUser } from '../types/user';
 
 /**
  * 認証コンテキストの型定義

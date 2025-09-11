@@ -3,45 +3,98 @@ import { colors, spacing } from '@styles/globalStyles';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// タグの型定義
+/**
+ * タグの型定義
+ * タグアイテムで使用される基本的なタグ情報を定義
+ */
 export interface Tag {
-  id: string;
-  name: string;
-  imageUrl: string;
-  userCount: number;
-  category: string;
+  id: string;           // タグの一意ID
+  name: string;         // タグの表示名
+  imageUrl: string;     // タグの画像URL
+  userCount: number;    // そのタグを使用しているユーザー数
+  category: string;     // タグのカテゴリ
 }
 
+/**
+ * WebTagItemのプロパティ定義
+ */
 interface TagItemProps {
-  tag: Tag;
-  index: number;
-  onPress: (tag: Tag) => void;
+  tag: Tag;                           // 表示するタグ情報
+  index: number;                      // リスト内でのインデックス
+  onPress: (tag: Tag) => void;        // タグがタップされた時のコールバック
+  isSelected?: boolean;               // タグが選択されているかどうか
+  isMaxReached?: boolean;             // 最大選択数に達しているかどうか
 }
 
-const TagItem: React.FC<TagItemProps> = ({ tag, index, onPress }) => {
+/**
+ * Web用タグアイテムコンポーネント
+ * 
+ * タグの選択・表示機能を提供するWeb専用コンポーネント。
+ * 選択状態や最大選択数に応じた視覚的フィードバックを表示する。
+ * 
+ * 主な機能：
+ * - タグ画像とユーザー数の表示
+ * - 選択状態の視覚的フィードバック（チェックマーク、色変更）
+ * - 最大選択数に達した場合の無効化表示
+ * - タップによる選択/選択解除
+ */
+const TagItem: React.FC<TagItemProps> = ({ tag, index, onPress, isSelected = false, isMaxReached = false }) => {
+  // タグデータマップから画像を取得、見つからない場合はデフォルト画像を使用
   const tagImage = tagDataMap[tag.id as keyof typeof tagDataMap]?.image || require('@assets/tag-images/cat.jpg');
 
   return (
     <TouchableOpacity
       key={`${tag.name}-${index}`}
-      style={styles.tagItem}
+      style={[
+        styles.tagItem,
+        isSelected && styles.tagItemSelected,      // 選択状態のスタイル
+        isMaxReached && styles.tagItemDisabled    // 無効状態のスタイル
+      ]}
       onPress={() => onPress(tag)}
       activeOpacity={0.8}
+      disabled={isMaxReached}  // 最大選択数に達している場合は無効化
     >
+      {/* タグ画像コンテナ */}
       <View style={styles.imageContainer}>
-        <Image source={tagImage} style={styles.tagImage} />
-        <View style={styles.countBadge}>
-          <Text style={styles.countText}>{tag.userCount}人</Text>
+        <Image
+          source={tagImage}
+          style={[
+            styles.tagImage,
+            isSelected && styles.tagImageSelected,
+            isMaxReached && styles.tagImageDisabled
+          ]}
+        />
+        {/* 選択状態のチェックマーク */}
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Text style={styles.selectedText}>✓</Text>
+          </View>
+        )}
+        {/* ユーザー数バッジ */}
+        <View style={[
+          styles.countBadge,
+          isSelected && styles.countBadgeSelected
+        ]}>
+          <Text style={[
+            styles.countText,
+            isSelected && styles.countTextSelected
+          ]}>{tag.userCount}人</Text>
         </View>
       </View>
+      {/* タグ名コンテナ */}
       <View style={styles.tagContent}>
-        <Text style={styles.tagName}>{tag.name}</Text>
+        <Text style={[
+          styles.tagName,
+          isSelected && styles.tagNameSelected,
+          isMaxReached && styles.tagNameDisabled
+        ]}>{tag.name}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  // メインのタグアイテムスタイル
   tagItem: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
@@ -59,17 +112,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     overflow: 'hidden',
-    // Web特有のスタイル
-    cursor: 'pointer',
-    transition: 'transform 0.2s ease-in-out',
-    ':hover': {
-      transform: 'scale(1.02)',
-    },
-  },
+  } as any, // Web特有のCSSプロパティのため型アサーションを使用
+
+  // 画像コンテナ
   imageContainer: {
     position: 'relative',
     marginBottom: 16,
   },
+
+  // タグ画像
   tagImage: {
     width: 100,
     height: 100,
@@ -80,6 +131,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+
+  // ユーザー数バッジ
   countBadge: {
     position: 'absolute',
     bottom: -4,
@@ -96,24 +149,87 @@ const styles = StyleSheet.create({
     minWidth: 32,
     alignItems: 'center',
   },
+
+  // ユーザー数テキスト
   countText: {
     fontSize: 11,
     fontWeight: '700',
     color: '#ffffff',
     textAlign: 'center',
   },
+
+  // タグ名コンテナ
   tagContent: {
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 8,
   },
+
+  // タグ名テキスト
   tagName: {
     fontSize: 16,
     fontWeight: '700',
     color: '#2d3748',
     textAlign: 'center',
     lineHeight: 20,
+  },
+
+  // === 選択状態のスタイル ===
+  tagItemSelected: {
+    backgroundColor: colors.primary + '15',
+    borderColor: colors.primary,
+    borderWidth: 2,
+  },
+  tagImageSelected: {
+    opacity: 0.9,
+  },
+  tagNameSelected: {
+    color: colors.primary,
+    fontWeight: '800',
+  },
+  countBadgeSelected: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  countTextSelected: {
+    color: colors.primary,
+  },
+
+  // 選択状態のチェックマークバッジ
+  selectedBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  selectedText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.white,
+  },
+
+  // === 無効状態のスタイル ===
+  tagItemDisabled: {
+    opacity: 0.5,
+    backgroundColor: colors.gray100,
+  },
+  tagImageDisabled: {
+    opacity: 0.3,
+  },
+  tagNameDisabled: {
+    color: colors.gray400,
   },
 });
 

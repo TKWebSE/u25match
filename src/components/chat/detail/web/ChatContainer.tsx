@@ -6,8 +6,8 @@
 
 import React from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import ChatInput from "../ChatInput";
-import ChatList from "../ChatList";
+import ChatInput from "../multi/ChatInput";
+import ChatList from "../multi/ChatList";
 
 type ChatContainerProps = {
   messages: any[];

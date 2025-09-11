@@ -1,5 +1,5 @@
 import { PrefectureName } from '@/src/constants/userEdit/prefectures';
-import { PrefectureSelector } from '@components/common/PrefectureSelector';
+import { PrefectureSelector } from '@components/common/multi/selector/PrefectureSelector';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';

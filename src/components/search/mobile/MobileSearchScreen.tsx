@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User } from '../../../types/search';
+import { User } from '../../../my-types/search';
 import SearchHeader from './SearchHeader';
 import SearchModal from './SearchModal';
 import SearchResults from './SearchResults';

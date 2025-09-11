@@ -3,8 +3,8 @@
 
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
+import { ReactionTabType } from '@my-types/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { ReactionTabType } from '@types/search';
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import ReactionTabs from './ReactionTabs';

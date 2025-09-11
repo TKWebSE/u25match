@@ -3,7 +3,6 @@ import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
 import { MembershipDisplay } from '@components/settings/MembershipDisplay';
 import { RemainingStats } from '@components/settings/RemainingStats';
-import { SalesCarousel } from '@components/settings/SalesCarousel';
 import { VerificationPrompt } from '@components/settings/VerificationPrompt';
 import {
   CONTACT_SCREEN_PATH,
@@ -161,17 +160,17 @@ const SettingsScreen = () => {
           <VerificationPrompt onPress={handleVerification} />
         )}
 
-        {/* セールカルーセル */}
-        <SalesCarousel onSalePress={handleSalePress} />
+        {/* セールカルーセル - 非活性 */}
+        {/* <SalesCarousel onSalePress={handleSalePress} /> */}
 
-        {/* セール詳細セクション */}
-        <View style={[SettingsStyles.section, styles.webSection]}>
+        {/* セール詳細セクション - 非活性 */}
+        {/* <View style={[SettingsStyles.section, styles.webSection]}>
           <Text style={SettingsStyles.sectionTitle}>セール情報</Text>
           <TouchableOpacity style={SettingsStyles.button} onPress={handleSalesDetail}>
             <Text style={SettingsStyles.buttonText}>セール詳細</Text>
             <Text style={SettingsStyles.buttonArrow}>›</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* いいね履歴セクション */}
         <View style={[SettingsStyles.section, styles.webSection]}>

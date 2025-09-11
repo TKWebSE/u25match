@@ -1,8 +1,8 @@
 // src/components/search/mobile/SearchResults.tsx
 // 検索結果表示コンポーネント
 
+import { User as SearchUser } from '@/src/my-types/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { User as SearchUser } from '@types/search';
 import { getCategoryTitle } from '@utils/searchUtils';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

@@ -1,8 +1,8 @@
 // src/components/search/web/ReactionTabs.tsx
 // リアクションタブコンポーネント
 
+import { ReactionTabType } from '@/src/my-types/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { ReactionTabType } from '@types/search';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

@@ -1,9 +1,9 @@
 import EmptyState from '@components/common/EmptyState';
-import { useCardLayout } from '@components/explore/CardLayoutCalculator';
-import UserCard from '@components/explore/UserCard';
-import WebGridLayout from '@components/explore/WebGridLayout';
+import UserCard from '@components/common/UserCard';
+import WebGridLayout from '@components/common/WebGridLayout';
 import ReactionTabs from '@components/reactions/ReactionTabs';
 import { getProfilePath } from '@constants/routes';
+import { useCardLayout } from '@hooks/useCardLayout';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';

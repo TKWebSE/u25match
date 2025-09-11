@@ -11,7 +11,7 @@ type ChatContainerProps = {
   onError?: (error: string) => void;
 };
 
-const ChatContainer: React.FC<ChatContainerProps> = ({ chatUid, onError }) => {
+const ChatScreen: React.FC<ChatContainerProps> = ({ chatUid, onError }) => {
   // チャットメッセージの状態管理
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatContainer; 
+export default ChatScreen;

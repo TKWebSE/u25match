@@ -4,7 +4,6 @@ import {
   EXPLORE_SCREEN_PATH,
   getProfilePath,
   REACTIONS_SCREEN_PATH,
-  SALES_SCREEN_PATH,
   SEARCH_SCREEN_PATH,
   SETTINGS_SCREEN_PATH
 } from '@constants/routes';
@@ -37,7 +36,6 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
     { id: 'reactions', label: 'リアクション', icon: '❤️', route: REACTIONS_SCREEN_PATH },
     { id: 'settings', label: '設定', icon: '⚙️', route: SETTINGS_SCREEN_PATH },
     { id: 'profile', label: 'プロフィール', icon: '👤', route: getProfilePath(user.uid) },
-    { id: 'sales', label: 'セールス', icon: '💰', route: SALES_SCREEN_PATH },
   ], [user.uid]);
 
   const handleNavigation = (menuId: string) => {
