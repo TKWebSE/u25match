@@ -144,8 +144,7 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
             {/* 検索バーをメインコンテンツエリアの上部に配置 */}
             <View style={styles.searchBarContainer}>
               <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
+                onSearch={setSearchQuery}
               />
             </View>
             {/* メインコンテンツ */}

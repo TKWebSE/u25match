@@ -5,6 +5,7 @@ import {
   getProfilePath,
   REACTIONS_SCREEN_PATH,
   SALES_SCREEN_PATH,
+  SEARCH_SCREEN_PATH,
   SETTINGS_SCREEN_PATH
 } from '@constants/routes';
 import { useStrictAuth } from '@hooks/useStrictAuth';
@@ -31,6 +32,7 @@ export const WebSidebar: React.FC<WebSidebarProps> = ({ onMenuSelect }) => {
   const menuItems = useMemo(() => [
     // { id: 'recommendations', label: '今日のオススメ', icon: '⭐', route: RECOMMENDATIONS_SCREEN_PATH },
     { id: 'explore', label: '探す', icon: '🔍', route: EXPLORE_SCREEN_PATH },
+    { id: 'search', label: '検索', icon: '📝', route: SEARCH_SCREEN_PATH },
     { id: 'chat', label: 'チャット', icon: '💬', route: CHAT_LIST_SCREEN_PATH },
     { id: 'reactions', label: 'リアクション', icon: '❤️', route: REACTIONS_SCREEN_PATH },
     { id: 'settings', label: '設定', icon: '⚙️', route: SETTINGS_SCREEN_PATH },

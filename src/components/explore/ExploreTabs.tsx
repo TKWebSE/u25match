@@ -1,5 +1,7 @@
 import { ExploreTabType } from '@hooks/useUserSearch';
+import { useSidebar } from '@layouts/WebLayout';
 import { colors } from '@styles/globalStyles';
+import { isWeb } from '@utils/platform';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -29,11 +31,30 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
   const slideAnim = useRef(new Animated.Value(0)).current;
   const translateX = useRef(new Animated.Value(0)).current;
 
+  // Web版の場合はサイドバーコンテキストを使用
+  const sidebarContext = isWeb ? useSidebar() : null;
+
   // タブの幅と位置を計算
   const getTabLayout = () => {
-    const containerWidth = cardListWidth || Math.min(screenWidth - 32, 1200);
+    let containerWidth: number;
+    let containerMargin: number;
+
+    if (isWeb && sidebarContext) {
+      // Web版：サイドバーの状態を考慮
+      containerWidth = sidebarContext.mainContentWidth;
+      containerMargin = 0; // WebLayoutで既にマージンが設定されている
+    } else if (cardListWidth) {
+      // モバイル版：カードリストの幅を使用
+      containerWidth = cardListWidth;
+      containerMargin = (screenWidth - cardListWidth) / 2;
+    } else {
+      // フォールバック：画面幅からマージンを引いた幅
+      containerWidth = Math.min(screenWidth - 32, 1200);
+      containerMargin = 16;
+    }
+
+    // タブの幅を計算（4つのタブを均等に配置）
     const tabWidth = containerWidth / 4;
-    const containerMargin = cardListWidth ? (screenWidth - cardListWidth) / 2 : 16;
 
     return {
       containerWidth,
@@ -99,7 +120,7 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
 
     // アニメーションなしで即座に移動
     slideAnim.setValue(targetPosition);
-  }, [activeTab, slideAnim, cardListWidth]);
+  }, [activeTab, slideAnim, cardListWidth, sidebarContext?.mainContentWidth]);
 
   const { containerWidth, tabWidth, containerMargin } = getTabLayout();
 

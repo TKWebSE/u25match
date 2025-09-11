@@ -8,6 +8,7 @@ export const FORGOT_PASSWORD_SCREEN_PATH = '/forgotPasswordScreen';
 
 // メイン（ユーザー探索）
 export const EXPLORE_SCREEN_PATH = "/explore";
+export const SEARCH_SCREEN_PATH = "/(home)/(tabs)/search";
 export const PROFILE_MODAL_PATH = "/profile/detail/[uid]";
 
 // チャット

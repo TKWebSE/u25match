@@ -1,22 +1,18 @@
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
-import TodaysRecommendationBanner from '@components/explore/TodaysRecommendationBanner';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
-import { getProfilePath, RECOMMENDATIONS_SCREEN_PATH } from '@constants/routes';
+import { getProfilePath } from '@constants/routes';
 import { useCardSize } from '@hooks/useCardSize';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
 import { useUserSearch } from '@hooks/useUserSearch';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// User型はUnifiedUserCardからインポート済み
-const { width: screenWidth } = Dimensions.get('window');
-
-// 探索画面コンポーネント - ユーザー検索・探索機能（モバイル版）
+// 探索画面コンポーネント - ユーザー検索・探索機能
 const ExploreScreen = () => {
   const router = useRouter();
 
@@ -187,17 +183,6 @@ const ExploreScreen = () => {
             <Text style={styles.logo}>u25match</Text>
           </View>
         </View>
-
-        {/* 今日のおすすめバナー */}
-        {showTodaysRecommendation && (
-          <TodaysRecommendationBanner
-            onPress={() => {
-              router.push(RECOMMENDATIONS_SCREEN_PATH as any);
-            }}
-            onClose={dismissBanner}
-            visible={showTodaysRecommendation}
-          />
-        )}
 
         {/* 検索バー */}
         {isSearchVisible && (
