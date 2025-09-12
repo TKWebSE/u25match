@@ -1,7 +1,7 @@
+import ReactionTabs from '@/src/components/reactions/web/ReactionTabs.web';
 import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
-import ReactionTabs from '@components/reactions/ReactionTabs';
 import { getProfilePath } from '@constants/routes';
 import { useCardLayout } from '@hooks/useCardLayout';
 import { reactionUsers } from '@mock/exploreUserMock';
@@ -81,6 +81,7 @@ const ReactionsScreen = () => {
       <ReactionTabs
         activeTab={activeTab}
         onTabPress={handleTabPress}
+        cardListWidth={cardListWidth}
       />
 
       {/* カードリストエリアの幅を計測 */}
