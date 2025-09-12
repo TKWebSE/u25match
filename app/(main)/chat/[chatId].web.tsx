@@ -81,13 +81,6 @@ export default function ChatDetailScreen() {
     <View style={styles.container}>
       {/* Web用のチャットヘッダー */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{otherUserName}</Text>
         </View>
@@ -157,18 +150,6 @@ const styles = StyleSheet.create({
         '@media (max-width: 768px)': {
           paddingHorizontal: 16,
           paddingVertical: 12,
-        } as any,
-      },
-    }),
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 16,
-    borderRadius: 20,
-    ...Platform.select({
-      web: {
-        ':hover': {
-          backgroundColor: '#f5f5f5',
         } as any,
       },
     }),
