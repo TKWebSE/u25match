@@ -90,12 +90,6 @@ export default function ChatDetailScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>{otherUserName}</Text>
-          <Text style={styles.headerSubtitle}>オンライン</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-            <MaterialIcons name="more-vert" size={24} color="#666" />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -188,25 +182,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#4CAF50',
-    fontWeight: '500',
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionButton: {
-    padding: 8,
-    borderRadius: 20,
-    ...Platform.select({
-      web: {
-        ':hover': {
-          backgroundColor: '#f5f5f5',
-        } as any,
-      },
-    }),
   },
 });

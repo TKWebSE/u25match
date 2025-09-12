@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
       web: {
         display: 'flex',
         flexDirection: 'column',
+        height: '100%',
       },
     }),
   },
@@ -70,10 +71,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     ...Platform.select({
       web: {
-        height: 'calc(100vh - 80px)' as any, // ヘッダー分を除く
+        height: 'calc(100vh - 80px)',
         '@media (max-width: 768px)': {
           height: 'calc(100vh - 70px)',
-        } as any,
+        },
       },
     }),
   },
@@ -85,21 +86,41 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#e8e8e8',
+        position: 'relative',
+        '::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 1,
+          background: 'linear-gradient(90deg, transparent, #e8e8e8, transparent)',
+        },
       },
     }),
   },
   inputContainer: {
     backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
+    borderTopColor: "#e8e8e8",
     ...Platform.select({
       web: {
         borderLeftWidth: 1,
         borderRightWidth: 1,
         borderBottomWidth: 1,
-        borderColor: '#e0e0e0',
-        boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
+        borderColor: '#e8e8e8',
+        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.06)',
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
+        paddingHorizontal: 20,
+        paddingVertical: 16,
+        '@media (max-width: 768px)': {
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+        },
       },
     }),
   },
