@@ -1,5 +1,4 @@
 import { WebChatContainer } from "@components/chat/detail/web";
-import { MaterialIcons } from '@expo/vector-icons';
 import { useChatInput } from "@hooks/useChatInput";
 import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatRooms } from "@hooks/useChatRooms";
@@ -7,7 +6,7 @@ import { useKeyboard } from "@hooks/useKeyboard";
 import { useStrictAuth } from "@hooks/useStrictAuth";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
-import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatDetailScreen() {
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 20,
