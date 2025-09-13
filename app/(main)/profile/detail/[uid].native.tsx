@@ -1,7 +1,7 @@
 // app/(main)/profile/detail/[uid].native.tsx
 import { LikeButton } from '@/src/components/profile/detail/mobile/LikeButton.native';
+import { LoadingState } from '@components/common';
 import { ErrorState } from '@components/common/ErrorState';
-import { LoadingState } from '@components/common/LoadingState';
 import {
   MobileProfileBio,
   MobileProfileDetails,

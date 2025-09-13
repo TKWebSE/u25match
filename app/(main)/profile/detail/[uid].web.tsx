@@ -1,7 +1,7 @@
 // app/(main)/profile/detail/[uid].web.tsx
 import { LikeButton } from '@/src/components/profile/detail/web/LikeButton.web';
+import { LoadingState } from '@components/common';
 import { ErrorState } from '@components/common/ErrorState';
-import { LoadingState } from '@components/common/LoadingState';
 import {
   WebProfileBio,
   WebProfileDetails,

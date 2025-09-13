@@ -6,7 +6,7 @@ export { default as CustomPagination } from './CustomPagination';
 export { default as EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
 export { ImageCarousel } from './ImageCarousel';
-export { LoadingState } from './LoadingState';
+export { LoadingState } from './multi/LoadingState';
 export { default as ScreenWrapper } from './ScreenWrapper';
 export { VerificationMark } from './VerificationMark';
 
