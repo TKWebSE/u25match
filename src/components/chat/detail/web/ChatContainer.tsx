@@ -17,6 +17,9 @@ type ChatContainerProps = {
   sending: boolean;
   onSend: () => void;
   keyboardHeight: number;
+  isDrawerOpen: boolean;
+  availableWidth: number;
+  availableHeight: number;
 };
 
 const WebChatContainer: React.FC<ChatContainerProps> = ({
@@ -27,11 +30,39 @@ const WebChatContainer: React.FC<ChatContainerProps> = ({
   sending,
   onSend,
   keyboardHeight,
+  isDrawerOpen,
+  availableWidth,
+  availableHeight,
 }) => {
+  // ドロワーの状態に応じた動的スタイル
+  const dynamicStyles = {
+    container: {
+      ...styles.container,
+      ...Platform.select({
+        web: {
+          width: isDrawerOpen ? `${availableWidth}px` : '100%',
+          height: isDrawerOpen ? `${availableHeight}px` : '100%',
+          maxWidth: isDrawerOpen ? `${availableWidth}px` : 'none',
+          maxHeight: isDrawerOpen ? `${availableHeight}px` : 'none',
+        } as any,
+      }),
+    },
+    chatArea: {
+      ...styles.chatArea,
+      ...Platform.select({
+        web: {
+          height: isDrawerOpen ? `calc(${availableHeight}px - 80px)` : 'calc(100vh - 80px)',
+          width: isDrawerOpen ? `${availableWidth}px` : '100%',
+          maxWidth: isDrawerOpen ? `${availableWidth}px` : 'none',
+        } as any,
+      }),
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       {/* Web用のレイアウト（キーボード対応は不要） */}
-      <View style={styles.chatArea}>
+      <View style={dynamicStyles.chatArea}>
         <View style={styles.messagesContainer}>
           <ChatList
             messages={messages}
@@ -71,10 +102,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     ...Platform.select({
       web: {
-        height: 'calc(100vh - 80px)',
+        height: 'calc(100vh - 80px)' as any,
         '@media (max-width: 768px)': {
           height: 'calc(100vh - 70px)',
-        },
+        } as any,
       },
     }),
   },
@@ -83,11 +114,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     ...Platform.select({
       web: {
-        overflow: 'hidden',
+        overflow: 'hidden' as any,
         borderLeftWidth: 1,
         borderRightWidth: 1,
         borderColor: '#e8e8e8',
-        position: 'relative',
+        position: 'relative' as any,
         '::before': {
           content: '""',
           position: 'absolute',
@@ -96,7 +127,7 @@ const styles = StyleSheet.create({
           right: 0,
           height: 1,
           background: 'linear-gradient(90deg, transparent, #e8e8e8, transparent)',
-        },
+        } as any,
       },
     }),
   },
@@ -110,17 +141,25 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderBottomWidth: 1,
         borderColor: '#e8e8e8',
-        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.06)',
+        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.06)' as any,
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
-        paddingHorizontal: 20,
-        paddingVertical: 16,
+        paddingHorizontal: 32,
+        paddingVertical: 20,
         '@media (max-width: 768px)': {
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           paddingHorizontal: 16,
           paddingVertical: 12,
-        },
+        } as any,
+        '@media (min-width: 1200px)': {
+          paddingHorizontal: 40,
+          paddingVertical: 24,
+        } as any,
+        '@media (min-width: 1600px)': {
+          paddingHorizontal: 48,
+          paddingVertical: 28,
+        } as any,
       },
     }),
   },

@@ -2,6 +2,7 @@
 // アプリのルートレイアウト - 認証状態の管理とナビゲーション制御
 import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
+import { DrawerProvider } from '@contexts/DrawerContext';
 import { colors } from '@styles/globalStyles';
 import { defaultConfig } from '@tamagui/config/v4';
 import { TamaguiProvider, createTamagui } from '@tamagui/core';
@@ -99,10 +100,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <TamaguiProvider config={config}>
-          <AuthProvider>
-            <AuthGate />
-            <Toast />
-          </AuthProvider>
+          <DrawerProvider>
+            <AuthProvider>
+              <AuthGate />
+              <Toast />
+            </AuthProvider>
+          </DrawerProvider>
         </TamaguiProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

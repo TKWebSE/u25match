@@ -2,6 +2,7 @@ import { WebChatContainer } from "@components/chat/detail/web";
 import { useChatInput } from "@hooks/useChatInput";
 import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatRooms } from "@hooks/useChatRooms";
+import { useDrawerState } from "@hooks/useDrawerState";
 import { useKeyboard } from "@hooks/useKeyboard";
 import { useStrictAuth } from "@hooks/useStrictAuth";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -25,6 +26,7 @@ export default function ChatDetailScreen() {
   const { input, setInput, sending, clearInput, setSendingState } = useChatInput();
   const { keyboardHeight } = useKeyboard();
   const { chatRooms } = useChatRooms();
+  const { isDrawerOpen, availableWidth, availableHeight, effectiveWidth } = useDrawerState();
 
   // 現在のチャットルーム情報を取得
   const currentChatRoom = useMemo(() => {
@@ -76,8 +78,21 @@ export default function ChatDetailScreen() {
     );
   }
 
+  // ドロワーの状態に応じた動的スタイル
+  const dynamicContainerStyle = {
+    ...styles.container,
+    ...Platform.select({
+      web: {
+        width: isDrawerOpen ? `${effectiveWidth}px` : '100vw',
+        height: isDrawerOpen ? `${availableHeight}px` : '100vh',
+        maxWidth: isDrawerOpen ? `${effectiveWidth}px` : 'none',
+        maxHeight: isDrawerOpen ? `${availableHeight}px` : 'none',
+      } as any,
+    }),
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={dynamicContainerStyle}>
       {/* Web用のチャットヘッダー */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
@@ -93,6 +108,9 @@ export default function ChatDetailScreen() {
         sending={sending}
         onSend={handleSend}
         keyboardHeight={keyboardHeight}
+        isDrawerOpen={isDrawerOpen}
+        availableWidth={effectiveWidth}
+        availableHeight={availableHeight}
       />
     </View>
   );
@@ -102,7 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    maxWidth: 1200,
+    maxWidth: 1400,
     marginHorizontal: 'auto',
     ...Platform.select({
       web: {
@@ -116,7 +134,10 @@ const styles = StyleSheet.create({
           height: '100vh',
         } as any,
         '@media (min-width: 1200px)': {
-          maxWidth: 1000,
+          maxWidth: 1200,
+        } as any,
+        '@media (min-width: 1600px)': {
+          maxWidth: 1400,
         } as any,
       },
     }),
@@ -138,8 +159,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: 32,
+    paddingVertical: 20,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -150,6 +171,14 @@ const styles = StyleSheet.create({
           paddingHorizontal: 16,
           paddingVertical: 12,
         } as any,
+        '@media (min-width: 1200px)': {
+          paddingHorizontal: 40,
+          paddingVertical: 24,
+        } as any,
+        '@media (min-width: 1600px)': {
+          paddingHorizontal: 48,
+          paddingVertical: 28,
+        } as any,
       },
     }),
   },
@@ -158,9 +187,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '600',
     color: '#333',
     marginBottom: 2,
+    ...Platform.select({
+      web: {
+        '@media (max-width: 768px)': {
+          fontSize: 20,
+        },
+        '@media (min-width: 1200px)': {
+          fontSize: 26,
+        },
+        '@media (min-width: 1600px)': {
+          fontSize: 28,
+        },
+      },
+    }),
   },
 });
