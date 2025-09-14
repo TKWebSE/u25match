@@ -101,12 +101,12 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
       activeOpacity={0.8}
     >
       <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]}>
-        <Image
-          source={getTagImage(tag.name)}
-          style={ProfileDetailStyles.tagImage}
-          onError={handleImageError}
-        />
-        <View style={ProfileDetailStyles.tagOverlay}>
+        <View style={ProfileDetailStyles.tagContent}>
+          <Image
+            source={getTagImage(tag.name)}
+            style={ProfileDetailStyles.tagImage}
+            onError={handleImageError}
+          />
           <Text style={ProfileDetailStyles.tagText}>{tag.name}</Text>
         </View>
       </Animated.View>
@@ -125,9 +125,9 @@ export const WebProfileTags: React.FC<ProfileTagsProps> = ({ tags }) => {
   }
 
   return (
-    <View style={ProfileDetailStyles.tagsContainer}>
+    <View style={ProfileDetailStyles.tagsSection}>
       <Text style={ProfileDetailStyles.tagsTitle}>興味・趣味</Text>
-      <View style={ProfileDetailStyles.tagsGrid}>
+      <View style={ProfileDetailStyles.tagsContainer}>
         {tags.map((tag) => (
           <TagItem key={tag.id} tag={tag} />
         ))}

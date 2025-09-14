@@ -46,7 +46,7 @@ export default function ProfileScreen() {
   } = useProfileDetail(uniqueId);
 
   // Web版でのコンテンツ幅と余白の計算
-  const contentWidth = Math.min(windowWidth * 0.9, 900);
+  const contentWidth = Math.min(windowWidth * 0.9, 1200);
   const contentMargin = (windowWidth - contentWidth) / 2;
 
   // 読み込み中の表示
