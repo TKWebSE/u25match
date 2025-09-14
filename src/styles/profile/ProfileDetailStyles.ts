@@ -277,6 +277,26 @@ export const ProfileDetailStyles = StyleSheet.create({
     flex: 1,
   },
 
+  // セクション共通スタイル（編集画面と統一）
+  section: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    marginHorizontal: 24,
+    marginTop: 16,
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
+  },
+
   // 編集画面用のスタイル
   safeArea: {
     flex: 1,
