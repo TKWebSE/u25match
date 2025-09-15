@@ -1,3 +1,4 @@
+import { useLegalDocuments } from '@components/common';
 import { AccountInfo } from '@components/settings/AccountInfo';
 import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
@@ -11,7 +12,6 @@ import {
   LIKES_HISTORY_SCREEN_PATH,
   MEMBERSHIP_REGISTRATION_SCREEN_PATH,
   NOTIFICATIONS_SCREEN_PATH,
-  PRIVACY_POLICY_SCREEN_PATH,
   PURCHASE_BOOSTS_SCREEN_PATH,
   PURCHASE_LIKES_SCREEN_PATH,
   PURCHASE_POINTS_SCREEN_PATH,
@@ -34,6 +34,7 @@ const SettingsScreen = () => {
   const user = useStrictAuth(); // 認証済みユーザー情報を取得
   const { } = useAuth(); // 認証コンテキスト（状態のみ）
   const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
+  const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // 自分のプロフィール画面への遷移
   const handleUserProfilePress = () => {
@@ -51,15 +52,6 @@ const SettingsScreen = () => {
     }
   };
 
-  // プライバシーポリシーの表示
-  const handlePrivacyPolicy = () => {
-    router.push(PRIVACY_POLICY_SCREEN_PATH as any);
-  };
-
-  // 利用規約の表示
-  const handleTermsOfService = () => {
-    router.push(PRIVACY_POLICY_SCREEN_PATH as any);
-  };
 
   // お問い合わせの表示
   const handleContact = () => {
@@ -217,13 +209,13 @@ const SettingsScreen = () => {
           <Text style={SettingsStyles.sectionTitle}>その他</Text>
 
           {/* プライバシーポリシーへのリンク */}
-          <TouchableOpacity style={SettingsStyles.button} onPress={handlePrivacyPolicy}>
+          <TouchableOpacity style={SettingsStyles.button} onPress={showPrivacy}>
             <Text style={SettingsStyles.buttonText}>プライバシーポリシー</Text>
             <Text style={SettingsStyles.buttonArrow}>›</Text>
           </TouchableOpacity>
 
           {/* 利用規約へのリンク */}
-          <TouchableOpacity style={SettingsStyles.button} onPress={handleTermsOfService}>
+          <TouchableOpacity style={SettingsStyles.button} onPress={showTerms}>
             <Text style={SettingsStyles.buttonText}>利用規約</Text>
             <Text style={SettingsStyles.buttonArrow}>›</Text>
           </TouchableOpacity>
@@ -241,6 +233,8 @@ const SettingsScreen = () => {
           <LogoutButton loading={false} onLogout={handleLogout} />
         </View>
       </ScrollView>
+
+      <Modal />
     </View>
   );
 };

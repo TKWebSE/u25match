@@ -1,5 +1,6 @@
 // app/(auth)/sign-up/index.tsx
 // サインアップ画面 - 新しいユーザーアカウントの作成
+import { useLegalDocuments } from '@components/common';
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { signUp } from '@services/auth';
@@ -10,7 +11,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -27,6 +27,7 @@ export default function SignUpScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
+  const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // フォームのバリデーション
   const validateForm = () => {
@@ -85,14 +86,6 @@ export default function SignUpScreen() {
     }
   };
 
-  // 利用規約・プライバシーポリシーの表示
-  const handleTermsAndConditions = () => {
-    Alert.alert(
-      '利用規約・プライバシーポリシー',
-      '利用規約とプライバシーポリシーに同意の上、サービスをご利用ください。',
-      [{ text: 'OK' }]
-    );
-  };
 
   return (
     <ScreenWrapper>
@@ -150,14 +143,15 @@ export default function SignUpScreen() {
           </TouchableOpacity>
 
           {/* 利用規約へのリンク */}
-          <TouchableOpacity
-            onPress={handleTermsAndConditions}
-            style={styles.termsLink}
-          >
+          <View style={styles.termsLink}>
             <Text style={styles.termsText}>
-              登録することで、利用規約とプライバシーポリシーに同意したものとみなされます
+              登録することで、
+              <Text onPress={showTerms} style={styles.linkText}>利用規約</Text>
+              および
+              <Text onPress={showPrivacy} style={styles.linkText}>プライバシーポリシー</Text>
+              に同意したものとみなされます
             </Text>
-          </TouchableOpacity>
+          </View>
 
           {/* 区切り線 */}
           <View style={styles.divider}>
@@ -176,6 +170,8 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal />
     </ScreenWrapper>
   );
 }
@@ -239,6 +235,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     lineHeight: 16,
+  },
+  linkText: {
+    color: colors.primary,
+    textDecorationLine: 'underline',
   },
   divider: {
     flexDirection: 'row',

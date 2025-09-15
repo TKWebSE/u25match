@@ -2,11 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ErrorStateProps {
-  error: string | null;
-  onRetry: () => void;
-  fallbackMessage?: string;
+  error: string | null;          // エラーメッセージ
+  onRetry: () => void;          // 再試行ボタンのハンドラー
+  fallbackMessage?: string;     // デフォルトメッセージ
 }
 
+/**
+ * エラー状態表示コンポーネント
+ * エラーメッセージと再試行ボタンを表示
+ */
 export const ErrorState: React.FC<ErrorStateProps> = ({
   error,
   onRetry,
@@ -14,7 +18,10 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 }) => {
   return (
     <View style={styles.errorContainer}>
+      {/* エラーメッセージ表示 */}
       <Text style={styles.errorText}>{error || fallbackMessage}</Text>
+
+      {/* 再試行ボタン */}
       <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
         <Text style={styles.retryButtonText}>再試行</Text>
       </TouchableOpacity>
@@ -38,11 +45,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   retryButton: {
-    backgroundColor: '#FF6B9D', // モダンなピンク色
+    backgroundColor: '#FF6B9D',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
-    // モダンなシャドウ
+    // シャドウ効果
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
