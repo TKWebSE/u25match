@@ -1,0 +1,357 @@
+import { PROFILE_IMAGE_SIZES } from '@constants/imageSizes';
+import { colors } from '@styles/globalStyles';
+import { StyleSheet } from 'react-native';
+
+/**
+ * プロフィール詳細画面専用のスタイル定義
+ * 
+ * このファイルは以下の責務を持ちます：
+ * - プロフィール詳細画面の全体的なレイアウト
+ * - 画像、基本情報、自己紹介、タグ、詳細情報の表示スタイル
+ * - 編集画面との統一性を保ったセクションスタイル
+ * - Web版とモバイル版の両方に対応したレスポンシブデザイン
+ */
+export const ProfileDetailStyles = StyleSheet.create({
+  // メインコンテナ
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa', // モダンな背景色
+  },
+
+  // スクロール可能なコンテンツエリア
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
+
+  // コンテンツ全体のラッパー（Web版での中央寄せ用）
+  contentContainer: {
+    // コンテンツ全体のスタイル
+  },
+  // プロフィール画像のコンテナ（スライダー用）
+  imageContainer: {
+    width: PROFILE_IMAGE_SIZES.width,
+    aspectRatio: PROFILE_IMAGE_SIZES.aspectRatio,
+    overflow: 'hidden',
+    marginHorizontal: 8,
+    marginTop: 12,
+    alignSelf: 'center', // 中央寄せ
+    borderRadius: 20, // より丸みを帯びた角
+    // より強いシャドウ効果で立体感を演出
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 12,
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover', // containからcoverに変更してより良い表示
+    borderRadius: 20,
+  },
+  header: {
+    padding: 24,
+    alignItems: 'center',
+    // より透明なガラスモーフィズム効果
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 20,
+    // ガラス効果のためのボーダー
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginBottom: 4,
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  verificationMark: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 8,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    textAlign: 'center',
+    lineHeight: 24,
+    borderWidth: 2,
+  },
+  verifiedMark: {
+    color: '#38A169', // 緑色のチェックマーク
+    borderColor: '#38A169', // 緑色の枠線
+  },
+  unverifiedMark: {
+    color: '#9CA3AF', // グレーのチェックマーク
+    borderColor: '#9CA3AF', // グレーの枠線
+  },
+  age: {
+    fontSize: 18,
+    color: '#718096',
+    fontWeight: '500',
+  },
+  location: {
+    fontSize: 18, // 16から18に変更
+    color: '#718096',
+    fontWeight: '600', // 500から600に変更
+    marginTop: 4,
+  },
+  onlineStatus: {
+    fontSize: 14,
+    color: '#38a169',
+    fontWeight: '500',
+    marginTop: 8,
+  },
+  online: {
+    fontSize: 16, // 14から16に変更
+    color: '#38a169', // モダンな緑色
+    marginTop: 4,
+    fontWeight: '600', // 500から600に変更
+  },
+  likes: {
+    fontSize: 16, // 14から16に変更
+    color: '#718096',
+    marginTop: 8,
+    fontWeight: '600', // 500から600に変更
+  },
+  bioContainer: {
+    marginTop: 16,
+    // ガラスモーフィズム効果
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    marginHorizontal: 24, // 16から24に変更して左右の隙間を増やす
+    borderRadius: 16,
+    padding: 20,
+  },
+  bioTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
+  },
+  bio: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#4a5568',
+    fontWeight: '400',
+  },
+  detailsSection: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+    // ガラスモーフィズム効果
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    marginHorizontal: 24, // 16から24に変更して左右の隙間を増やす
+    borderRadius: 16,
+    paddingTop: 20,
+    marginBottom: 100, // いいねボタンが入るくらいの隙間を追加
+  },
+  detailsTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
+  },
+  detailSection: {
+    marginBottom: 24,
+  },
+  detailSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4a5568',
+    marginBottom: 12,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: '#718096',
+    fontWeight: '500',
+  },
+  detailValue: {
+    fontSize: 14,
+    color: '#2d3748',
+    fontWeight: '600',
+    textAlign: 'right',
+    flex: 1,
+    marginLeft: 16,
+  },
+  likeButtonContainer: {
+    position: 'absolute',
+    bottom: 24,
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+
+  // 編集ボタン
+  editButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 25,
+    shadowColor: '#4A90E2',
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 0,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+  },
+
+  // 編集ボタンテキスト
+  editButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  // ===== タグ表示関連スタイル =====
+  // タグセクション全体（レガシー：現在はsectionスタイルを使用）
+  tagsSection: {
+    marginBottom: 16,
+    marginHorizontal: 24, // 自己紹介や詳細プロフィールと同じ幅に調整
+    marginTop: 16, // 自己紹介と同じ間隔に調整
+    // ガラスモーフィズム効果
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 16,
+    padding: 20, // 自己紹介と同じパディング
+  },
+
+  // タグセクションのタイトル（レガシー：現在はsectionTitleスタイルを使用）
+  tagsTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginTop: 24, // 上に空白をもっと追加
+    marginBottom: 16,
+    textAlign: 'left', // 左寄せに変更
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
+  },
+
+  // タグ一覧のコンテナ
+  tagsContainer: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+
+  // 個別のタグアイテム（編集画面と同じレイアウト）
+  tagItem: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    width: '100%', // タグ項目を全幅に
+    alignSelf: 'stretch', // 親コンテナの幅に合わせる
+  },
+
+  // タグ内のコンテンツ（画像とテキストの横並び）
+  tagContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  // タグの画像
+  tagImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    marginRight: 12,
+  },
+
+  // タグのテキスト
+  tagText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2d3748',
+    flex: 1,
+  },
+
+  // ===== セクション共通スタイル（編集画面と統一） =====
+  // 各セクション（自己紹介、タグ、詳細情報）の共通コンテナ
+  section: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    marginHorizontal: 24,
+    marginTop: 16,
+  },
+
+  // セクションタイトルの共通スタイル
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2d3748',
+    marginBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#4CAF50',
+    paddingBottom: 8,
+  },
+
+  // タググリッドのレイアウト
+  tagsGrid: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+
+  // ===== 編集画面用のスタイル（レガシー） =====
+  // セーフエリア
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+
+  // 保存ボタン
+  saveButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+
+  // 保存ボタンのテキスト
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+}); 

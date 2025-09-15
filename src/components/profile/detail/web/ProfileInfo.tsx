@@ -1,5 +1,5 @@
 import { VerificationMark } from '@components/common/VerificationMark';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailStyles } from '@styles/profile/detail/web/ProfileDetailStyles.web';
 import React from 'react';
 import { Text, View } from 'react-native';
 

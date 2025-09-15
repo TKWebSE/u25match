@@ -1,4 +1,4 @@
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailStyles } from '@styles/profile/detail/mobile/ProfileDetailStyles.native';
 import React, { useEffect, useRef } from 'react';
 import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 

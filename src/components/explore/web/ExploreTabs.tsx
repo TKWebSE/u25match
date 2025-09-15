@@ -42,7 +42,7 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
     if (isWeb && sidebarContext) {
       // Web版：サイドバーの状態を考慮
       containerWidth = sidebarContext.mainContentWidth;
-      containerMargin = 0; // WebLayoutで既にマージンが設定されている
+      containerMargin = -16; // 左端を詰める
     } else if (cardListWidth) {
       // モバイル版：カードリストの幅を使用
       containerWidth = cardListWidth;
@@ -53,8 +53,8 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
       containerMargin = 16;
     }
 
-    // タブの幅を計算（4つのタブを均等に配置）
-    const tabWidth = containerWidth / 4;
+    // タブの幅を計算（4つのタブを均等に配置、タブ間に隙間を作る）
+    const tabWidth = (containerWidth - 96) / 4; // 左右24pxずつ、タブ間に16pxずつの隙間
 
     return {
       containerWidth,
@@ -140,7 +140,7 @@ const ExploreTabs: React.FC<ExploreTabsProps> = ({ activeTab, onTabPress, cardLi
           style={[
             styles.indicator,
             {
-              width: tabWidth,
+              width: tabWidth + 32, // 右端まで伸ばすため32px追加
               transform: [{ translateX: slideAnim }],
             },
           ]}

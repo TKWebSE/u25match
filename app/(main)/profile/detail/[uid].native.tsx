@@ -3,6 +3,7 @@ import { EditButton } from '@/src/components/profile/detail/mobile/EditButton.na
 import ImageIndicator from '@/src/components/profile/detail/mobile/ImageIndicator.native';
 import { LikeButton } from '@/src/components/profile/detail/mobile/LikeButton.native';
 import { MobileImageCarousel } from '@/src/components/profile/detail/mobile/MobileImageCarousel.native';
+import { ProfileDetailStyles } from '@/src/styles/profile/detail/mobile/ProfileDetailStyles.native';
 import { LoadingState } from '@components/common';
 import { ErrorState } from '@components/common/ErrorState';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@components/profile/detail';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {

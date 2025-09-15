@@ -1,4 +1,4 @@
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailStyles } from '@styles/profile/detail/mobile/ProfileDetailStyles.native';
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 

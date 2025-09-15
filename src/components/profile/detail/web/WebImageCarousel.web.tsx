@@ -1,94 +1,189 @@
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
-import React, { useEffect, useRef } from 'react';
-import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { PROFILE_IMAGE_SIZES } from '@constants/imageSizes';
+import React, { useState } from 'react';
+import { Image, PanResponder, Text, TouchableOpacity, View } from 'react-native';
 
-const { width } = Dimensions.get('window');
-
-interface MobileImageCarouselProps {
+interface WebImageCarouselProps {
   images: string[];
   currentIndex: number;
   onIndexChange: (index: number) => void;
 }
 
 /**
- * モバイル用画像カルーセルコンポーネント
+ * Web版画像カルーセルコンポーネント
+ * リアクション画面や検索画面のユーザーカードと同じアスペクト比（1:1.4）で表示
  * 
  * @param images - 画像URLの配列
  * @param currentIndex - 現在の画像インデックス
  * @param onIndexChange - 画像インデックスが変更された時のコールバック
  */
-export const MobileImageCarousel: React.FC<MobileImageCarouselProps> = ({
+export const MobileImageCarousel: React.FC<WebImageCarouselProps> = ({
   images,
   currentIndex,
   onIndexChange,
 }) => {
-  const flatListRef = useRef<FlatList>(null);
-  const imageSize = width - 8;
+  const imageSizes = PROFILE_IMAGE_SIZES;
+  const [startX, setStartX] = useState(0);
 
-  // 外部からのインデックス変更に応じてスクロール位置を更新
-  useEffect(() => {
-    if (flatListRef.current && currentIndex >= 0 && currentIndex < images.length) {
-      flatListRef.current.scrollToIndex({
-        index: currentIndex,
-        animated: true,
-      });
+  // 前の画像に移動
+  const goToPrevious = () => {
+    if (currentIndex > 0) {
+      onIndexChange(currentIndex - 1);
     }
-  }, [currentIndex, images.length]);
+  };
 
-  // 画像スライダーのスクロール処理
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(contentOffsetX / imageSize);
+  // 次の画像に移動
+  const goToNext = () => {
+    if (currentIndex < images.length - 1) {
+      onIndexChange(currentIndex + 1);
+    }
+  };
 
-    // インデックスが有効な範囲内の場合のみ更新
-    if (index >= 0 && index < images.length && index !== currentIndex) {
+  // 指定した画像に移動
+  const goToImage = (index: number) => {
+    if (index >= 0 && index < images.length) {
       onIndexChange(index);
     }
   };
 
-  // スクロールエラー時のフォールバック
-  const handleScrollToIndexFailed = (info: any) => {
-    console.warn('ScrollToIndex failed:', info);
-    // フォールバック: 指定した位置にスクロール
-    setTimeout(() => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({
-          offset: info.averageItemLength * info.index,
-          animated: true,
-        });
+  // PanResponderでスワイプを検知
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+
+    onPanResponderGrant: (evt) => {
+      setStartX(evt.nativeEvent.pageX);
+    },
+
+    onPanResponderRelease: (evt) => {
+      const endX = evt.nativeEvent.pageX;
+      const diffX = endX - startX;
+      const threshold = 50; // スワイプの閾値
+
+      if (Math.abs(diffX) > threshold) {
+        if (diffX > 0 && currentIndex > 0) {
+          // 右にスワイプ（前の画像）
+          goToPrevious();
+        } else if (diffX < 0 && currentIndex < images.length - 1) {
+          // 左にスワイプ（次の画像）
+          goToNext();
+        }
       }
-    }, 100);
-  };
+    },
+  });
 
   return (
-    <FlatList
-      ref={flatListRef}
-      data={images}
-      horizontal
-      pagingEnabled
-      showsHorizontalScrollIndicator={false}
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      decelerationRate="fast"
-      snapToInterval={imageSize}
-      snapToAlignment="start"
-      initialNumToRender={1}
-      maxToRenderPerBatch={1}
-      windowSize={1}
-      removeClippedSubviews={true}
-      onScrollToIndexFailed={handleScrollToIndexFailed}
-      getItemLayout={(data, index) => ({
-        length: imageSize,
-        offset: imageSize * index,
-        index,
-      })}
-      renderItem={({ item }) => (
+    <View style={{ position: 'relative' }}>
+      {/* PanResponderでスワイプを検知 */}
+      <View {...panResponder.panHandlers}>
+        {/* 現在の画像を表示 */}
         <Image
-          source={{ uri: item }}
-          style={ProfileDetailStyles.profileImage}
-          resizeMode="cover"
+          source={{ uri: images[currentIndex] }}
+          style={{
+            width: imageSizes.width,
+            height: imageSizes.height,
+            resizeMode: 'cover',
+            borderRadius: 20,
+          }}
         />
+      </View>
+
+      {/* 左右のナビゲーションボタン */}
+      {images.length > 1 && (
+        <>
+          {/* 前の画像ボタン */}
+          {currentIndex > 0 && (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: [{ translateY: -20 }],
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderRadius: 20,
+                width: 40,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1,
+              }}
+              onPress={goToPrevious}
+            >
+              <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>‹</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* 次の画像ボタン */}
+          {currentIndex < images.length - 1 && (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: [{ translateY: -20 }],
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderRadius: 20,
+                width: 40,
+                height: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1,
+              }}
+              onPress={goToNext}
+            >
+              <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>›</Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
-    />
+
+      {/* プログレスバー型インジケーター */}
+      {images.length > 1 && (
+        <View style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 8,
+          zIndex: 1,
+        }}>
+          {/* 背景の線 */}
+          <View style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 8,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            borderRadius: 4,
+          }} />
+
+          {/* 各画像のセグメント */}
+          <View style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 8,
+            flexDirection: 'row',
+            borderRadius: 4,
+          }}>
+            {images.map((_, index) => (
+              <TouchableOpacity
+                key={index}
+                style={{
+                  flex: 1,
+                  height: 8,
+                  backgroundColor: index <= currentIndex ? '#4CAF50' : 'transparent',
+                  borderRadius: 4,
+                  marginRight: index < images.length - 1 ? 2 : 0,
+                }}
+                onPress={() => goToImage(index)}
+                activeOpacity={0.7}
+              />
+            ))}
+          </View>
+        </View>
+      )}
+    </View>
   );
-}; 
+};

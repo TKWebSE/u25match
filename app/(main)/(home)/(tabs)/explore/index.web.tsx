@@ -1,7 +1,7 @@
+import ExploreTabs from '@/src/components/explore/web/ExploreTabs';
 import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
-import ExploreTabs from '@components/explore/ExploreTabs';
 import { getProfilePath } from '@constants/routes';
 import { useCardLayout } from '@hooks/useCardLayout';
 import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';

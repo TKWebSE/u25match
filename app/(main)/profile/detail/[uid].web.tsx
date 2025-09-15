@@ -13,7 +13,7 @@ import {
 } from '@components/profile/detail/web';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
-import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
+import { ProfileDetailStyles as WebProfileDetailStyles } from '@styles/profile/detail/web/ProfileDetailStyles.web';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -60,7 +60,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View style={ProfileDetailStyles.container}>
+    <View style={WebProfileDetailStyles.container}>
       {/* 戻るボタン */}
       <TouchableOpacity
         style={styles.backButton}
@@ -70,11 +70,11 @@ export default function ProfileScreen() {
         <Text style={styles.backButtonText}>←</Text>
       </TouchableOpacity>
 
-      <ScrollView style={ProfileDetailStyles.scrollContainer}>
+      <ScrollView style={WebProfileDetailStyles.scrollContainer}>
         {/* コンテンツ全体に余白を適用 */}
-        <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>
+        <View style={[WebProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>
           {/* 画像スライダー */}
-          <View style={ProfileDetailStyles.imageContainer}>
+          <View style={WebProfileDetailStyles.imageContainer}>
             <WebImageCarousel
               images={profile.images}
               currentIndex={activeDotIndex}
@@ -113,12 +113,12 @@ export default function ProfileScreen() {
       {/* 自分のプロフィールかどうかを判定 */}
       {profile.uid === 'my-user-id' ? (
         // 自分のプロフィールの場合：編集ボタン
-        <View style={ProfileDetailStyles.likeButtonContainer}>
+        <View style={WebProfileDetailStyles.likeButtonContainer}>
           <EditButton onPress={() => router.push(PROFILE_EDIT_SCREEN_PATH)} />
         </View>
       ) : (
         // 他人のプロフィールの場合：いいねボタン
-        <View style={ProfileDetailStyles.likeButtonContainer}>
+        <View style={WebProfileDetailStyles.likeButtonContainer}>
           <LikeButton onPress={handleLike} liked={liked} />
         </View>
       )}
