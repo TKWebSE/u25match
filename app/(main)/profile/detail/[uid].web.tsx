@@ -1,16 +1,16 @@
 // app/(main)/profile/detail/[uid].web.tsx
-import { LikeButton } from '@/src/components/profile/detail/web/LikeButton.web';
 import { LoadingState } from '@components/common';
 import { ErrorState } from '@components/common/ErrorState';
 import {
+  EditButton,
+  ImageIndicator,
+  LikeButton,
+  WebImageCarousel,
   WebProfileBio,
   WebProfileDetails,
   WebProfileInfo,
   WebProfileTags
-} from '@components/profile/detail';
-import { EditButton } from '@components/profile/EditButton';
-import ImageIndicator from '@components/profile/ImageIndicator';
-import WebImageNavigator from '@components/profile/WebImageNavigator';
+} from '@components/profile/detail/web';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { useProfileDetail } from '@hooks/useProfileDetail';
 import { ProfileDetailStyles } from '@styles/profile/ProfileDetailStyles';
@@ -75,10 +75,10 @@ export default function ProfileScreen() {
         <View style={[ProfileDetailStyles.contentContainer, { marginHorizontal: contentMargin }]}>
           {/* 画像スライダー */}
           <View style={ProfileDetailStyles.imageContainer}>
-            <WebImageNavigator
+            <WebImageCarousel
               images={profile.images}
               currentIndex={activeDotIndex}
-              onImageChange={setActiveDotIndex}
+              onIndexChange={setActiveDotIndex}
             />
           </View>
 

@@ -72,19 +72,6 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
     }).start();
   };
 
-  const handleHoverIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1.02,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleHoverOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
 
   const handleImageError = () => {
     console.warn(`タグ画像の読み込みに失敗しました: ${tag.name}`);
@@ -96,17 +83,15 @@ const TagItem: React.FC<{ tag: { id: string; name: string; imageUrl: string } }>
       style={ProfileDetailStyles.tagItem}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onMouseEnter={handleHoverIn}
-      onMouseLeave={handleHoverOut}
       activeOpacity={0.8}
     >
       <Animated.View style={[{ transform: [{ scale: scaleAnim }] }]}>
-        <Image
-          source={getTagImage(tag.name)}
-          style={ProfileDetailStyles.tagImage}
-          onError={handleImageError}
-        />
-        <View style={ProfileDetailStyles.tagOverlay}>
+        <View style={ProfileDetailStyles.tagContent}>
+          <Image
+            source={getTagImage(tag.name)}
+            style={ProfileDetailStyles.tagImage}
+            onError={handleImageError}
+          />
           <Text style={ProfileDetailStyles.tagText}>{tag.name}</Text>
         </View>
       </Animated.View>

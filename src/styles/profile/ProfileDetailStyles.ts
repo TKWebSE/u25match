@@ -4,26 +4,41 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * プロフィール詳細画面専用のスタイル定義
+ * 
+ * このファイルは以下の責務を持ちます：
+ * - プロフィール詳細画面の全体的なレイアウト
+ * - 画像、基本情報、自己紹介、タグ、詳細情報の表示スタイル
+ * - 編集画面との統一性を保ったセクションスタイル
+ * - Web版とモバイル版の両方に対応したレスポンシブデザイン
+ */
 export const ProfileDetailStyles = StyleSheet.create({
+  // メインコンテナ
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa', // モダンな背景色
   },
+
+  // スクロール可能なコンテンツエリア
   scrollContainer: {
     flex: 1,
     backgroundColor: '#f8f9fa'
   },
+
+  // コンテンツ全体のラッパー（Web版での中央寄せ用）
   contentContainer: {
     // コンテンツ全体のスタイル
   },
+  // プロフィール画像のコンテナ（スライダー用）
   imageContainer: {
     width: '100%',
-    height: getPlatformValue(600, width), // 高さを少し調整
+    height: getPlatformValue(600, width), // プラットフォーム別の高さ調整
     overflow: 'hidden',
     marginHorizontal: 8,
     marginTop: 12,
     borderRadius: 20, // より丸みを帯びた角
-    // より強いシャドウ効果
+    // より強いシャドウ効果で立体感を演出
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -221,7 +236,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.5,
   },
-  // タグ表示用スタイル
+  // ===== タグ表示関連スタイル =====
+  // タグセクション全体（レガシー：現在はsectionスタイルを使用）
   tagsSection: {
     marginBottom: 16,
     marginHorizontal: 24, // 自己紹介や詳細プロフィールと同じ幅に調整
@@ -231,6 +247,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     borderRadius: 16,
     padding: 20, // 自己紹介と同じパディング
   },
+
+  // タグセクションのタイトル（レガシー：現在はsectionTitleスタイルを使用）
   tagsTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -242,10 +260,14 @@ export const ProfileDetailStyles = StyleSheet.create({
     borderBottomColor: '#4CAF50',
     paddingBottom: 8,
   },
+
+  // タグ一覧のコンテナ
   tagsContainer: {
     flexDirection: 'column',
     gap: 12,
   },
+
+  // 個別のタグアイテム（編集画面と同じレイアウト）
   tagItem: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 12,
@@ -260,16 +282,22 @@ export const ProfileDetailStyles = StyleSheet.create({
     width: '100%', // タグ項目を全幅に
     alignSelf: 'stretch', // 親コンテナの幅に合わせる
   },
+
+  // タグ内のコンテンツ（画像とテキストの横並び）
   tagContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+
+  // タグの画像
   tagImage: {
     width: 40,
     height: 40,
     borderRadius: 10,
     marginRight: 12,
   },
+
+  // タグのテキスト
   tagText: {
     fontSize: 15,
     fontWeight: '600',
@@ -277,7 +305,8 @@ export const ProfileDetailStyles = StyleSheet.create({
     flex: 1,
   },
 
-  // セクション共通スタイル（編集画面と統一）
+  // ===== セクション共通スタイル（編集画面と統一） =====
+  // 各セクション（自己紹介、タグ、詳細情報）の共通コンテナ
   section: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 16,
@@ -287,6 +316,7 @@ export const ProfileDetailStyles = StyleSheet.create({
     marginTop: 16,
   },
 
+  // セクションタイトルの共通スタイル
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -297,12 +327,20 @@ export const ProfileDetailStyles = StyleSheet.create({
     paddingBottom: 8,
   },
 
-  // 編集画面用のスタイル
+  // タググリッドのレイアウト
+  tagsGrid: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+
+  // ===== 編集画面用のスタイル（レガシー） =====
+  // セーフエリア
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
 
+  // 保存ボタン
   saveButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: 16,
@@ -311,6 +349,7 @@ export const ProfileDetailStyles = StyleSheet.create({
     marginRight: 16,
   },
 
+  // 保存ボタンのテキスト
   saveButtonText: {
     color: 'white',
     fontSize: 16,
