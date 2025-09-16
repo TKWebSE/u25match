@@ -8,12 +8,14 @@ interface SidebarContextType {
   isSidebarOpen: boolean;
   sidebarWidth: number;
   mainContentWidth: number; // メインコンテンツエリアの幅を追加
+  searchQuery: string; // 検索クエリを追加
 }
 
 const SidebarContext = createContext<SidebarContextType>({
   isSidebarOpen: true,
   sidebarWidth: 280,
   mainContentWidth: 829, // デフォルト値を設定
+  searchQuery: '', // デフォルト値を設定
 });
 
 // カスタムフックでドロワーの状態を取得
@@ -87,6 +89,7 @@ export const WebLayout: React.FC<WebLayoutProps> = ({ children }) => {
     isSidebarOpen,
     sidebarWidth: actualSidebarWidth || sidebarWidth, // 実際に計測した値を使用
     mainContentWidth: actualMainContentWidth || (width - sidebarWidth), // 実際に計測した値を使用
+    searchQuery: '', // 検索クエリのデフォルト値
   };
 
   return (
