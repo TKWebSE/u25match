@@ -4,63 +4,45 @@ import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, LOGIN_SCREEN_PATH, SI
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
 import { DrawerProvider } from '@contexts/DrawerContext';
 import { colors } from '@styles/globalStyles';
-import { defaultConfig } from '@tamagui/config/v4';
-import { TamaguiProvider, createTamagui } from '@tamagui/core';
 import { Slot, usePathname, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import EntryScreen from './(auth)/entryScreen';
 
-// Tamagui設定の作成
-const config = createTamagui(defaultConfig)
-
-type Conf = typeof config
-
-// make imports typed
-declare module '@tamagui/core' {
-  interface TamaguiCustomConfig extends Conf { }
-}
 
 // 認証ゲートコンポーネント - 認証状態に基づいて画面を制御
 function AuthGate() {
-  const { user, loading, error } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // 画面側の初期化制御
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 300); // 最低限の初期化時間
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // 認証状態の変更を監視し、適切な画面にリダイレクト
   useEffect(() => {
-    console.log('🔐 AuthGate: 認証状態変更', {
-      user: user ? { uid: user.uid, email: user.email } : null,
-      loading,
-      pathname
-    });
-    console.log('AuthGateのpathnameは：', pathname);
-    // 認証済みユーザーがルートにいる場合はメイン画面にリダイレクト
-    if (!loading && user && pathname === '/') {
+    if (!isInitializing && user && pathname === '/') {
       console.log('🔐 AuthGate: 認証済みユーザーをメイン画面にリダイレクト');
       router.replace(EXPLORE_SCREEN_PATH as any);
     }
-  }, [user, loading, pathname, router]);
+  }, [user, isInitializing, pathname, router]);
 
-  // ローディング中 - 認証状態の確認中
-  if (loading) {
+  // 初期化中 - アプリ起動時の表示
+  if (isInitializing) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>認証状態を確認中...</Text>
-      </View>
-    );
-  }
-
-  // エラーが発生した場合 - 認証エラーの表示
-  if (error) {
-    return (
-      <View style={styles.error}>
-        <Text style={styles.errorText}>認証エラーが発生しました</Text>
-        <Text style={styles.errorDetail}>{error}</Text>
+        <Text style={styles.loadingText}>アプリを起動中...</Text>
       </View>
     );
   }
@@ -99,14 +81,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <TamaguiProvider config={config}>
-          <DrawerProvider>
-            <AuthProvider>
-              <AuthGate />
-              <Toast />
-            </AuthProvider>
-          </DrawerProvider>
-        </TamaguiProvider>
+        <DrawerProvider>
+          <AuthProvider>
+            <AuthGate />
+            <Toast />
+          </AuthProvider>
+        </DrawerProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

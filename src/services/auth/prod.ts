@@ -1,12 +1,15 @@
 // src/services/auth/prod.ts
 // 🔥 本番用認証サービス - 実際のFirebaseを使う
 
-import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { AuthUser } from '@my-types/user';
+import { getUserProfile } from '@services/firestoreUserProfile';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
 export class ProdAuthService implements AuthService {
   // 🎯 インターフェースの約束を守って実装
+  private currentUser: AuthUser | null = null;
 
   async signUp(email: string, password: string): Promise<AuthResult> {
     console.log('🔥 本番サインアップ:', email);
@@ -58,5 +61,44 @@ export class ProdAuthService implements AuthService {
   async resetPassword(email: string): Promise<void> {
     console.log('🔥 本番パスワードリセット:', email);
     await sendPasswordResetEmail(auth, email);
+  }
+
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser;
+  }
+
+  onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void {
+    console.log('🔥 Firebase認証状態監視を開始');
+
+    return onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('🔥 Firebase認証状態変更:', firebaseUser ? firebaseUser.uid : 'null');
+
+      if (firebaseUser) {
+        // Firebase UserをAuthUserに変換
+        const authUser: AuthUser = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: null,
+          photoURL: null,
+        };
+
+        // Firestoreからプロフィール情報を取得
+        try {
+          const userProfile = await getUserProfile(firebaseUser.uid);
+          if (userProfile) {
+            authUser.displayName = userProfile.displayName || null;
+            authUser.photoURL = userProfile.photoURL || null;
+          }
+        } catch (error) {
+          console.error('🔥 プロフィール取得エラー:', error);
+        }
+
+        this.currentUser = authUser;
+        callback(authUser);
+      } else {
+        this.currentUser = null;
+        callback(null);
+      }
+    });
   }
 }

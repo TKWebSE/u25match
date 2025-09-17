@@ -33,5 +33,13 @@ export const resetPassword = (email: string) => {
   return authService.resetPassword(email);
 };
 
+export const getCurrentUser = () => {
+  return authService.getCurrentUser();
+};
+
+export const onAuthStateChanged = (callback: (user: any) => void) => {
+  return authService.onAuthStateChanged(callback);
+};
+
 // 型定義も再エクスポート
 export type { AuthResult, AuthService } from './types';

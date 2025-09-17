@@ -1,10 +1,13 @@
 // src/services/auth/mock.ts
 // 🎭 モック用認証サービス - バックエンドに接続しない
 
+import { AuthUser } from '@my-types/user';
 import { AuthResult, AuthService } from './types';
 
 export class MockAuthService implements AuthService {
   // 🎯 同じインターフェースの約束を守って実装（でも中身はダミー）
+  private currentUser: AuthUser | null = null;
+  private callbacks: ((user: AuthUser | null) => void)[] = [];
 
   async signUp(email: string, password: string): Promise<AuthResult> {
     console.log('🎭 モックサインアップ:', email);
@@ -65,6 +68,38 @@ export class MockAuthService implements AuthService {
     }
 
     console.log('🎭 パスワードリセットメールを送信しました（モック）');
+  }
+
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser;
+  }
+
+  onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void {
+    console.log('🎭 モック認証状態監視を開始');
+
+    // コールバックを登録
+    this.callbacks.push(callback);
+
+    // モックユーザーを即座に通知
+    setTimeout(() => {
+      const mockUser: AuthUser = {
+        uid: 'mock-user-123',
+        email: 'test@example.com',
+        displayName: 'テストユーザー',
+        photoURL: null,
+      };
+
+      this.currentUser = mockUser;
+      callback(mockUser);
+    }, 100);
+
+    // unsubscribe関数を返す
+    return () => {
+      const index = this.callbacks.indexOf(callback);
+      if (index > -1) {
+        this.callbacks.splice(index, 1);
+      }
+    };
   }
 
   // 🛠️ プライベートヘルパーメソッド

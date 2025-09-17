@@ -1,18 +1,28 @@
 // src/services/auth/types.ts
 // 🎯 これが「契約書」- どんな認証サービスも必ずこの機能を提供する約束
 
+import { AuthUser } from '@my-types/user';
+
 export interface AuthService {
-  // サインアップ機能
+  // 認証処理機能
+  /** 新規ユーザーアカウントの作成 */
   signUp(email: string, password: string): Promise<any>;
 
-  // ログイン機能  
+  /** 既存ユーザーのログイン */
   logIn(email: string, password: string): Promise<any>;
 
-  // ログアウト機能
+  /** 現在ユーザーのログアウト */
   logOut(): Promise<void>;
 
-  // パスワードリセット機能
+  /** パスワードリセットメールの送信 */
   resetPassword(email: string): Promise<void>;
+
+  // 状態監視機能
+  /** 現在ログイン中のユーザー情報を取得 */
+  getCurrentUser(): AuthUser | null;
+
+  /** 認証状態の変更を監視し、変更時にコールバックを実行 */
+  onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void;
 }
 
 // 認証結果の型も定義
