@@ -2,7 +2,7 @@
 // パスワードリセット画面 - パスワードを忘れた場合の処理
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { resetPassword } from '@services/auth';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
@@ -20,9 +20,8 @@ export default function ForgotPasswordScreen() {
   // フォーム状態の管理
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // 認証コンテキストから必要な機能を取得
-  const { resetPassword, error, clearError, loading } = useAuth();
   const router = useRouter();
 
   // パスワードリセット処理の実行
@@ -41,13 +40,18 @@ export default function ForgotPasswordScreen() {
 
     try {
       setIsSubmitting(true);
+      setError(null);
+
+      // services/authのresetPassword関数を直接呼び出し
       await resetPassword(email);
+
       showSuccessToast('パスワードリセットメールを送信しました');
       // ログイン画面に戻る
       router.push(LOGIN_SCREEN_PATH);
     } catch (error: any) {
       console.error('パスワードリセットエラー:', error);
-      showErrorToast('パスワードリセットに失敗しました。メールアドレスを確認してください。');
+      setError(error.message || 'パスワードリセットに失敗しました');
+      showErrorToast(error.message || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
     } finally {
       setIsSubmitting(false);
     }
@@ -85,7 +89,7 @@ export default function ForgotPasswordScreen() {
           <TouchableOpacity
             style={[styles.resetButton, isSubmitting && styles.resetButtonDisabled]}
             onPress={handleResetPassword}
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <ActivityIndicator color="#fff" size="small" />

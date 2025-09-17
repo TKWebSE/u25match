@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@contexts/AuthContext';
 import { useProfile } from '@hooks/useProfile';
 import { useStrictAuth } from '@hooks/useStrictAuth';
+import { logOut } from '@services/auth';
 import { colors, spacing } from '@styles/globalStyles';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { useRouter } from 'expo-router';
@@ -31,7 +32,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 const SettingsScreen = () => {
   const router = useRouter();
   const user = useStrictAuth(); // 認証済みユーザー情報を取得
-  const { logout, loading } = useAuth(); // 認証コンテキストからログアウト機能を取得
+  const { } = useAuth(); // 認証コンテキスト（状態のみ）
   const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
 
   // 自分のプロフィール画面への遷移
@@ -41,8 +42,13 @@ const SettingsScreen = () => {
 
   // ログアウト処理
   const handleLogout = async () => {
-    await logout();
-    // ログアウト後は認証画面に自動的にリダイレクトされます
+    try {
+      await logOut();
+      // onAuthStateChangedでuser状態が更新され、自動的に認証画面にリダイレクトされます
+    } catch (error: any) {
+      console.error('ログアウトエラー:', error);
+      // エラーハンドリングは必要に応じて追加
+    }
   };
 
   // プライバシーポリシーの表示
@@ -232,7 +238,7 @@ const SettingsScreen = () => {
         {/* ログアウトセクション */}
         <View style={[SettingsStyles.section, styles.webSection]}>
           {/* ログアウトボタン */}
-          <LogoutButton loading={loading} onLogout={handleLogout} />
+          <LogoutButton loading={false} onLogout={handleLogout} />
         </View>
       </ScrollView>
     </View>

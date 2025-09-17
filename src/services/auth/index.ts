@@ -29,5 +29,9 @@ export const logOut = () => {
   return authService.logOut();
 };
 
+export const resetPassword = (email: string) => {
+  return authService.resetPassword(email);
+};
+
 // 型定義も再エクスポート
-export type { AuthService, AuthResult } from './types';
+export type { AuthResult, AuthService } from './types';

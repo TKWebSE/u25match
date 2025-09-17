@@ -3,6 +3,7 @@
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
+import { logIn } from '@services/auth';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
@@ -21,18 +22,18 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // 認証コンテキストから必要な機能を取得
-  const { login, error, clearError, loading } = useAuth();
+  // 認証コンテキストから必要な機能を取得（状態のみ）
+  const { user } = useAuth();
   const router = useRouter();
 
-  // エラーが変更されたらトーストで表示
+  // ユーザーがログイン済みの場合はメイン画面にリダイレクト
   useEffect(() => {
-    if (error) {
-      // エラーメッセージの表示を削除
-      clearError();
+    if (user) {
+      router.replace(EXPLORE_SCREEN_PATH as any);
     }
-  }, [error, clearError]);
+  }, [user, router]);
 
   // ログイン処理の実行
   const handleLogin = async () => {
@@ -56,12 +57,17 @@ export default function LoginScreen() {
 
     try {
       setIsSubmitting(true);
-      await login(email, password);
+      setError(null);
+
+      // services/authのlogIn関数を直接呼び出し
+      await logIn(email, password);
+
       showSuccessToast('ログインに成功しました');
-      router.push(EXPLORE_SCREEN_PATH);
+      // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
     } catch (error: any) {
       console.error('ログインエラー:', error);
-      // エラーはAuthContextで処理されるので、ここでは何もしない
+      setError(error.message || 'ログインに失敗しました');
+      showErrorToast(error.message || 'ログインに失敗しました');
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +116,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[styles.loginButton, isSubmitting && styles.loginButtonDisabled]}
             onPress={handleLogin}
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <ActivityIndicator color="#fff" size="small" />

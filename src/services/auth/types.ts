@@ -4,12 +4,15 @@
 export interface AuthService {
   // サインアップ機能
   signUp(email: string, password: string): Promise<any>;
-  
+
   // ログイン機能  
   logIn(email: string, password: string): Promise<any>;
-  
+
   // ログアウト機能
   logOut(): Promise<void>;
+
+  // パスワードリセット機能
+  resetPassword(email: string): Promise<void>;
 }
 
 // 認証結果の型も定義

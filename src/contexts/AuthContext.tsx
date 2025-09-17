@@ -17,12 +17,12 @@
  * }
  * ```
  */
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { mockAuthUser } from '@mock/authMock';
+import { AuthUser } from '@my-types/user';
+import { getUserProfile } from '@services/firestoreUserProfile';
+import { onAuthStateChanged } from 'firebase/auth';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { auth } from '../../firebaseConfig';
-import { mockAuthUser } from '../mock/authMock';
-import { AuthUser } from '../my-types/user';
-import { getUserProfile } from '../services/firestoreUserProfile';
 
 /**
  * 認証コンテキストの型定義
@@ -41,18 +41,6 @@ type AuthContextType = {
   userProfile: any | null;
   /** 認証状態の読み込み中かどうかのフラグ */
   loading: boolean;
-  /** エラーメッセージ */
-  error: string | null;
-  /** ログイン関数 */
-  login: (email: string, password: string) => Promise<void>;
-  /** サインアップ関数 */
-  signup: (email: string, password: string) => Promise<void>;
-  /** ログアウト関数 */
-  logout: () => Promise<void>;
-  /** パスワードリセット関数 */
-  resetPassword: (email: string) => Promise<void>;
-  /** エラーをクリアする関数 */
-  clearError: () => void;
   /** プロフィール情報を更新する関数 */
   refreshUserProfile: () => Promise<void>;
 };
@@ -81,7 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [userProfile, setUserProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   /**
    * プロフィール情報を取得・更新する関数
@@ -130,7 +117,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // 他のプロフィール情報
       });
       setLoading(false);
-      setError(null);
       return;
     }
 
@@ -179,11 +165,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setLoading(false);
-      setError(null);
     }, (error) => {
       // 認証エラーが発生した場合の処理
       console.error('🔐 AuthProvider: 認証エラーが発生しました', error);
-      setError(error.message);
       setLoading(false);
     });
 
@@ -195,120 +179,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  /**
-   * ログイン関数
-   * 
-   * メールアドレスとパスワードを使用してログインを実行します。
-   * Dev環境では実際のFirebase Authは使用されません。
-   * 
-   * @param email - ユーザーのメールアドレス
-   * @param password - ユーザーのパスワード
-   * @throws {Error} ログインに失敗した場合
-   */
-  const login = async (email: string, password: string) => {
-    try {
-      setError(null);
-      setLoading(true);
-      console.log('🔐 ログイン試行:', { email });
-
-      // Firebase Authを使用してログイン
-      await signInWithEmailAndPassword(auth, email, password);
-
-      console.log('🔐 ログイン成功');
-    } catch (error: any) {
-      console.error('🔐 ログインエラー:', error);
-      setError(error.message || 'ログインに失敗しました');
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * サインアップ関数
-   * 
-   * 新しいアカウントを作成します。
-   * Dev環境では実際のFirebase Authは使用されません。
-   * 
-   * @param email - ユーザーのメールアドレス
-   * @param password - ユーザーのパスワード
-   * @throws {Error} アカウント作成に失敗した場合
-   */
-  const signup = async (email: string, password: string) => {
-    try {
-      setError(null);
-      setLoading(true);
-      console.log('🔐 サインアップ試行:', { email });
-
-      // Firebase Authを使用してユーザー作成
-      await createUserWithEmailAndPassword(auth, email, password);
-
-      console.log('🔐 サインアップ成功');
-    } catch (error: any) {
-      console.error('🔐 サインアップエラー:', error);
-      setError(error.message || 'アカウント作成に失敗しました');
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * ログアウト関数
-   * 
-   * 現在のユーザーをログアウトします。
-   * Dev環境では実際のFirebase Authは使用されません。
-   * 
-   * @throws {Error} ログアウトに失敗した場合
-   */
-  const logout = async () => {
-    try {
-      setError(null);
-      console.log('🔐 ログアウト試行');
-
-      // Firebase Authを使用してログアウト
-      await signOut(auth);
-
-      console.log('🔐 ログアウト成功');
-    } catch (error: any) {
-      console.error('🔐 ログアウトエラー:', error);
-      setError(error.message || 'ログアウトに失敗しました');
-      throw error;
-    }
-  };
-
-  /**
-   * パスワードリセット関数
-   * 
-   * 指定されたメールアドレスにパスワードリセットメールを送信します。
-   * 
-   * @param email - パスワードリセット対象のメールアドレス
-   * @throws {Error} パスワードリセットに失敗した場合
-   */
-  const resetPassword = async (email: string) => {
-    try {
-      setError(null);
-      console.log('🔐 パスワードリセット試行:', { email });
-
-      // Firebase Authを使用してパスワードリセットメールを送信
-      await sendPasswordResetEmail(auth, email);
-
-      console.log('🔐 パスワードリセットメール送信成功');
-    } catch (error: any) {
-      console.error('🔐 パスワードリセットエラー:', error);
-      setError(error.message || 'パスワードリセットに失敗しました');
-      throw error;
-    }
-  };
-
-  /**
-   * エラーをクリアする関数
-   * 
-   * エラーメッセージをリセットします。
-   */
-  const clearError = () => {
-    setError(null);
-  };
 
   /**
    * コンテキストに値をセットして、子コンポーネントに渡す
@@ -317,19 +187,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * - ユーザー情報
    * - プロフィール情報（画面遷移後も保持）
    * - ローディング状態
-   * - エラー情報
-   * - 認証関連の操作関数
+   * - プロフィール更新関数
    */
   const value: AuthContextType = {
     user,
     userProfile,
     loading,
-    error,
-    login,
-    signup,
-    logout,
-    resetPassword,
-    clearError,
     refreshUserProfile,
   };
 

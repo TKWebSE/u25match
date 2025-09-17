@@ -3,6 +3,7 @@
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { EXPLORE_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
+import { signUp } from '@services/auth';
 import { createUserProfile } from '@services/firestoreUserProfile';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
@@ -25,18 +26,18 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // 認証コンテキストから必要な機能を取得
-  const { signup, error, clearError, loading } = useAuth();
+  // 認証コンテキストから必要な機能を取得（状態のみ）
+  const { user } = useAuth();
   const router = useRouter();
 
-  // エラーが変更されたらトーストで表示
+  // ユーザーがログイン済みの場合はメイン画面にリダイレクト
   useEffect(() => {
-    if (error) {
-      showErrorToast(error);
-      clearError();
+    if (user) {
+      router.replace(EXPLORE_SCREEN_PATH as any);
     }
-  }, [error, clearError]);
+  }, [user, router]);
 
   // フォームのバリデーション
   const validateForm = () => {
@@ -75,9 +76,10 @@ export default function SignUpScreen() {
 
     try {
       setIsSubmitting(true);
+      setError(null);
 
-      // サインアップ実行
-      await signup(email, password);
+      // services/authのsignUp関数を直接呼び出し
+      await signUp(email, password);
 
       // ユーザープロファイル作成
       const currentUser = auth.currentUser;
@@ -86,10 +88,11 @@ export default function SignUpScreen() {
       }
 
       showSuccessToast('登録完了！ようこそ✨');
-      router.push(EXPLORE_SCREEN_PATH);
+      // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
     } catch (error: any) {
       console.error('サインアップエラー:', error);
-      // エラーはAuthContextで処理されるので、ここでは何もしない
+      setError(error.message || 'アカウント作成に失敗しました');
+      showErrorToast(error.message || 'アカウント作成に失敗しました');
     } finally {
       setIsSubmitting(false);
     }
@@ -150,7 +153,7 @@ export default function SignUpScreen() {
           <TouchableOpacity
             style={[styles.button, isSubmitting && styles.buttonDisabled]}
             onPress={handleSignUp}
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <ActivityIndicator color="#fff" size="small" />
