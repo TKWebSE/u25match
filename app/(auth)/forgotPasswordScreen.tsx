@@ -20,7 +20,6 @@ export default function ForgotPasswordScreen() {
   // フォーム状態の管理
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -40,7 +39,6 @@ export default function ForgotPasswordScreen() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
 
       // services/authのresetPassword関数を直接呼び出し
       await resetPassword(email);
@@ -50,7 +48,6 @@ export default function ForgotPasswordScreen() {
       router.push(LOGIN_SCREEN_PATH);
     } catch (error: any) {
       console.error('パスワードリセットエラー:', error);
-      setError(error.message || 'パスワードリセットに失敗しました');
       showErrorToast(error.message || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
     } finally {
       setIsSubmitting(false);

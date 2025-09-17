@@ -22,7 +22,6 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // 認証コンテキストから必要な機能を取得（状態のみ）
   const { user } = useAuth();
@@ -57,7 +56,6 @@ export default function LoginScreen() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
 
       // services/authのlogIn関数を直接呼び出し
       await logIn(email, password);
@@ -66,7 +64,6 @@ export default function LoginScreen() {
       // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
     } catch (error: any) {
       console.error('ログインエラー:', error);
-      setError(error.message || 'ログインに失敗しました');
       showErrorToast(error.message || 'ログインに失敗しました');
     } finally {
       setIsSubmitting(false);

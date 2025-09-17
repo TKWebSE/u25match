@@ -26,7 +26,6 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // 認証コンテキストから必要な機能を取得（状態のみ）
   const { user } = useAuth();
@@ -76,7 +75,6 @@ export default function SignUpScreen() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
 
       // services/authのsignUp関数を直接呼び出し
       await signUp(email, password);
@@ -91,7 +89,6 @@ export default function SignUpScreen() {
       // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
     } catch (error: any) {
       console.error('サインアップエラー:', error);
-      setError(error.message || 'アカウント作成に失敗しました');
       showErrorToast(error.message || 'アカウント作成に失敗しました');
     } finally {
       setIsSubmitting(false);
