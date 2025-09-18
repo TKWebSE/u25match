@@ -13,7 +13,7 @@ export const mockAuthUser: AuthUser = {
   uid: 'my-user-id',
   email: 'tanaka.hanako@example.com',
   displayName: '田中 花子',
-  photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face',
+  image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face',
 };
 
 /**
