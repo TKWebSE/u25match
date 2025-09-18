@@ -31,7 +31,7 @@ export interface AuthResult {
     uid: string;
     email: string;
     displayName?: string;
-    photoURL?: string;
+    image?: string;
     emailVerified: boolean;
   };
   operationType?: string;

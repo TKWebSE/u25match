@@ -22,7 +22,7 @@ export class ProdAuthService implements AuthService {
         uid: result.user.uid,
         email: result.user.email || '',
         displayName: result.user.displayName || undefined,
-        photoURL: result.user.photoURL || undefined,
+        image: result.user.photoURL || undefined,
         emailVerified: result.user.emailVerified,
       },
       operationType: 'signIn',
@@ -79,7 +79,7 @@ export class ProdAuthService implements AuthService {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: null,
-          photoURL: null,
+          image: null,
         };
 
         // Firestoreからプロフィール情報を取得
@@ -87,7 +87,7 @@ export class ProdAuthService implements AuthService {
           const userProfile = await getUserProfile(firebaseUser.uid);
           if (userProfile) {
             authUser.displayName = userProfile.displayName || null;
-            authUser.photoURL = userProfile.photoURL || null;
+            authUser.image = userProfile.photoURL || null;
           }
         } catch (error) {
           console.error('🔥 プロフィール取得エラー:', error);

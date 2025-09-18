@@ -13,7 +13,7 @@ interface AccountInfoProps {
     uid: string;
     email: string | null;
     displayName: string | null;
-    photoURL: string | null;
+    image: string | null;
   };
   /** プロフィール情報 */
   profile?: {
@@ -44,7 +44,7 @@ export const AccountInfo: React.FC<AccountInfoProps> = ({
       {/* アバター */}
       <View style={SettingsStyles.avatarContainer}>
         <UserAvatar
-          images={authUser.photoURL ? [authUser.photoURL] : []}
+          images={authUser.image ? [authUser.image] : []}
           email={authUser.email || undefined}
           size={50}
         />

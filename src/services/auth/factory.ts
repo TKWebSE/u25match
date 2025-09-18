@@ -1,7 +1,7 @@
 // src/services/auth/factory.ts
 // 🏭 認証サービス工場 - 環境判定と生成の責任のみ
 
-import { getServiceConfigInfo, getServiceMode } from '../../utils/serviceConfig';
+import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
 import { MockAuthService } from './mock';
 import { ProdAuthService } from './prod';
 import { AuthService } from './types';

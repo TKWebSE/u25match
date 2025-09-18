@@ -17,7 +17,7 @@ export interface User {
  * 
  * この型は認証に必要な最小限の情報のみを含みます：
  * - Firebase Authから取得できる基本情報（uid, email）
- * - Firestoreから取得するプロフィール情報（displayName, photoURL）
+ * - Firestoreから取得するプロフィール情報（displayName, image）
  * - 認証状態の管理に必要な情報のみ
  */
 export interface AuthUser {
@@ -28,7 +28,7 @@ export interface AuthUser {
   /** ユーザーの表示名（Firestoreから取得、初期はnull） */
   displayName: string | null;
   /** ユーザーのプロフィール画像URL（Firestoreから取得、初期はnull） */
-  photoURL: string | null;
+  image: string | null;
 }
 
 /**

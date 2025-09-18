@@ -7,6 +7,7 @@
  * 
  * 注意：認証処理は各画面でservices/authを直接使用
  */
+import { myProfileMock } from '@mock/myProfileMock';
 import { AuthUser } from '@my-types/user';
 import { onAuthStateChanged } from '@services/auth';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged((user) => {
       setUser(user);
-      setUserProfile(user ? {} : null);
+      setUserProfile(user ? myProfileMock : null);
     });
 
     return () => unsubscribe();

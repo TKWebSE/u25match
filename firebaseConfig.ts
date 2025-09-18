@@ -33,7 +33,7 @@ if (isDev) {
     uid: 'mock-user-123',
     email: 'test@example.com',
     displayName: 'テストユーザー',
-    photoURL: null,
+    image: null,
     emailVerified: true,
   };
 

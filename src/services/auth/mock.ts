@@ -1,6 +1,7 @@
 // src/services/auth/mock.ts
 // 🎭 モック用認証サービス - バックエンドに接続しない
 
+import { myProfileMock } from '@mock/myProfileMock';
 import { AuthUser } from '@my-types/user';
 import { AuthResult, AuthService } from './types';
 
@@ -83,10 +84,10 @@ export class MockAuthService implements AuthService {
     // モックユーザーを即座に通知
     setTimeout(() => {
       const mockUser: AuthUser = {
-        uid: 'mock-user-123',
-        email: 'test@example.com',
-        displayName: 'テストユーザー',
-        photoURL: null,
+        uid: myProfileMock.uid,
+        email: 'tanaka.hanako@example.com', // myProfileMockに合わせたメール
+        displayName: myProfileMock.name,
+        image: myProfileMock.images[0] || null,
       };
 
       this.currentUser = mockUser;
@@ -116,7 +117,7 @@ export class MockAuthService implements AuthService {
         uid: 'mock-user-123',
         email: 'test@example.com',
         displayName: 'テストユーザー',
-        photoURL: undefined,
+        image: undefined,
         emailVerified: true,
       },
       operationType: 'signIn',
