@@ -1,4 +1,4 @@
-// app/(auth)/forgotPasswordScreen.tsx
+// app/(auth)/forgot-password/index.tsx
 // パスワードリセット画面 - パスワードを忘れた場合の処理
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
@@ -45,7 +45,7 @@ export default function ForgotPasswordScreen() {
 
       showSuccessToast('パスワードリセットメールを送信しました');
       // ログイン画面に戻る
-      router.push(LOGIN_SCREEN_PATH);
+      router.push(LOGIN_SCREEN_PATH as any);
     } catch (error: any) {
       console.error('パスワードリセットエラー:', error);
       showErrorToast(error.message || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
@@ -56,7 +56,7 @@ export default function ForgotPasswordScreen() {
 
   // ログイン画面に戻る
   const handleBackToLogin = () => {
-    router.push(LOGIN_SCREEN_PATH);
+    router.push(LOGIN_SCREEN_PATH as any);
   };
 
   return (

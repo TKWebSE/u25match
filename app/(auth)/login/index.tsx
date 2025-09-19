@@ -1,4 +1,4 @@
-// app/(auth)/loginScreen.tsx
+// app/(auth)/login/index.tsx
 // ログイン画面 - ユーザーの認証を行う
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
@@ -62,7 +62,7 @@ export default function LoginScreen() {
 
   // パスワードを忘れた場合の処理
   const handleForgotPassword = () => {
-    router.push(FORGOT_PASSWORD_SCREEN_PATH);
+    router.push(FORGOT_PASSWORD_SCREEN_PATH as any);
   };
 
   return (
@@ -131,7 +131,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             onPress={() => {
               console.log('新規登録へ遷移');
-              router.push(SIGN_UP_SCREEN_PATH);
+              router.push(SIGN_UP_SCREEN_PATH as any);
             }}
             style={styles.signupButton}
             disabled={isSubmitting}

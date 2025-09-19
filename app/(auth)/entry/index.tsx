@@ -1,4 +1,4 @@
-// app/(auth)/entryScreen.tsx
+// app/(auth)/entry/index.tsx
 // エントリー画面 - アプリの最初の画面、ログインまたは新規登録への導線
 import { LOGIN_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { colors } from '@styles/globalStyles';

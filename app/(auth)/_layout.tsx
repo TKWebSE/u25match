@@ -24,10 +24,10 @@ export default function AuthLayout() {
         animation: 'slide_from_right',
       }}
     >
-      <Stack.Screen name="entryScreen" />
-      <Stack.Screen name="loginScreen" />
-      <Stack.Screen name="signUpScreen" />
-      <Stack.Screen name="forgotPasswordScreen" />
+      <Stack.Screen name="entry" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="sign-up" />
+      <Stack.Screen name="forgot-password" />
     </Stack>
   );
 }

@@ -1,4 +1,4 @@
-// app/(auth)/signUpScreen.tsx
+// app/(auth)/sign-up/index.tsx
 // サインアップ画面 - 新しいユーザーアカウントの作成
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth } from '../../firebaseConfig';
+import { auth } from '../../../firebaseConfig';
 
 export default function SignUpScreen() {
   // フォーム状態の管理
@@ -168,7 +168,7 @@ export default function SignUpScreen() {
 
           {/* ログインへのリンク */}
           <TouchableOpacity
-            onPress={() => router.push(LOGIN_SCREEN_PATH)}
+            onPress={() => router.push(LOGIN_SCREEN_PATH as any)}
             style={styles.loginButton}
             disabled={isSubmitting}
           >

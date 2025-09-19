@@ -10,7 +10,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import EntryScreen from './(auth)/entryScreen';
+import EntryScreen from './(auth)/entry';
 
 
 // 認証ゲートコンポーネント - 認証状態に基づいて画面を制御
