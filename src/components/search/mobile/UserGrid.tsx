@@ -4,7 +4,7 @@
 import { User as SearchUser } from '@/src/my-types/search';
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard from '@components/common/mobile/UnifiedUserCard';
-import { useCardSize } from '@hooks/useCardSize';
+import { useCardSize } from '@hooks/ui';
 import React, { useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 

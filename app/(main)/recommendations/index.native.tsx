@@ -1,7 +1,7 @@
 import ActionButtons from '@components/recommendations/ActionButtons';
 import { EmptyRecommendationsState } from '@components/recommendations/EmptyRecommendationsState';
 import SwipeableCard, { SwipeableCardRef } from '@components/recommendations/SwipeableCard';
-import { useRecommendations } from '@hooks/useRecommendations';
+import { useRecommendations } from '@hooks/features/recommendations';
 import { colors, spacing, typography } from '@styles/globalStyles';
 import React, { useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';

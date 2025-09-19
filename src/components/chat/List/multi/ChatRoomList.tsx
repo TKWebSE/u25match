@@ -4,7 +4,7 @@
 // - 空状態の表示
 // - チャット詳細画面への遷移
 
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
 import { ChatRoom } from '@services/main/chat/types';
 import React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';

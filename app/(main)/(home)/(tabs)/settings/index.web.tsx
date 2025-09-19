@@ -19,8 +19,8 @@ import {
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
 import { useAuth } from '@contexts/AuthContext';
-import { useProfile } from '@hooks/useProfile';
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
+import { useProfile } from '@hooks/profile';
 import { logOut } from '@services/auth';
 import { colors, spacing } from '@styles/globalStyles';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';

@@ -1,10 +1,8 @@
 import { MobileChatContainer } from "@components/chat/detail/mobile";
 import { MaterialIcons } from '@expo/vector-icons';
-import { useChatInput } from "@hooks/useChatInput";
-import { useChatMessages } from "@hooks/useChatMessages";
-import { useChatRooms } from "@hooks/useChatRooms";
-import { useKeyboard } from "@hooks/useKeyboard";
-import { useStrictAuth } from "@hooks/useStrictAuth";
+import { useStrictAuth } from "@hooks/auth";
+import { useChatInput, useChatMessages, useChatRooms } from "@hooks/chat";
+import { useKeyboard } from "@hooks/ui";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";

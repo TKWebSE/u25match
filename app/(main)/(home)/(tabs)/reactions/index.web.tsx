@@ -3,7 +3,7 @@ import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
 import { getProfilePath } from '@constants/routes';
-import { useCardLayout } from '@hooks/useCardLayout';
+import { useCardLayout } from '@hooks/ui';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';

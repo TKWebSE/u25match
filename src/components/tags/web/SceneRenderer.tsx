@@ -1,6 +1,6 @@
 import { WebTagList } from '@components/tags';
 import { TagCategory } from '@constants/tagDataMap';
-import { Tag } from '@hooks/useTagsData';
+import { Tag } from '@hooks/features/tags';
 import React from 'react';
 
 export interface SceneRendererProps {

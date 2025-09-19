@@ -1,6 +1,6 @@
+import { myProfileMock } from '@mock/myProfileMock';
+import { ProfileUser } from '@my-types/user';
 import { useEffect, useState } from 'react';
-import { myProfileMock } from '../mock/myProfileMock';
-import { ProfileUser } from '../my-types/user';
 
 /**
  * プロフィール情報を取得するカスタムフック

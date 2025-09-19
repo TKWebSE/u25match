@@ -1,4 +1,4 @@
-import { ExploreTabType } from '@hooks/useUserSearch';
+import { ExploreTabType } from '@hooks/features/search';
 import { useSidebar } from '@layouts/WebLayout';
 import { colors } from '@styles/globalStyles';
 import { isWeb } from '@utils/platform';

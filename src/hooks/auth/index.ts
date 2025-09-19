@@ -1,0 +1,2 @@
+export { useStrictAuth } from './useStrictAuth';
+

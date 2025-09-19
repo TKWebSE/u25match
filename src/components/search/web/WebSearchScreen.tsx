@@ -2,8 +2,8 @@
 // Web版検索画面のメインコンポーネント
 
 import { MaterialIcons } from '@expo/vector-icons';
-import { useProfile } from '@hooks/useProfile';
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
+import { useProfile } from '@hooks/profile';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { getUsersByCategory } from '@mock/searchMock';

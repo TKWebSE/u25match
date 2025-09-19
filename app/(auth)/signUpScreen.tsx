@@ -1,14 +1,13 @@
 // app/(auth)/signUpScreen.tsx
 // サインアップ画面 - 新しいユーザーアカウントの作成
 import ScreenWrapper from '@components/common/ScreenWrapper';
-import { EXPLORE_SCREEN_PATH, LOGIN_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { signUp } from '@services/auth';
 import { createUserProfile } from '@services/firestoreUserProfile';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -27,16 +26,7 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 認証コンテキストから必要な機能を取得（状態のみ）
-  const { user } = useAuth();
   const router = useRouter();
-
-  // ユーザーがログイン済みの場合はメイン画面にリダイレクト
-  useEffect(() => {
-    if (user) {
-      router.replace(EXPLORE_SCREEN_PATH as any);
-    }
-  }, [user, router]);
 
   // フォームのバリデーション
   const validateForm = () => {

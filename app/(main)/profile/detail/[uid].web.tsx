@@ -12,7 +12,7 @@ import {
   WebProfileTags
 } from '@components/profile/detail/web';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
-import { useProfileDetail } from '@hooks/useProfileDetail';
+import { useProfileDetail } from '@hooks/profile';
 import { ProfileDetailStyles as WebProfileDetailStyles } from '@styles/profile/detail/web/ProfileDetailStyles.web';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';

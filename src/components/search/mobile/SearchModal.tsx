@@ -2,8 +2,8 @@
 // 検索モーダルコンポーネント
 
 import { MaterialIcons } from '@expo/vector-icons';
-import { useProfile } from '@hooks/useProfile';
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
+import { useProfile } from '@hooks/profile';
 import { myProfileMock } from '@mock/myProfileMock';
 import { colors, spacing } from '@styles/globalStyles';
 import { getMembershipType } from '@utils/membershipUtils';

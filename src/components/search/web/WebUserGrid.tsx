@@ -6,7 +6,7 @@ import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
 import { getProfilePath } from '@constants/routes';
-import { useCardLayout } from '@hooks/useCardLayout';
+import { useCardLayout } from '@hooks/ui';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';

@@ -3,9 +3,9 @@ import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard
 import { SearchBar } from '@components/explore';
 import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import { getProfilePath } from '@constants/routes';
-import { useCardSize } from '@hooks/useCardSize';
-import { useTodaysRecommendation } from '@hooks/useTodaysRecommendation';
-import { useUserSearch } from '@hooks/useUserSearch';
+import { useTodaysRecommendation } from '@hooks/features/recommendations';
+import { useUserSearch } from '@hooks/features/search';
+import { useCardSize } from '@hooks/ui';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';

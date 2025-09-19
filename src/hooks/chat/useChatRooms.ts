@@ -7,7 +7,7 @@
 import { ChatRoom } from '@services/main/chat/types';
 import { ServiceRegistry } from '@services/ServiceRegistry';
 import { useCallback, useEffect, useState } from 'react';
-import { useStrictAuth } from './useStrictAuth';
+import { useStrictAuth } from '../auth/useStrictAuth';
 
 /**
  * チャットルーム一覧の状態を管理するカスタムフック

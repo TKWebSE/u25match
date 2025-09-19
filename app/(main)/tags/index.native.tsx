@@ -1,7 +1,5 @@
 import { SceneRenderer, TagTabs } from '@components/tags';
-import { useTagRoutes } from '@hooks/useTagRoutes';
-import { Tag, useTagsData } from '@hooks/useTagsData';
-import { useTagSelection } from '@hooks/useTagSelection';
+import { Tag, useTagRoutes, useTagsData, useTagSelection } from '@hooks/features/tags';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';

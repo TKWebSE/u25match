@@ -1,5 +1,5 @@
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
-import { useCardSize } from '@hooks/useCardSize';
+import { useCardSize } from '@hooks/ui';
 import { colors, spacing, typography } from '@styles/globalStyles';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';

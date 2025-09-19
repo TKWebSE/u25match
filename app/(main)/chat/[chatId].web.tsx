@@ -1,10 +1,7 @@
 import { WebChatContainer } from "@components/chat/detail/web";
-import { useChatInput } from "@hooks/useChatInput";
-import { useChatMessages } from "@hooks/useChatMessages";
-import { useChatRooms } from "@hooks/useChatRooms";
-import { useDrawerState } from "@hooks/useDrawerState";
-import { useKeyboard } from "@hooks/useKeyboard";
-import { useStrictAuth } from "@hooks/useStrictAuth";
+import { useStrictAuth } from "@hooks/auth";
+import { useChatInput, useChatMessages, useChatRooms } from "@hooks/chat";
+import { useDrawerState, useKeyboard } from "@hooks/ui";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Alert, Platform, StyleSheet, Text, View } from "react-native";

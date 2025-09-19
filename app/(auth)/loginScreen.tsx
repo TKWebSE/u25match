@@ -1,13 +1,12 @@
 // app/(auth)/loginScreen.tsx
 // ログイン画面 - ユーザーの認証を行う
 import ScreenWrapper from '@components/common/ScreenWrapper';
-import { EXPLORE_SCREEN_PATH, FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/routes';
 import { logIn } from '@services/auth';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -23,16 +22,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 認証コンテキストから必要な機能を取得（状態のみ）
-  const { user } = useAuth();
   const router = useRouter();
-
-  // ユーザーがログイン済みの場合はメイン画面にリダイレクト
-  useEffect(() => {
-    if (user) {
-      router.replace(EXPLORE_SCREEN_PATH as any);
-    }
-  }, [user, router]);
 
   // ログイン処理の実行
   const handleLogin = async () => {

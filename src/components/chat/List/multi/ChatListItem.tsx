@@ -1,4 +1,4 @@
-import { useProfile } from '@hooks/useProfile';
+import { useProfile } from '@hooks/profile';
 import { mockUsers } from '@mock/chatMock';
 import { ChatRoom } from '@services/main/chat/types';
 import { getMembershipType } from '@utils/membershipUtils';

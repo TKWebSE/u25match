@@ -1,4 +1,4 @@
-import { useStrictAuth } from "@hooks/useStrictAuth";
+import { useStrictAuth } from "@hooks/auth";
 import { ChatMessage } from "@services/main/chat/types";
 import { ServiceRegistry } from "@services/ServiceRegistry";
 import React, { useEffect, useState } from "react";

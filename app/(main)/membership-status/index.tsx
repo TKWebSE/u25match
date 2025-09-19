@@ -1,7 +1,7 @@
 import { EMOJIS } from '@constants/emojis';
 import { Ionicons } from '@expo/vector-icons';
-import { useProfile } from '@hooks/useProfile';
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
+import { useProfile } from '@hooks/profile';
 import { mockUserSettings } from '@mock/settingsMock';
 import { getMembershipType, getPlanName } from '@utils/membershipUtils';
 import { LinearGradient } from 'expo-linear-gradient';

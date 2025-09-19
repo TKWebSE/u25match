@@ -13,7 +13,7 @@ import {
   MobileProfileTags,
 } from '@components/profile/detail';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
-import { useProfileDetail } from '@hooks/useProfileDetail';
+import { useProfileDetail } from '@hooks/profile';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {

@@ -7,7 +7,7 @@ import {
   SEARCH_SCREEN_PATH,
   SETTINGS_SCREEN_PATH
 } from '@constants/routes';
-import { useStrictAuth } from '@hooks/useStrictAuth';
+import { useStrictAuth } from '@hooks/auth';
 import { isDevMode } from '@utils/devMode';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';

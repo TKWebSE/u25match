@@ -1,7 +1,7 @@
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { getProfilePath } from '@constants/routes';
-import { useCardSize } from '@hooks/useCardSize';
+import { useCardSize } from '@hooks/ui';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { colors, spacing } from '@styles/globalStyles';
