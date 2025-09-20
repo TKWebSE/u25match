@@ -1,10 +1,10 @@
-// src/services/auth/signUpService.ts
-// サインアップのビジネスロジック
+// src/usecases/auth/signUpUser.ts
+// サインアップのユースケース
 
+import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
 import { validateSignUpForm } from '@utils/validation';
 import { auth } from '../../../firebaseConfig';
-import { serviceRegistry } from '../core/ServiceRegistry';
-import { signUp } from './index';
 
 export interface SignUpData {
   email: string;
@@ -18,10 +18,10 @@ export interface SignUpResult {
 }
 
 /**
- * サインアップの完全な処理を実行
- * バリデーション → アカウント作成 → プロフィール作成
+ * ユーザーサインアップのユースケース
+ * バリデーション → アカウント作成 → プロフィール作成 → ストア更新
  */
-export const executeSignUp = async (data: SignUpData): Promise<SignUpResult> => {
+export const signUpUser = async (data: SignUpData): Promise<SignUpResult> => {
   const { email, password, confirmPassword } = data;
 
   // バリデーション
@@ -34,14 +34,16 @@ export const executeSignUp = async (data: SignUpData): Promise<SignUpResult> => 
   }
 
   try {
+    // ローディング開始
+    authStore.getState().setLoading(true);
+
     // Firebase認証でアカウント作成
-    await signUp(email, password);
+    await serviceRegistry.auth.signUp(email, password);
 
     // ユーザープロファイル作成
     const currentUser = auth.currentUser;
     if (currentUser) {
       await serviceRegistry.profileDetail.updateProfileDetail(currentUser.uid, {
-        email: currentUser.email || email,
         name: '',
         age: 0,
         location: '',
@@ -58,12 +60,19 @@ export const executeSignUp = async (data: SignUpData): Promise<SignUpResult> => 
         },
         createdAt: new Date()
       });
+
+      // ストアにユーザー情報を設定
+      authStore.getState().setUser(currentUser);
     }
 
+    authStore.getState().setLoading(false);
     return { success: true };
 
   } catch (error: any) {
     console.error('サインアップエラー:', error);
+    authStore.getState().setLoading(false);
+    authStore.getState().setError(error.message || 'アカウント作成に失敗しました');
+
     return {
       success: false,
       error: error.message || 'アカウント作成に失敗しました'

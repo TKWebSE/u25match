@@ -8,6 +8,9 @@ import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
 export class ProdAuthService implements AuthService {
+  logIn(email: string, password: string): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
   // 🎯 インターフェースの約束を守って実装
   private currentUser: AuthUser | null = null;
 
@@ -30,7 +33,7 @@ export class ProdAuthService implements AuthService {
     };
   }
 
-  async logIn(email: string, password: string): Promise<AuthResult> {
+  async signIn(email: string, password: string): Promise<AuthResult> {
     console.log('🔥 本番ログイン:', email);
 
     try {
@@ -42,7 +45,7 @@ export class ProdAuthService implements AuthService {
           uid: result.user.uid,
           email: result.user.email || '',
           displayName: result.user.displayName || undefined,
-          photoURL: result.user.photoURL || undefined,
+          image: result.user.photoURL || undefined,
           emailVerified: result.user.emailVerified,
         },
         operationType: 'signIn',
@@ -83,15 +86,16 @@ export class ProdAuthService implements AuthService {
         };
 
         // Firestoreからプロフィール情報を取得
-        try {
-          const userProfile = await getUserProfile(firebaseUser.uid);
-          if (userProfile) {
-            authUser.displayName = userProfile.displayName || null;
-            authUser.image = userProfile.photoURL || null;
-          }
-        } catch (error) {
-          console.error('🔥 プロフィール取得エラー:', error);
-        }
+        // TODO: プロフィール情報の取得を実装
+        // try {
+        //   const userProfile = await getUserProfile(firebaseUser.uid);
+        //   if (userProfile) {
+        //     authUser.displayName = userProfile.displayName || null;
+        //     authUser.image = userProfile.photoURL || null;
+        //   }
+        // } catch (error) {
+        //   console.error('🔥 プロフィール取得エラー:', error);
+        // }
 
         this.currentUser = authUser;
         callback(authUser);

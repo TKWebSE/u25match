@@ -48,6 +48,12 @@
       ],
       "@types/*": [
         "src/types/*"
+      ],
+      "@stores/*": [
+        "src/stores/*"
+      ],
+      "@usecases/*": [
+        "src/usecases/*"
       ]
     }
   },
