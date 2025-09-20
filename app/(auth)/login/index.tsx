@@ -5,6 +5,7 @@ import { FORGOT_PASSWORD_SCREEN_PATH, SIGN_UP_SCREEN_PATH } from '@constants/rou
 import { logIn } from '@services/auth';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
+import { validateLoginForm } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -26,21 +27,10 @@ export default function LoginScreen() {
 
   // ログイン処理の実行
   const handleLogin = async () => {
-    // 入力値のバリデーション
-    if (!email || !password) {
-      showErrorToast('メールアドレスとパスワードを入力してください');
-      return;
-    }
-
-    // メールアドレスの形式チェック
-    if (!email.includes('@')) {
-      showErrorToast('有効なメールアドレスを入力してください');
-      return;
-    }
-
-    // パスワードの長さチェック
-    if (password.length < 6) {
-      showErrorToast('パスワードは6文字以上で入力してください');
+    // 共通バリデーションを使用
+    const validationResult = validateLoginForm({ email, password });
+    if (!validationResult.isValid) {
+      showErrorToast(validationResult.message || 'バリデーションエラーが発生しました');
       return;
     }
 

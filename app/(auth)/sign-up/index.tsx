@@ -7,6 +7,7 @@ import { signUp } from '@services/auth';
 import { createUserProfile } from '@services/firestoreUserProfile';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
+import { validateSignUpForm } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -29,38 +30,12 @@ export default function SignUpScreen() {
   const router = useRouter();
   const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
-  // フォームのバリデーション
-  const validateForm = () => {
-    // 必須項目のチェック
-    if (!email || !password || !confirmPassword) {
-      showErrorToast('すべての項目を入力してください');
-      return false;
-    }
-
-    // メールアドレスの形式チェック
-    if (!email.includes('@')) {
-      showErrorToast('有効なメールアドレスを入力してください');
-      return false;
-    }
-
-    // パスワードの長さチェック
-    if (password.length < 6) {
-      showErrorToast('パスワードは6文字以上で入力してください');
-      return false;
-    }
-
-    // パスワードの一致チェック
-    if (password !== confirmPassword) {
-      showErrorToast('パスワードが一致しません');
-      return false;
-    }
-
-    return true;
-  };
-
   // サインアップ処理の実行
   const handleSignUp = async () => {
-    if (!validateForm()) {
+    // 共通バリデーションを使用
+    const validationResult = validateSignUpForm({ email, password, confirmPassword });
+    if (!validationResult.isValid) {
+      showErrorToast(validationResult.message || 'バリデーションエラーが発生しました');
       return;
     }
 
