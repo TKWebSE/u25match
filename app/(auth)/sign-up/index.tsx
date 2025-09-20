@@ -3,11 +3,9 @@
 import { useLegalDocuments } from '@components/common';
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
-import { signUp } from '@services/auth';
-import { createUserProfile } from '@services/firestoreUserProfile';
+import { executeSignUp } from '@services/auth/signUpService';
 import { colors } from '@styles/globalStyles';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
-import { validateSignUpForm } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -18,7 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth } from '../../../firebaseConfig';
 
 export default function SignUpScreen() {
   // フォーム状態の管理
@@ -32,30 +29,21 @@ export default function SignUpScreen() {
 
   // サインアップ処理の実行
   const handleSignUp = async () => {
-    // 共通バリデーションを使用
-    const validationResult = validateSignUpForm({ email, password, confirmPassword });
-    if (!validationResult.isValid) {
-      showErrorToast(validationResult.message || 'バリデーションエラーが発生しました');
-      return;
-    }
-
     try {
       setIsSubmitting(true);
 
-      // services/authのsignUp関数を直接呼び出し
-      await signUp(email, password);
+      // ビジネスロジックをサービス層に委譲
+      const result = await executeSignUp({ email, password, confirmPassword });
 
-      // ユーザープロファイル作成
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        await createUserProfile(currentUser.uid, currentUser.email || email);
+      if (result.success) {
+        showSuccessToast('登録完了！ようこそ✨');
+        // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
+      } else {
+        showErrorToast(result.error || 'アカウント作成に失敗しました');
       }
-
-      showSuccessToast('登録完了！ようこそ✨');
-      // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
     } catch (error: any) {
       console.error('サインアップエラー:', error);
-      showErrorToast(error.message || 'アカウント作成に失敗しました');
+      showErrorToast('予期しないエラーが発生しました');
     } finally {
       setIsSubmitting(false);
     }
