@@ -2,8 +2,9 @@
 // パスワードリセット画面 - パスワードを忘れた場合の処理
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
-import { resetPassword } from '@services/auth';
+import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
+import { resetPasswordUser } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -19,12 +20,17 @@ import {
 export default function ForgotPasswordScreen() {
   // フォーム状態の管理
   const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ストアから認証状態を取得
+  const { isLoading, error, clearError } = useAuthStore();
 
   const router = useRouter();
 
   // パスワードリセット処理の実行
   const handleResetPassword = async () => {
+    // エラーをクリア
+    clearError();
+
     // 入力値のバリデーション
     if (!email) {
       showErrorToast('メールアドレスを入力してください');
@@ -37,20 +43,15 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    try {
-      setIsSubmitting(true);
+    // ユースケースを呼び出し
+    const result = await resetPasswordUser({ email });
 
-      // services/authのresetPassword関数を直接呼び出し
-      await resetPassword(email);
-
+    if (result.success) {
       showSuccessToast('パスワードリセットメールを送信しました');
       // ログイン画面に戻る
       router.push(LOGIN_SCREEN_PATH as any);
-    } catch (error: any) {
-      console.error('パスワードリセットエラー:', error);
-      showErrorToast(error.message || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      showErrorToast(result.error || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
     }
   };
 
@@ -78,17 +79,17 @@ export default function ForgotPasswordScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             style={styles.input}
-            editable={!isSubmitting}
+            editable={!isLoading}
             autoComplete="email"
           />
 
           {/* パスワードリセットボタン */}
           <TouchableOpacity
-            style={[styles.resetButton, isSubmitting && styles.resetButtonDisabled]}
+            style={[styles.resetButton, isLoading && styles.resetButtonDisabled]}
             onPress={handleResetPassword}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
-            {isSubmitting ? (
+            {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.buttonText}>パスワードリセットメールを送信</Text>
@@ -99,7 +100,7 @@ export default function ForgotPasswordScreen() {
           <TouchableOpacity
             onPress={handleBackToLogin}
             style={styles.backButton}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             <Text style={styles.backButtonText}>ログイン画面に戻る</Text>
           </TouchableOpacity>

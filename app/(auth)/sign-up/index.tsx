@@ -3,8 +3,9 @@
 import { useLegalDocuments } from '@components/common';
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
-import { executeSignUp } from '@services/auth/signUpService';
+import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
+import { signUpUser } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -22,30 +23,26 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ストアから認証状態を取得
+  const { isLoading, error, clearError } = useAuthStore();
 
   const router = useRouter();
   const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // サインアップ処理の実行
   const handleSignUp = async () => {
-    try {
-      setIsSubmitting(true);
+    // エラーをクリア
+    clearError();
 
-      // ビジネスロジックをサービス層に委譲
-      const result = await executeSignUp({ email, password, confirmPassword });
+    // ユースケースを呼び出し（ストア更新は監視システムが担当）
+    const result = await signUpUser({ email, password, confirmPassword });
 
-      if (result.success) {
-        showSuccessToast('登録完了！ようこそ✨');
-        // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
-      } else {
-        showErrorToast(result.error || 'アカウント作成に失敗しました');
-      }
-    } catch (error: any) {
-      console.error('サインアップエラー:', error);
-      showErrorToast('予期しないエラーが発生しました');
-    } finally {
-      setIsSubmitting(false);
+    if (result.success) {
+      showSuccessToast('登録完了！ようこそ✨');
+      // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
+    } else {
+      showErrorToast(result.error || 'アカウント作成に失敗しました');
     }
   };
 
@@ -66,7 +63,7 @@ export default function SignUpScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             style={styles.input}
-            editable={!isSubmitting}
+            editable={!isLoading}
             autoComplete="email"
           />
 
@@ -77,7 +74,7 @@ export default function SignUpScreen() {
             onChangeText={setPassword}
             secureTextEntry
             style={styles.input}
-            editable={!isSubmitting}
+            editable={!isLoading}
             autoComplete="new-password"
           />
 
@@ -88,17 +85,17 @@ export default function SignUpScreen() {
             onChangeText={setConfirmPassword}
             secureTextEntry
             style={styles.input}
-            editable={!isSubmitting}
+            editable={!isLoading}
             autoComplete="new-password"
           />
 
           {/* 登録ボタン */}
           <TouchableOpacity
-            style={[styles.button, isSubmitting && styles.buttonDisabled]}
+            style={[styles.button, isLoading && styles.buttonDisabled]}
             onPress={handleSignUp}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
-            {isSubmitting ? (
+            {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.buttonText}>登録する</Text>
@@ -127,7 +124,7 @@ export default function SignUpScreen() {
           <TouchableOpacity
             onPress={() => router.push(LOGIN_SCREEN_PATH as any)}
             style={styles.loginButton}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             <Text style={styles.loginButtonText}>ログイン</Text>
           </TouchableOpacity>

@@ -60,16 +60,18 @@ export const signUpUser = async (data: SignUpData): Promise<SignUpResult> => {
         },
         createdAt: new Date()
       });
-
-      // ストアにユーザー情報を設定
-      authStore.getState().setUser(currentUser);
     }
 
-    authStore.getState().setLoading(false);
+    // ストア更新は監視システムに任せる（重複処理を避ける）
+    // authStore.getState().setUser() ← 削除
+    // authStore.getState().setLoading(false) ← 削除
+
     return { success: true };
 
   } catch (error: any) {
     console.error('サインアップエラー:', error);
+
+    // エラー時のみ手動でストア更新
     authStore.getState().setLoading(false);
     authStore.getState().setError(error.message || 'アカウント作成に失敗しました');
 
