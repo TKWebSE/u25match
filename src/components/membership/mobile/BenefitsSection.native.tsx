@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { BenefitCard } from './BenefitCard';
+import { BenefitCard } from './BenefitCard.native';
 
 /**
- * プレミアム会員の特典を表示するセクションコンポーネント
+ * プレミアム会員の特典を表示するセクションコンポーネント（Mobile版）
  * 
  * 特典の一覧を2列グリッドで表示し、
  * 各特典の詳細情報を含むカード形式でレンダリングします。

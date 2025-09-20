@@ -1,7 +1,7 @@
-import { BenefitsSection } from '@components/membership/BenefitsSection';
-import { Header } from '@components/membership/Header';
-import { HeroSection } from '@components/membership/HeroSection';
-import { PlanCard } from '@components/membership/PlanCard';
+import { Header } from '@components/membership/multi/Header';
+import { HeroSection } from '@components/membership/multi/HeroSection';
+import { PlanCard } from '@components/membership/multi/PlanCard';
+import { BenefitsSection } from '@components/membership/web/BenefitsSection.web';
 import { MEMBERSHIP_PLANS, PlanId } from '@constants/membershipPlans';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { LinearGradient } from 'expo-linear-gradient';
