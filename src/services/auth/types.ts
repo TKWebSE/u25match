@@ -6,10 +6,10 @@ import { AuthUser } from '@my-types/user';
 export interface AuthService {
   // 認証処理機能
   /** 新規ユーザーアカウントの作成 */
-  signUp(email: string, password: string): Promise<any>;
+  signUp(email: string, password: string): Promise<AuthResult>;
 
   /** 既存ユーザーのログイン */
-  logIn(email: string, password: string): Promise<any>;
+  logIn(email: string, password: string): Promise<AuthResult>;
 
   /** 現在ユーザーのログアウト */
   logOut(): Promise<void>;

@@ -8,9 +8,6 @@ import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
 export class ProdAuthService implements AuthService {
-  logIn(email: string, password: string): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
   // 🎯 インターフェースの約束を守って実装
   private currentUser: AuthUser | null = null;
 
@@ -28,12 +25,12 @@ export class ProdAuthService implements AuthService {
         image: result.user.photoURL || undefined,
         emailVerified: result.user.emailVerified,
       },
-      operationType: 'signIn',
-      providerId: null,
+      operationType: result.operationType || 'signUp',
+      providerId: result.providerId,
     };
   }
 
-  async signIn(email: string, password: string): Promise<AuthResult> {
+  async logIn(email: string, password: string): Promise<AuthResult> {
     console.log('🔥 本番ログイン:', email);
 
     try {
@@ -48,8 +45,8 @@ export class ProdAuthService implements AuthService {
           image: result.user.photoURL || undefined,
           emailVerified: result.user.emailVerified,
         },
-        operationType: 'signIn',
-        providerId: null,
+        operationType: result.operationType || 'signIn',
+        providerId: result.providerId,
       };
     } catch (error) {
       throw new Error("ログインできませんでした");

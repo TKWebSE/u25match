@@ -3,6 +3,7 @@
 import { LoadingScreen } from '@components/common';
 import { AuthProvider } from '@contexts/AuthContext';
 import { DrawerProvider } from '@contexts/DrawerContext';
+import { cleanupAuth, initializeAuth } from '@stores/authInitializer';
 import { Slot } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -15,11 +16,17 @@ function InitializationGate() {
 
   // アプリ起動時の初期化制御
   useEffect(() => {
+    // Firebase認証状態の監視を開始
+    const unsubscribeAuth = initializeAuth();
+
     const timer = setTimeout(() => {
       setIsInitializing(false);
     }, 100); // 最低限の初期化時間
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      cleanupAuth(unsubscribeAuth); // 認証監視をクリーンアップ
+    };
   }, []);
 
   // 初期化中の表示
