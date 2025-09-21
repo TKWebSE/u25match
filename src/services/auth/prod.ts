@@ -3,7 +3,7 @@
 
 import { AuthUser } from '@my-types/user';
 // import { getUserProfile } from '@services/firestoreUserProfile'; // 削除済み
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
@@ -61,6 +61,15 @@ export class ProdAuthService implements AuthService {
   async resetPassword(email: string): Promise<void> {
     console.log('🔥 本番パスワードリセット:', email);
     await sendPasswordResetEmail(auth, email);
+  }
+
+  async deleteAccount(): Promise<void> {
+    console.log('🔥 本番アカウント削除');
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('ログインしていません');
+    }
+    await deleteUser(currentUser);
   }
 
   getCurrentUser(): AuthUser | null {

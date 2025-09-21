@@ -71,6 +71,23 @@ export class MockAuthService implements AuthService {
     console.log('🎭 パスワードリセットメールを送信しました（モック）');
   }
 
+  async deleteAccount(): Promise<void> {
+    console.log('🎭 モックアカウント削除');
+
+    // APIコールをシミュレート
+    await this.simulateApiCall(2000);
+
+    if (!this.currentUser) {
+      throw new Error('ログインしていません');
+    }
+
+    // ユーザー情報をクリア
+    this.currentUser = null;
+    this.notifyCallbacks(null);
+
+    console.log('🎭 アカウント削除完了（モック）');
+  }
+
   getCurrentUser(): AuthUser | null {
     return this.currentUser;
   }

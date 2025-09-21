@@ -17,6 +17,9 @@ export interface AuthService {
   /** パスワードリセットメールの送信 */
   resetPassword(email: string): Promise<void>;
 
+  /** アカウント削除 */
+  deleteAccount(): Promise<void>;
+
   // 状態監視機能
   /** 現在ログイン中のユーザー情報を取得 */
   getCurrentUser(): AuthUser | null;
