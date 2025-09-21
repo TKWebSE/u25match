@@ -37,4 +37,7 @@ export interface ExploreService {
 
   // 近くのユーザーを取得
   getNearbyUsers(location: { lat: number; lng: number }): Promise<ExploreResponse>;
+
+  // ユーザー一覧を取得
+  getUserList(params: { page: number; limit: number; filters?: any }): Promise<{ users: UserRecommendation[]; hasMore: boolean }>;
 } 

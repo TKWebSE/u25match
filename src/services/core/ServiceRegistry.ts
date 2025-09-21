@@ -7,6 +7,8 @@ import { createChatService } from '../chat/factory';
 import { ChatService } from '../chat/types';
 import { createExploreService } from '../explore/factory';
 import { ExploreService } from '../explore/types';
+import { createPaymentService } from '../payment/factory';
+import { PaymentService } from '../payment/types';
 import { createProfileService } from '../profile/factory';
 import { ProfileDetailService } from '../profile/types';
 import { createReactionsService } from '../reactions/factory';
@@ -15,6 +17,8 @@ import { createSalesService } from '../sales/factory';
 import { SalesService } from '../sales/types';
 import { createSettingsService } from '../settings/factory';
 import { SettingsService } from '../settings/types';
+import { createVerificationService } from '../verification/factory';
+import { VerificationService } from '../verification/types';
 
 export class ServiceRegistry {
   private static instance: ServiceRegistry;  // シングルトンインスタンス
@@ -65,6 +69,12 @@ export class ServiceRegistry {
 
     // 設定サービスの登録
     this.register('settings', createSettingsService());
+
+    // 本人確認サービスの登録
+    this.register('verification', createVerificationService());
+
+    // 決済サービスの登録
+    this.register('payment', createPaymentService());
   }
 
   /**
@@ -152,6 +162,20 @@ export class ServiceRegistry {
    */
   get settings(): SettingsService {
     return this.get<SettingsService>('settings');
+  }
+
+  /**
+   * 📄 本人確認サービスの型安全な取得
+   */
+  get verification(): VerificationService {
+    return this.get<VerificationService>('verification');
+  }
+
+  /**
+   * 💳 決済サービスの型安全な取得
+   */
+  get payment(): PaymentService {
+    return this.get<PaymentService>('payment');
   }
 }
 
