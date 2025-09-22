@@ -1,4 +1,4 @@
-import { useAuth } from '@contexts/AuthContext';
+import { useAuthStore } from '@stores/authStore';
 
 /**
  * 厳格な認証チェックを行うカスタムフック
@@ -19,7 +19,7 @@ import { useAuth } from '@contexts/AuthContext';
  * @throws {Error} ユーザーがログインしていない場合
  */
 export function useStrictAuth() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   // ユーザーがログインしていない場合はエラーをスロー
   if (!user) {

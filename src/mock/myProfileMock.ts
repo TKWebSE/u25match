@@ -1,4 +1,4 @@
-import { ProfileDetail } from '@services/main/profile';
+import { ProfileDetail } from '@services/profile';
 
 /**
  * 自分のプロフィール詳細用のモックデータ

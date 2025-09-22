@@ -3,8 +3,8 @@
 // - ローディング状態の管理
 // - エラーハンドリング
 
-import { ChatMessage } from "@services/main/chat/types";
-import { ServiceRegistry } from "@services/ServiceRegistry";
+import { ChatMessage } from "@services/chat/types";
+import { serviceRegistry } from "@services/core/ServiceRegistry";
 import { useEffect, useState } from "react";
 
 export const useChatMessages = (chatUid: string, onError?: (error: string) => void) => {
@@ -23,7 +23,7 @@ export const useChatMessages = (chatUid: string, onError?: (error: string) => vo
         setLoading(true);
 
         // useEffect内でchatServiceを取得（依存配列から除外）
-        const chatService = ServiceRegistry.getChatService();
+        const chatService = serviceRegistry.chat;
         console.log('🔧 chatService:', chatService);
 
         const response = await chatService.getMessages(chatUid);
@@ -51,7 +51,7 @@ export const useChatMessages = (chatUid: string, onError?: (error: string) => vo
   // メッセージ送信
   const sendMessage = async (content: string, senderId: string) => {
     try {
-      const chatService = ServiceRegistry.getChatService();
+      const chatService = serviceRegistry.chat;
       const response = await chatService.sendMessage(chatUid, content, senderId);
 
       if (response.success && response.data) {

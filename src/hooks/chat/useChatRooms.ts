@@ -4,8 +4,8 @@
 // - エラーハンドリング
 // - リフレッシュ機能
 
-import { ChatRoom } from '@services/main/chat/types';
-import { ServiceRegistry } from '@services/ServiceRegistry';
+import { ChatRoom } from '@services/chat/types';
+import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { useCallback, useEffect, useState } from 'react';
 import { useStrictAuth } from '../auth/useStrictAuth';
 
@@ -30,7 +30,7 @@ export const useChatRooms = () => {
   const user = useStrictAuth();
 
   // チャットサービスを取得
-  const chatService = ServiceRegistry.getChatService();
+  const chatService = serviceRegistry.chat;
 
   /**
    * チャットルーム一覧を取得する

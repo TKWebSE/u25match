@@ -2,13 +2,13 @@
 // メインレイアウト - 認証が必要な画面の制御
 import { LoadingScreen } from '@components/common';
 import { ENTRY_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { useAuthStore } from '@stores/authStore';
 import { Stack, usePathname, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { PlatformLayout } from '../../src/layouts'; // 正しいパスに修正
 
 export default function MainLayout() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
 

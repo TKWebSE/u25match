@@ -18,10 +18,9 @@ import {
   SALES_SCREEN_PATH,
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
 import { useStrictAuth } from '@hooks/auth';
-import { useProfile } from '@hooks/profile';
 import { logOut } from '@services/auth';
+import { useProfileStore } from '@stores/profileStore';
 import { colors, spacing } from '@styles/globalStyles';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
 import { useRouter } from 'expo-router';
@@ -32,8 +31,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 const SettingsScreen = () => {
   const router = useRouter();
   const user = useStrictAuth(); // 認証済みユーザー情報を取得
-  const { } = useAuth(); // 認証コンテキスト（状態のみ）
-  const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
+  const { currentProfile, isLoading: profileLoading } = useProfileStore(); // プロフィールストアから情報を取得
   const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // 自分のプロフィール画面への遷移
@@ -129,8 +127,13 @@ const SettingsScreen = () => {
 
           {/* ユーザー情報カード */}
           <AccountInfo
-            authUser={user}
-            profile={profile || undefined}
+            authUser={{
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              image: null, // Firebase Userにはimageプロパティがないため
+            }}
+            profile={currentProfile || undefined}
             onPress={handleUserProfilePress}
           />
         </View>
@@ -138,23 +141,23 @@ const SettingsScreen = () => {
         {/* 会員種別セクション */}
         <View style={[SettingsStyles.section, styles.webSection]}>
           <MembershipDisplay
-            membershipType="free"
+            membershipType={currentProfile?.membershipType === 'premium' ? 'premium' : 'free'}
             onUpgradePress={handleUpgradePress}
           />
         </View>
 
         {/* 残り数量セクション */}
         <RemainingStats
-          remainingLikes={profile?.remainingLikes ?? 10}
-          remainingBoosts={profile?.remainingBoosts ?? 5}
-          remainingPoints={profile?.remainingPoints ?? 100}
+          remainingLikes={currentProfile?.remainingLikes ?? 10}
+          remainingBoosts={currentProfile?.remainingBoosts ?? 5}
+          remainingPoints={currentProfile?.remainingPoints ?? 100}
           onLikesPress={handleLikesPurchase}
           onBoostsPress={handleBoostsPurchase}
           onPointsPress={handlePointsPurchase}
         />
 
         {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
-        {profile?.isVerified === false && (
+        {currentProfile?.isVerified === false && (
           <VerificationPrompt onPress={handleVerification} />
         )}
 

@@ -1,4 +1,4 @@
-import { ProfileDetail, profileDetailService } from '@services/main/profile';
+import { ProfileDetail, profileDetailService } from '@services/profile';
 import { getOnlineStatus } from '@utils/getOnlineStatus';
 import { useEffect, useState } from 'react';
 

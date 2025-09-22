@@ -3,7 +3,7 @@ import { LoadingState } from '@components/common';
 import { ErrorState } from '@components/common/ErrorState';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
 import { useChatRooms } from '@hooks/chat';
-import { ChatRoom } from '@services/main/chat/types';
+import { ChatRoom } from '@services/chat/types';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';

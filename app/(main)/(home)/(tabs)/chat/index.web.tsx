@@ -2,7 +2,7 @@ import ChatRoomList from '@components/chat/List/multi/ChatRoomList';
 import { ErrorState, LoadingState } from '@components/common';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
 import { useChatRooms } from '@hooks/chat';
-import { ChatRoom } from '@services/main/chat/types';
+import { ChatRoom } from '@services/chat/types';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React from 'react';

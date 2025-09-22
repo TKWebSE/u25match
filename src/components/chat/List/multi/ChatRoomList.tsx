@@ -5,7 +5,7 @@
 // - チャット詳細画面への遷移
 
 import { useStrictAuth } from '@hooks/auth';
-import { ChatRoom } from '@services/main/chat/types';
+import { ChatRoom } from '@services/chat/types';
 import React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { EmptyChatMessage } from '../../detail/multi';

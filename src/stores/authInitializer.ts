@@ -3,6 +3,7 @@
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { authStore } from './authStore';
+import { initializeProfile } from './profileInitializer';
 
 /**
  * アプリ起動時にFirebase認証状態を監視開始
@@ -12,7 +13,7 @@ export const initializeAuth = (): (() => void) => {
   console.log('🔥 認証状態の監視を開始...');
 
   // Firebase認証状態の変更を監視
-  const unsubscribe = serviceRegistry.auth.onAuthStateChanged((user) => {
+  const unsubscribe = serviceRegistry.auth.onAuthStateChanged(async (user) => {
     console.log('🔥 認証状態変更:', user ? `${user.uid} (${user.email})` : 'ログアウト');
 
     if (user) {
@@ -21,12 +22,18 @@ export const initializeAuth = (): (() => void) => {
       authStore.getState().setError(null); // エラーをクリア
       authStore.getState().setLoading(false); // ローディング終了
       console.log('✅ ログイン状態をストアに反映完了');
+
+      // プロフィール情報も取得・保存
+      await initializeProfile(user);
     } else {
       // ログアウト状態: ストアをクリア
       authStore.getState().setUser(null);
       authStore.getState().setError(null);
       authStore.getState().setLoading(false); // ローディング終了
       console.log('✅ ログアウト状態をストアに反映完了');
+
+      // プロフィール情報もクリア
+      await initializeProfile(null);
     }
   });
 

@@ -1,7 +1,6 @@
 // app/_layout.tsx
 // アプリのルートレイアウト - アプリ全体の構造を定義
 import { LoadingScreen } from '@components/common';
-import { AuthProvider } from '@contexts/AuthContext';
 import { DrawerProvider } from '@contexts/DrawerContext';
 import { cleanupAuth, initializeAuth } from '@stores/authInitializer';
 import { Slot } from 'expo-router';
@@ -44,10 +43,8 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <DrawerProvider>
-          <AuthProvider>
-            <InitializationGate />
-            <Toast />
-          </AuthProvider>
+          <InitializationGate />
+          <Toast />
         </DrawerProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

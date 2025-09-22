@@ -1,11 +1,11 @@
 // app/index.tsx
 // ルートパス（/）へのアクセス時のリダイレクト処理
 import { ENTRY_SCREEN_PATH, EXPLORE_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { useAuthStore } from '@stores/authStore';
 import { Redirect } from 'expo-router';
 
 export default function Index() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   // 認証済みユーザーはメイン画面へ
   if (user) {

@@ -1,6 +1,6 @@
 import { useProfile } from '@hooks/profile';
 import { mockUsers } from '@mock/chatMock';
-import { ChatRoom } from '@services/main/chat/types';
+import { ChatRoom } from '@services/chat/types';
 import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';

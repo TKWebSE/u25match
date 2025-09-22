@@ -18,12 +18,10 @@ import {
   SALES_SCREEN_PATH,
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
 import { useStrictAuth } from '@hooks/auth';
-import { useProfile } from '@hooks/profile';
 import { logOut } from '@services/auth';
+import { useProfileStore } from '@stores/profileStore';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
-import { getMembershipType } from '@utils/membershipUtils';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -34,8 +32,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const SettingsScreen = () => {
   const router = useRouter();
   const user = useStrictAuth(); // 認証済みユーザー情報を取得
-  const { } = useAuth(); // 認証コンテキスト（状態のみ）
-  const { profile, loading: profileLoading } = useProfile(user.uid); // プロフィール情報を取得
+  const { currentProfile, isLoading: currentProfileLoading } = useProfileStore(); // プロフィールストアから情報を取得
   const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // ブースト実行状態
@@ -55,7 +52,7 @@ const SettingsScreen = () => {
   // デバッグ用のuseEffect
   useEffect(() => {
     // ログを削除
-  }, [user, profile, profileLoading]);
+  }, [user, currentProfile, currentProfileLoading]);
 
   // 自分のプロフィール画面への遷移
   const handleUserProfilePress = () => {
@@ -132,7 +129,7 @@ const SettingsScreen = () => {
 
   // ブースト実行処理
   const handleBoost = async () => {
-    const remainingBoosts = profile?.remainingBoosts ?? 0;
+    const remainingBoosts = currentProfile?.remainingBoosts ?? 0;
 
     if (remainingBoosts <= 0) {
       Alert.alert(
@@ -503,22 +500,27 @@ const SettingsScreen = () => {
 
             {/* ユーザー情報カード */}
             <AccountInfo
-              authUser={user}
-              profile={profile || undefined}
+              authUser={{
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                image: null, // Firebase Userにはimageプロパティがないため
+              }}
+              profile={currentProfile || undefined}
               onPress={handleUserProfilePress}
             />
           </View>
 
 
           {/* 本人確認プロンプト（未認証ユーザーのみ表示） */}
-          {profile?.isVerified === false && (
+          {currentProfile?.isVerified === false && (
             <VerificationPrompt onPress={handleVerification} />
           )}
 
           {/* 会員種別セクション */}
           <View style={SettingsStyles.section}>
             <MembershipDisplay
-              membershipType={getMembershipType(profile || undefined)}
+              membershipType={currentProfile?.membershipType === 'premium' ? 'premium' : 'free'}
               onUpgradePress={handleUpgradePress}
             />
           </View>
@@ -545,11 +547,11 @@ const SettingsScreen = () => {
               <TouchableOpacity
                 style={[
                   SettingsStyles.boostButton,
-                  (profile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonDisabled,
+                  (currentProfile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonDisabled,
                   isBoosting && SettingsStyles.boostButtonBoosting
                 ]}
                 onPress={handleBoost}
-                disabled={(profile?.remainingBoosts ?? 0) <= 0 || isBoosting}
+                disabled={(currentProfile?.remainingBoosts ?? 0) <= 0 || isBoosting}
                 activeOpacity={0.8}
               >
                 <View style={SettingsStyles.boostButtonContent}>
@@ -575,24 +577,24 @@ const SettingsScreen = () => {
                   <View style={SettingsStyles.boostTextContainer}>
                     <Text style={[
                       SettingsStyles.boostButtonTitle,
-                      (profile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonTitleDisabled,
+                      (currentProfile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonTitleDisabled,
                       isBoosting && SettingsStyles.boostButtonTitleBoosting
                     ]}>
                       {isBoosting
                         ? `ブースト実行中... ${Math.round(boostProgress)}%`
-                        : (profile?.remainingBoosts ?? 0) > 0
+                        : (currentProfile?.remainingBoosts ?? 0) > 0
                           ? 'ブーストを実行'
                           : 'ブーストが不足しています'
                       }
                     </Text>
                     <Text style={[
                       SettingsStyles.boostButtonSubtitle,
-                      (profile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonSubtitleDisabled,
+                      (currentProfile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostButtonSubtitleDisabled,
                       isBoosting && SettingsStyles.boostButtonSubtitleBoosting
                     ]}>
                       {isBoosting
                         ? 'プロフィールを目立たせています...'
-                        : (profile?.remainingBoosts ?? 0) > 0
+                        : (currentProfile?.remainingBoosts ?? 0) > 0
                           ? '1時間有効でプロフィールを目立たせる'
                           : 'ブーストを購入して実行しよう'
                       }
@@ -601,7 +603,7 @@ const SettingsScreen = () => {
                   <View style={SettingsStyles.boostArrowContainer}>
                     <Text style={[
                       SettingsStyles.boostArrow,
-                      (profile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostArrowDisabled,
+                      (currentProfile?.remainingBoosts ?? 0) <= 0 && SettingsStyles.boostArrowDisabled,
                       isBoosting && SettingsStyles.boostArrowBoosting
                     ]}>
                       {isBoosting ? '⚡' : '›'}
@@ -630,9 +632,9 @@ const SettingsScreen = () => {
 
           {/* 残り数量セクション */}
           <RemainingStats
-            remainingLikes={profile?.remainingLikes ?? 10}
-            remainingBoosts={profile?.remainingBoosts ?? 5}
-            remainingPoints={profile?.remainingPoints ?? 100}
+            remainingLikes={currentProfile?.remainingLikes ?? 10}
+            remainingBoosts={currentProfile?.remainingBoosts ?? 5}
+            remainingPoints={currentProfile?.remainingPoints ?? 100}
             onLikesPress={handleLikesPurchase}
             onBoostsPress={handleBoostsPurchase}
             onPointsPress={handlePointsPurchase}

@@ -2,12 +2,12 @@
 // 認証関連画面の共通レイアウト - ログイン済みユーザーのリダイレクト処理を含む
 import { LoadingScreen } from '@components/common';
 import { EXPLORE_SCREEN_PATH } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { useAuthStore } from '@stores/authStore';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 export default function AuthLayout() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const router = useRouter();
 
   // ユーザーがログイン済みの場合はメイン画面にリダイレクト

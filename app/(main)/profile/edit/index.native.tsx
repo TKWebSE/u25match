@@ -1,6 +1,6 @@
 import { ProfileBioEdit, ProfileDetailsEdit, ProfileImageEdit, ProfileInfoEdit, ProfileInfoEditRef, ProfileTagsEdit } from '@components/profile/edit';
 import { getProfilePath } from '@constants/routes';
-import { useAuth } from '@contexts/AuthContext';
+import { useStrictAuth } from '@hooks/auth';
 import { mockProfileData } from '@mock/UserEditMock';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import { ProfileData, getChangeSummary, getProfileDiff, hasProfileChanges } from '@utils/profileDiff';
@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
  */
 const ProfileEditScreen = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const user = useStrictAuth();
 
   // プロフィール情報の状態管理
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);

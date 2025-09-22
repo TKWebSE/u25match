@@ -1,6 +1,6 @@
 import { useStrictAuth } from "@hooks/auth";
-import { ChatMessage } from "@services/main/chat/types";
-import { ServiceRegistry } from "@services/ServiceRegistry";
+import { ChatMessage } from "@services/chat/types";
+import { serviceRegistry } from "@services/core/ServiceRegistry";
 import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, Text, View } from "react-native";
 import ChatInput from "../web/ChatInput.web";
@@ -21,7 +21,7 @@ const ChatScreen: React.FC<ChatContainerProps> = ({ chatUid, onError }) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const user = useStrictAuth();
-  const chatService = ServiceRegistry.getChatService();
+  const chatService = serviceRegistry.chat;
 
   // キーボードの高さを監視（フォーカス時の位置ずれを防ぐため）
   useEffect(() => {
