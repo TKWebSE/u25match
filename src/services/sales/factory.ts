@@ -1,7 +1,7 @@
 // src/services/sales/factory.ts
 // 🏭 セールサービス工場 - 環境判定と生成の責任のみ
 
-import { getDevModeInfo, isDevMode } from '@utils/devMode';
+import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
 import { MockSalesService } from './mock';
 import { ProdSalesService } from './prod';
 import { SalesService } from './types';
@@ -15,18 +15,18 @@ export class SalesServiceFactory {
    * 3. インスタンスの生成
    */
   static createSalesService(): SalesService {
-    const devModeInfo = getDevModeInfo();
-    const isDevelopment = isDevMode();
+    const mode = getServiceMode('SALES');
+    const configInfo = getServiceConfigInfo('SALES');
 
     console.log('🔧 セールサービス生成中...');
-    console.log('📋 DEVモード情報:', devModeInfo);
+    console.log('📋 セールサービス設定:', configInfo);
 
-    if (isDevelopment) {
-      console.log('🎭 DEVモード: モックセールサービスを生成');
-      return new MockSalesService();
-    } else {
-      console.log('🌐 本番モード: 本番セールサービスを生成');
+    if (mode === 'firebase') {
+      console.log('🔥 Firebaseセールサービスを生成');
       return new ProdSalesService();
+    } else {
+      console.log('🎭 モックセールサービスを生成');
+      return new MockSalesService();
     }
   }
 }

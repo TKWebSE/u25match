@@ -1,7 +1,7 @@
 // src/services/profileDetail/factory.ts
 // 🏭 プロフィール詳細サービス工場 - 環境判定と生成の責任のみ
 
-import { getDevModeInfo, isDevMode } from '../../utils/devMode';
+import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
 import { MockProfileService } from './mock';
 import { ProdProfileDetailService } from './prod';
 import { ProfileDetailService } from './types';
@@ -15,18 +15,18 @@ export class ProfileServiceFactory {
    * 3. インスタンスの生成
    */
   static createProfileService(): ProfileDetailService {
-    const devModeInfo = getDevModeInfo();
-    const isDevelopment = isDevMode();
+    const mode = getServiceMode('PROFILE');
+    const configInfo = getServiceConfigInfo('PROFILE');
 
     console.log('🔧 プロフィール詳細サービス生成中...');
-    console.log('📋 DEVモード情報:', devModeInfo);
+    console.log('📋 プロフィール詳細サービス設定:', configInfo);
 
-    if (isDevelopment) {
-      console.log('🎭 DEVモード: モックプロフィール詳細サービスを生成');
-      return new MockProfileService();
-    } else {
-      console.log('🌐 本番モード: 本番プロフィール詳細サービスを生成');
+    if (mode === 'firebase') {
+      console.log('🔥 Firebaseプロフィール詳細サービスを生成');
       return new ProdProfileDetailService();
+    } else {
+      console.log('🎭 モックプロフィール詳細サービスを生成');
+      return new MockProfileService();
     }
   }
 }

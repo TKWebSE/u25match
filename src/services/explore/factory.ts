@@ -1,7 +1,7 @@
 // src/services/main/explore/factory.ts
 // 🏭 探索サービス工場 - 環境判定と生成の責任のみ
 
-import { getDevModeInfo, isDevMode } from '@utils/devMode';
+import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
 import { MockExploreService } from './mock';
 import { ProdExploreService } from './prod';
 import { ExploreService } from './types';
@@ -15,18 +15,18 @@ export class ExploreServiceFactory {
    * 3. インスタンスの生成
    */
   static createExploreService(): ExploreService {
-    const devModeInfo = getDevModeInfo();
-    const isDevelopment = isDevMode();
+    const mode = getServiceMode('EXPLORE');
+    const configInfo = getServiceConfigInfo('EXPLORE');
 
     console.log('🔧 探索サービス生成中...');
-    console.log('📋 DEVモード情報:', devModeInfo);
+    console.log('📋 探索サービス設定:', configInfo);
 
-    if (isDevelopment) {
-      console.log('🎭 DEVモード: モック探索サービスを生成');
-      return new MockExploreService();
-    } else {
-      console.log('🌐 本番モード: 本番探索サービスを生成');
+    if (mode === 'firebase') {
+      console.log('🔥 Firebase探索サービスを生成');
       return new ProdExploreService();
+    } else {
+      console.log('🎭 モック探索サービスを生成');
+      return new MockExploreService();
     }
   }
 }

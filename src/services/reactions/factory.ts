@@ -1,7 +1,7 @@
 // src/services/main/reactions/factory.ts
 // 🏭 リアクションサービス工場 - 環境判定と生成の責任のみ
 
-import { getDevModeInfo, isDevMode } from '@utils/devMode';
+import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
 import { MockReactionsService } from './mock';
 import { ProdReactionsService } from './prod';
 import { ReactionsService } from './types';
@@ -15,18 +15,18 @@ export class ReactionsServiceFactory {
    * 3. インスタンスの生成
    */
   static createReactionsService(): ReactionsService {
-    const devModeInfo = getDevModeInfo();
-    const isDevelopment = isDevMode();
+    const mode = getServiceMode('REACTIONS');
+    const configInfo = getServiceConfigInfo('REACTIONS');
 
     console.log('🔧 リアクションサービス生成中...');
-    console.log('📋 DEVモード情報:', devModeInfo);
+    console.log('📋 リアクションサービス設定:', configInfo);
 
-    if (isDevelopment) {
-      console.log('🎭 DEVモード: モックリアクションサービスを生成');
-      return new MockReactionsService();
-    } else {
-      console.log('🌐 本番モード: 本番リアクションサービスを生成');
+    if (mode === 'firebase') {
+      console.log('🔥 Firebaseリアクションサービスを生成');
       return new ProdReactionsService();
+    } else {
+      console.log('🎭 モックリアクションサービスを生成');
+      return new MockReactionsService();
     }
   }
 }

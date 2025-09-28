@@ -63,6 +63,31 @@ export class ProdProfileDetailService implements ProfileDetailService {
   }
 
   /**
+   * 👤 ユニークIDでプロフィール詳細を取得（本番）
+   * FirebaseからユニークIDでプロフィール情報を取得
+   * @param uniqueId 取得したいユーザーのユニークID
+   * @returns プロフィール詳細データ
+   */
+  async getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse> {
+    try {
+      console.log('🔥 FirebaseからユニークIDでプロフィール詳細を取得中...', { uniqueId });
+
+      // TODO: ユニークIDでユーザーを検索する実装
+      // 現在はuidベースの検索のみ実装されているため、一時的にエラーを返す
+      return {
+        success: false,
+        error: 'ユニークID検索は未実装です',
+      };
+    } catch (error) {
+      console.error('💥 FirebaseユニークID検索エラー:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
    * ✏️ プロフィール詳細を更新（本番）
    * Firebaseでプロフィール情報を更新
    * @param uid 更新したいユーザーのID
