@@ -100,12 +100,7 @@ export class MockAuthService implements AuthService {
 
     // モックユーザーを即座に通知
     setTimeout(() => {
-      const mockUser: AuthUser = {
-        uid: myProfileMock.uid,
-        email: 'tanaka.hanako@example.com', // myProfileMockに合わせたメール
-        displayName: myProfileMock.name,
-        image: myProfileMock.images[0] || null,
-      };
+      const mockUser = this.createMockAuthUser();
 
       this.currentUser = mockUser;
       callback(mockUser);
@@ -122,19 +117,35 @@ export class MockAuthService implements AuthService {
 
   // 🛠️ プライベートヘルパーメソッド
 
+  private createMockAuthUser(): AuthUser {
+    // myProfileMockと一貫性のあるモックユーザーを作成
+    return {
+      uid: myProfileMock.uid,
+      email: 'tanaka.hanako@example.com',
+      displayName: myProfileMock.name,
+      image: myProfileMock.images[0] || null,
+    };
+  }
+
   private async simulateApiCall(delay: number): Promise<void> {
     // 実際のAPIコールのような待機時間をシミュレート
     await new Promise(resolve => setTimeout(resolve, delay));
   }
 
+  private notifyCallbacks(user: AuthUser | null): void {
+    this.callbacks.forEach(callback => callback(user));
+  }
+
   private createMockResult(): AuthResult {
-    // 同じ形のダミーデータを返す
+    // 共通のモックユーザーを作成し、AuthResult形式に変換
+    const authUser = this.createMockAuthUser();
+
     return {
       user: {
-        uid: 'mock-user-123',
-        email: 'test@example.com',
-        displayName: 'テストユーザー',
-        image: undefined,
+        uid: authUser.uid,
+        email: authUser.email || '',
+        displayName: authUser.displayName || undefined,
+        image: authUser.image || undefined,
         emailVerified: true,
       },
       operationType: 'signIn',
