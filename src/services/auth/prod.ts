@@ -25,21 +25,36 @@ export class ProdAuthService implements AuthService {
   async signUp(email: string, password: string): Promise<AuthResult> {
     console.log('🔥 本番サインアップ:', email);
 
-    // Firebase Authenticationでユーザー作成
-    const result = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      // Firebase Authenticationでユーザー作成
+      const result = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Firebase結果を共通フォーマットに変換
-    return {
-      user: {
-        uid: result.user.uid,
-        email: result.user.email || '',
-        displayName: result.user.displayName || undefined,
-        image: result.user.photoURL || undefined,
-        emailVerified: result.user.emailVerified,
-      },
-      operationType: result.operationType || 'signUp',
-      providerId: result.providerId,
-    };
+      // Firebase結果を共通フォーマットに変換
+      return {
+        user: {
+          uid: result.user.uid,
+          email: result.user.email || '',
+          displayName: result.user.displayName || undefined,
+          image: result.user.photoURL || undefined,
+          emailVerified: result.user.emailVerified,
+        },
+        operationType: result.operationType || 'signUp',
+        providerId: result.providerId,
+      };
+    } catch (error: any) {
+      console.error('🔥 サインアップエラー:', error);
+
+      // Firebaseエラーを適切なメッセージに変換
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('このメールアドレスは既に使用されています');
+      } else if (error.code === 'auth/weak-password') {
+        throw new Error('パスワードが弱すぎます');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('無効なメールアドレスです');
+      } else {
+        throw new Error('アカウント作成に失敗しました');
+      }
+    }
   }
 
   /**

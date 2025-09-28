@@ -1,115 +1,72 @@
-import { LoginFormData, SignUpFormData, ValidationResult } from './types';
-
 /**
  * メールアドレスの形式をバリデーションする
+ * @param email メールアドレス
+ * @throws Error バリデーションに失敗した場合
  */
-export const validateEmail = (email: string): ValidationResult => {
+export const validateEmailFormat = (email: string): void => {
   if (!email) {
-    return {
-      isValid: false,
-      message: 'メールアドレスを入力してください',
-    };
+    throw new Error('メールアドレスを入力してください');
   }
-
-  // シンプルなメールチェック
   if (!email.includes('@') || !email.includes('.')) {
-    return {
-      isValid: false,
-      message: '有効なメールアドレスを入力してください',
-    };
+    throw new Error('有効なメールアドレスを入力してください');
   }
-
-  return { isValid: true };
 };
 
 /**
- * パスワードをバリデーションする
+ * パスワードの長さをバリデーションする
+ * @param password パスワード
+ * @throws Error バリデーションに失敗した場合
  */
-export const validatePassword = (password: string): ValidationResult => {
+export const validatePasswordLength = (password: string): void => {
   if (!password) {
-    return {
-      isValid: false,
-      message: 'パスワードを入力してください',
-    };
+    throw new Error('パスワードを入力してください');
   }
-
-  if (password.length < 6) {
-    return {
-      isValid: false,
-      message: 'パスワードは6文字以上で入力してください',
-    };
+  if (password.length < 6 || password.length > 32) {
+    throw new Error('パスワードは6-32文字で入力してください');
   }
-
-  return { isValid: true };
 };
 
 /**
- * パスワード確認の一致をバリデーションする
+ * パスワードに空白文字が含まれていないかチェック
+ * @param password パスワード
+ * @throws Error バリデーションに失敗した場合
  */
-export const validatePasswordConfirmation = (
-  password: string,
-  confirmPassword: string
-): ValidationResult => {
+export const validatePasswordNoSpaces = (password: string): void => {
+  if (!password) {
+    throw new Error('パスワードを入力してください');
+  }
+  if (password.includes(' ')) {
+    throw new Error('パスワードに空白文字は使用できません');
+  }
+};
+
+/**
+ * パスワードの文字種をバリデーションする
+ * @param password パスワード
+ * @throws Error バリデーションに失敗した場合
+ */
+export const validatePasswordCharacterTypes = (password: string): void => {
+  if (!password) {
+    throw new Error('パスワードを入力してください');
+  }
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  if (!hasLetter || !hasNumber) {
+    throw new Error('パスワードは英字と数字を組み合わせて入力してください');
+  }
+};
+
+/**
+ * パスワードの一致をチェックする
+ * @param password パスワード
+ * @param confirmPassword 確認パスワード
+ * @throws Error バリデーションに失敗した場合
+ */
+export const validatePasswordMatch = (password: string, confirmPassword: string): void => {
   if (!confirmPassword) {
-    return {
-      isValid: false,
-      message: 'パスワード（確認）を入力してください',
-    };
+    throw new Error('パスワード（確認）を入力してください');
   }
-
   if (password !== confirmPassword) {
-    return {
-      isValid: false,
-      message: 'パスワードが一致しません',
-    };
+    throw new Error('パスワードが一致しません');
   }
-
-  return { isValid: true };
-};
-
-/**
- * ログインフォームの全項目をバリデーションする
- */
-export const validateLoginForm = (formData: LoginFormData): ValidationResult => {
-  // メールアドレスのバリデーション
-  const emailValidation = validateEmail(formData.email);
-  if (!emailValidation.isValid) {
-    return emailValidation;
-  }
-
-  // パスワードのバリデーション
-  const passwordValidation = validatePassword(formData.password);
-  if (!passwordValidation.isValid) {
-    return passwordValidation;
-  }
-
-  return { isValid: true };
-};
-
-/**
- * サインアップフォームの全項目をバリデーションする
- */
-export const validateSignUpForm = (formData: SignUpFormData): ValidationResult => {
-  // メールアドレスのバリデーション
-  const emailValidation = validateEmail(formData.email);
-  if (!emailValidation.isValid) {
-    return emailValidation;
-  }
-
-  // パスワードのバリデーション
-  const passwordValidation = validatePassword(formData.password);
-  if (!passwordValidation.isValid) {
-    return passwordValidation;
-  }
-
-  // パスワード確認のバリデーション
-  const confirmPasswordValidation = validatePasswordConfirmation(
-    formData.password,
-    formData.confirmPassword
-  );
-  if (!confirmPasswordValidation.isValid) {
-    return confirmPasswordValidation;
-  }
-
-  return { isValid: true };
 };

@@ -3,8 +3,13 @@
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { authStore } from '@stores/authStore';
-import { validateSignUpForm } from '@utils/validation';
-import { auth } from '../../../firebaseConfig';
+import {
+  validateEmailFormat,
+  validatePasswordCharacterTypes,
+  validatePasswordLength,
+  validatePasswordMatch,
+  validatePasswordNoSpaces
+} from '@utils/validation/authValidation';
 
 export interface SignUpData {
   email: string;
@@ -19,52 +24,28 @@ export interface SignUpResult {
 
 /**
  * ユーザーサインアップのユースケース
- * バリデーション → アカウント作成 → プロフィール作成 → ストア更新
+ * バリデーション → アカウント作成 → ストア更新
+ * プロフィール初期化は認証後のコールバックで実行される
  */
 export const signUpUser = async (data: SignUpData): Promise<SignUpResult> => {
   const { email, password, confirmPassword } = data;
 
-  // バリデーション
-  const validationResult = validateSignUpForm({ email, password, confirmPassword });
-  if (!validationResult.isValid) {
-    return {
-      success: false,
-      error: validationResult.message || 'バリデーションエラーが発生しました'
-    };
-  }
-
   try {
+    // バリデーション（utils側でエラーをスロー）
+    validateEmailFormat(email);
+    validatePasswordLength(password);
+    validatePasswordNoSpaces(password);
+    validatePasswordCharacterTypes(password);
+    validatePasswordMatch(password, confirmPassword);
+
     // ローディング開始
     authStore.getState().setLoading(true);
 
     // Firebase認証でアカウント作成
     await serviceRegistry.auth.signUp(email, password);
 
-    // ユーザープロファイル作成
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      await serviceRegistry.profileDetail.updateProfileDetail(currentUser.uid, {
-        name: '',
-        age: 0,
-        location: '',
-        bio: '',
-        images: [],
-        tags: [],
-        details: {
-          height: 0,
-          occupation: '',
-          education: '',
-          languages: [],
-          smoking: false,
-          drinking: ''
-        },
-        createdAt: new Date()
-      });
-    }
-
     // ストア更新は監視システムに任せる（重複処理を避ける）
-    // authStore.getState().setUser() ← 削除
-    // authStore.getState().setLoading(false) ← 削除
+    // プロフィール初期化も認証後のコールバックで実行される
 
     return { success: true };
 
@@ -75,9 +56,7 @@ export const signUpUser = async (data: SignUpData): Promise<SignUpResult> => {
     authStore.getState().setLoading(false);
     authStore.getState().setError(error.message || 'アカウント作成に失敗しました');
 
-    return {
-      success: false,
-      error: error.message || 'アカウント作成に失敗しました'
-    };
+    // エラーを再スローして画面側でトースト表示
+    throw new Error(error.message || 'アカウント作成に失敗しました');
   }
 };

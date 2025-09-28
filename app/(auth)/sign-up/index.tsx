@@ -69,7 +69,7 @@ export default function SignUpScreen() {
 
           {/* パスワード入力フィールド */}
           <TextInput
-            placeholder="パスワード（6文字以上）"
+            placeholder="パスワード（6-32文字、英字+数字）"
             value={password}
             onChangeText={setPassword}
             secureTextEntry

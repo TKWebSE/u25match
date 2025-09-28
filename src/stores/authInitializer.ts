@@ -23,7 +23,7 @@ export const initializeAuth = (): (() => void) => {
       authStore.getState().setLoading(false); // ローディング終了
       console.log('✅ ログイン状態をストアに反映完了');
 
-      // プロフィール情報も取得・保存
+      // プロフィール情報を取得・保存
       await initializeProfile(user);
     } else {
       // ログアウト状態: ストアをクリア

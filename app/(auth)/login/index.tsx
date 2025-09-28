@@ -6,7 +6,6 @@ import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
 import { loginUser } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
-import { validateLoginForm } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -33,21 +32,14 @@ export default function LoginScreen() {
     // エラーをクリア
     clearError();
 
-    // 共通バリデーションを使用
-    const validationResult = validateLoginForm({ email, password });
-    if (!validationResult.isValid) {
-      showErrorToast(validationResult.message || 'バリデーションエラーが発生しました');
-      return;
-    }
+    try {
+      // ユースケースを呼び出し（バリデーションとログイン処理を実行）
+      await loginUser({ email, password });
 
-    // ユースケースを呼び出し（ストア更新は監視システムが担当）
-    const result = await loginUser({ email, password });
-
-    if (result.success) {
       showSuccessToast('ログインに成功しました');
       // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
-    } else {
-      showErrorToast(result.error || 'ログインに失敗しました');
+    } catch (error: any) {
+      showErrorToast(error.message || 'ログインに失敗しました');
     }
   };
 

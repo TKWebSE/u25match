@@ -16,17 +16,19 @@ export class MockAuthService implements AuthService {
     // APIコールをシミュレート（実際は何もしない）
     await this.simulateApiCall(500);
 
-    // バリデーション例
-    if (!email || !password) {
-      throw new Error('メールアドレスとパスワードは必須です');
-    }
-
-    if (password.length < 6) {
-      throw new Error('パスワードは6文字以上で入力してください');
-    }
-
-    // ダミーユーザーを返す
-    return this.createMockResult();
+    // ダミーユーザーを作成して返す
+    const authUser = this.createMockAuthUser();
+    return {
+      user: {
+        uid: authUser.uid,
+        email: authUser.email || '',
+        displayName: authUser.displayName || undefined,
+        image: authUser.image || undefined,
+        emailVerified: true,
+      },
+      operationType: 'signUp',
+      providerId: null,
+    };
   }
 
   async logIn(email: string, password: string): Promise<AuthResult> {
@@ -41,8 +43,19 @@ export class MockAuthService implements AuthService {
         throw new Error('ログインできませんでした');
       }
 
-      // ダミーユーザーを返す
-      return this.createMockResult();
+      // ダミーユーザーを作成して返す
+      const authUser = this.createMockAuthUser();
+      return {
+        user: {
+          uid: authUser.uid,
+          email: authUser.email || '',
+          displayName: authUser.displayName || undefined,
+          image: authUser.image || undefined,
+          emailVerified: true,
+        },
+        operationType: 'signIn',
+        providerId: null,
+      };
     } catch (error) {
       throw new Error("ログインできませんでした");
     }
@@ -62,11 +75,6 @@ export class MockAuthService implements AuthService {
 
     // APIコールをシミュレート
     await this.simulateApiCall(800);
-
-    // バリデーション例
-    if (!email) {
-      throw new Error('メールアドレスは必須です');
-    }
 
     console.log('🎭 パスワードリセットメールを送信しました（モック）');
   }
@@ -136,20 +144,4 @@ export class MockAuthService implements AuthService {
     this.callbacks.forEach(callback => callback(user));
   }
 
-  private createMockResult(): AuthResult {
-    // 共通のモックユーザーを作成し、AuthResult形式に変換
-    const authUser = this.createMockAuthUser();
-
-    return {
-      user: {
-        uid: authUser.uid,
-        email: authUser.email || '',
-        displayName: authUser.displayName || undefined,
-        image: authUser.image || undefined,
-        emailVerified: true,
-      },
-      operationType: 'signIn',
-      providerId: null,
-    };
-  }
 }

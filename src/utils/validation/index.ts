@@ -1,4 +1,3 @@
-// バリデーション関数と型定義をエクスポート
+// バリデーション関数をエクスポート
 export * from './authValidation';
-export * from './types';
 

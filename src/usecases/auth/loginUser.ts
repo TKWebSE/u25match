@@ -3,6 +3,7 @@
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { authStore } from '@stores/authStore';
+import { validateEmailFormat, validatePasswordLength } from '@utils/validation/authValidation';
 
 /**
  * ログインに必要なデータ
@@ -36,6 +37,10 @@ export const loginUser = async (data: LoginData): Promise<LoginResult> => {
   const { email, password } = data;
 
   try {
+    // バリデーション（utils側でエラーをスロー）
+    validateEmailFormat(email);
+    validatePasswordLength(password);
+
     // ローディング開始（UIにスピナー表示）
     authStore.getState().setLoading(true);
 
@@ -56,10 +61,7 @@ export const loginUser = async (data: LoginData): Promise<LoginResult> => {
     authStore.getState().setLoading(false);
     authStore.getState().setError(error.message || 'ログインに失敗しました');
 
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'ログインに失敗しました'
-    };
+    // エラーを再スローして画面側でトースト表示
+    throw new Error(error.message || 'ログインに失敗しました');
   }
 };
