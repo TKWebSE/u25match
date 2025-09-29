@@ -19,7 +19,6 @@ interface AuthState {
 interface AuthActions {
   setUser: (user: User | null) => void;    // ユーザー情報を設定
   setLoading: (loading: boolean) => void;  // ローディング状態を設定
-  setError: (error: string | null) => void; // エラーメッセージを設定
   clearError: () => void;                  // エラーをクリア
   logout: () => void;                      // ログアウト（ユーザー情報とエラーをクリア）
   deleteAccount: () => void;               // アカウント削除（完全クリア）
@@ -47,7 +46,6 @@ export const authStore = create<AuthStore>((set) => ({
   // アクション実装
   setUser: (user) => set({ user }),
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
   logout: () => set({ user: null, error: null }),
   deleteAccount: () => set({ user: null, error: null, isLoading: false }),

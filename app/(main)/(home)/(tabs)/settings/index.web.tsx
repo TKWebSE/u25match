@@ -19,10 +19,11 @@ import {
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
 import { useStrictAuth } from '@hooks/auth';
-import { logOut } from '@services/auth';
 import { useProfileStore } from '@stores/profileStore';
 import { colors, spacing } from '@styles/globalStyles';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
+import { logoutUser } from '@usecases/auth';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -42,11 +43,11 @@ const SettingsScreen = () => {
   // ログアウト処理
   const handleLogout = async () => {
     try {
-      await logOut();
+      await logoutUser();
+      showSuccessToast('ログアウトしました');
       // onAuthStateChangedでuser状態が更新され、自動的に認証画面にリダイレクトされます
     } catch (error: any) {
-      console.error('ログアウトエラー:', error);
-      // エラーハンドリングは必要に応じて追加
+      showErrorToast(error.message || 'ログアウトに失敗しました');
     }
   };
 

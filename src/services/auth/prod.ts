@@ -3,7 +3,7 @@
 
 import { AuthUser } from '@my-types/user';
 // import { getUserProfile } from '@services/firestoreUserProfile'; // 削除済み
-import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
@@ -94,7 +94,12 @@ export class ProdAuthService implements AuthService {
    */
   async logOut(): Promise<void> {
     console.log('🔥 本番ログアウト');
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      console.error('🔥 ログアウトエラー:', error);
+      throw new Error('ログアウトに失敗しました');
+    }
   }
 
   /**
@@ -103,7 +108,35 @@ export class ProdAuthService implements AuthService {
    */
   async resetPassword(email: string): Promise<void> {
     console.log('🔥 本番パスワードリセット:', email);
-    await sendPasswordResetEmail(auth, email);
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      console.error('🔥 パスワードリセットエラー:', error);
+      throw new Error('パスワードリセットメールの送信に失敗しました');
+    }
+  }
+
+  /**
+   * 再認証（パスワード確認）
+   * 現在のユーザーが正しいパスワードを持っているか確認する
+   * @param password 確認するパスワード
+   * @throws パスワードが間違っている場合、ログインしていない場合
+   */
+  async reauthenticate(password: string): Promise<void> {
+    console.log('🔥 本番再認証');
+    const currentUser = auth.currentUser;
+    if (!currentUser || !currentUser.email) {
+      throw new Error('ログインしていません');
+    }
+
+    try {
+      const credential = EmailAuthProvider.credential(currentUser.email, password);
+      await reauthenticateWithCredential(currentUser, credential);
+      console.log('🔥 再認証成功');
+    } catch (error: any) {
+      console.error('🔥 再認証エラー:', error);
+      throw new Error('パスワードが正しくありません');
+    }
   }
 
   /**

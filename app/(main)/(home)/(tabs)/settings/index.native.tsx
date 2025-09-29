@@ -19,9 +19,10 @@ import {
   VERIFICATION_SCREEN_PATH
 } from '@constants/routes';
 import { useStrictAuth } from '@hooks/auth';
-import { logOut } from '@services/auth';
 import { useProfileStore } from '@stores/profileStore';
 import { SettingsStyles } from '@styles/settings/SettingsStyles';
+import { deleteAccount, logoutUser } from '@usecases/auth';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -62,11 +63,11 @@ const SettingsScreen = () => {
   // ログアウト処理
   const handleLogout = async () => {
     try {
-      await logOut();
+      await logoutUser();
+      showSuccessToast('ログアウトしました');
       // onAuthStateChangedでuser状態が更新され、自動的に認証画面にリダイレクトされます
     } catch (error: any) {
-      console.error('ログアウトエラー:', error);
-      // エラーハンドリングは必要に応じて追加
+      showErrorToast(error.message || 'ログアウトに失敗しました');
     }
   };
 
@@ -361,25 +362,30 @@ const SettingsScreen = () => {
 
   // アカウント削除処理
   const handleDeleteAccount = () => {
-    Alert.alert(
+    Alert.prompt(
       'アカウント削除',
-      'アカウントを削除すると、すべてのデータが永久に失われます。この操作は取り消せません。本当に削除しますか？',
+      'パスワードを入力してください',
       [
-        {
-          text: 'キャンセル',
-          style: 'cancel',
-        },
+        { text: 'キャンセル', style: 'cancel' },
         {
           text: '削除する',
           style: 'destructive',
-          onPress: () => {
-            // 実際の削除処理を実装
-            Alert.alert('削除完了', 'アカウントが削除されました。');
-            // ログアウト処理も実行
-            logOut();
+          onPress: async (password) => {
+            if (!password) {
+              showErrorToast('パスワードを入力してください');
+              return;
+            }
+            try {
+              await deleteAccount({ password });
+              showSuccessToast('アカウントが削除されました');
+              await logoutUser();
+            } catch (error: any) {
+              showErrorToast(error.message || 'アカウント削除に失敗しました');
+            }
           },
         },
-      ]
+      ],
+      'secure-text'
     );
   };
 

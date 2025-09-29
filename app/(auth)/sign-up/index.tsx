@@ -35,14 +35,13 @@ export default function SignUpScreen() {
     // エラーをクリア
     clearError();
 
-    // ユースケースを呼び出し（ストア更新は監視システムが担当）
-    const result = await signUpUser({ email, password, confirmPassword });
-
-    if (result.success) {
+    try {
+      // ユースケースを呼び出し（ストア更新は監視システムが担当）
+      await signUpUser({ email, password, confirmPassword });
       showSuccessToast('登録完了！ようこそ✨');
       // onAuthStateChangedでuser状態が更新され、自動的にリダイレクトされる
-    } else {
-      showErrorToast(result.error || 'アカウント作成に失敗しました');
+    } catch (error: any) {
+      showErrorToast(error.message || 'アカウント作成に失敗しました');
     }
   };
 

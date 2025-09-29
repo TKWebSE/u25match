@@ -64,19 +64,47 @@ export class MockAuthService implements AuthService {
   async logOut(): Promise<void> {
     console.log('🎭 モックログアウト');
 
-    // APIコールをシミュレート
-    await this.simulateApiCall(300);
+    try {
+      // APIコールをシミュレート
+      await this.simulateApiCall(300);
 
-    // 何もしない（実際は状態をクリア）
+      // 何もしない（実際は状態をクリア）
+    } catch (error: any) {
+      console.error('🎭 モックログアウトエラー:', error);
+      throw new Error('ログアウトに失敗しました');
+    }
   }
 
   async resetPassword(email: string): Promise<void> {
     console.log('🎭 モックパスワードリセット:', email);
 
-    // APIコールをシミュレート
-    await this.simulateApiCall(800);
+    try {
+      // APIコールをシミュレート
+      await this.simulateApiCall(800);
 
-    console.log('🎭 パスワードリセットメールを送信しました（モック）');
+      console.log('🎭 パスワードリセットメールを送信しました（モック）');
+    } catch (error: any) {
+      console.error('🎭 モックパスワードリセットエラー:', error);
+      throw new Error('パスワードリセットメールの送信に失敗しました');
+    }
+  }
+
+  async reauthenticate(password: string): Promise<void> {
+    console.log('🎭 モック再認証:', password);
+
+    // APIコールをシミュレート
+    await this.simulateApiCall(500);
+
+    if (!this.currentUser) {
+      throw new Error('ログインしていません');
+    }
+
+    // モック用のパスワードチェック（実際のアプリでは適切なパスワードを設定）
+    if (password !== 'password123') {
+      throw new Error('パスワードが正しくありません');
+    }
+
+    console.log('🎭 再認証成功');
   }
 
   async deleteAccount(): Promise<void> {

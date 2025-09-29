@@ -20,6 +20,9 @@ export interface AuthService {
   /** アカウント削除 */
   deleteAccount(): Promise<void>;
 
+  /** 再認証（パスワード確認） */
+  reauthenticate(password: string): Promise<void>;
+
   // 状態監視機能
   /** 現在ログイン中のユーザー情報を取得 */
   getCurrentUser(): AuthUser | null;

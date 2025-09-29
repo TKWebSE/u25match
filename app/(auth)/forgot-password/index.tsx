@@ -6,6 +6,7 @@ import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
 import { resetPasswordUser } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
+import { validateEmailFormat } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -22,7 +23,7 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
 
   // ストアから認証状態を取得
-  const { isLoading, error, clearError } = useAuthStore();
+  const { isLoading, clearError } = useAuthStore();
 
   const router = useRouter();
 
@@ -37,21 +38,18 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    // メールアドレスの形式チェック
-    if (!email.includes('@')) {
-      showErrorToast('有効なメールアドレスを入力してください');
-      return;
-    }
+    try {
+      // utilsのバリデーション関数を使用
+      validateEmailFormat(email);
 
-    // ユースケースを呼び出し
-    const result = await resetPasswordUser({ email });
+      // ユースケースを呼び出し
+      await resetPasswordUser({ email });
 
-    if (result.success) {
       showSuccessToast('パスワードリセットメールを送信しました');
       // ログイン画面に戻る
       router.push(LOGIN_SCREEN_PATH as any);
-    } else {
-      showErrorToast(result.error || 'パスワードリセットに失敗しました。メールアドレスを確認してください。');
+    } catch (error: any) {
+      showErrorToast(error.message || 'パスワードリセットに失敗しました');
     }
   };
 

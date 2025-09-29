@@ -8,23 +8,16 @@ export interface ResetPasswordData {
   email: string;
 }
 
-export interface ResetPasswordResult {
-  success: boolean;
-  error?: string;
-}
-
 /**
  * パスワードリセットのユースケース
  * 
  * フロー:
  * 1. ローディング状態を開始
  * 2. サービス層でFirebaseパスワードリセットメール送信
- * 3. 結果をUIに返却
- * 
  * @param data - リセットデータ（メールアドレス）
- * @returns リセット結果（成功/失敗とエラーメッセージ）
+ * @returns 成功時はtrue、エラー時はスロー
  */
-export const resetPasswordUser = async (data: ResetPasswordData): Promise<ResetPasswordResult> => {
+export const resetPasswordUser = async (data: ResetPasswordData): Promise<boolean> => {
   const { email } = data;
 
   try {
@@ -36,20 +29,14 @@ export const resetPasswordUser = async (data: ResetPasswordData): Promise<ResetP
 
     // 成功時
     authStore.getState().setLoading(false);
-    authStore.getState().setError(null); // エラーをクリア
 
-    return { success: true };
+    return true;
 
   } catch (error: any) {
-    console.error('パスワードリセットエラー:', error);
-
     // エラー時
     authStore.getState().setLoading(false);
-    authStore.getState().setError(error.message || 'パスワードリセットに失敗しました');
 
-    return {
-      success: false,
-      error: error.message || 'パスワードリセットに失敗しました'
-    };
+    // エラーを再スローして画面側でトースト表示
+    throw new Error(error.message || 'パスワードリセットに失敗しました');
   }
 };

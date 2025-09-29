@@ -4,11 +4,6 @@
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { authStore } from '@stores/authStore';
 
-export interface LogoutResult {
-  success: boolean;
-  error?: string;
-}
-
 /**
  * ユーザーログアウトのユースケース
  * 
@@ -16,9 +11,9 @@ export interface LogoutResult {
  * 1. ローディング開始
  * 2. サービス層でFirebaseログアウト
  * 3. ストアをクリア
- * 4. 結果をUIに返却
+ * 4. 成功時はtrueを返し、エラー時はスロー
  */
-export const logoutUser = async (): Promise<LogoutResult> => {
+export const logoutUser = async (): Promise<boolean> => {
   try {
     // ローディング開始
     authStore.getState().setLoading(true);
@@ -30,18 +25,13 @@ export const logoutUser = async (): Promise<LogoutResult> => {
     authStore.getState().logout();
     authStore.getState().setLoading(false);
 
-    return { success: true };
+    return true;
 
   } catch (error: any) {
-    console.error('ログアウトエラー:', error);
-
     // エラー時
     authStore.getState().setLoading(false);
-    authStore.getState().setError(error.message || 'ログアウトに失敗しました');
 
-    return {
-      success: false,
-      error: error.message || 'ログアウトに失敗しました'
-    };
+    // エラーを再スローして画面側でトースト表示
+    throw new Error(error.message || 'ログアウトに失敗しました');
   }
 };

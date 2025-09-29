@@ -19,7 +19,7 @@ export const initializeAuth = (): (() => void) => {
     if (user) {
       // ログイン状態: ストアにユーザー情報を設定
       authStore.getState().setUser(user as any); // TODO: 型変換を適切に実装
-      authStore.getState().setError(null); // エラーをクリア
+      authStore.getState().clearError(); // エラーをクリア
       authStore.getState().setLoading(false); // ローディング終了
       console.log('✅ ログイン状態をストアに反映完了');
 
@@ -28,7 +28,7 @@ export const initializeAuth = (): (() => void) => {
     } else {
       // ログアウト状態: ストアをクリア
       authStore.getState().setUser(null);
-      authStore.getState().setError(null);
+      authStore.getState().clearError();
       authStore.getState().setLoading(false); // ローディング終了
       console.log('✅ ログアウト状態をストアに反映完了');
 

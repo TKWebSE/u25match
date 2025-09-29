@@ -13,13 +13,6 @@ export interface LoginData {
   password: string;  // パスワード
 }
 
-/**
- * ログイン処理の結果
- */
-export interface LoginResult {
-  success: boolean;    // 処理成功フラグ
-  error?: string;      // エラーメッセージ（失敗時のみ）
-}
 
 /**
  * ユーザーログインのユースケース
@@ -33,7 +26,7 @@ export interface LoginResult {
  * @param data - ログインデータ（メール・パスワード）
  * @returns ログイン結果（成功/失敗とエラーメッセージ）
  */
-export const loginUser = async (data: LoginData): Promise<LoginResult> => {
+export const loginUser = async (data: LoginData): Promise<boolean> => {
   const { email, password } = data;
 
   try {
@@ -52,14 +45,11 @@ export const loginUser = async (data: LoginData): Promise<LoginResult> => {
     // authStore.getState().setUser() ← 削除
     // authStore.getState().setLoading(false) ← 削除
 
-    return { success: true };
+    return true;
 
   } catch (error: any) {
-    console.error('ログインエラー:', error);
-
     // エラー時のみ手動でストア更新
     authStore.getState().setLoading(false);
-    authStore.getState().setError(error.message || 'ログインに失敗しました');
 
     // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'ログインに失敗しました');
