@@ -29,6 +29,10 @@ export const createChat = (participants: string[]) => {
   return chatService.createChat(participants);
 };
 
+export const getChatRooms = (userId: string) => {
+  return chatService.getChatRooms(userId);
+};
+
 // 型定義も再エクスポート
 export type { ChatMessage, ChatRoom, ChatService } from './types';
 
