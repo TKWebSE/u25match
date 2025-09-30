@@ -29,11 +29,8 @@ export class ProdChatService implements ChatService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'メッセージの送信に失敗しました');
     }
   }
 
@@ -55,11 +52,8 @@ export class ProdChatService implements ChatService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'メッセージの取得に失敗しました');
     }
   }
 
@@ -87,11 +81,8 @@ export class ProdChatService implements ChatService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'チャットの作成に失敗しました');
     }
   }
 
@@ -113,11 +104,8 @@ export class ProdChatService implements ChatService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'チャット一覧の取得に失敗しました');
     }
   }
 }

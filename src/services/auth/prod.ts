@@ -23,8 +23,6 @@ export class ProdAuthService implements AuthService {
    * @returns 認証結果（ユーザー情報、操作タイプ、プロバイダーID）
    */
   async signUp(email: string, password: string): Promise<AuthResult> {
-    console.log('🔥 本番サインアップ:', email);
-
     try {
       // Firebase Authenticationでユーザー作成
       const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,8 +40,6 @@ export class ProdAuthService implements AuthService {
         providerId: result.providerId,
       };
     } catch (error: any) {
-      console.error('🔥 サインアップエラー:', error);
-
       // Firebaseエラーを適切なメッセージに変換
       if (error.code === 'auth/email-already-in-use') {
         throw new Error('このメールアドレスは既に使用されています');
@@ -65,8 +61,6 @@ export class ProdAuthService implements AuthService {
    * @throws ログインに失敗した場合
    */
   async logIn(email: string, password: string): Promise<AuthResult> {
-    console.log('🔥 本番ログイン:', email);
-
     try {
       // Firebase Authenticationでログイン
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -93,11 +87,9 @@ export class ProdAuthService implements AuthService {
    * 現在のセッションを終了する
    */
   async logOut(): Promise<void> {
-    console.log('🔥 本番ログアウト');
     try {
       await signOut(auth);
     } catch (error: any) {
-      console.error('🔥 ログアウトエラー:', error);
       throw new Error('ログアウトに失敗しました');
     }
   }
@@ -107,11 +99,9 @@ export class ProdAuthService implements AuthService {
    * @param email パスワードリセットメールを送信するメールアドレス
    */
   async resetPassword(email: string): Promise<void> {
-    console.log('🔥 本番パスワードリセット:', email);
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error: any) {
-      console.error('🔥 パスワードリセットエラー:', error);
       throw new Error('パスワードリセットメールの送信に失敗しました');
     }
   }
@@ -123,7 +113,6 @@ export class ProdAuthService implements AuthService {
    * @throws パスワードが間違っている場合、ログインしていない場合
    */
   async reauthenticate(password: string): Promise<void> {
-    console.log('🔥 本番再認証');
     const currentUser = auth.currentUser;
     if (!currentUser || !currentUser.email) {
       throw new Error('ログインしていません');
@@ -132,9 +121,7 @@ export class ProdAuthService implements AuthService {
     try {
       const credential = EmailAuthProvider.credential(currentUser.email, password);
       await reauthenticateWithCredential(currentUser, credential);
-      console.log('🔥 再認証成功');
     } catch (error: any) {
-      console.error('🔥 再認証エラー:', error);
       throw new Error('パスワードが正しくありません');
     }
   }
@@ -145,7 +132,6 @@ export class ProdAuthService implements AuthService {
    * @throws ログインしていない場合
    */
   async deleteAccount(): Promise<void> {
-    console.log('🔥 本番アカウント削除');
     const currentUser = auth.currentUser;
     if (!currentUser) {
       throw new Error('ログインしていません');
@@ -168,10 +154,7 @@ export class ProdAuthService implements AuthService {
    * @returns 監視を停止するための関数
    */
   onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void {
-    console.log('🔥 Firebase認証状態監視を開始');
-
     return onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('🔥 Firebase認証状態変更:', firebaseUser ? firebaseUser.uid : 'null');
 
       if (firebaseUser) {
         // Firebase UserをAuthUserに変換

@@ -33,13 +33,11 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async getProfileDetail(uid: string): Promise<ProfileDetailResponse> {
     try {
-      console.log('🔥 Firebaseからプロフィール詳細を取得中...', { uid });
 
       const userDocRef = doc(db, 'users', uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        console.log('❌ ユーザードキュメントが見つかりません:', { uid });
         return {
           success: false,
           error: 'ユーザーが見つかりません',
@@ -47,7 +45,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
       }
 
       const userData = userDoc.data();
-      console.log('✅ Firebaseからプロフィール詳細取得成功:', userData);
 
       return {
         success: true,
@@ -70,7 +67,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse> {
     try {
-      console.log('🔥 FirebaseからユニークIDでプロフィール詳細を取得中...', { uniqueId });
 
       // TODO: ユニークIDでユーザーを検索する実装
       // 現在はuidベースの検索のみ実装されているため、一時的にエラーを返す
@@ -96,7 +92,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse> {
     try {
-      console.log('🔥 Firebaseでプロフィール詳細を更新中...', { uid, data });
 
       const userDocRef = doc(db, 'users', uid);
       await updateDoc(userDocRef, data);
@@ -105,7 +100,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
       const updatedDoc = await getDoc(userDocRef);
       const updatedData = updatedDoc.data();
 
-      console.log('✅ Firebaseでプロフィール詳細更新成功:', updatedData);
 
       return {
         success: true,
@@ -128,17 +122,14 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async sendLike(uid: string): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('🔥 Firebaseでいいねを送信中...', { uid });
 
       const userDocRef = doc(db, 'users', uid);
       await updateDoc(userDocRef, {
         likeCount: increment(1)
       });
 
-      console.log('✅ Firebaseでいいね送信成功');
       return { success: true };
     } catch (error) {
-      console.error('💥 Firebaseいいね送信エラー:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

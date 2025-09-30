@@ -29,9 +29,8 @@ export interface CheckStatusResult {
  */
 export const checkStatus = async (): Promise<CheckStatusResult> => {
   try {
-    // ローディング開始・エラークリア
+    // ローディング開始
     verificationStore.getState().setLoading(true);
-    verificationStore.getState().clearError();
 
     // サービス層でステータス取得
     const result = await serviceRegistry.verification.getStatus();
@@ -75,9 +74,8 @@ export const checkStatus = async (): Promise<CheckStatusResult> => {
   } catch (error: any) {
     console.error('ステータス確認エラー:', error);
 
-    // エラー処理（ストアにエラー情報を設定）
+    // ローディング終了
     verificationStore.getState().setLoading(false);
-    verificationStore.getState().setError(error.message || 'ステータスの確認に失敗しました');
 
     // UIに結果を返却
     return {

@@ -11,7 +11,6 @@ export class MockAuthService implements AuthService {
   private callbacks: ((user: AuthUser | null) => void)[] = [];
 
   async signUp(email: string, password: string): Promise<AuthResult> {
-    console.log('🎭 モックサインアップ:', email);
 
     // APIコールをシミュレート（実際は何もしない）
     await this.simulateApiCall(500);
@@ -32,8 +31,6 @@ export class MockAuthService implements AuthService {
   }
 
   async logIn(email: string, password: string): Promise<AuthResult> {
-    console.log('🎭 モックログイン:', email);
-
     try {
       // APIコールをシミュレート
       await this.simulateApiCall(800);
@@ -62,36 +59,27 @@ export class MockAuthService implements AuthService {
   }
 
   async logOut(): Promise<void> {
-    console.log('🎭 モックログアウト');
-
     try {
       // APIコールをシミュレート
       await this.simulateApiCall(300);
 
       // 何もしない（実際は状態をクリア）
     } catch (error: any) {
-      console.error('🎭 モックログアウトエラー:', error);
       throw new Error('ログアウトに失敗しました');
     }
   }
 
   async resetPassword(email: string): Promise<void> {
-    console.log('🎭 モックパスワードリセット:', email);
-
     try {
       // APIコールをシミュレート
       await this.simulateApiCall(800);
 
-      console.log('🎭 パスワードリセットメールを送信しました（モック）');
     } catch (error: any) {
-      console.error('🎭 モックパスワードリセットエラー:', error);
       throw new Error('パスワードリセットメールの送信に失敗しました');
     }
   }
 
   async reauthenticate(password: string): Promise<void> {
-    console.log('🎭 モック再認証:', password);
-
     // APIコールをシミュレート
     await this.simulateApiCall(500);
 
@@ -103,13 +91,9 @@ export class MockAuthService implements AuthService {
     if (password !== 'password123') {
       throw new Error('パスワードが正しくありません');
     }
-
-    console.log('🎭 再認証成功');
   }
 
   async deleteAccount(): Promise<void> {
-    console.log('🎭 モックアカウント削除');
-
     // APIコールをシミュレート
     await this.simulateApiCall(2000);
 
@@ -120,8 +104,6 @@ export class MockAuthService implements AuthService {
     // ユーザー情報をクリア
     this.currentUser = null;
     this.notifyCallbacks(null);
-
-    console.log('🎭 アカウント削除完了（モック）');
   }
 
   getCurrentUser(): AuthUser | null {
@@ -129,8 +111,6 @@ export class MockAuthService implements AuthService {
   }
 
   onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void {
-    console.log('🎭 モック認証状態監視を開始');
-
     // コールバックを登録
     this.callbacks.push(callback);
 

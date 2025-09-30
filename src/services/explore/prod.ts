@@ -22,11 +22,8 @@ export class ProdExploreService implements ExploreService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'ユーザー検索に失敗しました');
     }
   }
 
@@ -48,11 +45,8 @@ export class ProdExploreService implements ExploreService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'おすすめユーザー取得に失敗しました');
     }
   }
 
@@ -80,11 +74,8 @@ export class ProdExploreService implements ExploreService {
         success: true,
         data,
       };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || '近くのユーザー取得に失敗しました');
     }
   }
 
@@ -112,8 +103,8 @@ export class ProdExploreService implements ExploreService {
         users: data.users || [],
         hasMore: data.hasMore || false,
       };
-    } catch (error) {
-      throw new Error(`Failed to get user list: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (error: any) {
+      throw new Error(error.message || 'ユーザー一覧の取得に失敗しました');
     }
   }
 } 

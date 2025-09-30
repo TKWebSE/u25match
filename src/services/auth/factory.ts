@@ -1,7 +1,7 @@
 // src/services/auth/factory.ts
 // 🏭 認証サービス工場 - 環境判定と生成の責任のみ
 
-import { getServiceConfigInfo, getServiceMode } from '@utils/serviceConfig';
+import { getServiceMode } from '@utils/serviceConfig';
 import { MockAuthService } from './mock';
 import { ProdAuthService } from './prod';
 import { AuthService } from './types';
@@ -16,16 +16,10 @@ export class AuthServiceFactory {
    */
   static createAuthService(): AuthService {
     const mode = getServiceMode('AUTH');
-    const configInfo = getServiceConfigInfo('AUTH');
-
-    console.log('🔧 認証サービス生成中...');
-    console.log('📋 認証サービス設定:', configInfo);
 
     if (mode === 'firebase') {
-      console.log('🔥 Firebase認証サービスを生成');
       return new ProdAuthService();
     } else {
-      console.log('🎭 モック認証サービスを生成');
       return new MockAuthService();
     }
   }
