@@ -40,17 +40,18 @@ export interface SendReactionResult {
  */
 export const sendReaction = async (fromUserId: string, data: SendReactionData): Promise<SendReactionResult> => {
   const { toUserId, type } = data;
+  const reactionsStoreState = reactionsStore.getState();
 
   try {
     // リアクション制限チェック
-    if (type === 'like' && !reactionsStore.getState().canSendLike()) {
+    if (type === 'like' && !reactionsStoreState.canSendLike()) {
       return {
         success: false,
         error: '本日のいいね上限に達しています'
       };
     }
 
-    if (type === 'super_like' && !reactionsStore.getState().canSendSuperLike()) {
+    if (type === 'super_like' && !reactionsStoreState.canSendSuperLike()) {
       return {
         success: false,
         error: '本日のスーパーいいね上限に達しています'
@@ -66,8 +67,8 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
     }
 
     // ローディング開始・エラークリア
-    reactionsStore.getState().setLoading(true);
-    reactionsStore.getState().clearError();
+    reactionsStoreState.setLoading(true);
+    reactionsStoreState.clearError();
 
     // サービス層でリアクション送信
     const result = await serviceRegistry.reactions.sendReaction({
@@ -86,11 +87,11 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
       isMatched: result.isMatched,
     };
 
-    reactionsStore.getState().addSentReaction(reaction);
+    reactionsStoreState.addSentReaction(reaction);
 
     // マッチした場合はマッチ情報も追加
     if (result.isMatched && result.matchId) {
-      reactionsStore.getState().addMatch({
+      reactionsStoreState.addMatch({
         id: result.matchId,
         userId1: fromUserId,
         userId2: toUserId,
@@ -101,12 +102,12 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
 
     // 使用回数を更新
     if (type === 'like') {
-      reactionsStore.getState().incrementDailyLikes();
+      reactionsStoreState.incrementDailyLikes();
     } else if (type === 'super_like') {
-      reactionsStore.getState().incrementSuperLikes();
+      reactionsStoreState.incrementSuperLikes();
     }
 
-    reactionsStore.getState().setLoading(false);
+    reactionsStoreState.setLoading(false);
 
     return {
       success: true,
@@ -118,8 +119,8 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
     console.error('リアクション送信エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setLoading(false);
-    reactionsStore.getState().setError(error.message || 'リアクションの送信に失敗しました');
+    reactionsStoreState.setLoading(false);
+    reactionsStoreState.setError(error.message || 'リアクションの送信に失敗しました');
 
     // UIに結果を返却
     return {

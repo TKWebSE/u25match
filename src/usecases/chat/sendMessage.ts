@@ -27,16 +27,17 @@ export interface SendMessageData {
  */
 export const sendMessage = async (data: SendMessageData): Promise<boolean> => {
   const { chatId, content, type = 'text' } = data;
+  const chatStoreState = chatStore.getState();
 
   try {
     // ローディング開始（UIにスピナー表示）
-    chatStore.getState().setLoading(true);
+    chatStoreState.setLoading(true);
 
     // サービス層でメッセージ送信
     const message = await serviceRegistry.chat.sendMessage(chatId, content);
 
     // ストアにメッセージを追加
-    chatStore.getState().addMessage({
+    chatStoreState.addMessage({
       ...message,
       type,
       timestamp: new Date(),
@@ -46,7 +47,7 @@ export const sendMessage = async (data: SendMessageData): Promise<boolean> => {
 
   } catch (error: any) {
     // エラー時のみ手動でストア更新
-    chatStore.getState().setLoading(false);
+    chatStoreState.setLoading(false);
 
     // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'メッセージの送信に失敗しました');

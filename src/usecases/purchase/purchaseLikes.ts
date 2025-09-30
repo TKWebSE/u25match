@@ -38,10 +38,11 @@ export interface PurchaseLikesResult {
  */
 export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLikesResult> => {
   const { planId, amount, pointsCost } = data;
+  const purchaseStoreState = purchaseStore.getState();
 
   try {
     // ポイント残高チェック
-    const currentPoints = purchaseStore.getState().currentPoints;
+    const currentPoints = purchaseStoreState.currentPoints;
     if (currentPoints < pointsCost) {
       return {
         success: false,
@@ -50,8 +51,8 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     }
 
     // ローディング開始・エラークリア
-    purchaseStore.getState().setLoading(true);
-    purchaseStore.getState().clearError();
+    purchaseStoreState.setLoading(true);
+    purchaseStoreState.clearError();
 
     // サービス層でいいね購入処理
     const result = await serviceRegistry.payment.purchaseLikes({
@@ -61,12 +62,12 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     });
 
     // 購入成功時、ポイント消費・いいね追加
-    purchaseStore.getState().consumePoints(pointsCost);
-    const currentLikes = purchaseStore.getState().currentLikes;
-    purchaseStore.getState().setCurrentLikes(currentLikes + amount);
+    purchaseStoreState.consumePoints(pointsCost);
+    const currentLikes = purchaseStoreState.currentLikes;
+    purchaseStoreState.setCurrentLikes(currentLikes + amount);
 
     // 購入履歴に記録
-    purchaseStore.getState().addPurchaseHistory({
+    purchaseStoreState.addPurchaseHistory({
       id: result.transactionId,
       type: 'likes',
       amount,
@@ -75,7 +76,7 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
       status: 'completed',
     });
 
-    purchaseStore.getState().setLoading(false);
+    purchaseStoreState.setLoading(false);
 
     return {
       success: true,
@@ -86,8 +87,8 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     console.error('いいね購入エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    purchaseStore.getState().setLoading(false);
-    purchaseStore.getState().setError(error.message || 'いいねの購入に失敗しました');
+    purchaseStoreState.setLoading(false);
+    purchaseStoreState.setError(error.message || 'いいねの購入に失敗しました');
 
     // UIに結果を返却
     return {

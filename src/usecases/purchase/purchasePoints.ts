@@ -38,11 +38,12 @@ export interface PurchasePointsResult {
  */
 export const purchasePoints = async (data: PurchasePointsData): Promise<PurchasePointsResult> => {
   const { planId, amount, price, paymentMethod } = data;
+  const purchaseStoreState = purchaseStore.getState();
 
   try {
     // ローディング開始・エラークリア
-    purchaseStore.getState().setLoading(true);
-    purchaseStore.getState().clearError();
+    purchaseStoreState.setLoading(true);
+    purchaseStoreState.clearError();
 
     // サービス層で決済処理
     const result = await serviceRegistry.payment.purchasePoints({
@@ -53,11 +54,11 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
     });
 
     // 購入成功時、ポイントをストアに追加
-    const currentPoints = purchaseStore.getState().currentPoints;
-    purchaseStore.getState().setCurrentPoints(currentPoints + amount);
+    const currentPoints = purchaseStoreState.currentPoints;
+    purchaseStoreState.setCurrentPoints(currentPoints + amount);
 
     // 購入履歴に記録
-    purchaseStore.getState().addPurchaseHistory({
+    purchaseStoreState.addPurchaseHistory({
       id: result.transactionId,
       type: 'points',
       amount,
@@ -67,7 +68,7 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
       status: 'completed',
     });
 
-    purchaseStore.getState().setLoading(false);
+    purchaseStoreState.setLoading(false);
 
     return {
       success: true,
@@ -78,8 +79,8 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
     console.error('ポイント購入エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    purchaseStore.getState().setLoading(false);
-    purchaseStore.getState().setError(error.message || 'ポイントの購入に失敗しました');
+    purchaseStoreState.setLoading(false);
+    purchaseStoreState.setError(error.message || 'ポイントの購入に失敗しました');
 
     // UIに結果を返却
     return {

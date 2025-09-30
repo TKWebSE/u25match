@@ -39,10 +39,11 @@ export interface UploadProfileImageResult {
  */
 export const uploadProfileImage = async (uid: string, data: UploadProfileImageData): Promise<UploadProfileImageResult> => {
   const { file, imageIndex = 0 } = data;
+  const profileStoreState = profileStore.getState();
 
   try {
     // 現在のプロフィール確認
-    const currentProfile = profileStore.getState().currentProfile;
+    const currentProfile = profileStoreState.currentProfile;
     if (!currentProfile || currentProfile.uid !== uid) {
       return {
         success: false,
@@ -69,8 +70,8 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
     }
 
     // 保存開始・エラークリア
-    profileStore.getState().setSaving(true);
-    profileStore.getState().clearError();
+    profileStoreState.setSaving(true);
+    profileStoreState.clearError();
 
     // サービス層で画像アップロード
     const uploadResult = await serviceRegistry.profileDetail.uploadProfileImage(uid, file, imageIndex);
@@ -93,15 +94,15 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
       updatedAt: new Date(),
     };
 
-    profileStore.getState().setCurrentProfile(updatedProfile);
+    profileStoreState.setCurrentProfile(updatedProfile);
 
     // 編集中の場合は編集状態も更新
-    const editingProfile = profileStore.getState().editingProfile;
+    const editingProfile = profileStoreState.editingProfile;
     if (editingProfile) {
-      profileStore.getState().updateEditingProfile({ images: updatedImages });
+      profileStoreState.updateEditingProfile({ images: updatedImages });
     }
 
-    profileStore.getState().setSaving(false);
+    profileStoreState.setSaving(false);
 
     return {
       success: true,
@@ -112,8 +113,8 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
     console.error('プロフィール画像アップロードエラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    profileStore.getState().setSaving(false);
-    profileStore.getState().setError(error.message || 'プロフィール画像のアップロードに失敗しました');
+    profileStoreState.setSaving(false);
+    profileStoreState.setError(error.message || 'プロフィール画像のアップロードに失敗しました');
 
     // UIに結果を返却
     return {

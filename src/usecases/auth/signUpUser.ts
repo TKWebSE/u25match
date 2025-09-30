@@ -24,6 +24,7 @@ export interface SignUpData {
  */
 export const signUpUser = async (data: SignUpData): Promise<boolean> => {
   const { email, password, confirmPassword } = data;
+  const authStoreState = authStore.getState();
 
   try {
     // バリデーション（utils側でエラーをスロー）
@@ -34,7 +35,7 @@ export const signUpUser = async (data: SignUpData): Promise<boolean> => {
     validatePasswordMatch(password, confirmPassword);
 
     // ローディング開始
-    authStore.getState().setLoading(true);
+    authStoreState.setLoading(true);
 
     // Firebase認証でアカウント作成
     await serviceRegistry.auth.signUp(email, password);
@@ -50,7 +51,7 @@ export const signUpUser = async (data: SignUpData): Promise<boolean> => {
 
   } catch (error: any) {
     // エラー時のみ手動でストア更新
-    authStore.getState().setLoading(false);
+    authStoreState.setLoading(false);
 
     // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'アカウント作成に失敗しました');

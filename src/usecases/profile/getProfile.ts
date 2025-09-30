@@ -28,10 +28,12 @@ export interface GetProfileResult {
  * @returns プロフィール取得結果（成功/失敗・プロフィール・エラー）
  */
 export const getProfile = async (uid: string, isOwnProfile = false): Promise<GetProfileResult> => {
+  const profileStoreState = profileStore.getState();
+
   try {
     // ローディング開始・エラークリア
-    profileStore.getState().setLoading(true);
-    profileStore.getState().clearError();
+    profileStoreState.setLoading(true);
+    profileStoreState.clearError();
 
     // サービス層でプロフィール取得
     const result = await serviceRegistry.profileDetail.getProfileDetail(uid);
@@ -54,13 +56,13 @@ export const getProfile = async (uid: string, isOwnProfile = false): Promise<Get
 
     if (isOwnProfile) {
       // 自分のプロフィールの場合は currentProfile に設定
-      profileStore.getState().setCurrentProfile(profileData);
+      profileStoreState.setCurrentProfile(profileData);
     } else {
       // 他のユーザーのプロフィールの場合は閲覧履歴に追加
-      profileStore.getState().addViewedProfile(profileData);
+      profileStoreState.addViewedProfile(profileData);
     }
 
-    profileStore.getState().setLoading(false);
+    profileStoreState.setLoading(false);
 
     return {
       success: true,
@@ -71,8 +73,8 @@ export const getProfile = async (uid: string, isOwnProfile = false): Promise<Get
     console.error('プロフィール取得エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    profileStore.getState().setLoading(false);
-    profileStore.getState().setError(error.message || 'プロフィールの取得に失敗しました');
+    profileStoreState.setLoading(false);
+    profileStoreState.setError(error.message || 'プロフィールの取得に失敗しました');
 
     // UIに結果を返却
     return {

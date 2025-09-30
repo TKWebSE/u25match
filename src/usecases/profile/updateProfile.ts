@@ -42,9 +42,11 @@ export interface UpdateProfileResult {
  * @returns プロフィール更新結果（成功/失敗・プロフィール・エラー）
  */
 export const updateProfile = async (uid: string, updates: UpdateProfileData): Promise<UpdateProfileResult> => {
+  const profileStoreState = profileStore.getState();
+
   try {
     // 現在のプロフィール確認
-    const currentProfile = profileStore.getState().currentProfile;
+    const currentProfile = profileStoreState.currentProfile;
     if (!currentProfile || currentProfile.uid !== uid) {
       return {
         success: false,
@@ -53,8 +55,8 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
     }
 
     // 保存開始・エラークリア
-    profileStore.getState().setSaving(true);
-    profileStore.getState().clearError();
+    profileStoreState.setSaving(true);
+    profileStoreState.clearError();
 
     // サービス層でプロフィール更新
     const result = await serviceRegistry.profileDetail.updateProfileDetail(uid, {
@@ -69,12 +71,12 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
       updatedAt: new Date(),
     };
 
-    profileStore.getState().setCurrentProfile(updatedProfile);
+    profileStoreState.setCurrentProfile(updatedProfile);
 
     // 編集状態をクリア
-    profileStore.getState().setEditingProfile(null);
+    profileStoreState.setEditingProfile(null);
 
-    profileStore.getState().setSaving(false);
+    profileStoreState.setSaving(false);
 
     return {
       success: true,
@@ -85,8 +87,8 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
     console.error('プロフィール更新エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    profileStore.getState().setSaving(false);
-    profileStore.getState().setError(error.message || 'プロフィールの更新に失敗しました');
+    profileStoreState.setSaving(false);
+    profileStoreState.setError(error.message || 'プロフィールの更新に失敗しました');
 
     // UIに結果を返却
     return {

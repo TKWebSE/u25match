@@ -38,10 +38,11 @@ export interface PurchaseBoostsResult {
  */
 export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<PurchaseBoostsResult> => {
   const { planId, amount, pointsCost } = data;
+  const purchaseStoreState = purchaseStore.getState();
 
   try {
     // ポイント残高チェック
-    const currentPoints = purchaseStore.getState().currentPoints;
+    const currentPoints = purchaseStoreState.currentPoints;
     if (currentPoints < pointsCost) {
       return {
         success: false,
@@ -50,8 +51,8 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
     }
 
     // ローディング開始・エラークリア
-    purchaseStore.getState().setLoading(true);
-    purchaseStore.getState().clearError();
+    purchaseStoreState.setLoading(true);
+    purchaseStoreState.clearError();
 
     // サービス層でブースト購入処理
     const result = await serviceRegistry.payment.purchaseBoosts({
@@ -61,12 +62,12 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
     });
 
     // 購入成功時、ポイント消費・ブースト追加
-    purchaseStore.getState().consumePoints(pointsCost);
-    const currentBoosts = purchaseStore.getState().currentBoosts;
-    purchaseStore.getState().setCurrentBoosts(currentBoosts + amount);
+    purchaseStoreState.consumePoints(pointsCost);
+    const currentBoosts = purchaseStoreState.currentBoosts;
+    purchaseStoreState.setCurrentBoosts(currentBoosts + amount);
 
     // 購入履歴に記録
-    purchaseStore.getState().addPurchaseHistory({
+    purchaseStoreState.addPurchaseHistory({
       id: result.transactionId,
       type: 'boosts',
       amount,
@@ -75,7 +76,7 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
       status: 'completed',
     });
 
-    purchaseStore.getState().setLoading(false);
+    purchaseStoreState.setLoading(false);
 
     return {
       success: true,
@@ -86,8 +87,8 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
     console.error('ブースト購入エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    purchaseStore.getState().setLoading(false);
-    purchaseStore.getState().setError(error.message || 'ブーストの購入に失敗しました');
+    purchaseStoreState.setLoading(false);
+    purchaseStoreState.setError(error.message || 'ブーストの購入に失敗しました');
 
     // UIに結果を返却
     return {

@@ -28,6 +28,7 @@ export interface LoginData {
  */
 export const loginUser = async (data: LoginData): Promise<boolean> => {
   const { email, password } = data;
+  const authStoreState = authStore.getState();
 
   try {
     // バリデーション（utils側でエラーをスロー）
@@ -35,7 +36,7 @@ export const loginUser = async (data: LoginData): Promise<boolean> => {
     validatePasswordLength(password);
 
     // ローディング開始（UIにスピナー表示）
-    authStore.getState().setLoading(true);
+    authStoreState.setLoading(true);
 
     // サービス層でFirebase認証を実行
     // → 成功時、onAuthStateChangedが自動的にストア更新してくれる
@@ -49,7 +50,7 @@ export const loginUser = async (data: LoginData): Promise<boolean> => {
 
   } catch (error: any) {
     // エラー時のみ手動でストア更新
-    authStore.getState().setLoading(false);
+    authStoreState.setLoading(false);
 
     // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'ログインに失敗しました');

@@ -20,10 +20,11 @@ export interface DeleteAccountData {
  */
 export const deleteAccount = async (data: DeleteAccountData): Promise<boolean> => {
   const { password } = data;
+  const authStoreState = authStore.getState();
 
   try {
     // ローディング開始
-    authStore.getState().setLoading(true);
+    authStoreState.setLoading(true);
 
     // 本人確認（再認証）
     await serviceRegistry.auth.reauthenticate(password);
@@ -34,14 +35,14 @@ export const deleteAccount = async (data: DeleteAccountData): Promise<boolean> =
     await serviceRegistry.auth.deleteAccount();
 
     // ストアをクリア
-    authStore.getState().deleteAccount();
-    authStore.getState().setLoading(false);
+    authStoreState.deleteAccount();
+    authStoreState.setLoading(false);
 
     return true;
 
   } catch (error: any) {
     // エラー時
-    authStore.getState().setLoading(false);
+    authStoreState.setLoading(false);
 
     // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'アカウント削除に失敗しました');

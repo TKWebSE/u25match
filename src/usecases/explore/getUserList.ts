@@ -36,11 +36,12 @@ export interface GetUserListResult {
  */
 export const getUserList = async (data: GetUserListData = {}): Promise<GetUserListResult> => {
   const { page = 1, limit = 20, filters = {} } = data;
+  const exploreStoreState = exploreStore.getState();
 
   try {
     // ローディング開始・エラークリア
-    exploreStore.getState().setLoading(true);
-    exploreStore.getState().clearError();
+    exploreStoreState.setLoading(true);
+    exploreStoreState.clearError();
 
     // サービス層でユーザー一覧取得
     const result = await serviceRegistry.explore.getUserList({
@@ -52,15 +53,15 @@ export const getUserList = async (data: GetUserListData = {}): Promise<GetUserLi
     // ストアに反映（ページングに応じて処理を分岐）
     if (page === 1) {
       // 初回取得時は既存データを置き換え
-      exploreStore.getState().setUsers(result.users);
+      exploreStoreState.setUsers(result.users);
     } else {
       // 追加読み込み時は既存データに追加
-      exploreStore.getState().addUsers(result.users);
+      exploreStoreState.addUsers(result.users);
     }
 
     // さらに読み込み可能かとローディング状態を更新
-    exploreStore.getState().setHasMore(result.hasMore);
-    exploreStore.getState().setLoading(false);
+    exploreStoreState.setHasMore(result.hasMore);
+    exploreStoreState.setLoading(false);
 
     return { success: true };
 
@@ -68,8 +69,8 @@ export const getUserList = async (data: GetUserListData = {}): Promise<GetUserLi
     console.error('ユーザー一覧取得エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    exploreStore.getState().setLoading(false);
-    exploreStore.getState().setError(error.message || 'ユーザー一覧の取得に失敗しました');
+    exploreStoreState.setLoading(false);
+    exploreStoreState.setError(error.message || 'ユーザー一覧の取得に失敗しました');
 
     // UIに結果を返却
     return {
