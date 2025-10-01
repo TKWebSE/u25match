@@ -14,8 +14,11 @@ export interface AuthService {
   /** 現在ユーザーのログアウト */
   logOut(): Promise<void>;
 
-  /** パスワードリセットメールの送信 */
-  resetPassword(email: string): Promise<void>;
+  /** パスワードを忘れた場合のメール送信 */
+  forgotPassword(email: string): Promise<void>;
+
+  /** パスワードの更新（oobCodeとnewPasswordを使用） */
+  updatePassword(oobCode: string, newPassword: string): Promise<void>;
 
   /** アカウント削除 */
   deleteAccount(): Promise<void>;

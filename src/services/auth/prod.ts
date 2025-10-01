@@ -3,7 +3,7 @@
 
 import { AuthUser } from '@my-types/user';
 // import { getUserProfile } from '@services/firestoreUserProfile'; // 削除済み
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { confirmPasswordReset, createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { AuthResult, AuthService } from './types';
 
@@ -95,10 +95,10 @@ export class ProdAuthService implements AuthService {
   }
 
   /**
-   * パスワードリセットメール送信
+   * パスワードを忘れた場合のメール送信
    * @param email パスワードリセットメールを送信するメールアドレス
    */
-  async resetPassword(email: string): Promise<void> {
+  async forgotPassword(email: string): Promise<void> {
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error: any) {
@@ -123,6 +123,29 @@ export class ProdAuthService implements AuthService {
       await reauthenticateWithCredential(currentUser, credential);
     } catch (error: any) {
       throw new Error('パスワードが正しくありません');
+    }
+  }
+
+  /**
+   * パスワードの更新（oobCodeとnewPasswordを使用）
+   * パスワードリセットメールから取得したoobCodeを使用して新しいパスワードを設定する
+   * @param oobCode メールから取得したワンタイムコード
+   * @param newPassword 新しいパスワード
+   * @throws 無効なoobCodeまたはパスワード設定に失敗した場合
+   */
+  async updatePassword(oobCode: string, newPassword: string): Promise<void> {
+    try {
+      await confirmPasswordReset(auth, oobCode, newPassword);
+    } catch (error: any) {
+      if (error.code === 'auth/invalid-action-code') {
+        throw new Error('無効なリセットコードです。再度パスワードリセットを実行してください');
+      } else if (error.code === 'auth/expired-action-code') {
+        throw new Error('リセットコードの有効期限が切れています。再度パスワードリセットを実行してください');
+      } else if (error.code === 'auth/weak-password') {
+        throw new Error('パスワードが弱すぎます');
+      } else {
+        throw new Error('パスワードの更新に失敗しました');
+      }
     }
   }
 

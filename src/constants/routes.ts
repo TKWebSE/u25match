@@ -5,6 +5,7 @@ export const ENTRY_SCREEN_PATH = '/entry';
 export const LOGIN_SCREEN_PATH = '/login';
 export const SIGN_UP_SCREEN_PATH = '/sign-up';
 export const FORGOT_PASSWORD_SCREEN_PATH = '/forgot-password';
+export const RESET_PASSWORD_NEW_SCREEN_PATH = '/reset-password-new';
 
 // メイン（ユーザー探索）
 export const EXPLORE_SCREEN_PATH = "/explore";

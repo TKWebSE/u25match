@@ -1,13 +1,12 @@
-// app/(auth)/forgot-password/index.tsx
-// パスワードリセット画面 - パスワードを忘れた場合の処理
+// app/(auth)/reset-password-new/index.tsx
+// 新しいパスワード設定画面 - パスワードリセット後の処理
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
-import { forgotPasswordUser } from '@usecases/auth';
+import { updatePasswordWithReset } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
-import { validateEmailFormat } from '@utils/validation';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,38 +17,50 @@ import {
   View,
 } from 'react-native';
 
-export default function ForgotPasswordScreen() {
+export default function ResetPasswordNewScreen() {
+  // URLパラメータからoobCodeを取得
+  const { oobCode } = useLocalSearchParams<{ oobCode: string }>();
+
   // フォーム状態の管理
-  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   // ストアから認証状態を取得
   const { isLoading, clearError } = useAuthStore();
 
   const router = useRouter();
 
-  // パスワードリセット処理の実行
-  const handleResetPassword = async () => {
+  // パスワード更新処理の実行
+  const handleUpdatePassword = async () => {
     // エラーをクリア
     clearError();
 
+    // oobCodeの存在チェック
+    if (!oobCode) {
+      showErrorToast('無効なリセットリンクです');
+      router.push(LOGIN_SCREEN_PATH as any);
+      return;
+    }
+
     // 入力値のバリデーション
-    if (!email) {
-      showErrorToast('メールアドレスを入力してください');
+    if (!newPassword || !confirmPassword) {
+      showErrorToast('パスワードを入力してください');
       return;
     }
 
     try {
-      // utilsのバリデーション関数を使用
-      validateEmailFormat(email);
-
       // ユースケースを呼び出し
-      await forgotPasswordUser({ email });
+      await updatePasswordWithReset({
+        oobCode,
+        newPassword,
+        confirmPassword,
+      });
 
-      showSuccessToast('パスワードリセットメールを送信しました');
-      // ログイン画面に戻る
+      showSuccessToast('パスワードを更新しました');
+      // ログイン画面に遷移
       router.push(LOGIN_SCREEN_PATH as any);
     } catch (error: any) {
-      showErrorToast(error.message || 'パスワードリセットに失敗しました');
+      showErrorToast(error.message || 'パスワードの更新に失敗しました');
     }
   };
 
@@ -62,35 +73,45 @@ export default function ForgotPasswordScreen() {
     <ScreenWrapper>
       <View style={styles.container}>
         {/* ヘッダー部分 */}
-        <Text style={styles.title}>パスワードを忘れた場合</Text>
+        <Text style={styles.title}>新しいパスワードを設定</Text>
         <Text style={styles.subtitle}>
-          登録済みのメールアドレスを入力してください{'\n'}
-          パスワードリセット用のメールをお送りします
+          新しいパスワードを入力してください{'\n'}
+          安全なパスワードを設定しましょう
         </Text>
 
         <View style={styles.form}>
-          {/* メールアドレス入力フィールド */}
+          {/* 新しいパスワード入力フィールド */}
           <TextInput
-            placeholder="メールアドレス"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
+            placeholder="新しいパスワード（6-32文字、英字+数字）"
+            value={newPassword}
+            onChangeText={setNewPassword}
+            secureTextEntry
             style={styles.input}
             editable={!isLoading}
-            autoComplete="email"
+            autoComplete="new-password"
           />
 
-          {/* パスワードリセットボタン */}
+          {/* パスワード確認入力フィールド */}
+          <TextInput
+            placeholder="パスワード（確認）"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            style={styles.input}
+            editable={!isLoading}
+            autoComplete="new-password"
+          />
+
+          {/* パスワード更新ボタン */}
           <TouchableOpacity
-            style={[styles.resetButton, isLoading && styles.resetButtonDisabled]}
-            onPress={handleResetPassword}
+            style={[styles.updateButton, isLoading && styles.updateButtonDisabled]}
+            onPress={handleUpdatePassword}
             disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
-              <Text style={styles.buttonText}>パスワードリセットメールを送信</Text>
+              <Text style={styles.buttonText}>パスワードを更新</Text>
             )}
           </TouchableOpacity>
 
@@ -103,13 +124,13 @@ export default function ForgotPasswordScreen() {
             <Text style={styles.backButtonText}>ログイン画面に戻る</Text>
           </TouchableOpacity>
 
-          {/* 注意事項 */}
-          <View style={styles.noteContainer}>
-            <Text style={styles.noteTitle}>ご注意</Text>
-            <Text style={styles.noteText}>
-              • パスワードリセットメールは数分以内に届きます{'\n'}
-              • メールが届かない場合は、迷惑メールフォルダをご確認ください{'\n'}
-              • メールアドレスが登録されていない場合は、新規登録をお願いします
+          {/* パスワード要件 */}
+          <View style={styles.requirementsContainer}>
+            <Text style={styles.requirementsTitle}>パスワード要件</Text>
+            <Text style={styles.requirementsText}>
+              • 6文字以上32文字以内{'\n'}
+              • 英字と数字を含む{'\n'}
+              • 推測しにくいパスワードを設定してください
             </Text>
           </View>
         </View>
@@ -149,12 +170,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     fontSize: 16,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: '#ddd',
     width: '100%',
   },
-  resetButton: {
+  updateButton: {
     backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
@@ -162,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: '100%',
   },
-  resetButtonDisabled: {
+  updateButtonDisabled: {
     backgroundColor: '#ccc',
   },
   buttonText: {
@@ -184,24 +205,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  noteContainer: {
+  requirementsContainer: {
     backgroundColor: '#f8f9fa',
     padding: 20,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e9ecef',
   },
-  noteTitle: {
+  requirementsTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
     marginBottom: 12,
     textAlign: 'center',
   },
-  noteText: {
+  requirementsText: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
     textAlign: 'left',
   },
 });
+

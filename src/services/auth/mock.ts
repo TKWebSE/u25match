@@ -69,7 +69,7 @@ export class MockAuthService implements AuthService {
     }
   }
 
-  async resetPassword(email: string): Promise<void> {
+  async forgotPassword(email: string): Promise<void> {
     try {
       // APIコールをシミュレート
       await this.simulateApiCall(800);
@@ -90,6 +90,21 @@ export class MockAuthService implements AuthService {
     // モック用のパスワードチェック（実際のアプリでは適切なパスワードを設定）
     if (password !== 'password123') {
       throw new Error('パスワードが正しくありません');
+    }
+  }
+
+  async updatePassword(oobCode: string, newPassword: string): Promise<void> {
+    // APIコールをシミュレート
+    await this.simulateApiCall(1000);
+
+    // モック用のoobCodeチェック
+    if (!oobCode || oobCode.length < 10) {
+      throw new Error('無効なリセットコードです。再度パスワードリセットを実行してください');
+    }
+
+    // モック用のパスワード強度チェック
+    if (newPassword.length < 6) {
+      throw new Error('パスワードが弱すぎます');
     }
   }
 

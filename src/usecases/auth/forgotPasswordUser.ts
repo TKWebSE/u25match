@@ -1,15 +1,15 @@
-// src/usecases/auth/resetPasswordUser.ts
-// パスワードリセットのユースケース
+// src/usecases/auth/forgotPasswordUser.ts
+// パスワードを忘れた場合のユースケース
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { authStore } from '@stores/authStore';
 
-export interface ResetPasswordData {
+export interface ForgotPasswordData {
   email: string;
 }
 
 /**
- * パスワードリセットのユースケース
+ * パスワードを忘れた場合のユースケース
  * 
  * フロー:
  * 1. ローディング状態を開始
@@ -17,7 +17,7 @@ export interface ResetPasswordData {
  * @param data - リセットデータ（メールアドレス）
  * @returns 成功時はtrue、エラー時はスロー
  */
-export const resetPasswordUser = async (data: ResetPasswordData): Promise<boolean> => {
+export const forgotPasswordUser = async (data: ForgotPasswordData): Promise<boolean> => {
   const { email } = data;
   const authStoreState = authStore.getState();
 
@@ -26,7 +26,7 @@ export const resetPasswordUser = async (data: ResetPasswordData): Promise<boolea
     authStoreState.setLoading(true);
 
     // サービス層でFirebaseパスワードリセットメール送信
-    await serviceRegistry.auth.resetPassword(email);
+    await serviceRegistry.auth.forgotPassword(email);
 
     // 成功時
     authStoreState.setLoading(false);
