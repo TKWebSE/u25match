@@ -1,60 +1,64 @@
 import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { SearchBar } from '@components/explore';
-import UserSwipeSection from '@components/explore/mobile/UserSwipeSection';
 import { getProfilePath } from '@constants/routes';
-import { useTodaysRecommendation } from '@hooks/features/recommendations';
-import { useUserSearch } from '@hooks/features/search';
 import { useCardSize } from '@hooks/ui';
+import { useExploreStore } from '@stores/exploreStore';
 import { colors, spacing } from '@styles/globalStyles';
+import { getUserList } from '@usecases/explore';
+import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // 探索画面コンポーネント - ユーザー検索・探索機能
 const ExploreScreen = () => {
   const router = useRouter();
 
+  // ストアの状態管理
+  const { users, isLoading, hasMore, activeTab, currentPage, switchTab } = useExploreStore();
 
   // 統一カードサイズを取得
   const gridCardSize = useCardSize('grid');
-  const swiperCardSize = useCardSize('swiper');
 
-  // モバイルではローカル状態を使用
+  // ローカル状態
   const [localSearchQuery, setLocalSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // 今日のおすすめバナーの状態管理
-  const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
+  // 初回読み込み
+  const fetchInitialUsers = async () => {
+    try {
+      await getUserList({
+        page: 1,
+        limit: 30,
+        filters: { tab: activeTab }
+      });
+    } catch (error: any) {
+      showErrorToast(error.message || 'ユーザー一覧の取得に失敗しました');
+    }
+  };
 
-  // 各カテゴリのユーザー検索
-  const {
-    filteredUsers: searchUsers,
-    hasSearchResults: hasSearchResults,
-    hasSearchQuery: hasSearchQuery
-  } = useUserSearch(localSearchQuery, 'search');
+  // 追加読み込み（無限スクロール用）
+  const loadMoreUsers = async () => {
+    if (!hasMore || isLoading) return;
 
-  const {
-    filteredUsers: recommendedUsers
-  } = useUserSearch('', 'recommended');
+    try {
+      await getUserList({
+        page: currentPage + 1,
+        limit: 30,
+        filters: { tab: activeTab }
+      });
+    } catch (error: any) {
+      showErrorToast(error.message || '追加データの取得に失敗しました');
+    }
+  };
 
-  const {
-    filteredUsers: onlineUsers
-  } = useUserSearch('', 'online');
-
-  const {
-    filteredUsers: nearbyUsers
-  } = useUserSearch('', 'nearby');
-
-  const {
-    filteredUsers: beginnerUsers
-  } = useUserSearch('', 'beginner');
-
-  const {
-    filteredUsers: popularUsers
-  } = useUserSearch('', 'popular');
+  // 初回読み込み
+  useEffect(() => {
+    fetchInitialUsers();
+  }, [activeTab]);
 
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {
@@ -62,9 +66,15 @@ const ExploreScreen = () => {
     router.push(getProfilePath(userId) as any);
   }, [router]);
 
-  // 検索ハンドラー
+  // 検索ハンドラー（一時的に無効化）
   const handleSearch = (query: string) => {
     setLocalSearchQuery(query);
+    // TODO: 検索機能は後で実装
+  };
+
+  // タブ切り替えハンドラー
+  const handleTabChange = (tab: 'recommended' | 'beginner' | 'online' | 'nearby') => {
+    switchTab(tab);
   };
 
   // 検索フィールドを開く（フォーカスを当てる）
@@ -87,22 +97,20 @@ const ExploreScreen = () => {
     }, 100);
   };
 
-  // 統一カードを使用したレンダリング（メモ化）
-  const renderUserItem = useCallback(({ item, index }: { item: User; index: number }) => {
-    return (
-      <UnifiedUserCard
-        key={`${item.name}-${index}`}
-        user={item}
-        onPress={handleCardPress}
-        size={gridCardSize}
-        layout="grid"
-      />
-    );
-  }, [gridCardSize, handleCardPress]);
 
   // メインコンテンツのレンダリング
   const renderMainContent = () => {
-    if (hasSearchQuery && !hasSearchResults) {
+    // ローディング状態
+    if (isLoading && users.length === 0) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>ユーザーを読み込み中...</Text>
+        </View>
+      );
+    }
+
+    // 検索結果がない場合（一時的に無効化）
+    if (localSearchQuery && users.length === 0) {
       return (
         <View style={styles.emptyStateContainer}>
           <EmptyState
@@ -114,62 +122,45 @@ const ExploreScreen = () => {
       );
     }
 
-    if (hasSearchQuery && searchUsers.length > 0) {
-      return (
-        <ScrollView style={styles.scrollContainer}>
-          <UserSwipeSection
-            title="検索結果"
-            subtitle={`${searchUsers.length}人のユーザー`}
-            users={searchUsers}
-            onCardPress={handleCardPress}
-          />
-        </ScrollView>
-      );
-    }
-
+    // メインコンテンツ
     return (
-      <ScrollView style={styles.scrollContainer}>
-        {/* おすすめユーザー */}
-        <UserSwipeSection
-          title="⭐ おすすめ"
-          subtitle={`${recommendedUsers.length}人のユーザー`}
-          users={recommendedUsers}
-          onCardPress={handleCardPress}
-          isHighlighted={true}
-        />
-
-        {/* オンラインユーザー */}
-        <UserSwipeSection
-          title="🟢 オンライン"
-          subtitle={`${onlineUsers.length}人のユーザー`}
-          users={onlineUsers}
-          onCardPress={handleCardPress}
-        />
-
-        {/* ビギナーユーザー */}
-        <UserSwipeSection
-          title="🌱 ビギナー"
-          subtitle={`${beginnerUsers.length}人の新規ユーザー`}
-          users={beginnerUsers}
-          onCardPress={handleCardPress}
-        />
-
-        {/* 人気ユーザー */}
-        <UserSwipeSection
-          title="🔥 人気"
-          subtitle={`${popularUsers.length}人の人気ユーザー`}
-          users={popularUsers}
-          onCardPress={handleCardPress}
-        />
-
-        {/* 近くの人 */}
-        <UserSwipeSection
-          title="📍 近くの人"
-          subtitle={`${nearbyUsers.length}人のユーザー`}
-          users={nearbyUsers}
-          onCardPress={handleCardPress}
-        />
-      </ScrollView>
+      <FlatList
+        data={users}
+        renderItem={({ item }) => (
+          <UnifiedUserCard
+            user={item}
+            onPress={handleCardPress}
+            size={gridCardSize}
+            layout="grid"
+          />
+        )}
+        keyExtractor={(item, index) => `${item.name}-${index}`}
+        numColumns={2}
+        contentContainerStyle={styles.gridContainer}
+        onEndReached={loadMoreUsers}
+        onEndReachedThreshold={0.5}
+        ListHeaderComponent={() => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              ⭐ {activeTab === 'recommended' ? 'おすすめ' :
+                activeTab === 'beginner' ? 'ビギナー' :
+                  activeTab === 'online' ? 'オンライン' :
+                    '近くの人'}
+            </Text>
+            <Text style={styles.sectionSubtitle}>
+              {users.length}人のユーザー
+            </Text>
+          </View>
+        )}
+        ListFooterComponent={() => (
+          isLoading && users.length > 0 ? (
+            <View style={styles.loadingFooter}>
+              <Text style={styles.loadingFooterText}>読み込み中...</Text>
+            </View>
+          ) : null
+        )}
+        showsVerticalScrollIndicator={false}
+      />
     );
   };
 
@@ -273,6 +264,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 0,
     marginBottom: spacing.sm,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+  },
+  sectionHeader: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.background,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  loadingFooter: {
+    paddingVertical: spacing.lg,
+    alignItems: 'center',
+  },
+  loadingFooterText: {
+    fontSize: 14,
+    color: colors.textSecondary,
   },
   // 統一カードコンポーネントを使用するため、カード関連のスタイルは削除
 });

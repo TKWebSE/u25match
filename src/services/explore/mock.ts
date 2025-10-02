@@ -1,7 +1,7 @@
 // src/services/main/explore/mock.ts
 // 🎭 探索サービスのモック実装
 
-import { mockUserRecommendations } from '@mock/exploreMock';
+import { reactionUsers } from '@mock/exploreUserMock';
 import { BaseService } from '../core/BaseService';
 import { ExploreResponse, ExploreService } from './types';
 
@@ -14,8 +14,8 @@ export class MockExploreService extends BaseService implements ExploreService {
   async searchUsers(query: string): Promise<ExploreResponse> {
     await this.simulateNetworkDelay();
     // クエリに基づいてモックデータをフィルタリング
-    const filteredUsers = mockUserRecommendations.filter(user =>
-      user.name.includes(query) || user.bio.includes(query) || user.tags.some(tag => tag.includes(query))
+    const filteredUsers = reactionUsers.filter(user =>
+      user.name.includes(query) || user.location.includes(query)
     );
     return {
       success: true,
@@ -35,9 +35,8 @@ export class MockExploreService extends BaseService implements ExploreService {
   async getRecommendedUsers(userId: string): Promise<ExploreResponse> {
     await this.simulateNetworkDelay();
     // モックデータから上位の相性スコアを持つユーザーを返す
-    const recommendedUsers = mockUserRecommendations
-      .filter(user => user.uid !== userId)
-      .sort((a, b) => b.compatibility - a.compatibility)
+    const recommendedUsers = reactionUsers
+      .filter(user => user.name !== userId)
       .slice(0, 3);
     return {
       success: true,
@@ -57,9 +56,7 @@ export class MockExploreService extends BaseService implements ExploreService {
   async getNearbyUsers(location: { lat: number; lng: number }): Promise<ExploreResponse> {
     await this.simulateNetworkDelay();
     // 距離が近いユーザーを返す
-    const nearbyUsers = mockUserRecommendations
-      .filter(user => user.distance <= 5)
-      .sort((a, b) => a.distance - b.distance);
+    const nearbyUsers = reactionUsers.slice(0, 5);
     return {
       success: true,
       data: {
@@ -80,8 +77,8 @@ export class MockExploreService extends BaseService implements ExploreService {
     const { page, limit, filters } = params;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    const users = mockUserRecommendations.slice(startIndex, endIndex);
-    const hasMore = endIndex < mockUserRecommendations.length;
+    const users = reactionUsers.slice(startIndex, endIndex);
+    const hasMore = endIndex < reactionUsers.length;
     return { users, hasMore };
   }
 } 

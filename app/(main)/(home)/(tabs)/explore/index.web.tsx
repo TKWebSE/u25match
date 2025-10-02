@@ -1,96 +1,50 @@
 import ExploreTabs from '@/src/components/explore/web/ExploreTabs';
-import EmptyState from '@components/common/EmptyState';
-import UserCard from '@components/common/UserCard';
-import WebGridLayout from '@components/common/WebGridLayout';
+import WebUserGrid from '@/src/components/search/web/WebUserGrid';
 import { getProfilePath } from '@constants/routes';
-import { useTodaysRecommendation } from '@hooks/features/recommendations';
-import { ExploreTabType, useUserSearch } from '@hooks/features/search';
-import { useCardLayout } from '@hooks/ui';
-import { useSidebar } from '@layouts/WebLayout';
+import { User } from '@my-types/search';
+import { useExploreStore } from '@stores/exploreStore';
 import { spacing } from '@styles/globalStyles';
+import { getUserList } from '@usecases/explore';
+import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-
-interface User {
-  name: string;
-  age: number;
-  location: string;
-  imageUrl: string;
-  isOnline: boolean;
-  lastActiveAt: Date;
-}
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 // 探索画面コンポーネント - ユーザー検索・探索機能（Web版）
 const ExploreScreen = () => {
   const router = useRouter();
 
-  // カードリストエリアの幅を計測
-  const [cardListWidth, setCardListWidth] = useState(0);
+  // ストアの状態管理
+  const { users, isLoading, activeTab, switchTab } = useExploreStore();
 
-  // アクティブなタブの状態管理
-  const [activeTab, setActiveTab] = useState<ExploreTabType>('search');
+  // 初回読み込み
+  useEffect(() => {
+    const fetchInitialUsers = async () => {
+      try {
+        await getUserList({
+          page: 1,
+          limit: 30,
+          filters: { tab: activeTab }
+        });
+      } catch (error: any) {
+        showErrorToast(error.message || 'ユーザー一覧の取得に失敗しました');
+      }
+    };
 
-  // カードレイアウト情報を取得
-  const cardLayout = useCardLayout(cardListWidth);
+    fetchInitialUsers();
+  }, [activeTab]);
 
-  // Web環境ではWebLayoutの検索クエリを使用
-  const { searchQuery: webSearchQuery } = useSidebar();
-
-  // 今日のおすすめバナーの状態管理
-  const { isVisible: showTodaysRecommendation, dismissBanner } = useTodaysRecommendation();
-
-  const {
-    filteredUsers,
-    hasSearchResults,
-    hasSearchQuery
-  } = useUserSearch(webSearchQuery, activeTab);
-
-  const handleCardPress = (user: User) => {
+  // カードタップハンドラー
+  const handleCardPress = useCallback((user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
     router.push(getProfilePath(userId) as any);
-  };
+  }, [router]);
 
   // タブ切り替えハンドラー
-  const handleTabPress = (tab: ExploreTabType) => {
-    setActiveTab(tab);
+  const handleTabPress = (tab: any) => {
+    switchTab(tab as 'recommended' | 'beginner' | 'online' | 'nearby');
   };
 
-  const renderEmptyComponent = () => {
-    if (hasSearchQuery && !hasSearchResults) {
-      return (
-        <EmptyState
-          message=""
-          showSearchMessage={true}
-          searchQuery={webSearchQuery}
-        />
-      );
-    }
-
-    if (!hasSearchQuery && !hasSearchResults) {
-      return <EmptyState message="ユーザーが見つかりません" />;
-    }
-
-    return null;
-  };
-
-  // Web環境用のグリッドレイアウト
-  const renderWebGrid = () => (
-    <ScrollView
-      style={styles.webScrollView}
-      contentContainerStyle={styles.webScrollContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <WebGridLayout
-        gridTemplateColumns={cardLayout.gridTemplateColumns}
-        gridGap={cardLayout.gridGap}
-      >
-        {filteredUsers.map((user, index) => (
-          <UserCard key={`${user.name}-${index}`} user={user} onPress={handleCardPress} layout={cardLayout} />
-        ))}
-      </WebGridLayout>
-    </ScrollView>
-  );
 
   return (
     <View style={styles.container}>
@@ -99,20 +53,14 @@ const ExploreScreen = () => {
       <ExploreTabs
         activeTab={activeTab}
         onTabPress={handleTabPress}
-        cardListWidth={cardListWidth}
       />
 
-      {/* カードリストエリアの幅を計測 */}
-      <View
-        style={styles.cardListArea}
-        onLayout={(event) => {
-          const { width } = event.nativeEvent.layout;
-          setCardListWidth(width);
-        }}
-      >
-        {/* Web環境用のグリッドレイアウト */}
-        {renderWebGrid()}
-      </View>
+      {/* Web環境用のグリッドレイアウト */}
+      <WebUserGrid
+        users={users}
+        emptyMessage={isLoading ? "ユーザーを読み込み中..." : "ユーザーが見つかりません"}
+        onCardPress={handleCardPress}
+      />
     </View>
   );
 };
@@ -120,18 +68,7 @@ const ExploreScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // colors.background,
     padding: spacing.lg,
-  },
-  cardListArea: {
-    flex: 1,
-  },
-  // Web環境用のスクロールスタイル
-  webScrollView: {
-    flex: 1,
-  },
-  webScrollContent: {
-    flexGrow: 1,
   },
 });
 

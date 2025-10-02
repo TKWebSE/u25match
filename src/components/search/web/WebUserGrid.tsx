@@ -15,11 +15,13 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 interface WebUserGridProps {
   users: User[];
   emptyMessage?: string;
+  onCardPress?: (user: User) => void;
 }
 
 const WebUserGrid: React.FC<WebUserGridProps> = ({
   users,
-  emptyMessage = "ユーザーがいません"
+  emptyMessage = "ユーザーがいません",
+  onCardPress
 }) => {
   const router = useRouter();
 
@@ -29,12 +31,18 @@ const WebUserGrid: React.FC<WebUserGridProps> = ({
   // カードレイアウト情報を取得
   const cardLayout = useCardLayout(cardListWidth);
 
-  // カードタップハンドラー
+  // カードタップハンドラー（外部から渡された場合はそれを使用、そうでなければデフォルト）
   const handleCardPress = useCallback((user: User) => {
-    const userId = user.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(getProfilePath(userId) as any);
-  }, [router]);
+    if (onCardPress) {
+      onCardPress(user);
+    } else {
+      // デフォルトの処理
+      const userId = user.name.toLowerCase().replace(/\s+/g, '-');
+      router.push(getProfilePath(userId) as any);
+    }
+  }, [router, onCardPress]);
 
+  // 空のコンポーネントをレンダリング
   const renderEmptyComponent = () => {
     if (users.length === 0) {
       return (
