@@ -1,5 +1,4 @@
 import { useProfile } from '@hooks/profile';
-import { mockUsers } from '@mock/chatMock';
 import { ChatRoom } from '@services/chat/types';
 import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
@@ -18,16 +17,10 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, on
   // 会員種別の判定
   const membershipType = getMembershipType(profile || undefined);
 
-  // 相手のユーザーIDを取得（自分以外の参加者）
-  const otherParticipantId = chatRoom.participants.find(id => id !== currentUserId) || '';
-
-  // 相手のユーザー情報を取得
-  const otherUser = mockUsers.find(user => user.id === otherParticipantId) || {
-    id: otherParticipantId,
-    name: `ユーザー${otherParticipantId}`,
-    avatar: `https://i.pravatar.cc/150?u=${otherParticipantId}`,
-    isOnline: false,
-  };
+  // 相手のユーザー情報（サービス層から取得済み）
+  const otherUserName = chatRoom.otherUserName || 'ユーザー';
+  const otherUserAvatar = chatRoom.otherUserAvatar || 'https://i.pravatar.cc/150';
+  const otherUserIsOnline = chatRoom.otherUserIsOnline || false;
 
   // 最後のメッセージの内容を取得
   const lastMessageContent = chatRoom.lastMessage?.content || 'メッセージがありません';
@@ -87,18 +80,18 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chatRoom, currentUserId, on
       {/* アバター */}
       <View style={styles.avatarContainer}>
         <Image
-          source={{ uri: otherUser.avatar }}
+          source={{ uri: otherUserAvatar }}
           style={styles.avatar}
         />
         {/* オンラインステータスインジケーター */}
-        {otherUser.isOnline && <View style={styles.onlineIndicator} />}
+        {otherUserIsOnline && <View style={styles.onlineIndicator} />}
       </View>
 
       {/* チャット情報 */}
       <View style={styles.contentContainer}>
         <View style={styles.headerRow}>
           <Text style={styles.userName} numberOfLines={1}>
-            {otherUser.name}
+            {otherUserName}
           </Text>
           {lastMessageTime && (
             <Text style={styles.timeText}>{lastMessageTime}</Text>

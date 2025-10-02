@@ -1,11 +1,13 @@
 import ChatRoomList from '@components/chat/List/multi/ChatRoomList';
-import { ErrorState, LoadingState } from '@components/common';
+import { LoadingState } from '@components/common';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
-import { useChatRooms } from '@hooks/chat';
 import { ChatRoom } from '@services/chat/types';
+import { useChatStore } from '@stores/chatStore';
 import { colors, spacing } from '@styles/globalStyles';
+import { getChatList } from '@usecases/chat';
+import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 /**
@@ -20,7 +22,22 @@ import { StyleSheet, View } from 'react-native';
  */
 const ChatListScreenWrapper = () => {
   const router = useRouter();
-  const { chatRooms, loading, refreshing, error, refreshChatRooms } = useChatRooms();
+  const { chatList, isLoading } = useChatStore();
+  const [refreshing, setRefreshing] = useState(false);
+
+  // チャット一覧を取得
+  const fetchChatList = async () => {
+    try {
+      await getChatList();
+    } catch (error: any) {
+      showErrorToast(error.message || 'チャット一覧の取得に失敗しました');
+    }
+  };
+
+  // 初回読み込み
+  useEffect(() => {
+    fetchChatList();
+  }, []);
 
   // チャットルームタップ時の処理
   const handleChatPress = (chatRoom: ChatRoom) => {
@@ -29,27 +46,17 @@ const ChatListScreenWrapper = () => {
   };
 
   // プルトゥリフレッシュ時の処理
-  const handleRefresh = () => {
-    refreshChatRooms();
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchChatList();
+    setRefreshing(false);
   };
 
   // ローディング状態の表示
-  if (loading) {
+  if (isLoading && chatList.length === 0) {
     return (
       <View style={styles.container}>
         <LoadingState message="チャット一覧を読み込み中..." />
-      </View>
-    );
-  }
-
-  // エラー状態の表示
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <ErrorState
-          error={error}
-          onRetry={handleRefresh}
-        />
       </View>
     );
   }
@@ -59,7 +66,7 @@ const ChatListScreenWrapper = () => {
     <View style={styles.container}>
       {/* チャット一覧 */}
       <ChatRoomList
-        chatRooms={chatRooms}
+        chatRooms={chatList}
         onChatPress={handleChatPress}
         onRefresh={handleRefresh}
         refreshing={refreshing}

@@ -10,7 +10,6 @@ import { create } from 'zustand';
 interface AuthState {
   user: User | null;      // 現在ログイン中のユーザー（Firebase User）
   isLoading: boolean;     // 認証状態チェック中フラグ（起動時・ログイン・サインアップ）
-  error: string | null;   // 認証エラーメッセージ
 }
 
 /**
@@ -19,8 +18,7 @@ interface AuthState {
 interface AuthActions {
   setUser: (user: User | null) => void;    // ユーザー情報を設定
   setLoading: (loading: boolean) => void;  // ローディング状態を設定
-  clearError: () => void;                  // エラーをクリア
-  logout: () => void;                      // ログアウト（ユーザー情報とエラーをクリア）
+  logout: () => void;                      // ログアウト（ユーザー情報をクリア）
   deleteAccount: () => void;               // アカウント削除（完全クリア）
 }
 
@@ -41,14 +39,12 @@ export const authStore = create<AuthStore>((set) => ({
   // 初期状態
   user: null,
   isLoading: true,  // アプリ起動時は認証状態チェック中
-  error: null,
 
   // アクション実装
   setUser: (user) => set({ user }),
   setLoading: (isLoading) => set({ isLoading }),
-  clearError: () => set({ error: null }),
-  logout: () => set({ user: null, error: null }),
-  deleteAccount: () => set({ user: null, error: null, isLoading: false }),
+  logout: () => set({ user: null }),
+  deleteAccount: () => set({ user: null, isLoading: false }),
 }));
 
 /**
@@ -57,6 +53,6 @@ export const authStore = create<AuthStore>((set) => ({
  * @returns 認証ストアの現在の状態とアクション
  * 
  * 使用例:
- * const { user, isLoading, error, setUser, clearError } = useAuthStore();
+ * const { user, isLoading, setUser } = useAuthStore();
  */
 export const useAuthStore = () => authStore();

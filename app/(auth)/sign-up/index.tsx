@@ -25,16 +25,13 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // ストアから認証状態を取得
-  const { isLoading, error, clearError } = useAuthStore();
+  const { isLoading } = useAuthStore();
 
   const router = useRouter();
   const { showTerms, showPrivacy, Modal } = useLegalDocuments();
 
   // サインアップ処理の実行
   const handleSignUp = async () => {
-    // エラーをクリア
-    clearError();
-
     try {
       // ユースケースを呼び出し（ストア更新は監視システムが担当）
       await signUpUser({ email, password, confirmPassword });

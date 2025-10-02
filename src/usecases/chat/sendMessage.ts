@@ -43,6 +43,7 @@ export const sendMessage = async (data: SendMessageData): Promise<boolean> => {
       timestamp: new Date(),
     });
 
+    chatStoreState.setLoading(false);
     return true;
 
   } catch (error: any) {

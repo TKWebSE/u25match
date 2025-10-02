@@ -3,6 +3,9 @@ import { PURCHASE_POINTS_SCREEN_PATH } from '@constants/routes';
 import { Ionicons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
+import { usePurchaseStore } from '@stores/purchaseStore';
+import { purchaseLikes } from '@usecases/purchase';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -33,6 +36,7 @@ const PurchaseLikesScreen = () => {
   const user = useStrictAuth();
   const { profile } = useProfile(user.uid);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { isLoading } = usePurchaseStore();
 
   // いいね購入プランの定義
   const likePlans: LikePlan[] = [
@@ -52,7 +56,7 @@ const PurchaseLikesScreen = () => {
   };
 
   // 購入処理
-  const handlePurchase = (plan: LikePlan) => {
+  const handlePurchase = async (plan: LikePlan) => {
     if (currentPoints < plan.points) {
       Alert.alert(
         'ポイント不足',
@@ -72,10 +76,23 @@ const PurchaseLikesScreen = () => {
         { text: 'キャンセル', style: 'cancel' },
         {
           text: '購入する',
-          onPress: () => {
-            // ここで実際の購入処理を実装
-            Alert.alert('購入完了', `${plan.likes}いいねを購入しました！`);
-            setSelectedPlan(null);
+          onPress: async () => {
+            try {
+              const result = await purchaseLikes({
+                planId: plan.id,
+                amount: plan.likes,
+                pointsCost: plan.points,
+              });
+
+              if (result.success) {
+                showSuccessToast(`${plan.likes}いいねを購入しました！`);
+                setSelectedPlan(null);
+              } else {
+                showErrorToast(result.error || 'いいねの購入に失敗しました');
+              }
+            } catch (error: any) {
+              showErrorToast(error.message || 'いいねの購入に失敗しました');
+            }
           }
         }
       ]
@@ -174,15 +191,24 @@ const PurchaseLikesScreen = () => {
               style={styles.purchaseButton}
             >
               <TouchableOpacity
-                style={styles.purchaseButtonContent}
+                style={[styles.purchaseButtonContent, isLoading && styles.disabledButton]}
                 onPress={() => {
                   const plan = likePlans.find(p => p.id === selectedPlan);
                   if (plan) handlePurchase(plan);
                 }}
                 activeOpacity={0.8}
+                disabled={isLoading}
               >
-                <Ionicons name="cart" size={20} color="#FFFFFF" />
-                <Text style={styles.purchaseButtonText}>購入する</Text>
+                {isLoading ? (
+                  <>
+                    <Text style={styles.purchaseButtonText}>処理中...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="cart" size={20} color="#FFFFFF" />
+                    <Text style={styles.purchaseButtonText}>購入する</Text>
+                  </>
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
@@ -384,6 +410,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 8,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   // 注意事項
   noticeContainer: {

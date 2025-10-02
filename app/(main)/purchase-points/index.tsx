@@ -2,6 +2,9 @@ import { EMOJIS } from '@constants/emojis';
 import { Ionicons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
+import { usePurchaseStore } from '@stores/purchaseStore';
+import { purchasePoints } from '@usecases/purchase';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -34,6 +37,7 @@ const PurchasePointsScreen = () => {
   const user = useStrictAuth();
   const { profile } = useProfile(user.uid);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { isLoading } = usePurchaseStore();
 
   // ポイント購入プランの定義
   const pointPlans: PointPlan[] = [
@@ -54,7 +58,7 @@ const PurchasePointsScreen = () => {
   };
 
   // 購入処理
-  const handlePurchase = (plan: PointPlan) => {
+  const handlePurchase = async (plan: PointPlan) => {
     Alert.alert(
       '購入確認',
       `${plan.points}ポイント（ボーナス${plan.bonus}ポイント含む）を${plan.price}円で購入しますか？`,
@@ -62,21 +66,24 @@ const PurchasePointsScreen = () => {
         { text: 'キャンセル', style: 'cancel' },
         {
           text: '購入する',
-          onPress: () => {
-            // ここで実際の購入処理を実装（決済処理など）
-            Alert.alert(
-              '購入完了',
-              `${plan.points}ポイント（ボーナス${plan.bonus}ポイント含む）を購入しました！`,
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    setSelectedPlan(null);
-                    // 購入完了後の処理（プロフィール更新など）
-                  }
-                }
-              ]
-            );
+          onPress: async () => {
+            try {
+              const result = await purchasePoints({
+                planId: plan.id,
+                amount: plan.points + (plan.bonus ?? 0),
+                price: plan.price,
+                paymentMethod: 'credit_card', // デフォルト決済方法
+              });
+
+              if (result.success) {
+                showSuccessToast(`${plan.points}ポイント（ボーナス${plan.bonus}ポイント含む）を購入しました！`);
+                setSelectedPlan(null);
+              } else {
+                showErrorToast(result.error || 'ポイントの購入に失敗しました');
+              }
+            } catch (error: any) {
+              showErrorToast(error.message || 'ポイントの購入に失敗しました');
+            }
           }
         }
       ]
@@ -191,15 +198,24 @@ const PurchasePointsScreen = () => {
               style={styles.purchaseButton}
             >
               <TouchableOpacity
-                style={styles.purchaseButtonContent}
+                style={[styles.purchaseButtonContent, isLoading && styles.disabledButton]}
                 onPress={() => {
                   const plan = pointPlans.find(p => p.id === selectedPlan);
                   if (plan) handlePurchase(plan);
                 }}
                 activeOpacity={0.8}
+                disabled={isLoading}
               >
-                <Ionicons name="cart" size={20} color="#FFFFFF" />
-                <Text style={styles.purchaseButtonText}>購入する</Text>
+                {isLoading ? (
+                  <>
+                    <Text style={styles.purchaseButtonText}>処理中...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="cart" size={20} color="#FFFFFF" />
+                    <Text style={styles.purchaseButtonText}>購入する</Text>
+                  </>
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
@@ -422,6 +438,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 8,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   // 注意事項
   noticeContainer: {

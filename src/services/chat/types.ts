@@ -16,6 +16,9 @@ export interface ChatRoom {
   lastMessage?: ChatMessage;
   createdAt: Date;
   updatedAt: Date;
+  otherUserName?: string;      // 相手のユーザー名
+  otherUserAvatar?: string;    // 相手のアバターURL
+  otherUserIsOnline?: boolean; // 相手のオンライン状態
 }
 
 export interface ChatResponse {

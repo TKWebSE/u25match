@@ -1,3 +1,6 @@
+import { useVerificationStore } from '@stores/verificationStore';
+import { uploadDocument } from '@usecases/verification';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -15,9 +18,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
  */
 const VerificationScreen = () => {
   const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
   const [frontImage, setFrontImage] = useState<string | null>(null);
   const [backImage, setBackImage] = useState<string | null>(null);
+  const { isUploading, error } = useVerificationStore();
 
   /**
    * 写真選択方法を選択する処理
@@ -112,28 +115,51 @@ const VerificationScreen = () => {
   /**
    * 本人確認の開始処理
    */
-  const handleStartVerification = () => {
+  const handleStartVerification = async () => {
     if (!frontImage || !backImage) {
-      Alert.alert('写真が必要です', '身分証明書の表裏両方の写真をアップロードしてください。');
+      showErrorToast('身分証明書の表裏両方の写真をアップロードしてください');
       return;
     }
 
-    setIsProcessing(true);
+    try {
+      // 表面のアップロード
+      const frontFile = await createFileFromUri(frontImage, 'front.jpg');
+      const frontResult = await uploadDocument({
+        file: frontFile,
+        documentType: 'identity_card',
+      });
 
-    // 実際の本人確認処理をシミュレート
-    setTimeout(() => {
-      setIsProcessing(false);
-      Alert.alert(
-        '本人確認',
-        '本人確認の申請を受け付けました。\n審査完了まで1-3営業日程度かかります。',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.back(),
-          },
-        ]
-      );
-    }, 2000);
+      if (!frontResult.success) {
+        showErrorToast(frontResult.error || '表面のアップロードに失敗しました');
+        return;
+      }
+
+      // 裏面のアップロード
+      const backFile = await createFileFromUri(backImage, 'back.jpg');
+      const backResult = await uploadDocument({
+        file: backFile,
+        documentType: 'identity_card',
+      });
+
+      if (!backResult.success) {
+        showErrorToast(backResult.error || '裏面のアップロードに失敗しました');
+        return;
+      }
+
+      showSuccessToast('本人確認の申請を受け付けました。審査完了まで1-3営業日程度かかります。');
+      router.back();
+    } catch (error: any) {
+      showErrorToast(error.message || '本人確認の申請に失敗しました');
+    }
+  };
+
+  /**
+   * URIからFileオブジェクトを作成
+   */
+  const createFileFromUri = async (uri: string, fileName: string): Promise<File> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: 'image/jpeg' });
   };
 
   /**
@@ -281,12 +307,12 @@ const VerificationScreen = () => {
         {/* 開始ボタン */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.startButton, isProcessing && styles.startButtonDisabled]}
+            style={[styles.startButton, isUploading && styles.startButtonDisabled]}
             onPress={handleStartVerification}
-            disabled={isProcessing}
+            disabled={isUploading}
           >
             <Text style={styles.startButtonText}>
-              {isProcessing ? '処理中...' : '本人確認を開始'}
+              {isUploading ? 'アップロード中...' : '本人確認を開始'}
             </Text>
           </TouchableOpacity>
         </View>

@@ -1,10 +1,12 @@
 import { WebChatContainer } from "@components/chat/detail/web";
 import { useStrictAuth } from "@hooks/auth";
-import { useChatInput, useChatMessages, useChatRooms } from "@hooks/chat";
 import { useDrawerState, useKeyboard } from "@hooks/ui";
+import { useChatStore } from "@stores/chatStore";
+import { getMessages, sendMessage } from "@usecases/chat";
+import { showErrorToast } from "@utils/showToast";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useMemo } from "react";
-import { Alert, Platform, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatDetailScreen() {
@@ -14,58 +16,47 @@ export default function ChatDetailScreen() {
 
   console.log('💬 チャット詳細画面 (Web) - chatId:', chatId);
 
-  const handleError = useCallback((error: string) => {
-    Alert.alert("エラー", error);
-  }, []);
-
-  // カスタムフックを使用して状態管理
-  const { messages, loading, sendMessage } = useChatMessages(chatId as string, handleError);
-  const { input, setInput, sending, clearInput, setSendingState } = useChatInput();
+  const [input, setInput] = useState('');
   const { keyboardHeight } = useKeyboard();
-  const { chatRooms } = useChatRooms();
+  const { chatList, messages, isLoading } = useChatStore();
   const { isDrawerOpen, availableWidth, availableHeight, effectiveWidth } = useDrawerState();
 
   // 現在のチャットルーム情報を取得
   const currentChatRoom = useMemo(() => {
-    return chatRooms.find(room => room.id === chatId);
-  }, [chatRooms, chatId]);
+    return chatList.find(room => room.id === chatId);
+  }, [chatList, chatId]);
 
-  // 相手のユーザーIDを取得
-  const otherUserId = useMemo(() => {
-    if (!currentChatRoom) return null;
-    return currentChatRoom.participants.find(id => id !== user.uid);
-  }, [currentChatRoom, user.uid]);
+  // 相手のユーザー名（サービス層から取得済み）
+  const otherUserName = currentChatRoom?.otherUserName || 'ユーザー';
 
-  // 相手の名前を取得（モックデータから）
-  const otherUserName = useMemo(() => {
-    if (!otherUserId) return 'ユーザー';
-    // モックデータから相手の名前を取得
-    const mockUsers = [
-      { id: 'user1', name: '山田太郎' },
-      { id: 'user2', name: '佐藤花子' },
-      { id: 'user3', name: '田中次郎' },
-    ];
-    const mockUser = mockUsers.find(u => u.id === otherUserId);
-    return mockUser?.name || `ユーザー${otherUserId}`;
-  }, [otherUserId]);
+  // メッセージ取得
+  const fetchMessages = useCallback(async () => {
+    try {
+      await getMessages({ chatId: chatId as string });
+    } catch (error: any) {
+      showErrorToast(error.message || 'メッセージの取得に失敗しました');
+    }
+  }, [chatId]);
+
+  // 初回読み込み
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
 
   // メッセージ送信処理
   const handleSend = async () => {
-    if (!input.trim() || sending) return;
+    if (!input.trim() || isLoading) return;
 
-    setSendingState(true);
     try {
-      const result = await sendMessage(input, user.uid);
-      if (result.success) {
-        clearInput();
-      }
-    } finally {
-      setSendingState(false);
+      await sendMessage({ chatId: chatId as string, content: input });
+      setInput('');
+    } catch (error: any) {
+      showErrorToast(error.message || 'メッセージの送信に失敗しました');
     }
   };
 
   // ローディング状態の表示
-  if (loading) {
+  if (isLoading && messages.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
@@ -102,7 +93,7 @@ export default function ChatDetailScreen() {
         currentUserId={user.uid}
         input={input}
         setInput={setInput}
-        sending={sending}
+        sending={isLoading}
         onSend={handleSend}
         keyboardHeight={keyboardHeight}
         isDrawerOpen={isDrawerOpen}

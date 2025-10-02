@@ -23,15 +23,12 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   // ストアから認証状態を取得
-  const { isLoading, error, clearError } = useAuthStore();
+  const { isLoading } = useAuthStore();
 
   const router = useRouter();
 
   // ログイン処理の実行
   const handleLogin = async () => {
-    // エラーをクリア
-    clearError();
-
     try {
       // ユースケースを呼び出し（バリデーションとログイン処理を実行）
       await loginUser({ email, password });
@@ -113,7 +110,6 @@ export default function LoginScreen() {
           {/* 新規登録へのリンク */}
           <TouchableOpacity
             onPress={() => {
-              console.log('新規登録へ遷移');
               router.push(SIGN_UP_SCREEN_PATH as any);
             }}
             style={styles.signupButton}

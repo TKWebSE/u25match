@@ -3,6 +3,9 @@ import { PURCHASE_POINTS_SCREEN_PATH } from '@constants/routes';
 import { Ionicons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
+import { usePurchaseStore } from '@stores/purchaseStore';
+import { purchaseBoosts } from '@usecases/purchase';
+import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -33,6 +36,7 @@ const PurchaseBoostsScreen = () => {
   const user = useStrictAuth();
   const { profile } = useProfile(user.uid);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const { isLoading } = usePurchaseStore();
 
   // ブースト購入プランの定義
   const boostPlans: BoostPlan[] = [
@@ -73,7 +77,7 @@ const PurchaseBoostsScreen = () => {
   };
 
   // 購入処理
-  const handlePurchase = (plan: BoostPlan) => {
+  const handlePurchase = async (plan: BoostPlan) => {
     if (currentPoints < plan.points) {
       Alert.alert(
         'ポイント不足',
@@ -93,10 +97,23 @@ const PurchaseBoostsScreen = () => {
         { text: 'キャンセル', style: 'cancel' },
         {
           text: '購入する',
-          onPress: () => {
-            // ここで実際の購入処理を実装
-            Alert.alert('購入完了', `${plan.boosts}ブーストを購入しました！`);
-            setSelectedPlan(null);
+          onPress: async () => {
+            try {
+              const result = await purchaseBoosts({
+                planId: plan.id,
+                amount: plan.boosts,
+                pointsCost: plan.points,
+              });
+
+              if (result.success) {
+                showSuccessToast(`${plan.boosts}ブーストを購入しました！`);
+                setSelectedPlan(null);
+              } else {
+                showErrorToast(result.error || 'ブーストの購入に失敗しました');
+              }
+            } catch (error: any) {
+              showErrorToast(error.message || 'ブーストの購入に失敗しました');
+            }
           }
         }
       ]
@@ -203,15 +220,24 @@ const PurchaseBoostsScreen = () => {
               style={styles.purchaseButton}
             >
               <TouchableOpacity
-                style={styles.purchaseButtonContent}
+                style={[styles.purchaseButtonContent, isLoading && styles.disabledButton]}
                 onPress={() => {
                   const plan = boostPlans.find(p => p.id === selectedPlan);
                   if (plan) handlePurchase(plan);
                 }}
                 activeOpacity={0.8}
+                disabled={isLoading}
               >
-                <Ionicons name="cart" size={20} color="#FFFFFF" />
-                <Text style={styles.purchaseButtonText}>購入する</Text>
+                {isLoading ? (
+                  <>
+                    <Text style={styles.purchaseButtonText}>処理中...</Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="cart" size={20} color="#FFFFFF" />
+                    <Text style={styles.purchaseButtonText}>購入する</Text>
+                  </>
+                )}
               </TouchableOpacity>
             </LinearGradient>
           </View>
@@ -434,6 +460,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 8,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   // 注意事項
   noticeContainer: {

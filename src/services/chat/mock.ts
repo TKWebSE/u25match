@@ -1,7 +1,7 @@
 // src/services/main/chat/mock.ts
 // 🎭 チャットサービスのモック実装
 
-import { mockChatMessages, mockChatRooms } from '@mock/chatMock';
+import { mockChatMessages, mockChatRooms, mockUsers } from '@mock/chatMock';
 import { BaseService } from '../core/BaseService';
 import { ChatResponse, ChatService } from './types';
 
@@ -69,9 +69,22 @@ export class MockChatService extends BaseService implements ChatService {
   async getChatRooms(userId: string): Promise<ChatResponse> {
     await this.simulateNetworkDelay();
     // モックデータから該当するユーザーが参加しているチャットルームを取得
-    const userChatRooms = mockChatRooms.filter(room =>
-      room.participants.includes(userId)
-    );
+    const userChatRooms = mockChatRooms
+      .filter(room => room.participants.includes(userId))
+      .map(room => {
+        // 相手のユーザーIDを取得
+        const otherUserId = room.participants.find(id => id !== userId);
+        // 相手のユーザー情報を取得
+        const otherUser = mockUsers.find(user => user.id === otherUserId);
+
+        return {
+          ...room,
+          otherUserName: otherUser?.name || `ユーザー${otherUserId}`,
+          otherUserAvatar: otherUser?.avatar || `https://i.pravatar.cc/150?u=${otherUserId}`,
+          otherUserIsOnline: otherUser?.isOnline || false,
+        };
+      });
+
     return {
       success: true,
       data: userChatRooms,

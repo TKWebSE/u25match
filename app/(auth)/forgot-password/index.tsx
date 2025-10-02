@@ -1,12 +1,11 @@
 // app/(auth)/forgot-password/index.tsx
-// パスワードリセット画面 - パスワードを忘れた場合の処理
+// パスワードリセットメール送信画面
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
 import { forgotPasswordUser } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
-import { validateEmailFormat } from '@utils/validation';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -23,26 +22,14 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
 
   // ストアから認証状態を取得
-  const { isLoading, clearError } = useAuthStore();
+  const { isLoading } = useAuthStore();
 
   const router = useRouter();
 
-  // パスワードリセット処理の実行
-  const handleResetPassword = async () => {
-    // エラーをクリア
-    clearError();
-
-    // 入力値のバリデーション
-    if (!email) {
-      showErrorToast('メールアドレスを入力してください');
-      return;
-    }
-
+  // リセットメール送信処理
+  const handleSendResetEmail = async () => {
     try {
-      // utilsのバリデーション関数を使用
-      validateEmailFormat(email);
-
-      // ユースケースを呼び出し
+      // ユースケースを呼び出し（バリデーション含む）
       await forgotPasswordUser({ email });
 
       showSuccessToast('パスワードリセットメールを送信しました');
@@ -84,7 +71,7 @@ export default function ForgotPasswordScreen() {
           {/* パスワードリセットボタン */}
           <TouchableOpacity
             style={[styles.resetButton, isLoading && styles.resetButtonDisabled]}
-            onPress={handleResetPassword}
+            onPress={handleSendResetEmail}
             disabled={isLoading}
           >
             {isLoading ? (

@@ -1,10 +1,10 @@
-// app/(auth)/reset-password-new/index.tsx
-// 新しいパスワード設定画面 - パスワードリセット後の処理
+// app/(auth)/reset-password/index.tsx
+// パスワードリセット画面
 import ScreenWrapper from '@components/common/ScreenWrapper';
 import { LOGIN_SCREEN_PATH } from '@constants/routes';
 import { useAuthStore } from '@stores/authStore';
 import { colors } from '@styles/globalStyles';
-import { updatePasswordWithReset } from '@usecases/auth';
+import { resetPassword } from '@usecases/auth';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 
-export default function ResetPasswordNewScreen() {
+export default function ResetPasswordScreen() {
   // URLパラメータからoobCodeを取得
   const { oobCode } = useLocalSearchParams<{ oobCode: string }>();
 
@@ -26,31 +26,15 @@ export default function ResetPasswordNewScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // ストアから認証状態を取得
-  const { isLoading, clearError } = useAuthStore();
+  const { isLoading } = useAuthStore();
 
   const router = useRouter();
 
-  // パスワード更新処理の実行
-  const handleUpdatePassword = async () => {
-    // エラーをクリア
-    clearError();
-
-    // oobCodeの存在チェック
-    if (!oobCode) {
-      showErrorToast('無効なリセットリンクです');
-      router.push(LOGIN_SCREEN_PATH as any);
-      return;
-    }
-
-    // 入力値のバリデーション
-    if (!newPassword || !confirmPassword) {
-      showErrorToast('パスワードを入力してください');
-      return;
-    }
-
+  // パスワードリセット処理
+  const handleResetPassword = async () => {
     try {
       // ユースケースを呼び出し
-      await updatePasswordWithReset({
+      await resetPassword({
         oobCode,
         newPassword,
         confirmPassword,
@@ -105,7 +89,7 @@ export default function ResetPasswordNewScreen() {
           {/* パスワード更新ボタン */}
           <TouchableOpacity
             style={[styles.updateButton, isLoading && styles.updateButtonDisabled]}
-            onPress={handleUpdatePassword}
+            onPress={handleResetPassword}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -226,4 +210,5 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 });
+
 
