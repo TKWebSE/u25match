@@ -3,7 +3,7 @@ import { LoadingState } from '@components/common';
 import { CHAT_ROOM_SCREEN_PATH } from '@constants/routes';
 import { ChatRoom } from '@services/chat/types';
 import { useChatStore } from '@stores/chatStore';
-import { getChatList } from '@usecases/chat';
+import { getChatRooms } from '@usecases/chat';
 import { showErrorToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -23,21 +23,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
  */
 const ChatListScreenWrapper = () => {
   const router = useRouter();
-  const { chatList, isLoading } = useChatStore();
+  const { chatRooms, isLoading } = useChatStore();
   const [refreshing, setRefreshing] = useState(false);
 
-  // チャット一覧を取得
-  const fetchChatList = async () => {
+  // チャットルーム一覧を取得
+  const fetchChatRooms = async () => {
     try {
-      await getChatList();
+      await getChatRooms();
     } catch (error: any) {
-      showErrorToast(error.message || 'チャット一覧の取得に失敗しました');
+      showErrorToast(error.message || 'チャットルーム一覧の取得に失敗しました');
     }
   };
 
   // 初回読み込み
   useEffect(() => {
-    fetchChatList();
+    fetchChatRooms();
   }, []);
 
   // チャットルームタップ時の処理
@@ -49,15 +49,15 @@ const ChatListScreenWrapper = () => {
   // プルトゥリフレッシュ時の処理
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchChatList();
+    await fetchChatRooms();
     setRefreshing(false);
   };
 
   // ローディング状態の表示
-  if (isLoading && chatList.length === 0) {
+  if (isLoading && chatRooms.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <LoadingState message="チャット一覧を読み込み中..." />
+        <LoadingState message="チャットルーム一覧を読み込み中..." />
       </SafeAreaView>
     );
   }
@@ -65,9 +65,9 @@ const ChatListScreenWrapper = () => {
   // メインコンテンツの表示
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* チャット一覧 */}
+      {/* チャットルーム一覧 */}
       <ChatRoomList
-        chatRooms={chatList}
+        chatRooms={chatRooms}
         onChatPress={handleChatPress}
         onRefresh={handleRefresh}
         refreshing={refreshing}

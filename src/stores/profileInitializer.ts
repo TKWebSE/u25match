@@ -20,7 +20,6 @@ export const initializeProfile = async (user: any) => {
   try {
     console.log('🔍 プロフィール情報を取得中...', user.uid);
     profileStore.getState().setLoading(true);
-    profileStore.getState().clearError();
 
     // プロフィール詳細サービスから情報を取得
     const profileService = serviceRegistry.profileDetail;
@@ -53,12 +52,10 @@ export const initializeProfile = async (user: any) => {
       console.log('✅ プロフィール情報を取得・保存完了');
     } else {
       const errorMessage = response.error || 'プロフィール情報の取得に失敗しました';
-      profileStore.getState().setError(errorMessage);
       console.error('❌ プロフィール取得失敗:', errorMessage);
     }
   } catch (error) {
     const errorMessage = 'プロフィール情報の取得中にエラーが発生しました';
-    profileStore.getState().setError(errorMessage);
     console.error('💥 プロフィール取得エラー:', error);
   } finally {
     profileStore.getState().setLoading(false);
@@ -82,7 +79,6 @@ export const saveProfile = async (profileData: ProfileData) => {
   try {
     console.log('💾 プロフィール情報を保存中...', profileData.uid);
     profileStore.getState().setSaving(true);
-    profileStore.getState().clearError();
 
     // TODO: 実際の保存処理を実装
     // const profileService = serviceRegistry.profileDetail;
@@ -97,7 +93,6 @@ export const saveProfile = async (profileData: ProfileData) => {
     return { success: true };
   } catch (error) {
     const errorMessage = 'プロフィール情報の保存中にエラーが発生しました';
-    profileStore.getState().setError(errorMessage);
     console.error('💥 プロフィール保存エラー:', error);
     return { success: false, error: errorMessage };
   } finally {

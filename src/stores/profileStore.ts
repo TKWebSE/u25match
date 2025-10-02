@@ -36,7 +36,6 @@ interface ProfileState {
   viewedProfiles: ProfileData[];         // 閲覧したプロフィール一覧
   isLoading: boolean;                    // プロフィール取得中フラグ
   isSaving: boolean;                     // プロフィール保存中フラグ
-  error: string | null;                  // エラーメッセージ
 }
 
 /**
@@ -50,8 +49,6 @@ interface ProfileActions {
   addViewedProfile: (profile: ProfileData) => void;
   setLoading: (loading: boolean) => void;
   setSaving: (saving: boolean) => void;
-  setError: (error: string | null) => void;
-  clearError: () => void;
   reset: () => void; // 状態をリセット
   // 編集関連
   startEditing: () => void;
@@ -71,7 +68,6 @@ export const profileStore = create<ProfileStore>((set, get) => ({
   viewedProfiles: [],
   isLoading: false,
   isSaving: false,
-  error: null,
 
   // アクション
   setCurrentProfile: (currentProfile) => set({ currentProfile }),
@@ -93,15 +89,12 @@ export const profileStore = create<ProfileStore>((set, get) => ({
   }),
   setLoading: (isLoading) => set({ isLoading }),
   setSaving: (isSaving) => set({ isSaving }),
-  setError: (error) => set({ error }),
-  clearError: () => set({ error: null }),
   reset: () => set({
     currentProfile: null,
     editingProfile: null,
     viewedProfiles: [],
     isLoading: false,
     isSaving: false,
-    error: null,
   }),
 
   // 編集関連

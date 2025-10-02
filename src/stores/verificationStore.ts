@@ -40,7 +40,6 @@ interface VerificationState {
   };
   reviewHistory: any[];                 // 審査履歴
   isLoading: boolean;                   // 処理中フラグ
-  error: string | null;                 // エラーメッセージ
 }
 
 /**
@@ -57,8 +56,6 @@ interface VerificationActions {
   setReviewHistory: (history: any[]) => void;
   addReviewHistory: (review: any) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  clearError: () => void;
   reset: () => void; // 状態をリセット
 }
 
@@ -112,15 +109,12 @@ export const verificationStore = create<VerificationStore>((set) => ({
     reviewHistory: [review, ...state.reviewHistory]
   })),
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  clearError: () => set({ error: null }),
   reset: () => set({
     status: 'not_started',
     documents: [],
     currentUpload: { isUploading: false, progress: 0 },
     reviewHistory: [],
     isLoading: false,
-    error: null,
   }),
 }));
 

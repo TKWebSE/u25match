@@ -7,24 +7,21 @@ import { create } from 'zustand';
  * チャット関連の状態
  */
 interface ChatState {
-  chatList: any[];          // チャット一覧
-  currentChat: any | null;  // 現在のチャット
+  chatRooms: any[];         // チャットルーム一覧
+  currentRoom: any | null;  // 現在のチャットルーム
   messages: any[];          // メッセージ一覧
   isLoading: boolean;       // ローディング状態
-  error: string | null;     // エラーメッセージ
 }
 
 /**
  * チャット関連のアクション
  */
 interface ChatActions {
-  setChatList: (chatList: any[]) => void;
-  setCurrentChat: (chat: any | null) => void;
+  setChatRooms: (chatRooms: any[]) => void;
+  setCurrentRoom: (room: any | null) => void;
   setMessages: (messages: any[]) => void;
   addMessage: (message: any) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  clearError: () => void;
 }
 
 type ChatStore = ChatState & ChatActions;
@@ -34,22 +31,19 @@ type ChatStore = ChatState & ChatActions;
  */
 export const chatStore = create<ChatStore>((set) => ({
   // 初期状態
-  chatList: [],
-  currentChat: null,
+  chatRooms: [],
+  currentRoom: null,
   messages: [],
   isLoading: false,
-  error: null,
 
   // アクション
-  setChatList: (chatList) => set({ chatList }),
-  setCurrentChat: (currentChat) => set({ currentChat }),
+  setChatRooms: (chatRooms) => set({ chatRooms }),
+  setCurrentRoom: (currentRoom) => set({ currentRoom }),
   setMessages: (messages) => set({ messages }),
   addMessage: (message) => set((state) => ({
     messages: [...state.messages, message]
   })),
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  clearError: () => set({ error: null }),
 }));
 
 /**

@@ -11,7 +11,6 @@ interface ExploreState {
   currentUser: any | null;  // 現在表示中のユーザー
   filters: any;             // 検索フィルター
   isLoading: boolean;       // ローディング状態
-  error: string | null;     // エラーメッセージ
   hasMore: boolean;         // さらに読み込み可能か
 }
 
@@ -24,9 +23,7 @@ interface ExploreActions {
   setCurrentUser: (user: any | null) => void;
   setFilters: (filters: any) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
   setHasMore: (hasMore: boolean) => void;
-  clearError: () => void;
   reset: () => void;
 }
 
@@ -41,7 +38,6 @@ export const exploreStore = create<ExploreStore>((set) => ({
   currentUser: null,
   filters: {},
   isLoading: false,
-  error: null,
   hasMore: true,
 
   // アクション
@@ -52,15 +48,12 @@ export const exploreStore = create<ExploreStore>((set) => ({
   setCurrentUser: (currentUser) => set({ currentUser }),
   setFilters: (filters) => set({ filters }),
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
   setHasMore: (hasMore) => set({ hasMore }),
-  clearError: () => set({ error: null }),
   reset: () => set({
     users: [],
     currentUser: null,
     filters: {},
     isLoading: false,
-    error: null,
     hasMore: true,
   }),
 }));

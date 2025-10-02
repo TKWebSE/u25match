@@ -18,13 +18,13 @@ export default function ChatDetailScreen() {
 
   const [input, setInput] = useState('');
   const { keyboardHeight } = useKeyboard();
-  const { chatList, messages, isLoading } = useChatStore();
-  const { isDrawerOpen, availableWidth, availableHeight, effectiveWidth } = useDrawerState();
+  const { chatRooms, messages, isLoading } = useChatStore();
+  const { isDrawerOpen, availableHeight, effectiveWidth } = useDrawerState();
 
   // 現在のチャットルーム情報を取得
   const currentChatRoom = useMemo(() => {
-    return chatList.find(room => room.id === chatId);
-  }, [chatList, chatId]);
+    return chatRooms.find(room => room.id === chatId);
+  }, [chatRooms, chatId]);
 
   // 相手のユーザー名（サービス層から取得済み）
   const otherUserName = currentChatRoom?.otherUserName || 'ユーザー';

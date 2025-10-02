@@ -44,7 +44,6 @@ interface ReactionsState {
   superLikesUsed: number;           // 使用したスーパーいいね数
   superLikesLimit: number;          // スーパーいいね上限
   isLoading: boolean;               // リアクション処理中フラグ
-  error: string | null;             // エラーメッセージ
 }
 
 /**
@@ -65,8 +64,6 @@ interface ReactionsActions {
   incrementDailyLikes: () => void;
   incrementSuperLikes: () => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  clearError: () => void;
   reset: () => void; // 状態をリセット
   // ヘルパー関数
   canSendLike: () => boolean;
@@ -90,7 +87,6 @@ export const reactionsStore = create<ReactionsStore>((set, get) => ({
   superLikesUsed: 0,
   superLikesLimit: 1,       // 1日1スーパーいいね
   isLoading: false,
-  error: null,
 
   // アクション
   setSentReactions: (sentReactions) => set({ sentReactions }),
@@ -119,8 +115,6 @@ export const reactionsStore = create<ReactionsStore>((set, get) => ({
     superLikesUsed: state.superLikesUsed + 1
   })),
   setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  clearError: () => set({ error: null }),
   reset: () => set({
     sentReactions: [],
     receivedReactions: [],
@@ -130,7 +124,6 @@ export const reactionsStore = create<ReactionsStore>((set, get) => ({
     superLikesUsed: 0,
     superLikesLimit: 1,
     isLoading: false,
-    error: null,
   }),
 
   // ヘルパー関数

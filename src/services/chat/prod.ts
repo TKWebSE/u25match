@@ -21,7 +21,7 @@ export class ProdChatService implements ChatService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to send message: ${response.statusText}`);
+        throw new Error(`メッセージの送信に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -44,7 +44,7 @@ export class ProdChatService implements ChatService {
       const response = await fetch(`/api/chat/${chatId}/messages`);
 
       if (!response.ok) {
-        throw new Error(`Failed to get messages: ${response.statusText}`);
+        throw new Error(`メッセージの取得に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -73,7 +73,7 @@ export class ProdChatService implements ChatService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to create chat: ${response.statusText}`);
+        throw new Error(`チャットの作成に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -96,7 +96,7 @@ export class ProdChatService implements ChatService {
       const response = await fetch(`/api/chat?userId=${userId}`);
 
       if (!response.ok) {
-        throw new Error(`Failed to get chat rooms: ${response.statusText}`);
+        throw new Error(`チャットルームの取得に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
