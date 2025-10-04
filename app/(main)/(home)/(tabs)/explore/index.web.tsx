@@ -22,7 +22,6 @@ const ExploreScreen = () => {
     const fetchInitialUsers = async () => {
       try {
         await getUserList({
-          page: 1,
           limit: 30,
           filters: { tab: activeTab }
         });

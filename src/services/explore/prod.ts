@@ -81,13 +81,12 @@ export class ProdExploreService implements ExploreService {
 
   /**
    * 📋 ユーザー一覧を取得（本番）
-   * @param params ページ・件数・フィルター
+   * @param params 件数・フィルター
    * @returns ユーザー一覧とhasMoreフラグ
    */
-  async getUserList(params: { page: number; limit: number; filters?: any }): Promise<{ users: any[]; hasMore: boolean }> {
+  async getUserList(params: { limit: number; filters?: any }): Promise<{ users: any[]; hasMore: boolean }> {
     try {
       const queryParams = new URLSearchParams({
-        page: params.page.toString(),
         limit: params.limit.toString(),
         ...(params.filters && { filters: JSON.stringify(params.filters) }),
       });

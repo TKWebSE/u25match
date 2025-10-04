@@ -1,6 +1,7 @@
 // src/stores/exploreStore.ts
 // 探索状態管理ストア
 
+import { ExploreTabType } from '@constants/exploreTabs';
 import { getUserList } from '@usecases/explore';
 import { create } from 'zustand';
 
@@ -13,7 +14,7 @@ interface ExploreState {
   filters: any;             // 検索フィルター
   isLoading: boolean;       // ローディング状態
   hasMore: boolean;         // さらに読み込み可能か
-  activeTab: 'recommended' | 'beginner' | 'online' | 'nearby'; // アクティブなタブ
+  activeTab: ExploreTabType; // アクティブなタブ
   currentPage: number;      // 現在のページ番号
 }
 
@@ -27,9 +28,9 @@ interface ExploreActions {
   setFilters: (filters: any) => void;
   setLoading: (loading: boolean) => void;
   setHasMore: (hasMore: boolean) => void;
-  setActiveTab: (tab: 'recommended' | 'beginner' | 'online' | 'nearby') => void;
+  setActiveTab: (tab: ExploreTabType) => void;
   setCurrentPage: (page: number) => void;
-  switchTab: (tab: 'recommended' | 'beginner' | 'online' | 'nearby') => void;
+  switchTab: (tab: ExploreTabType) => void;
   reset: () => void;
 }
 
@@ -63,7 +64,7 @@ export const exploreStore = create<ExploreStore>((set, get) => ({
     set({ activeTab: tab, currentPage: 1 });
     // タブ切り替え時にデータ取得
     try {
-      await getUserList({ page: 1, limit: 30, filters: { tab } });
+      await getUserList({ limit: 30, filters: { tab } });
     } catch (error) {
       console.error('タブ切り替え時のデータ取得エラー:', error);
     }

@@ -69,16 +69,13 @@ export class MockExploreService extends BaseService implements ExploreService {
 
   /**
    * 📋 ユーザー一覧を取得（モック）
-   * @param params ページ・件数・フィルター
+   * @param params 件数・フィルター
    * @returns ユーザー一覧とhasMoreフラグ
    */
-  async getUserList(params: { page: number; limit: number; filters?: any }): Promise<{ users: any[]; hasMore: boolean }> {
+  async getUserList(params: { limit: number; filters?: any }): Promise<{ users: any[]; hasMore: boolean }> {
     await this.simulateNetworkDelay();
-    const { page, limit, filters } = params;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const users = reactionUsers.slice(startIndex, endIndex);
-    const hasMore = endIndex < reactionUsers.length;
-    return { users, hasMore };
+    const { limit, filters } = params;
+    const users = reactionUsers.slice(0, limit);
+    return { users, hasMore: false };
   }
 } 
