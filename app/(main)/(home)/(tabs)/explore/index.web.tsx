@@ -1,5 +1,6 @@
 import ExploreTabs from '@/src/components/explore/web/ExploreTabs';
 import WebUserGrid from '@/src/components/search/web/WebUserGrid';
+import { ExploreTabType } from '@constants/exploreTabs';
 import { getProfilePath } from '@constants/routes';
 import { User } from '@my-types/search';
 import { useExploreStore } from '@stores/exploreStore';
@@ -15,22 +16,24 @@ const ExploreScreen = () => {
   const router = useRouter();
 
   // ストアの状態管理
-  const { users, isLoading, activeTab, switchTab } = useExploreStore();
+  const { tabUsers, isLoading, activeTab, switchTab } = useExploreStore();
 
-  // 初回読み込み
+  // 現在のタブのユーザーデータを取得
+  const users = tabUsers[activeTab] || [];
+
+  // タブ切り替え時のデータ取得
   useEffect(() => {
-    const fetchInitialUsers = async () => {
+    const fetchUsersForTab = async () => {
       try {
         await getUserList({
-          limit: 30,
-          filters: { tab: activeTab }
+          tab: activeTab
         });
       } catch (error: any) {
         showErrorToast(error.message || 'ユーザー一覧の取得に失敗しました');
       }
     };
 
-    fetchInitialUsers();
+    fetchUsersForTab();
   }, [activeTab]);
 
   // カードタップハンドラー
@@ -40,8 +43,8 @@ const ExploreScreen = () => {
   }, [router]);
 
   // タブ切り替えハンドラー
-  const handleTabPress = (tab: any) => {
-    switchTab(tab as 'recommended' | 'beginner' | 'online' | 'nearby');
+  const handleTabPress = (tab: ExploreTabType) => {
+    switchTab(tab);
   };
 
 

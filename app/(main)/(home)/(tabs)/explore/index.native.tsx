@@ -18,15 +18,17 @@ const ExploreScreen = () => {
   const router = useRouter();
 
   // ストアの状態管理
-  const { users, isLoading, activeTab, switchTab } = useExploreStore();
+  const { tabUsers, isLoading, activeTab, switchTab } = useExploreStore();
+
+  // 現在のタブのユーザーデータを取得
+  const users = tabUsers[activeTab] || [];
 
   // 初回読み込み
   useEffect(() => {
     const fetchInitialUsers = async () => {
       try {
         await getUserList({
-          limit: 30,
-          filters: { tab: activeTab }
+          tab: activeTab
         });
       } catch (error: any) {
         showErrorToast(error.message || 'ユーザー一覧の取得に失敗しました');

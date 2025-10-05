@@ -1,4 +1,4 @@
-import { ExploreTabType } from '@hooks/features/search';
+import { ExploreTabType } from '@constants/exploreTabs';
 import { colors } from '@styles/globalStyles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

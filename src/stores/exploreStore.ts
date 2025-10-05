@@ -2,34 +2,30 @@
 // 探索状態管理ストア
 
 import { ExploreTabType } from '@constants/exploreTabs';
-import { getUserList } from '@usecases/explore';
 import { create } from 'zustand';
 
 /**
  * 探索関連の状態
  */
 interface ExploreState {
-  users: any[];             // ユーザー一覧
-  currentUser: any | null;  // 現在表示中のユーザー
-  filters: any;             // 検索フィルター
   isLoading: boolean;       // ローディング状態
-  hasMore: boolean;         // さらに読み込み可能か
   activeTab: ExploreTabType; // アクティブなタブ
-  currentPage: number;      // 現在のページ番号
+  // 4タブ分のデータキャッシュ
+  tabUsers: {
+    recommended?: any[];
+    beginner?: any[];
+    online?: any[];
+    nearby?: any[];
+  };
 }
 
 /**
  * 探索関連のアクション
  */
 interface ExploreActions {
-  setUsers: (users: any[]) => void;
-  addUsers: (users: any[]) => void;
-  setCurrentUser: (user: any | null) => void;
-  setFilters: (filters: any) => void;
   setLoading: (loading: boolean) => void;
-  setHasMore: (hasMore: boolean) => void;
   setActiveTab: (tab: ExploreTabType) => void;
-  setCurrentPage: (page: number) => void;
+  setTabUsers: (tab: ExploreTabType, users: any[]) => void;
   switchTab: (tab: ExploreTabType) => void;
   reset: () => void;
 }
@@ -41,42 +37,23 @@ type ExploreStore = ExploreState & ExploreActions;
  */
 export const exploreStore = create<ExploreStore>((set, get) => ({
   // 初期状態
-  users: [],
-  currentUser: null,
-  filters: {},
   isLoading: false,
-  hasMore: true,
   activeTab: 'recommended',
-  currentPage: 1,
+  tabUsers: {},
 
   // アクション
-  setUsers: (users) => set({ users }),
-  addUsers: (users) => set((state) => ({
-    users: [...state.users, ...users]
-  })),
-  setCurrentUser: (currentUser) => set({ currentUser }),
-  setFilters: (filters) => set({ filters }),
   setLoading: (isLoading) => set({ isLoading }),
-  setHasMore: (hasMore) => set({ hasMore }),
   setActiveTab: (activeTab) => set({ activeTab }),
-  setCurrentPage: (currentPage) => set({ currentPage }),
-  switchTab: async (tab) => {
-    set({ activeTab: tab, currentPage: 1 });
-    // タブ切り替え時にデータ取得
-    try {
-      await getUserList({ limit: 30, filters: { tab } });
-    } catch (error) {
-      console.error('タブ切り替え時のデータ取得エラー:', error);
-    }
+  setTabUsers: (tab, users) => set((state) => ({
+    tabUsers: { ...state.tabUsers, [tab]: users }
+  })),
+  switchTab: (tab) => {
+    set({ activeTab: tab });
   },
   reset: () => set({
-    users: [],
-    currentUser: null,
-    filters: {},
     isLoading: false,
-    hasMore: true,
     activeTab: 'recommended',
-    currentPage: 1,
+    tabUsers: {},
   }),
 }));
 
