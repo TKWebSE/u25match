@@ -1,7 +1,8 @@
 // src/services/main/explore/mock.ts
 // 🎭 探索サービスのモック実装
 
-import { reactionUsers } from '@mock/exploreUserMock';
+import { ExploreTabType } from '@constants/exploreTabs';
+import { reactionUsers, tabUsers } from '@mock/exploreUserMock';
 import { BaseService } from '../core/BaseService';
 import { ExploreResponse, ExploreService } from './types';
 
@@ -75,6 +76,16 @@ export class MockExploreService extends BaseService implements ExploreService {
   async getUserList(params: { limit: number; filters?: any }): Promise<{ users: any[]; hasMore: boolean }> {
     await this.simulateNetworkDelay();
     const { limit, filters } = params;
+
+    // フィルターでタブが指定されている場合はタブ別データを返す
+    if (filters?.tab && filters.tab in tabUsers) {
+      const tabType = filters.tab as ExploreTabType;
+      const tabData = tabUsers[tabType];
+      const users = tabData.slice(0, limit);
+      return { users, hasMore: false };
+    }
+
+    // フィルターがない場合は従来通りreactionUsersを返す
     const users = reactionUsers.slice(0, limit);
     return { users, hasMore: false };
   }

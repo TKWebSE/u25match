@@ -131,7 +131,43 @@ const generateReactionUsers = (): User[] => {
   return reactionUsers;
 };
 
+// タブ別の固定ユーザーデータを生成（動作確認・UI確認用）
+const generateTabUsers = () => {
+  const baseUsers = generateUsers();
+
+  return {
+    // おすすめタブ - 上位15人を固定（名前プレフィックス付き）
+    recommended: baseUsers.slice(0, 15).map((user, index) => ({
+      ...user,
+      name: `【おすすめ】${user.name}`,
+      isOnline: true, // おすすめは常にオンライン表示
+    })),
+
+    // 初心者タブ - 16-30番目のユーザー（新規ユーザー風）
+    beginner: baseUsers.slice(15, 30).map((user, index) => ({
+      ...user,
+      name: `【新規】${user.name}`,
+      createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // 1週間以内
+    })),
+
+    // オンラインタブ - 31-45番目のユーザー（オンライン状態）
+    online: baseUsers.slice(30, 45).map((user, index) => ({
+      ...user,
+      name: `【オンライン】${user.name}`,
+      isOnline: true,
+    })),
+
+    // 近くのユーザータブ - 46-60番目のユーザー（近場ユーザー風）
+    nearby: baseUsers.slice(45, 60).map((user, index) => ({
+      ...user,
+      name: `【近場】${user.name}`,
+      location: ['東京', '大阪', '名古屋', '横浜', '京都'][index % 5], // 近場の都市に固定
+    })),
+  };
+};
+
 export const users = generateUsers();
 export const reactionUsers = generateReactionUsers(); // リアクション画面用の20人分
+export const tabUsers = generateTabUsers(); // タブ別ユーザーデータ
 export type { User };
 
