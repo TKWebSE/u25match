@@ -18,15 +18,6 @@ export interface UpdateProfileData {
 }
 
 /**
- * プロフィール更新処理の結果
- */
-export interface UpdateProfileResult {
-  success: boolean;        // 更新成功フラグ
-  profile?: ProfileData;   // 更新後のプロフィール情報（成功時）
-  error?: string;          // エラーメッセージ（失敗時のみ）
-}
-
-/**
  * ユーザープロフィールを更新するユースケース
  * 
  * フロー:
@@ -35,31 +26,27 @@ export interface UpdateProfileResult {
  * 3. サービス層でプロフィール更新
  * 4. 更新後のプロフィール情報をストアに設定
  * 5. 編集状態をクリア
- * 6. 結果をUIに返却
+ * 6. 成功時はtrueを返し、エラー時はスロー
  * 
  * @param uid - 更新対象のユーザーID
  * @param updates - 更新するプロフィールデータ
- * @returns プロフィール更新結果（成功/失敗・プロフィール・エラー）
+ * @returns プロフィール更新成功時はtrue
  */
-export const updateProfile = async (uid: string, updates: UpdateProfileData): Promise<UpdateProfileResult> => {
+export const updateProfile = async (uid: string, updates: UpdateProfileData): Promise<boolean> => {
   const profileStoreState = profileStore.getState();
 
   try {
     // 現在のプロフィール確認
     const currentProfile = profileStoreState.currentProfile;
     if (!currentProfile || currentProfile.uid !== uid) {
-      return {
-        success: false,
-        error: '更新対象のプロフィールが見つかりません'
-      };
+      throw new Error('更新対象のプロフィールが見つかりません');
     }
 
-    // 保存開始・エラークリア
+    // 保存開始
     profileStoreState.setSaving(true);
-    profileStoreState.clearError();
 
     // サービス層でプロフィール更新
-    const result = await serviceRegistry.profileDetail.updateProfileDetail(uid, {
+    await serviceRegistry.profileDetail.updateProfileDetail(uid, {
       ...updates,
       updatedAt: new Date(),
     });
@@ -72,28 +59,13 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
     };
 
     profileStoreState.setCurrentProfile(updatedProfile);
-
-    // 編集状態をクリア
     profileStoreState.setEditingProfile(null);
-
     profileStoreState.setSaving(false);
 
-    return {
-      success: true,
-      profile: updatedProfile
-    };
+    return true;
 
   } catch (error: any) {
-    console.error('プロフィール更新エラー:', error);
-
-    // エラー処理（ストアにエラー情報を設定）
     profileStoreState.setSaving(false);
-    profileStoreState.setError(error.message || 'プロフィールの更新に失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'プロフィールの更新に失敗しました'
-    };
+    throw new Error(error.message || 'プロフィールの更新に失敗しました');
   }
 };
