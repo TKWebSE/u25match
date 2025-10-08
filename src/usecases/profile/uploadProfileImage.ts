@@ -3,6 +3,7 @@
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
 import { profileStore } from '@stores/profileStore';
+import { validateImageFileSize, validateImageFileType } from '@utils/validation/imageValidation';
 
 /**
  * 画像アップロードに必要なデータ
@@ -39,16 +40,8 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
     }
 
     // バリデーション
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('JPG、PNG、WebPファイルのみアップロード可能です');
-    }
-
-    if (file.size > maxSize) {
-      throw new Error('ファイルサイズは5MB以下にしてください');
-    }
+    validateImageFileType(file);
+    validateImageFileSize(file);
 
     // 保存開始
     profileStoreState.setSaving(true);
