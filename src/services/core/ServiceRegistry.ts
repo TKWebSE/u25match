@@ -19,6 +19,8 @@ import { createSettingsService } from '../settings/factory';
 import { SettingsService } from '../settings/types';
 import { createVerificationService } from '../verification/factory';
 import { VerificationService } from '../verification/types';
+import { createViewHistoryService } from '../viewHistory/factory';
+import { ViewHistoryService } from '../viewHistory/types';
 
 export class ServiceRegistry {
   private static instance: ServiceRegistry;  // シングルトンインスタンス
@@ -75,6 +77,9 @@ export class ServiceRegistry {
 
     // 決済サービスの登録
     this.register('payment', createPaymentService());
+
+    // 閲覧履歴サービスの登録
+    this.register('viewHistory', createViewHistoryService());
   }
 
   /**
@@ -176,6 +181,13 @@ export class ServiceRegistry {
    */
   get payment(): PaymentService {
     return this.get<PaymentService>('payment');
+  }
+
+  /**
+   * 👁️ 閲覧履歴サービスの型安全な取得
+   */
+  get viewHistory(): ViewHistoryService {
+    return this.get<ViewHistoryService>('viewHistory');
   }
 }
 

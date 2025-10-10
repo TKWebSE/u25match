@@ -2,6 +2,7 @@
 // プロフィール更新のユースケース - ユーザープロフィール情報更新処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
 import { ProfileData, profileStore } from '@stores/profileStore';
 
 /**
@@ -34,9 +35,13 @@ export interface UpdateProfileData {
  */
 export const updateProfile = async (uid: string, updates: UpdateProfileData): Promise<boolean> => {
   const profileStoreState = profileStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
-    // 現在のプロフィール確認
+    if (!currentUser || currentUser.uid !== uid) {
+      throw new Error('自分のプロフィールのみ更新できます');
+    }
+
     const currentProfile = profileStoreState.currentProfile;
     if (!currentProfile || currentProfile.uid !== uid) {
       throw new Error('更新対象のプロフィールが見つかりません');
@@ -58,6 +63,7 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
       updatedAt: new Date(),
     };
 
+    // 編集状態をクリア
     profileStoreState.setCurrentProfile(updatedProfile);
     profileStoreState.setEditingProfile(null);
     profileStoreState.setSaving(false);

@@ -69,11 +69,11 @@ export interface ProfileDetailService {
   // プロフィール詳細を取得
   getProfileDetail(uid: string): Promise<ProfileDetailResponse>;
 
-  // ユニークIDでプロフィール詳細を取得
-  getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse>;
-
   // プロフィール詳細を更新
   updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse>;
+
+  // プロフィール画像をアップロード
+  uploadProfileImage(uid: string, file: File, imageIndex: number): Promise<{ imageUrl: string }>;
 
   // いいねを送信
   sendLike(uid: string): Promise<{ success: boolean; error?: string }>;

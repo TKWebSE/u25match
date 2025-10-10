@@ -2,6 +2,7 @@
 // プロフィール画像アップロードのユースケース - プロフィール画像アップロード・更新処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
 import { profileStore } from '@stores/profileStore';
 import { validateImageFileSize, validateImageFileType } from '@utils/validation/imageValidation';
 
@@ -32,8 +33,13 @@ export interface UploadProfileImageData {
 export const uploadProfileImage = async (uid: string, data: UploadProfileImageData): Promise<boolean> => {
   const { file, imageIndex = 0 } = data;
   const profileStoreState = profileStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
+    if (!currentUser || currentUser.uid !== uid) {
+      throw new Error('自分のプロフィール画像のみアップロードできます');
+    }
+
     const currentProfile = profileStoreState.currentProfile;
     if (!currentProfile || currentProfile.uid !== uid) {
       throw new Error('更新対象のプロフィールが見つかりません');

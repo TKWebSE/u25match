@@ -2,24 +2,26 @@
 // プロフィール取得のユースケース - ユーザープロフィール情報取得処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
 import { ProfileData, profileStore } from '@stores/profileStore';
+import { useViewHistoryStore } from '@stores/viewHistoryStore';
 
 /**
  * ユーザープロフィールを取得するユースケース
  * 
  * フロー:
- * 1. ローディング開始・エラークリア
+ * 1. ローディング開始
  * 2. サービス層でプロフィール取得
  * 3. プロフィール情報をストアに設定
  * 4. 閲覧履歴に追加（他のユーザーの場合）
  * 5. 成功時はtrueを返し、エラー時はスロー
  * 
  * @param uid - 取得対象のユーザーID
- * @param isOwnProfile - 自分のプロフィールかどうか（デフォルト: false）
  * @returns プロフィール取得成功時はtrue
  */
-export const getProfile = async (uid: string, isOwnProfile = false): Promise<boolean> => {
+export const getProfile = async (uid: string): Promise<boolean> => {
   const profileStoreState = profileStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
     // ローディング開始
@@ -28,26 +30,31 @@ export const getProfile = async (uid: string, isOwnProfile = false): Promise<boo
     // サービス層でプロフィール取得
     const result = await serviceRegistry.profileDetail.getProfileDetail(uid);
 
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'プロフィールの取得に失敗しました');
+    }
+
     // プロフィール情報をストアに設定
     const profileData: ProfileData = {
-      uid: result.uid,
-      displayName: result.displayName,
-      bio: result.bio,
-      age: result.age,
-      location: result.location,
-      occupation: result.occupation,
-      interests: result.interests || [],
-      images: result.images || [],
-      isVerified: result.isVerified || false,
-      lastActive: result.lastActive ? new Date(result.lastActive) : undefined,
-      createdAt: result.createdAt ? new Date(result.createdAt) : undefined,
-      updatedAt: result.updatedAt ? new Date(result.updatedAt) : undefined,
+      uid: result.data.uid,
+      displayName: result.data.name,
+      bio: result.data.bio,
+      age: result.data.age,
+      location: result.data.location,
+      occupation: result.data.details.occupation,
+      interests: result.data.tags?.map(tag => tag.name) || [],
+      images: result.data.images || [],
+      isVerified: result.data.isVerified || false,
+      lastActive: result.data.lastActiveAt,
+      createdAt: result.data.createdAt,
+      updatedAt: result.data.updatedAt,
     };
 
-    if (isOwnProfile) {
+    // 自分のプロフィールの場合はストアに設定、それ以外は閲覧履歴に追加
+    if (currentUser?.uid === uid) {
       profileStoreState.setCurrentProfile(profileData);
     } else {
-      profileStoreState.addViewedProfile(profileData);
+      await useViewHistoryStore.getState().addView(uid);
     }
 
     profileStoreState.setLoading(false);

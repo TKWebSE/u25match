@@ -14,7 +14,7 @@ export class ProdExploreService implements ExploreService {
       const response = await fetch(`/api/explore/search?q=${encodeURIComponent(query)}`);
 
       if (!response.ok) {
-        throw new Error(`Failed to search users: ${response.statusText}`);
+        throw new Error(`ユーザーの検索に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -37,7 +37,7 @@ export class ProdExploreService implements ExploreService {
       const response = await fetch(`/api/explore/recommendations/${userId}`);
 
       if (!response.ok) {
-        throw new Error(`Failed to get recommendations: ${response.statusText}`);
+        throw new Error(`おすすめユーザーの取得に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -66,7 +66,7 @@ export class ProdExploreService implements ExploreService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to get nearby users: ${response.statusText}`);
+        throw new Error(`近くのユーザーの取得に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -94,7 +94,7 @@ export class ProdExploreService implements ExploreService {
       const response = await fetch(`/api/explore/users?${queryParams}`);
 
       if (!response.ok) {
-        throw new Error(`Failed to get user list: ${response.statusText}`);
+        throw new Error(`ユーザー一覧の取得に失敗しました: ${response.statusText}`);
       }
 
       const data = await response.json();

@@ -38,10 +38,7 @@ export class ProdProfileDetailService implements ProfileDetailService {
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        return {
-          success: false,
-          error: 'ユーザーが見つかりません',
-        };
+        throw new Error('ユーザーが見つかりません');
       }
 
       const userData = userDoc.data();
@@ -50,36 +47,8 @@ export class ProdProfileDetailService implements ProfileDetailService {
         success: true,
         data: userData as ProfileDetail,
       };
-    } catch (error) {
-      console.error('💥 Firebaseプロフィール詳細取得エラー:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  }
-
-  /**
-   * 👤 ユニークIDでプロフィール詳細を取得（本番）
-   * FirebaseからユニークIDでプロフィール情報を取得
-   * @param uniqueId 取得したいユーザーのユニークID
-   * @returns プロフィール詳細データ
-   */
-  async getProfileDetailByUniqueId(uniqueId: string): Promise<ProfileDetailResponse> {
-    try {
-
-      // TODO: ユニークIDでユーザーを検索する実装
-      // 現在はuidベースの検索のみ実装されているため、一時的にエラーを返す
-      return {
-        success: false,
-        error: 'ユニークID検索は未実装です',
-      };
-    } catch (error) {
-      console.error('💥 FirebaseユニークID検索エラー:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'プロフィール詳細の取得に失敗しました');
     }
   }
 
@@ -105,13 +74,22 @@ export class ProdProfileDetailService implements ProfileDetailService {
         success: true,
         data: updatedData as ProfileDetail,
       };
-    } catch (error) {
-      console.error('💥 Firebaseプロフィール詳細更新エラー:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'プロフィール詳細の更新に失敗しました');
     }
+  }
+
+  /**
+   * 📷 プロフィール画像をアップロード（本番）
+   * Firebase Storageに画像をアップロード
+   * @param uid ユーザーID
+   * @param file アップロードファイル
+   * @param imageIndex 画像インデックス
+   * @returns アップロード結果
+   */
+  async uploadProfileImage(uid: string, file: File, imageIndex: number): Promise<{ imageUrl: string }> {
+    // TODO: Firebase Storageへのアップロード実装
+    throw new Error('画像アップロード機能は未実装です');
   }
 
   /**
@@ -129,11 +107,8 @@ export class ProdProfileDetailService implements ProfileDetailService {
       });
 
       return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+    } catch (error: any) {
+      throw new Error(error.message || 'いいねの送信に失敗しました');
     }
   }
 } 
