@@ -34,7 +34,7 @@ export const useViewHistoryStore = create<ViewHistoryState>((set, get) => ({
     let newCache;
 
     if (exists) {
-      // 同じ targetId のものを最新として末尾に移動（viewedAtを更新）
+      // 同じ targetId のものを最新として末尾に移動（同じIDをフィルタで除外した後、末尾に同じIDを追加）
       newCache = [
         ...current.filter(item => item.targetId !== targetId),
         { viewerId: currentUser.uid, targetId, viewedAt: Date.now() },

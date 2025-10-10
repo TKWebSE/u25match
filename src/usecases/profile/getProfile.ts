@@ -50,19 +50,19 @@ export const getProfile = async (uid: string): Promise<boolean> => {
       updatedAt: result.data.updatedAt,
     };
 
-    // 自分のプロフィールの場合はストアに設定、それ以外は閲覧履歴に追加
-    if (currentUser?.uid === uid) {
-      profileStoreState.setCurrentProfile(profileData);
-    } else {
+    // プロフィール情報をストアに追加
+    profileStoreState.addViewedProfile(profileData);
+
+    // 他人のプロフィールの場合は閲覧履歴に記録
+    if (currentUser?.uid !== uid) {
       await useViewHistoryStore.getState().addView(uid);
     }
-
-    profileStoreState.setLoading(false);
 
     return true;
 
   } catch (error: any) {
-    profileStoreState.setLoading(false);
     throw new Error(error.message || 'プロフィールの取得に失敗しました');
+  } finally {
+    profileStoreState.setLoading(false);
   }
 };
