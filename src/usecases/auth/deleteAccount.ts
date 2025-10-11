@@ -36,15 +36,12 @@ export const deleteAccount = async (data: DeleteAccountData): Promise<boolean> =
 
     // ストアをクリア
     authStoreState.deleteAccount();
-    authStoreState.setLoading(false);
 
     return true;
 
   } catch (error: any) {
-    // エラー時
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'アカウント削除に失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };

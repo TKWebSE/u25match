@@ -63,8 +63,6 @@ export const checkStatus = async (): Promise<CheckStatusResult> => {
       });
     }
 
-    verificationStore.getState().setLoading(false);
-
     return {
       success: true,
       status: result.status,
@@ -74,14 +72,13 @@ export const checkStatus = async (): Promise<CheckStatusResult> => {
   } catch (error: any) {
     console.error('ステータス確認エラー:', error);
 
-    // ローディング終了
-    verificationStore.getState().setLoading(false);
-
     // UIに結果を返却
     return {
       success: false,
       error: error.message || 'ステータスの確認に失敗しました'
     };
+  } finally {
+    verificationStore.getState().setLoading(false);
   }
 };
 

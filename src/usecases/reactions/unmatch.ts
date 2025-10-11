@@ -93,15 +93,12 @@ export const unmatch = async (userId: string, data: UnmatchData): Promise<Unmatc
     });
     reactionsStore.getState().setReceivedReactions(updatedReceivedReactions);
 
-    reactionsStore.getState().setLoading(false);
-
     return { success: true };
 
   } catch (error: any) {
     console.error('マッチ解除エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setLoading(false);
     reactionsStore.getState().setError(error.message || 'マッチの解除に失敗しました');
 
     // UIに結果を返却
@@ -109,5 +106,7 @@ export const unmatch = async (userId: string, data: UnmatchData): Promise<Unmatc
       success: false,
       error: error.message || 'マッチの解除に失敗しました'
     };
+  } finally {
+    reactionsStore.getState().setLoading(false);
   }
 };

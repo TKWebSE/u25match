@@ -77,12 +77,11 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
       profileStoreState.updateEditingProfile({ images: updatedImages });
     }
 
-    profileStoreState.setSaving(false);
-
     return true;
 
   } catch (error: any) {
-    profileStoreState.setSaving(false);
     throw new Error(error.message || 'プロフィール画像のアップロードに失敗しました');
+  } finally {
+    profileStoreState.setSaving(false);
   }
 };

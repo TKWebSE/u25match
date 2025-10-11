@@ -66,12 +66,12 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
     // 編集状態をクリア
     profileStoreState.setCurrentProfile(updatedProfile);
     profileStoreState.setEditingProfile(null);
-    profileStoreState.setSaving(false);
 
     return true;
 
   } catch (error: any) {
-    profileStoreState.setSaving(false);
     throw new Error(error.message || 'プロフィールの更新に失敗しました');
+  } finally {
+    profileStoreState.setSaving(false);
   }
 };

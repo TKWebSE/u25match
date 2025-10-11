@@ -103,8 +103,6 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
       timestamp: new Date(),
     });
 
-    verificationStore.getState().setUploading(false);
-
     return {
       success: true,
       documentId: result.documentId
@@ -114,7 +112,6 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
     console.error('書類アップロードエラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    verificationStore.getState().setUploading(false);
     verificationStore.getState().setUploadProgress(0);
     verificationStore.getState().setError(error.message || '書類のアップロードに失敗しました');
 
@@ -123,5 +120,7 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
       success: false,
       error: error.message || '書類のアップロードに失敗しました'
     };
+  } finally {
+    verificationStore.getState().setUploading(false);
   }
 };

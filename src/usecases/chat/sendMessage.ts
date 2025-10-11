@@ -43,14 +43,11 @@ export const sendMessage = async (data: SendMessageData): Promise<boolean> => {
       timestamp: new Date(),
     });
 
-    chatStoreState.setLoading(false);
     return true;
 
   } catch (error: any) {
-    // エラー時のみ手動でストア更新
-    chatStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'メッセージの送信に失敗しました');
+  } finally {
+    chatStoreState.setLoading(false);
   }
 };

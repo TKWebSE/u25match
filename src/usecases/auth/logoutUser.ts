@@ -25,15 +25,12 @@ export const logoutUser = async (): Promise<boolean> => {
 
     // ストアをクリア（監視システムも自動でクリアしてくれるが、明示的に実行）
     authStoreState.logout();
-    authStoreState.setLoading(false);
 
     return true;
 
   } catch (error: any) {
-    // エラー時
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'ログアウトに失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };

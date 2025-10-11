@@ -55,8 +55,6 @@ export const getMatches = async (userId: string): Promise<GetMatchesResult> => {
     // マッチ情報をストアに設定
     reactionsStore.getState().setMatches(sortedMatches);
 
-    reactionsStore.getState().setLoading(false);
-
     return {
       success: true,
       matches: sortedMatches
@@ -66,7 +64,6 @@ export const getMatches = async (userId: string): Promise<GetMatchesResult> => {
     console.error('マッチ取得エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setLoading(false);
     reactionsStore.getState().setError(error.message || 'マッチの取得に失敗しました');
 
     // UIに結果を返却
@@ -74,5 +71,7 @@ export const getMatches = async (userId: string): Promise<GetMatchesResult> => {
       success: false,
       error: error.message || 'マッチの取得に失敗しました'
     };
+  } finally {
+    reactionsStore.getState().setLoading(false);
   }
 };

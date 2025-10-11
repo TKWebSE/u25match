@@ -48,15 +48,11 @@ export const getUserList = async (data: GetUserListData): Promise<boolean> => {
     // タブのデータをキャッシュに保存
     exploreStoreState.setTabUsers(tab as any, result.users);
 
-    exploreStoreState.setLoading(false);
-
     return true;
 
   } catch (error: any) {
-    // エラー時のみ手動でストア更新
-    exploreStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'ユーザー一覧の取得に失敗しました');
+  } finally {
+    exploreStoreState.setLoading(false);
   }
 };

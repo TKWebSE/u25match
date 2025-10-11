@@ -49,10 +49,8 @@ export const loginUser = async (data: LoginData): Promise<boolean> => {
     return true;
 
   } catch (error: any) {
-    // エラー時のみ手動でストア更新
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'ログインに失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };

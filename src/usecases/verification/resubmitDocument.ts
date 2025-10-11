@@ -122,8 +122,6 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
       timestamp: new Date(),
     });
 
-    verificationStore.getState().setUploading(false);
-
     return {
       success: true,
       documentId: result.documentId
@@ -133,7 +131,6 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
     console.error('書類再提出エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    verificationStore.getState().setUploading(false);
     verificationStore.getState().setUploadProgress(0);
     verificationStore.getState().setError(error.message || '書類の再提出に失敗しました');
 
@@ -142,5 +139,7 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
       success: false,
       error: error.message || '書類の再提出に失敗しました'
     };
+  } finally {
+    verificationStore.getState().setUploading(false);
   }
 };

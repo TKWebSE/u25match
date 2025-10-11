@@ -77,8 +77,6 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
       reactionsStore.getState().setSuperLikesLimit(result.limits.superLikes);
     }
 
-    reactionsStore.getState().setLoading(false);
-
     return {
       success: true,
       sentReactions,
@@ -89,7 +87,6 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
     console.error('リアクション取得エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setLoading(false);
     reactionsStore.getState().setError(error.message || 'リアクションの取得に失敗しました');
 
     // UIに結果を返却
@@ -97,5 +94,7 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
       success: false,
       error: error.message || 'リアクションの取得に失敗しました'
     };
+  } finally {
+    reactionsStore.getState().setLoading(false);
   }
 };

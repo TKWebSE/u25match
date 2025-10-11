@@ -107,8 +107,6 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
       reactionsStoreState.incrementSuperLikes();
     }
 
-    reactionsStoreState.setLoading(false);
-
     return {
       success: true,
       isMatched: result.isMatched,
@@ -119,7 +117,6 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
     console.error('リアクション送信エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    reactionsStoreState.setLoading(false);
     reactionsStoreState.setError(error.message || 'リアクションの送信に失敗しました');
 
     // UIに結果を返却
@@ -127,5 +124,7 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
       success: false,
       error: error.message || 'リアクションの送信に失敗しました'
     };
+  } finally {
+    reactionsStoreState.setLoading(false);
   }
 };

@@ -43,17 +43,12 @@ export const resetPassword = async (data: ResetPasswordData): Promise<boolean> =
     // サービス層でFirebaseパスワード更新実行
     await serviceRegistry.auth.updatePassword(oobCode, newPassword);
 
-    // 成功時
-    authStoreState.setLoading(false);
-
     return true;
 
   } catch (error: any) {
-    // エラー時
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'パスワードの更新に失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };
 

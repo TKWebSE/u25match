@@ -36,15 +36,12 @@ export const getMessages = async (data: GetMessagesData): Promise<boolean> => {
 
     // ストアにメッセージ一覧を設定
     chatStoreState.setMessages(response.data || []);
-    chatStoreState.setLoading(false);
 
     return true;
 
   } catch (error: any) {
-    // エラー時のみ手動でストア更新
-    chatStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'メッセージの取得に失敗しました');
+  } finally {
+    chatStoreState.setLoading(false);
   }
 };

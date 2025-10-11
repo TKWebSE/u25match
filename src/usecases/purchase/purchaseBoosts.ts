@@ -76,8 +76,6 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
       status: 'completed',
     });
 
-    purchaseStoreState.setLoading(false);
-
     return {
       success: true,
       transactionId: result.transactionId
@@ -87,7 +85,6 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
     console.error('ブースト購入エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    purchaseStoreState.setLoading(false);
     purchaseStoreState.setError(error.message || 'ブーストの購入に失敗しました');
 
     // UIに結果を返却
@@ -95,5 +92,7 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
       success: false,
       error: error.message || 'ブーストの購入に失敗しました'
     };
+  } finally {
+    purchaseStoreState.setLoading(false);
   }
 };

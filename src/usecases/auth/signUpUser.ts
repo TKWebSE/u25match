@@ -50,10 +50,8 @@ export const signUpUser = async (data: SignUpData): Promise<boolean> => {
     return true;
 
   } catch (error: any) {
-    // エラー時のみ手動でストア更新
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'アカウント作成に失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };

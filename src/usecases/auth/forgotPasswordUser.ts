@@ -39,16 +39,11 @@ export const forgotPasswordUser = async (data: ForgotPasswordData): Promise<bool
     // サービス層でFirebaseパスワードリセットメール送信
     await serviceRegistry.auth.forgotPassword(email);
 
-    // 成功時
-    authStoreState.setLoading(false);
-
     return true;
 
   } catch (error: any) {
-    // エラー時
-    authStoreState.setLoading(false);
-
-    // エラーを再スローして画面側でトースト表示
     throw new Error(error.message || 'パスワードリセットに失敗しました');
+  } finally {
+    authStoreState.setLoading(false);
   }
 };
