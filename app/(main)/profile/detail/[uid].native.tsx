@@ -5,7 +5,6 @@ import { LikeButton } from '@/src/components/profile/detail/mobile/LikeButton.na
 import { MobileImageCarousel } from '@/src/components/profile/detail/mobile/MobileImageCarousel.native';
 import { ProfileDetailStyles } from '@/src/styles/profile/detail/mobile/ProfileDetailStyles.native';
 import { LoadingState } from '@components/common';
-import { ErrorState } from '@components/common/ErrorState';
 import {
   MobileProfileBio,
   MobileProfileDetails,
@@ -13,9 +12,13 @@ import {
   MobileProfileTags,
 } from '@components/profile/detail';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
-import { useProfileDetail } from '@hooks/profile';
+import { ProfileDetail } from '@services/profile/types';
+import { getProfile } from '@usecases/profile/getProfile';
+import { sendLike } from '@usecases/profile/sendLike';
+import { getOnlineStatus } from '@utils/getOnlineStatus';
+import { showErrorToast } from '@utils/showToast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -32,26 +35,43 @@ export default function ProfileScreen() {
   // URLパラメータからユニークIDを取得
   const uniqueId = uid as string;
 
-  // カスタムフックでビジネスロジックを管理
-  const {
-    profile,
-    loading,
-    error,
-    liked,
-    onlineStatus,
-    handleLike,
-    retry,
-  } = useProfileDetail(uniqueId);
+  // 状態管理
+  const [profile, setProfile] = useState<ProfileDetail | null>(null);
+  const [liked, setLiked] = useState(false);
 
-  // 読み込み中の表示
-  if (loading) {
+  // プロフィールデータを取得
+  const loadProfile = useCallback(async () => {
+    try {
+      const result = await getProfile(uniqueId);
+      setProfile(result.profile);
+      setLiked(result.hasLiked);
+    } catch (err: any) {
+      showErrorToast(err.message || 'プロフィールの取得に失敗しました');
+    }
+  }, [uniqueId]);
+
+  // いいね送信
+  const handleLike = async () => {
+    try {
+      await sendLike(uniqueId);
+      setLiked(true);
+    } catch (err: any) {
+      showErrorToast(err.message || 'いいねの送信に失敗しました');
+    }
+  };
+
+  // 初回読み込み
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  // プロフィールが取得できていない場合はローディング表示
+  if (!profile) {
     return <LoadingState />;
   }
 
-  // エラー時の表示
-  if (error || !profile) {
-    return <ErrorState error={error || 'プロフィールが見つかりません'} onRetry={retry} />;
-  }
+  // オンライン状態を計算
+  const onlineStatus = getOnlineStatus(profile.lastActiveAt);
 
   return (
     <View style={ProfileDetailStyles.container}>

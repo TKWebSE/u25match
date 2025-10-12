@@ -2,7 +2,7 @@
 // 🎭 モック用認証サービス - バックエンドに接続しない
 
 import { myProfileMock } from '@mock/myProfileMock';
-import { AuthUser } from '@my-types/user';
+import { AuthUser } from '@my-types/firebase';
 import { AuthResult, AuthService } from './types';
 
 export class MockAuthService implements AuthService {

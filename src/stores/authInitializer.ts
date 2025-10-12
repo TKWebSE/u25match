@@ -16,18 +16,20 @@ export const initializeAuth = (): (() => void) => {
   const unsubscribe = serviceRegistry.auth.onAuthStateChanged(async (user) => {
     console.log('🔥 認証状態変更:', user ? `${user.uid} (${user.email})` : 'ログアウト');
 
+    const authStoreState = authStore.getState();
+
     if (user) {
       // ログイン状態: ストアにユーザー情報を設定
-      authStore.getState().setUser(user as any); // TODO: 型変換を適切に実装
-      authStore.getState().setLoading(false); // ローディング終了
+      authStoreState.setUser(user as any); // TODO: 型変換を適切に実装
+      authStoreState.setLoading(false); // ローディング終了
       console.log('✅ ログイン状態をストアに反映完了');
 
       // プロフィール情報を取得・保存
       await initializeProfile(user);
     } else {
       // ログアウト状態: ストアをクリア
-      authStore.getState().setUser(null);
-      authStore.getState().setLoading(false); // ローディング終了
+      authStoreState.setUser(null);
+      authStoreState.setLoading(false); // ローディング終了
       console.log('✅ ログアウト状態をストアに反映完了');
 
       // プロフィール情報もクリア

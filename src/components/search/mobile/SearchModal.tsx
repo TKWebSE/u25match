@@ -5,12 +5,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
 import { myProfileMock } from '@mock/myProfileMock';
+import { SearchCategory } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
 import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
 import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SearchCategory } from '../../../my-types/search';
 
 interface SearchModalProps {
   visible: boolean;

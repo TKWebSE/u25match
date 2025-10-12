@@ -7,7 +7,7 @@ import { useProfile } from '@hooks/profile';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { getUsersByCategory } from '@mock/searchMock';
-import { User } from '@my-types/search';
+import { User } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
 import { getMembershipType } from '@utils/membershipUtils';
 import { getCategoryTitle } from '@utils/searchUtils';

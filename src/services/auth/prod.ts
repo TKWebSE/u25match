@@ -1,7 +1,7 @@
 // src/services/auth/prod.ts
 // 🔥 本番用認証サービス - 実際のFirebaseを使う
 
-import { AuthUser } from '@my-types/user';
+import { AuthUser } from '@my-types/firebase';
 // import { getUserProfile } from '@services/firestoreUserProfile'; // 削除済み
 import { confirmPasswordReset, createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';

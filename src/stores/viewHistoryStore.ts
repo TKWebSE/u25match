@@ -1,18 +1,13 @@
 // src/stores/viewHistoryStore.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { serviceRegistry } from "@services/core/ServiceRegistry";
+import { ViewHistoryCache } from "@services/viewHistory/types";
 import { authStore } from "@stores/authStore";
 import { create } from "zustand";
 
-type ViewedProfile = {
-  viewerId: string;
-  targetId: string;
-  viewedAt: number;
-};
-
 type ViewHistoryState = {
-  cache: ViewedProfile[];
-  addView: (targetId: string) => Promise<void>;
+  cache: ViewHistoryCache[];
+  addView: (viewedUserId: string) => Promise<void>;
   flushIfNeeded: () => Promise<void>;
   clear: () => Promise<void>;
 };
@@ -23,25 +18,25 @@ export const useViewHistoryStore = create<ViewHistoryState>((set, get) => ({
   cache: [],
 
   // ✅ 履歴を追加（重複チェックあり）
-  addView: async (targetId: string) => {
+  addView: async (viewedUserId: string) => {
     const currentUser = authStore.getState().user;
     if (!currentUser) return; // ログインしていなければ何もしない
 
     const current = get().cache;
 
-    // すでに同じ targetId があるか確認
-    const exists = current.find(item => item.targetId === targetId);
+    // すでに同じ viewedUserId があるか確認
+    const exists = current.find(item => item.viewedUserId === viewedUserId);
     let newCache;
 
     if (exists) {
-      // 同じ targetId のものを最新として末尾に移動（同じIDをフィルタで除外した後、末尾に同じIDを追加）
+      // 同じ viewedUserId のものを最新として末尾に移動（同じIDをフィルタで除外した後、末尾に同じIDを追加）
       newCache = [
-        ...current.filter(item => item.targetId !== targetId),
-        { viewerId: currentUser.uid, targetId, viewedAt: Date.now() },
+        ...current.filter(item => item.viewedUserId !== viewedUserId),
+        { viewerId: currentUser.uid, viewedUserId, viewedAt: Date.now() },
       ];
     } else {
       // 新規追加
-      newCache = [...current, { viewerId: currentUser.uid, targetId, viewedAt: Date.now() }];
+      newCache = [...current, { viewerId: currentUser.uid, viewedUserId, viewedAt: Date.now() }];
     }
 
     set({ cache: newCache });

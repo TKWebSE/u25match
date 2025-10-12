@@ -2,67 +2,87 @@
 // プロフィール取得のユースケース - ユーザープロフィール情報取得処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { ProfileDetail } from '@services/profile/types';
 import { authStore } from '@stores/authStore';
-import { ProfileData, profileStore } from '@stores/profileStore';
+import { profileStore } from '@stores/profileStore';
 import { useViewHistoryStore } from '@stores/viewHistoryStore';
+
+/**
+ * プロフィール取得の戻り値型
+ */
+export interface GetProfileResult {
+  profile: ProfileDetail;
+  hasLiked: boolean;  // いいね済みかどうか
+}
 
 /**
  * ユーザープロフィールを取得するユースケース
  * 
  * フロー:
- * 1. ローディング開始
- * 2. サービス層でプロフィール取得
- * 3. プロフィール情報をストアに設定
- * 4. 閲覧履歴に追加（他のユーザーの場合）
- * 5. 成功時はtrueを返し、エラー時はスロー
+ * 1. 自分のプロフィール && ストアにキャッシュあり → キャッシュを返す（API呼び出しなし）
+ * 2. キャッシュなし → サービス層でプロフィール取得
+ * 3. 自分のプロフィールの場合 → ストアに保存（次回キャッシュ用）
+ * 4. 他人のプロフィールの場合 → 閲覧履歴に記録 & いいね済みかチェック
+ * 5. ProfileDetail（FirestoreUser）といいね状態を返す
  * 
  * @param uid - 取得対象のユーザーID
- * @returns プロフィール取得成功時はtrue
+ * @returns 取得したプロフィール詳細データといいね状態
  */
-export const getProfile = async (uid: string): Promise<boolean> => {
+export const getProfile = async (uid: string): Promise<GetProfileResult> => {
   const profileStoreState = profileStore.getState();
   const currentUser = authStore.getState().user;
 
   try {
-    // ローディング開始
-    profileStoreState.setLoading(true);
+    // 自分のプロフィールで、既にストアにある場合はそれを返す（キャッシュヒット）
+    if (currentUser?.uid === uid && profileStoreState.currentProfile) {
+      console.log('✅ キャッシュからプロフィールを取得');
+      return {
+        profile: profileStoreState.currentProfile,
+        hasLiked: false, // 自分のプロフィールなのでhasLikedは常にfalse
+      };
+    }
 
     // サービス層でプロフィール取得
     const result = await serviceRegistry.profileDetail.getProfileDetail(uid);
 
-    if (!result.success || !result.data) {
-      throw new Error(result.error || 'プロフィールの取得に失敗しました');
+    // サービス層でエラーが発生した場合はthrowされるため、ここに到達した時点でデータは存在する
+    const profileDetail = result.data!;
+
+    // 自分のプロフィールの場合のみ、ストアに保存
+    if (currentUser?.uid === uid) {
+      profileStoreState.setCurrentProfile(profileDetail);
+      console.log('✅ プロフィールをストアに保存');
+      return {
+        profile: profileDetail,
+        hasLiked: false, // 自分のプロフィールなのでhasLikedは常にfalse
+      };
     }
 
-    // プロフィール情報をストアに設定
-    const profileData: ProfileData = {
-      uid: result.data.uid,
-      displayName: result.data.name,
-      bio: result.data.bio,
-      age: result.data.age,
-      location: result.data.location,
-      occupation: result.data.details.occupation,
-      interests: result.data.tags?.map(tag => tag.name) || [],
-      images: result.data.images || [],
-      isVerified: result.data.isVerified || false,
-      lastActive: result.data.lastActiveAt,
-      createdAt: result.data.createdAt,
-      updatedAt: result.data.updatedAt,
+    // 他人のプロフィールの場合の処理
+    let hasLiked = false;
+
+    if (currentUser) {
+      // 閲覧履歴に記録（失敗しても無視）
+      useViewHistoryStore.getState().addView(uid).catch(err => {
+        console.error('❌ 閲覧履歴の記録に失敗:', err);
+      });
+
+      // いいね済みかチェック
+      try {
+        hasLiked = await serviceRegistry.profileDetail.checkIfLiked(currentUser.uid, uid);
+        console.log(`✅ いいね済みチェック完了: ${hasLiked}`);
+      } catch (err) {
+        console.error('❌ いいね済みチェックに失敗:', err);
+        // エラーが発生してもhasLiked=falseとして続行
+      }
+    }
+
+    return {
+      profile: profileDetail,
+      hasLiked,
     };
-
-    // プロフィール情報をストアに追加
-    profileStoreState.addViewedProfile(profileData);
-
-    // 他人のプロフィールの場合は閲覧履歴に記録
-    if (currentUser?.uid !== uid) {
-      await useViewHistoryStore.getState().addView(uid);
-    }
-
-    return true;
 
   } catch (error: any) {
     throw new Error(error.message || 'プロフィールの取得に失敗しました');
-  } finally {
-    profileStoreState.setLoading(false);
   }
 };

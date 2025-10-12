@@ -77,7 +77,7 @@ export class MockExploreService extends BaseService implements ExploreService {
     await this.simulateNetworkDelay();
     const { limit, filters } = params;
 
-    // フィルターでタブが指定されている場合はタブ別データを返す
+    // フィルターでタブが指定されている場合はタブ別データを返す(0からlimitまでのtoDataを返す)
     if (filters?.tab && filters.tab in tabUsers) {
       const tabType = filters.tab as ExploreTabType;
       const tabData = tabUsers[tabType];

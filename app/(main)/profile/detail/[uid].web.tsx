@@ -1,6 +1,5 @@
 // app/(main)/profile/detail/[uid].web.tsx
 import { LoadingState } from '@components/common';
-import { ErrorState } from '@components/common/ErrorState';
 import {
   EditButton,
   ImageIndicator,
@@ -12,10 +11,14 @@ import {
   WebProfileTags
 } from '@components/profile/detail/web';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
-import { useProfileDetail } from '@hooks/profile';
+import { ProfileDetail } from '@services/profile/types';
 import { ProfileDetailStyles as WebProfileDetailStyles } from '@styles/profile/detail/web/ProfileDetailStyles.web';
+import { getProfile } from '@usecases/profile/getProfile';
+import { sendLike } from '@usecases/profile/sendLike';
+import { getOnlineStatus } from '@utils/getOnlineStatus';
+import { showErrorToast } from '@utils/showToast';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -34,30 +37,47 @@ export default function ProfileScreen() {
   // URLパラメータからユニークIDを取得
   const uniqueId = uid as string;
 
-  // カスタムフックでビジネスロジックを管理
-  const {
-    profile,
-    loading,
-    error,
-    liked,
-    onlineStatus,
-    handleLike,
-    retry,
-  } = useProfileDetail(uniqueId);
+  // 状態管理
+  const [profile, setProfile] = useState<ProfileDetail | null>(null);
+  const [liked, setLiked] = useState(false);
+
+  // プロフィールデータを取得
+  const loadProfile = useCallback(async () => {
+    try {
+      const result = await getProfile(uniqueId);
+      setProfile(result.profile);
+      setLiked(result.hasLiked);
+    } catch (err: any) {
+      showErrorToast(err.message || 'プロフィールの取得に失敗しました');
+    }
+  }, [uniqueId]);
+
+  // いいね送信
+  const handleLike = async () => {
+    try {
+      await sendLike(uniqueId);
+      setLiked(true);
+    } catch (err: any) {
+      showErrorToast(err.message || 'いいねの送信に失敗しました');
+    }
+  };
+
+  // 初回読み込み
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  // プロフィールが取得できていない場合はローディング表示
+  if (!profile) {
+    return <LoadingState />;
+  }
 
   // Web版でのコンテンツ幅と余白の計算
   const contentWidth = Math.min(windowWidth * 0.9, 1200);
   const contentMargin = (windowWidth - contentWidth) / 2;
 
-  // 読み込み中の表示
-  if (loading) {
-    return <LoadingState />;
-  }
-
-  // エラー時の表示
-  if (error || !profile) {
-    return <ErrorState error={error || 'プロフィールが見つかりません'} onRetry={retry} />;
-  }
+  // オンライン状態を計算
+  const onlineStatus = getOnlineStatus(profile.lastActiveAt);
 
   return (
     <View style={WebProfileDetailStyles.container}>

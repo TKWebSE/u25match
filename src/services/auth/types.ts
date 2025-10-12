@@ -1,7 +1,7 @@
 // src/services/auth/types.ts
 // 🎯 これが「契約書」- どんな認証サービスも必ずこの機能を提供する約束
 
-import { AuthUser } from '@my-types/user';
+import { AuthUser } from '@my-types/firebase';
 
 export interface AuthService {
   // 認証処理機能

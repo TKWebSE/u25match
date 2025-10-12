@@ -48,7 +48,7 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
     }
 
     // 保存開始
-    profileStoreState.setSaving(true);
+    profileStoreState.setLoading(true);
 
     // サービス層でプロフィール更新
     await serviceRegistry.profileDetail.updateProfileDetail(uid, {
@@ -63,15 +63,14 @@ export const updateProfile = async (uid: string, updates: UpdateProfileData): Pr
       updatedAt: new Date(),
     };
 
-    // 編集状態をクリア
+    // ストアに保存
     profileStoreState.setCurrentProfile(updatedProfile);
-    profileStoreState.setEditingProfile(null);
 
     return true;
 
   } catch (error: any) {
     throw new Error(error.message || 'プロフィールの更新に失敗しました');
   } finally {
-    profileStoreState.setSaving(false);
+    profileStoreState.setLoading(false);
   }
 };

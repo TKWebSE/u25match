@@ -2,7 +2,7 @@
 // 閲覧履歴サービスの本番実装 - Firestoreへのバッチ書き込み
 
 import { collection, doc, getFirestore, writeBatch } from 'firebase/firestore';
-import { ViewHistoryService, ViewedProfile } from './types';
+import { ViewHistoryCache, ViewHistoryService } from './types';
 
 export class ProdViewHistoryService implements ViewHistoryService {
   private db = getFirestore();
@@ -13,9 +13,9 @@ export class ProdViewHistoryService implements ViewHistoryService {
    * クライアント側でキャッシュされた閲覧履歴を
    * まとめてFirestoreに書き込むことでDB負荷を軽減
    * 
-   * @param views 閲覧履歴の配列（viewerId, targetId, viewedAt）
+   * @param views 閲覧履歴の配列（viewerId, viewedUserId, viewedAt）
    */
-  async saveBatch(views: ViewedProfile[]): Promise<void> {
+  async saveBatch(views: ViewHistoryCache[]): Promise<void> {
     const batch = writeBatch(this.db);
     const viewHistoryRef = collection(this.db, 'viewHistory');
 
@@ -23,10 +23,9 @@ export class ProdViewHistoryService implements ViewHistoryService {
     views.forEach((view) => {
       const docRef = doc(viewHistoryRef);
       batch.set(docRef, {
-        viewerId: view.viewerId,      // 閲覧したユーザー
-        targetId: view.targetId,      // 閲覧されたユーザー
-        viewedAt: view.viewedAt,      // タイムスタンプ（ミリ秒）
-        createdAt: new Date(view.viewedAt), // Firestore用のDate型
+        viewerId: view.viewerId,          // 閲覧したユーザー
+        viewedUserId: view.viewedUserId,  // 閲覧されたユーザー
+        viewedAt: new Date(view.viewedAt), // Firestore用のDate型
       });
     });
 

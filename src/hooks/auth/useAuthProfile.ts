@@ -25,11 +25,10 @@ import { useProfileStore } from '@stores/profileStore';
  * ```
  */
 export function useAuthProfile() {
-  const { user, isLoading: authLoading, error: authError } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const {
     currentProfile: profile,
-    isLoading: profileLoading,
-    error: profileError
+    isLoading: profileLoading
   } = useProfileStore();
 
   return {
@@ -39,12 +38,9 @@ export function useAuthProfile() {
     profile,
     // 状態
     isLoading: authLoading || profileLoading,
-    error: authError || profileError,
     // 個別の状態も提供
     authLoading,
     profileLoading,
-    authError,
-    profileError,
   };
 }
 
@@ -55,7 +51,7 @@ export function useAuthProfile() {
  * @throws {Error} ユーザーがログインしていない場合
  */
 export function useStrictAuthProfile() {
-  const { user, profile, isLoading, error } = useAuthProfile();
+  const { user, profile, isLoading } = useAuthProfile();
 
   // ユーザーがログインしていない場合はエラーをスロー
   if (!user) {
@@ -66,6 +62,5 @@ export function useStrictAuthProfile() {
     user,
     profile, // プロフィールはnullの可能性あり（取得中など）
     isLoading,
-    error,
   };
 }

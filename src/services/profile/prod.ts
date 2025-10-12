@@ -1,7 +1,7 @@
 // src/services/profileDetail/prod.ts
 // 🌐 プロフィール詳細サービスの本番実装
 
-import { doc, getDoc, increment, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, increment, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
@@ -109,6 +109,39 @@ export class ProdProfileDetailService implements ProfileDetailService {
       return { success: true };
     } catch (error: any) {
       throw new Error(error.message || 'いいねの送信に失敗しました');
+    }
+  }
+
+  /**
+   * 💖 いいね済みかチェック（本番）
+   * Firestoreで指定ユーザーに既にいいねしているかチェック
+   * @param currentUserId 現在のユーザーID
+   * @param targetUserId チェック対象のユーザーID
+   * @returns いいね済みの場合true
+   */
+  async checkIfLiked(currentUserId: string, targetUserId: string): Promise<boolean> {
+    try {
+      // users/{currentUserId}/likes/{targetUserId} をチェック
+      const likeDocRef = doc(db, 'users', currentUserId, 'likes', targetUserId);
+      const likeDoc = await getDoc(likeDocRef);
+
+      if (likeDoc.exists()) {
+        return true;
+      }
+
+      // reactionsコレクションもチェック（代替パターン）
+      const reactionsRef = collection(db, 'reactions');
+      const q = query(
+        reactionsRef,
+        where('fromUserId', '==', currentUserId),
+        where('toUserId', '==', targetUserId)
+      );
+      const querySnapshot = await getDocs(q);
+
+      return !querySnapshot.empty;
+    } catch (error: any) {
+      console.error('❌ いいね済みチェックに失敗:', error);
+      return false; // エラー時はfalseを返す（失敗してもプロフィール表示は続ける）
     }
   }
 } 

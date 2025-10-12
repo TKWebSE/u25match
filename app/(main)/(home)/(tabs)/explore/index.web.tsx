@@ -2,7 +2,7 @@ import ExploreTabs from '@/src/components/explore/web/ExploreTabs';
 import WebUserGrid from '@/src/components/search/web/WebUserGrid';
 import { ExploreTabType } from '@constants/exploreTabs';
 import { getProfilePath } from '@constants/routes';
-import { User } from '@my-types/search';
+import { User } from '@my-types/app/search';
 import { useExploreStore } from '@stores/exploreStore';
 import { spacing } from '@styles/globalStyles';
 import { getUserList } from '@usecases/explore';

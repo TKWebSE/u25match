@@ -50,7 +50,7 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
     validateImageFileSize(file);
 
     // 保存開始
-    profileStoreState.setSaving(true);
+    profileStoreState.setLoading(true);
 
     // サービス層で画像アップロード
     const uploadResult = await serviceRegistry.profileDetail.uploadProfileImage(uid, file, imageIndex);
@@ -72,16 +72,11 @@ export const uploadProfileImage = async (uid: string, data: UploadProfileImageDa
 
     profileStoreState.setCurrentProfile(updatedProfile);
 
-    const editingProfile = profileStoreState.editingProfile;
-    if (editingProfile) {
-      profileStoreState.updateEditingProfile({ images: updatedImages });
-    }
-
     return true;
 
   } catch (error: any) {
     throw new Error(error.message || 'プロフィール画像のアップロードに失敗しました');
   } finally {
-    profileStoreState.setSaving(false);
+    profileStoreState.setLoading(false);
   }
 };

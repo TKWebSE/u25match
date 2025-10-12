@@ -10,45 +10,26 @@ import { ProfileData, profileStore } from './profileStore';
  * @param user Firebase認証ユーザー情報
  */
 export const initializeProfile = async (user: any) => {
+  const profileStoreState = profileStore.getState();
+
   if (!user) {
     // ログアウト時：プロフィール情報をクリア
-    profileStore.getState().reset();
+    profileStoreState.reset();
     console.log('✅ プロフィール情報をクリア');
     return;
   }
 
   try {
     console.log('🔍 プロフィール情報を取得中...', user.uid);
-    profileStore.getState().setLoading(true);
+    profileStoreState.setLoading(true);
 
     // プロフィール詳細サービスから情報を取得
     const profileService = serviceRegistry.profileDetail;
     const response = await profileService.getProfileDetail(user.uid);
 
     if (response.success && response.data) {
-      // サービスのProfileDetailからストア用のProfileDataに変換
-      const profileData: ProfileData = {
-        uid: response.data.uid,
-        displayName: response.data.name,
-        bio: response.data.bio,
-        age: response.data.age,
-        location: response.data.location,
-        occupation: response.data.details.occupation,
-        interests: response.data.tags?.map(tag => tag.name) || [],
-        images: response.data.images || [],
-        isVerified: response.data.isVerified || false,
-        lastActive: response.data.lastActiveAt,
-        createdAt: response.data.createdAt,
-        updatedAt: response.data.updatedAt,
-        // 設定画面用の情報
-        remainingLikes: response.data.remainingLikes || 10,
-        remainingBoosts: response.data.remainingBoosts || 5,
-        remainingPoints: response.data.remainingPoints || 100,
-        membershipType: 'free', // TODO: 実際の会員情報を取得
-        email: user.email || undefined,
-      };
-
-      profileStore.getState().setCurrentProfile(profileData);
+      // ProfileDetail（FirestoreUser）をそのまま保存
+      profileStoreState.setCurrentProfile(response.data);
       console.log('✅ プロフィール情報を取得・保存完了');
     } else {
       const errorMessage = response.error || 'プロフィール情報の取得に失敗しました';
@@ -58,7 +39,7 @@ export const initializeProfile = async (user: any) => {
     const errorMessage = 'プロフィール情報の取得中にエラーが発生しました';
     console.error('💥 プロフィール取得エラー:', error);
   } finally {
-    profileStore.getState().setLoading(false);
+    profileStoreState.setLoading(false);
   }
 };
 
@@ -76,18 +57,20 @@ export const refreshProfile = async (uid: string) => {
  * @param profileData 保存するプロフィール情報
  */
 export const saveProfile = async (profileData: ProfileData) => {
+  const profileStoreState = profileStore.getState();
+
   try {
     console.log('💾 プロフィール情報を保存中...', profileData.uid);
-    profileStore.getState().setSaving(true);
+    profileStoreState.setLoading(true);
 
     // TODO: 実際の保存処理を実装
     // const profileService = serviceRegistry.profileDetail;
-    // const response = await profileService.updateProfile(profileData);
+    // const response = await profileService.updateProfileDetail(profileData.uid, profileData);
 
     // 仮の成功処理
     await new Promise(resolve => setTimeout(resolve, 1000)); // 1秒待機
 
-    profileStore.getState().setCurrentProfile(profileData);
+    profileStoreState.setCurrentProfile(profileData);
     console.log('✅ プロフィール情報の保存完了');
 
     return { success: true };
@@ -96,6 +79,6 @@ export const saveProfile = async (profileData: ProfileData) => {
     console.error('💥 プロフィール保存エラー:', error);
     return { success: false, error: errorMessage };
   } finally {
-    profileStore.getState().setSaving(false);
+    profileStoreState.setLoading(false);
   }
 };

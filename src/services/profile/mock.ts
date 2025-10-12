@@ -94,4 +94,18 @@ export class MockProfileService extends BaseService implements ProfileDetailServ
     await this.simulateNetworkDelay();
     return { success: true };
   }
+
+  /**
+   * 💖 いいね済みかチェック（モック）
+   * @param currentUserId 現在のユーザーID
+   * @param targetUserId チェック対象のユーザーID
+   * @returns いいね済みの場合true
+   */
+  async checkIfLiked(currentUserId: string, targetUserId: string): Promise<boolean> {
+    await this.simulateNetworkDelay();
+    // モックでは特定のユーザーに対していいね済みとして返す
+    // 実際の実装ではFirestoreをチェック
+    const likedUsers = ['user1', 'user3', 'user5'];
+    return likedUsers.includes(targetUserId);
+  }
 } 

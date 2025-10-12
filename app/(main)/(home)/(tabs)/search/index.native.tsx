@@ -9,7 +9,7 @@ import { getProfilePath } from '@constants/routes';
 import { reactionUsers } from '@mock/exploreUserMock';
 import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { getUsersByCategory } from '@mock/searchMock';
-import { User } from '@my-types/search';
+import { User } from '@my-types/app/search';
 import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';

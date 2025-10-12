@@ -1,12 +1,12 @@
 // src/components/search/web/WebUserGrid.tsx
 // Web版ユーザーグリッド表示コンポーネント
 
-import { User } from '@/src/my-types/search';
 import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
 import { getProfilePath } from '@constants/routes';
 import { useCardLayout } from '@hooks/ui';
+import { User } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
