@@ -1,18 +1,35 @@
 // src/my-types/firestore/reaction.ts
-// Firestoreの reactionsコレクション または likesサブコレクション の型定義
+// Firestoreのリアクション（いいね）関連の型定義
 
 /**
- * Firestoreに保存されるリアクション情報
+ * 送信したいいねの記録
  * 
- * 保存場所:
- * - users/{fromUserId}/likes/{toUserId} (サブコレクション形式)
- * - または reactions/{reactionId} (単一コレクション形式)
+ * 保存場所: users/{currentUserId}/sentLikes/{targetUserId}
+ * 
+ * 用途:
+ * - いいね履歴画面（自分が送ったいいね一覧）
+ * - いいね済みチェック（重複防止）
  */
-export interface FirestoreReaction {
-  fromUserId: string;           // いいねを送った人
-  toUserId: string;             // いいねを受け取った人
-  type: 'like' | 'super_like' | 'skip';  // リアクションの種類
-  timestamp: Date;              // リアクション時刻
+export interface FirestoreSentLike {
+  toUserId: string;             // いいねを送った相手のID
+  type: 'like' | 'super_like';  // リアクションの種類
+  timestamp: Date;              // 送信日時
+  isMatched?: boolean;          // マッチしたかどうか
+}
+
+/**
+ * 受信したいいねの記録
+ * 
+ * 保存場所: users/{currentUserId}/receivedLikes/{fromUserId}
+ * 
+ * 用途:
+ * - リアクション画面（自分がもらったいいね一覧）
+ * - マッチング判定
+ */
+export interface FirestoreReceivedLike {
+  fromUserId: string;           // いいねを送ってきた相手のID
+  type: 'like' | 'super_like';  // リアクションの種類
+  timestamp: Date;              // 受信日時
   isMatched?: boolean;          // マッチしたかどうか
 }
 

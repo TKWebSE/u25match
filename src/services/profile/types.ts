@@ -36,7 +36,7 @@ export interface ProfileDetailService {
   uploadProfileImage(uid: string, file: File, imageIndex: number): Promise<{ imageUrl: string }>;
 
   // いいねを送信
-  sendLike(uid: string): Promise<{ success: boolean; error?: string }>;
+  sendLike(currentUserId: string, targetUserId: string): Promise<{ success: boolean; error?: string }>;
 
   // いいね済みかチェック
   checkIfLiked(currentUserId: string, targetUserId: string): Promise<boolean>;

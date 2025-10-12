@@ -1,7 +1,7 @@
 // src/services/profileDetail/prod.ts
 // 🌐 プロフィール詳細サービスの本番実装
 
-import { collection, doc, getDoc, getDocs, increment, query, updateDoc, where } from 'firebase/firestore';
+import { doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
@@ -94,14 +94,33 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
   /**
    * ❤️ いいねを送信（本番）
-   * Firebaseでいいねを送信
-   * @param uid いいねを送信したいユーザーのID
+   * Firebaseでいいねを送信（双方向サブコレクション方式）
+   * @param currentUserId いいねを送信するユーザーのID
+   * @param targetUserId いいねを受け取るユーザーのID
    * @returns 送信結果
    */
-  async sendLike(uid: string): Promise<{ success: boolean; error?: string }> {
+  async sendLike(currentUserId: string, targetUserId: string): Promise<{ success: boolean; error?: string }> {
     try {
+      // 1. 送信者の sentLikes サブコレクションに記録
+      const sentLikeRef = doc(db, 'users', currentUserId, 'sentLikes', targetUserId);
+      await setDoc(sentLikeRef, {
+        toUserId: targetUserId,
+        type: 'like',
+        timestamp: serverTimestamp(),
+        isMatched: false,
+      });
 
-      const userDocRef = doc(db, 'users', uid);
+      // 2. 受信者の receivedLikes サブコレクションに記録
+      const receivedLikeRef = doc(db, 'users', targetUserId, 'receivedLikes', currentUserId);
+      await setDoc(receivedLikeRef, {
+        fromUserId: currentUserId,
+        type: 'like',
+        timestamp: serverTimestamp(),
+        isMatched: false,
+      });
+
+      // 3. 受信者の likeCount を+1
+      const userDocRef = doc(db, 'users', targetUserId);
       await updateDoc(userDocRef, {
         likeCount: increment(1)
       });
@@ -121,24 +140,11 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async checkIfLiked(currentUserId: string, targetUserId: string): Promise<boolean> {
     try {
-      // users/{currentUserId}/likes/{targetUserId} をチェック
-      const likeDocRef = doc(db, 'users', currentUserId, 'likes', targetUserId);
-      const likeDoc = await getDoc(likeDocRef);
+      // sentLikes サブコレクションをチェック
+      const sentLikeRef = doc(db, 'users', currentUserId, 'sentLikes', targetUserId);
+      const sentLikeDoc = await getDoc(sentLikeRef);
 
-      if (likeDoc.exists()) {
-        return true;
-      }
-
-      // reactionsコレクションもチェック（代替パターン）
-      const reactionsRef = collection(db, 'reactions');
-      const q = query(
-        reactionsRef,
-        where('fromUserId', '==', currentUserId),
-        where('toUserId', '==', targetUserId)
-      );
-      const querySnapshot = await getDocs(q);
-
-      return !querySnapshot.empty;
+      return sentLikeDoc.exists();
     } catch (error: any) {
       console.error('❌ いいね済みチェックに失敗:', error);
       return false; // エラー時はfalseを返す（失敗してもプロフィール表示は続ける）

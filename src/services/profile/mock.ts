@@ -87,11 +87,13 @@ export class MockProfileService extends BaseService implements ProfileDetailServ
 
   /**
    * ❤️ いいねを送信（モック）
-   * @param uid 対象ユーザーID
+   * @param currentUserId いいねを送信するユーザーのID
+   * @param targetUserId いいねを受け取るユーザーのID
    * @returns いいね送信結果
    */
-  async sendLike(uid: string): Promise<{ success: boolean; error?: string }> {
+  async sendLike(currentUserId: string, targetUserId: string): Promise<{ success: boolean; error?: string }> {
     await this.simulateNetworkDelay();
+    console.log(`[Mock] ${currentUserId} が ${targetUserId} にいいねを送信`);
     return { success: true };
   }
 

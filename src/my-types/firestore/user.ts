@@ -1,17 +1,19 @@
 // src/my-types/firestore/user.ts
-// Firestoreの usersコレクション の型定義
+// Firestoreのユーザー情報の型定義
 
 /**
  * Firestoreに保存されるユーザープロフィール情報（完全版）
- * コレクション: users/{uid}
  * 
- * この型を使う場面：
+ * 保存場所: users/{uid}
+ * 
+ * 用途:
  * - Firestoreとのデータのやり取り（サービス層）
  * - プロフィール詳細画面（全情報が必要）
  * - プロフィール編集画面（全フィールドにアクセス）
  * - profileStoreでの状態管理
  * 
- * 軽量な表示のみの場合は @my-types/search の User を使用してください
+ * 注意:
+ * - 軽量な表示のみの場合は @my-types/app/search の User を使用してください
  */
 export interface FirestoreUser {
   uid: string;                    // ユーザーID

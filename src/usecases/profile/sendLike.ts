@@ -9,7 +9,7 @@ import { authStore } from '@stores/authStore';
  * 
  * フロー:
  * 1. ログインチェック
- * 2. サービス層でいいね送信
+ * 2. サービス層でいいね送信（currentUserIdとtargetUserIdを渡す）
  * 3. 成功時はtrueを返し、エラー時はスロー
  * 
  * @param targetUid - いいねを送る対象のユーザーID
@@ -27,8 +27,8 @@ export const sendLike = async (targetUid: string): Promise<boolean> => {
       throw new Error('自分自身にいいねを送ることはできません');
     }
 
-    // サービス層でいいね送信
-    const result = await serviceRegistry.profileDetail.sendLike(targetUid);
+    // サービス層でいいね送信（currentUserIdとtargetUserIdを渡す）
+    const result = await serviceRegistry.profileDetail.sendLike(currentUser.uid, targetUid);
 
     if (!result.success) {
       throw new Error(result.error || 'いいねの送信に失敗しました');

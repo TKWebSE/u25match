@@ -12,6 +12,7 @@ import {
 } from '@components/profile/detail/web';
 import { PROFILE_EDIT_SCREEN_PATH } from '@constants/routes';
 import { ProfileDetail } from '@services/profile/types';
+import { authStore } from '@stores/authStore';
 import { ProfileDetailStyles as WebProfileDetailStyles } from '@styles/profile/detail/web/ProfileDetailStyles.web';
 import { getProfile } from '@usecases/profile/getProfile';
 import { sendLike } from '@usecases/profile/sendLike';
@@ -54,11 +55,19 @@ export default function ProfileScreen() {
 
   // いいね送信
   const handleLike = async () => {
+    // 既にいいね済みなら何もしない（連打防止 & 重複防止）
+    if (liked) return;
+
+    // いいね送信中は liked=true になるので、連打しても再度送信されない
+    setLiked(true);
+
     try {
       await sendLike(uniqueId);
-      setLiked(true);
+      // 成功したのでliked=trueのまま
     } catch (err: any) {
       showErrorToast(err.message || 'いいねの送信に失敗しました');
+      // エラー時のみ元に戻す
+      setLiked(false);
     }
   };
 
@@ -131,7 +140,7 @@ export default function ProfileScreen() {
       </ScrollView>
 
       {/* 自分のプロフィールかどうかを判定 */}
-      {profile.uid === 'my-user-id' ? (
+      {profile.uid === authStore.getState().user?.uid ? (
         // 自分のプロフィールの場合：編集ボタン
         <View style={WebProfileDetailStyles.likeButtonContainer}>
           <EditButton onPress={() => router.push(PROFILE_EDIT_SCREEN_PATH)} />
