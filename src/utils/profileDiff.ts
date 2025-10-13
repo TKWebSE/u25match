@@ -12,10 +12,10 @@
 import { HolidayPreferenceName } from '../constants/userEdit/holidayPreferences';
 
 /**
- * プロフィールデータのメインインターフェース
- * ユーザーの基本情報と詳細情報を含む
+ * 編集可能なプロフィールデータ
+ * 編集画面で扱うフィールドのみを含む（uid, email, createdAt などは含まない）
  */
-export interface ProfileData {
+export interface EditableProfileData {
   name: string; // ユーザー名
   age: number; // 年齢
   location: string; // 居住地
@@ -67,8 +67,8 @@ export interface ProfileDetails {
  * @param current - 現在のプロフィールデータ
  * @returns 変更されたフィールドのみを含む部分的なプロフィールデータ
  */
-export const getProfileDiff = (original: ProfileData, current: ProfileData): Partial<ProfileData> => {
-  const changes: Partial<ProfileData> = {};
+export const getProfileDiff = (original: EditableProfileData, current: EditableProfileData): Partial<EditableProfileData> => {
+  const changes: Partial<EditableProfileData> = {};
 
   // 基本情報の差分チェック
   if (original.name !== current.name) {
@@ -233,15 +233,8 @@ const arraysEqual = <T>(
 };
 
 /**
- * 差分があるかどうかをチェック
- */
-export const hasProfileChanges = (original: ProfileData, current: ProfileData): boolean => {
-  return Object.keys(getProfileDiff(original, current)).length > 0;
-};
-
-/**
  * 差分の概要を取得（デバッグ用）
  */
-export const getChangeSummary = (original: ProfileData, current: ProfileData): string[] => {
+export const getChangeSummary = (original: EditableProfileData, current: EditableProfileData): string[] => {
   return Object.keys(getProfileDiff(original, current));
 };

@@ -6,6 +6,10 @@
  * 
  * 保存場所: users/{uid}
  * 
+ * サブコレクション:
+ * - sentLikes/{targetUserId} - 送信したいいね（FirestoreSentLike）
+ * - receivedLikes/{fromUserId} - 受信したいいね（FirestoreReceivedLike）
+ * 
  * 用途:
  * - Firestoreとのデータのやり取り（サービス層）
  * - プロフィール詳細画面（全情報が必要）
@@ -13,6 +17,7 @@
  * - profileStoreでの状態管理
  * 
  * 注意:
+ * - サブコレクションは自動取得されません（別途アクセスが必要）
  * - 軽量な表示のみの場合は @my-types/app/search の User を使用してください
  */
 export interface FirestoreUser {

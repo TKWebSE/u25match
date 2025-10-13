@@ -1,7 +1,7 @@
 // src/services/profileDetail/prod.ts
 // 🌐 プロフィール詳細サービスの本番実装
 
-import { doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, increment, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
@@ -95,15 +95,20 @@ export class ProdProfileDetailService implements ProfileDetailService {
   /**
    * ❤️ いいねを送信（本番）
    * Firebaseでいいねを送信（双方向サブコレクション方式）
+   * Batch処理でトランザクションを保証（全部成功 or 全部失敗）
+   * 
    * @param currentUserId いいねを送信するユーザーのID
    * @param targetUserId いいねを受け取るユーザーのID
    * @returns 送信結果
    */
   async sendLike(currentUserId: string, targetUserId: string): Promise<{ success: boolean; error?: string }> {
     try {
+      // Batch処理を開始
+      const batch = writeBatch(db);
+
       // 1. 送信者の sentLikes サブコレクションに記録
       const sentLikeRef = doc(db, 'users', currentUserId, 'sentLikes', targetUserId);
-      await setDoc(sentLikeRef, {
+      batch.set(sentLikeRef, {
         toUserId: targetUserId,
         type: 'like',
         timestamp: serverTimestamp(),
@@ -112,7 +117,7 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
       // 2. 受信者の receivedLikes サブコレクションに記録
       const receivedLikeRef = doc(db, 'users', targetUserId, 'receivedLikes', currentUserId);
-      await setDoc(receivedLikeRef, {
+      batch.set(receivedLikeRef, {
         fromUserId: currentUserId,
         type: 'like',
         timestamp: serverTimestamp(),
@@ -121,9 +126,12 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
       // 3. 受信者の likeCount を+1
       const userDocRef = doc(db, 'users', targetUserId);
-      await updateDoc(userDocRef, {
+      batch.update(userDocRef, {
         likeCount: increment(1)
       });
+
+      // 全部まとめて実行（全部成功 or 全部失敗）
+      await batch.commit();
 
       return { success: true };
     } catch (error: any) {
@@ -146,7 +154,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
       return sentLikeDoc.exists();
     } catch (error: any) {
-      console.error('❌ いいね済みチェックに失敗:', error);
       return false; // エラー時はfalseを返す（失敗してもプロフィール表示は続ける）
     }
   }
