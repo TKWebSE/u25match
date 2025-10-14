@@ -2,7 +2,10 @@
 // いいね購入のユースケース - いいね決済・購入処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
+import { profileStore } from '@stores/profileStore';
 import { purchaseStore } from '@stores/purchaseStore';
+import { getProfile } from '@usecases/profile/getProfile';
 
 /**
  * いいね購入に必要なデータ
@@ -24,12 +27,13 @@ export interface PurchaseLikesResult {
  * いいねを購入するユースケース
  * 
  * フロー:
- * 1. ポイント残高チェック（不足時はエラースロー）
- * 2. ローディング開始
- * 3. サービス層でいいね購入処理
- * 4. 購入成功時、ポイント消費・いいね追加
- * 5. 購入履歴に記録
- * 6. エラー時は呼び出し元にスロー
+ * 1. ログインチェック
+ * 2. ポイント残高チェック（不足時はエラースロー）
+ * 3. ローディング開始
+ * 4. サービス層でいいね購入処理
+ * 5. 購入成功時、プロフィールを再取得（ポイント・いいね更新）
+ * 6. 購入履歴に記録
+ * 7. エラー時は呼び出し元にスロー
  * 
  * @param data - 購入データ（プラン・数量・ポイント消費）
  * @returns 購入結果（取引ID）
@@ -38,10 +42,16 @@ export interface PurchaseLikesResult {
 export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLikesResult> => {
   const { planId, amount, pointsCost } = data;
   const purchaseStoreState = purchaseStore.getState();
+  const profileStoreState = profileStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
-    // ポイント残高チェック
-    const currentPoints = purchaseStoreState.currentPoints;
+    if (!currentUser) {
+      throw new Error('ログインが必要です');
+    }
+
+    // ポイント残高チェック（profileから取得）
+    const currentPoints = profileStoreState.currentProfile?.remainingPoints ?? 0;
     if (currentPoints < pointsCost) {
       throw new Error('ポイントが不足しています');
     }
@@ -56,9 +66,8 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
       pointsCost,
     });
 
-    // 購入成功時、ポイント消費・いいね追加
-    purchaseStoreState.consumePoints(pointsCost);
-    purchaseStoreState.setCurrentLikes(purchaseStoreState.currentLikes + amount);
+    // 購入成功時、プロフィールを再取得（ポイント・いいね更新）
+    await getProfile(currentUser.uid);
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({

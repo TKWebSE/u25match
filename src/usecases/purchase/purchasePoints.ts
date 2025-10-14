@@ -2,7 +2,9 @@
 // ポイント購入のユースケース - ポイント決済・購入処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
 import { purchaseStore } from '@stores/purchaseStore';
+import { getProfile } from '@usecases/profile/getProfile';
 
 /**
  * ポイント購入に必要なデータ
@@ -27,7 +29,7 @@ export interface PurchasePointsResult {
  * フロー:
  * 1. ローディング開始
  * 2. サービス層で決済処理
- * 3. 購入成功時、ポイントをストアに追加
+ * 3. 購入成功時、プロフィールを再取得（ポイント更新）
  * 4. 購入履歴に記録
  * 5. エラー時は呼び出し元にスロー
  * 
@@ -38,8 +40,13 @@ export interface PurchasePointsResult {
 export const purchasePoints = async (data: PurchasePointsData): Promise<PurchasePointsResult> => {
   const { planId, amount, price, paymentMethod } = data;
   const purchaseStoreState = purchaseStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
+    if (!currentUser) {
+      throw new Error('ログインが必要です');
+    }
+
     // ローディング開始
     purchaseStoreState.setLoading(true);
 
@@ -51,8 +58,8 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
       paymentMethod,
     });
 
-    // 購入成功時、ポイントをストアに追加
-    purchaseStoreState.setCurrentPoints(purchaseStoreState.currentPoints + amount);
+    // 購入成功時、プロフィールを再取得（ポイント更新）
+    await getProfile(currentUser.uid);
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({

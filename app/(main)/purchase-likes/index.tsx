@@ -55,18 +55,6 @@ const PurchaseLikesScreen = () => {
 
   // 購入処理
   const handlePurchase = async (plan: LikePlan) => {
-    if (currentPoints < plan.points) {
-      Alert.alert(
-        'ポイント不足',
-        '購入に必要なポイントが不足しています。ポイントを追加で購入してください。',
-        [
-          { text: 'キャンセル', style: 'cancel' },
-          { text: 'ポイント購入', onPress: () => router.push(PURCHASE_POINTS_SCREEN_PATH as any) }
-        ]
-      );
-      return;
-    }
-
     Alert.alert(
       '購入確認',
       `${plan.likes}いいねを${plan.points}ポイントで購入しますか？`,
@@ -76,20 +64,28 @@ const PurchaseLikesScreen = () => {
           text: '購入する',
           onPress: async () => {
             try {
-              const result = await purchaseLikes({
+              await purchaseLikes({
                 planId: plan.id,
                 amount: plan.likes,
                 pointsCost: plan.points,
               });
 
-              if (result.success) {
-                showSuccessToast(`${plan.likes}いいねを購入しました！`);
-                setSelectedPlan(null);
-              } else {
-                showErrorToast(result.error || 'いいねの購入に失敗しました');
-              }
+              showSuccessToast(`${plan.likes}いいねを購入しました！`);
+              setSelectedPlan(null);
             } catch (error: any) {
-              showErrorToast(error.message || 'いいねの購入に失敗しました');
+              // ポイント不足のエラーハンドリング
+              if (error.message?.includes('ポイントが不足')) {
+                Alert.alert(
+                  'ポイント不足',
+                  '購入に必要なポイントが不足しています。ポイントを追加で購入してください。',
+                  [
+                    { text: 'キャンセル', style: 'cancel' },
+                    { text: 'ポイント購入', onPress: () => router.push(PURCHASE_POINTS_SCREEN_PATH as any) }
+                  ]
+                );
+              } else {
+                showErrorToast(error.message || 'いいねの購入に失敗しました');
+              }
             }
           }
         }

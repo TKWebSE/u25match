@@ -66,19 +66,15 @@ const PurchasePointsScreen = () => {
           text: '購入する',
           onPress: async () => {
             try {
-              const result = await purchasePoints({
+              await purchasePoints({
                 planId: plan.id,
                 amount: plan.points + (plan.bonus ?? 0),
                 price: plan.price,
                 paymentMethod: 'credit_card', // デフォルト決済方法
               });
 
-              if (result.success) {
-                showSuccessToast(`${plan.points}ポイント（ボーナス${plan.bonus}ポイント含む）を購入しました！`);
-                setSelectedPlan(null);
-              } else {
-                showErrorToast(result.error || 'ポイントの購入に失敗しました');
-              }
+              showSuccessToast(`${plan.points}ポイント（ボーナス${plan.bonus}ポイント含む）を購入しました！`);
+              setSelectedPlan(null);
             } catch (error: any) {
               showErrorToast(error.message || 'ポイントの購入に失敗しました');
             }

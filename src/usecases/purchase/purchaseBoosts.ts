@@ -2,7 +2,10 @@
 // ブースト購入のユースケース - ブースト決済・購入処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
+import { authStore } from '@stores/authStore';
+import { profileStore } from '@stores/profileStore';
 import { purchaseStore } from '@stores/purchaseStore';
+import { getProfile } from '@usecases/profile/getProfile';
 
 /**
  * ブースト購入に必要なデータ
@@ -24,12 +27,13 @@ export interface PurchaseBoostsResult {
  * ブーストを購入するユースケース
  * 
  * フロー:
- * 1. ポイント残高チェック（不足時はエラースロー）
- * 2. ローディング開始
- * 3. サービス層でブースト購入処理
- * 4. 購入成功時、ポイント消費・ブースト追加
- * 5. 購入履歴に記録
- * 6. エラー時は呼び出し元にスロー
+ * 1. ログインチェック
+ * 2. ポイント残高チェック（不足時はエラースロー）
+ * 3. ローディング開始
+ * 4. サービス層でブースト購入処理
+ * 5. 購入成功時、プロフィールを再取得（ポイント・ブースト更新）
+ * 6. 購入履歴に記録
+ * 7. エラー時は呼び出し元にスロー
  * 
  * @param data - 購入データ（プラン・数量・ポイント消費）
  * @returns 購入結果（取引ID）
@@ -38,10 +42,16 @@ export interface PurchaseBoostsResult {
 export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<PurchaseBoostsResult> => {
   const { planId, amount, pointsCost } = data;
   const purchaseStoreState = purchaseStore.getState();
+  const profileStoreState = profileStore.getState();
+  const currentUser = authStore.getState().user;
 
   try {
-    // ポイント残高チェック
-    const currentPoints = purchaseStoreState.currentPoints;
+    if (!currentUser) {
+      throw new Error('ログインが必要です');
+    }
+
+    // ポイント残高チェック（profileから取得）
+    const currentPoints = profileStoreState.currentProfile?.remainingPoints ?? 0;
     if (currentPoints < pointsCost) {
       throw new Error('ポイントが不足しています');
     }
@@ -56,9 +66,8 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
       pointsCost,
     });
 
-    // 購入成功時、ポイント消費・ブースト追加
-    purchaseStoreState.consumePoints(pointsCost);
-    purchaseStoreState.setCurrentBoosts(purchaseStoreState.currentBoosts + amount);
+    // 購入成功時、プロフィールを再取得（ポイント・ブースト更新）
+    await getProfile(currentUser.uid);
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({

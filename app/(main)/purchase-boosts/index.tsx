@@ -76,18 +76,6 @@ const PurchaseBoostsScreen = () => {
 
   // 購入処理
   const handlePurchase = async (plan: BoostPlan) => {
-    if (currentPoints < plan.points) {
-      Alert.alert(
-        'ポイント不足',
-        '購入に必要なポイントが不足しています。ポイントを追加で購入してください。',
-        [
-          { text: 'キャンセル', style: 'cancel' },
-          { text: 'ポイント購入', onPress: () => router.push(PURCHASE_POINTS_SCREEN_PATH as any) }
-        ]
-      );
-      return;
-    }
-
     Alert.alert(
       '購入確認',
       `${plan.boosts}ブーストを${plan.points}ポイントで購入しますか？`,
@@ -97,20 +85,28 @@ const PurchaseBoostsScreen = () => {
           text: '購入する',
           onPress: async () => {
             try {
-              const result = await purchaseBoosts({
+              await purchaseBoosts({
                 planId: plan.id,
                 amount: plan.boosts,
                 pointsCost: plan.points,
               });
 
-              if (result.success) {
-                showSuccessToast(`${plan.boosts}ブーストを購入しました！`);
-                setSelectedPlan(null);
-              } else {
-                showErrorToast(result.error || 'ブーストの購入に失敗しました');
-              }
+              showSuccessToast(`${plan.boosts}ブーストを購入しました！`);
+              setSelectedPlan(null);
             } catch (error: any) {
-              showErrorToast(error.message || 'ブーストの購入に失敗しました');
+              // ポイント不足のエラーハンドリング
+              if (error.message?.includes('ポイントが不足')) {
+                Alert.alert(
+                  'ポイント不足',
+                  '購入に必要なポイントが不足しています。ポイントを追加で購入してください。',
+                  [
+                    { text: 'キャンセル', style: 'cancel' },
+                    { text: 'ポイント購入', onPress: () => router.push(PURCHASE_POINTS_SCREEN_PATH as any) }
+                  ]
+                );
+              } else {
+                showErrorToast(error.message || 'ブーストの購入に失敗しました');
+              }
             }
           }
         }
