@@ -75,7 +75,6 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     };
 
   } catch (error: any) {
-    console.error('いいね購入エラー:', error);
     // エラーを呼び出し元に再スロー
     throw error;
   } finally {

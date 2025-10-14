@@ -75,7 +75,6 @@ export const purchaseBoosts = async (data: PurchaseBoostsData): Promise<Purchase
     };
 
   } catch (error: any) {
-    console.error('ブースト購入エラー:', error);
     // エラーを呼び出し元に再スロー
     throw error;
   } finally {
