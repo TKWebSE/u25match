@@ -5,6 +5,7 @@ import { Animated } from 'react-native';
 interface LikeButtonProps {
   onPress: () => void;    // いいねボタンが押された時の処理
   liked?: boolean;         // いいね済みかどうか（trueの場合は非表示）
+  disabled?: boolean;      // ボタン無効化（送信中など）
 }
 
 /**
@@ -12,8 +13,9 @@ interface LikeButtonProps {
  * 
  * @param onPress - いいねボタンが押された時の処理
  * @param liked - いいね済みかどうか（デフォルト: false）
+ * @param disabled - ボタン無効化（デフォルト: false）
  */
-export const LikeButton: React.FC<LikeButtonProps> = ({ onPress, liked = false }) => {
+export const LikeButton: React.FC<LikeButtonProps> = ({ onPress, liked = false, disabled = false }) => {
   const [fadeAnim] = useState(new Animated.Value(1));
   const [shouldRender, setShouldRender] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -39,6 +41,8 @@ export const LikeButton: React.FC<LikeButtonProps> = ({ onPress, liked = false }
 
   // ボタン押下時の処理
   const handlePress = () => {
+    if (disabled) return; // 無効化されている場合は何もしない
+
     setIsAnimating(true); // アニメーション開始
 
     // ボタン押下の瞬間からフェードアウトを開始

@@ -16,59 +16,48 @@ export interface SendReactionData {
  * リアクション送信処理の結果
  */
 export interface SendReactionResult {
-  success: boolean;          // 送信成功フラグ
-  isMatched?: boolean;       // マッチしたかどうか（成功時）
-  matchId?: string;          // マッチID（マッチした場合）
-  error?: string;            // エラーメッセージ（失敗時のみ）
+  isMatched: boolean;       // マッチしたかどうか
+  matchId?: string;         // マッチID（マッチした場合）
 }
 
 /**
  * リアクションを送信するユースケース
  * 
  * フロー:
- * 1. リアクション制限チェック
- * 2. ローディング開始・エラークリア
+ * 1. リアクション制限チェック（制限超過時はエラースロー）
+ * 2. ローディング開始
  * 3. サービス層でリアクション送信
  * 4. リアクション情報をストアに追加
  * 5. マッチした場合はマッチ情報も追加
  * 6. 使用回数を更新
- * 7. 結果をUIに返却
+ * 7. エラー時は呼び出し元にスロー
  * 
  * @param fromUserId - リアクションを送信するユーザーID
  * @param data - リアクションデータ（対象ユーザー・種類）
- * @returns リアクション送信結果（成功/失敗・マッチ情報・エラー）
+ * @returns リアクション送信結果（マッチ情報）
+ * @throws 制限超過またはその他のエラーが発生した場合は例外をスロー
  */
 export const sendReaction = async (fromUserId: string, data: SendReactionData): Promise<SendReactionResult> => {
   const { toUserId, type } = data;
-  const reactionsStoreState = reactionsStore.getState();
+  const store = reactionsStore.getState();
 
   try {
     // リアクション制限チェック
-    if (type === 'like' && !reactionsStoreState.canSendLike()) {
-      return {
-        success: false,
-        error: '本日のいいね上限に達しています'
-      };
+    if (type === 'like' && !store.canSendLike()) {
+      throw new Error('本日のいいね上限に達しています');
     }
 
-    if (type === 'super_like' && !reactionsStoreState.canSendSuperLike()) {
-      return {
-        success: false,
-        error: '本日のスーパーいいね上限に達しています'
-      };
+    if (type === 'super_like' && !store.canSendSuperLike()) {
+      throw new Error('本日のスーパーいいね上限に達しています');
     }
 
     // 自分自身にリアクション禁止
     if (fromUserId === toUserId) {
-      return {
-        success: false,
-        error: '自分自身にリアクションはできません'
-      };
+      throw new Error('自分自身にリアクションはできません');
     }
 
-    // ローディング開始・エラークリア
-    reactionsStoreState.setLoading(true);
-    reactionsStoreState.clearError();
+    // ローディング開始
+    store.setLoading(true);
 
     // サービス層でリアクション送信
     const result = await serviceRegistry.reactions.sendReaction({
@@ -87,11 +76,11 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
       isMatched: result.isMatched,
     };
 
-    reactionsStoreState.addSentReaction(reaction);
+    store.addSentReaction(reaction);
 
     // マッチした場合はマッチ情報も追加
     if (result.isMatched && result.matchId) {
-      reactionsStoreState.addMatch({
+      store.addMatch({
         id: result.matchId,
         userId1: fromUserId,
         userId2: toUserId,
@@ -102,29 +91,21 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
 
     // 使用回数を更新
     if (type === 'like') {
-      reactionsStoreState.incrementDailyLikes();
+      store.incrementDailyLikes();
     } else if (type === 'super_like') {
-      reactionsStoreState.incrementSuperLikes();
+      store.incrementSuperLikes();
     }
 
     return {
-      success: true,
       isMatched: result.isMatched,
       matchId: result.matchId
     };
 
   } catch (error: any) {
     console.error('リアクション送信エラー:', error);
-
-    // エラー処理（ストアにエラー情報を設定）
-    reactionsStoreState.setError(error.message || 'リアクションの送信に失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'リアクションの送信に失敗しました'
-    };
+    // エラーを呼び出し元に再スロー
+    throw error;
   } finally {
-    reactionsStoreState.setLoading(false);
+    store.setLoading(false);
   }
 };

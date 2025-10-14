@@ -1,7 +1,7 @@
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileImageEditProps {
   images: string[];
@@ -36,8 +36,11 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
 
   // 画像を選択
   const pickImage = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
+    // Web環境では権限チェック不要
+    if (Platform.OS !== 'web') {
+      const hasPermission = await requestPermissions();
+      if (!hasPermission) return;
+    }
 
     try {
       setIsUploading(true);
@@ -58,7 +61,11 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
       }
     } catch (error) {
       console.error('画像選択エラー:', error);
-      Alert.alert('エラー', '画像の選択に失敗しました');
+      if (Platform.OS === 'web') {
+        alert('画像の選択に失敗しました');
+      } else {
+        Alert.alert('エラー', '画像の選択に失敗しました');
+      }
     } finally {
       setIsUploading(false);
     }
@@ -106,6 +113,13 @@ export const ProfileImageEdit: React.FC<ProfileImageEditProps> = ({
 
   // 画像選択オプションを表示
   const showImageOptions = () => {
+    // Web環境では直接ファイル選択を開く
+    if (Platform.OS === 'web') {
+      pickImage();
+      return;
+    }
+
+    // モバイル環境では選択肢を表示
     Alert.alert(
       '画像を追加',
       '画像を追加する方法を選択してください',

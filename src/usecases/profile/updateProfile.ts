@@ -30,35 +30,20 @@ export const updateProfile = async (uid: string, updates: Partial<EditableProfil
       throw new Error('自分のプロフィールのみ更新できます');
     }
 
-    const currentProfile = profileStoreState.currentProfile;
-    if (!currentProfile || currentProfile.uid !== uid) {
-      throw new Error('更新対象のプロフィールが見つかりません');
+    // サービス層でプロフィール更新（updatedAtはサービス層で自動設定される）
+    const result = await serviceRegistry.profileDetail.updateProfileDetail(uid, updates);
+
+    // データの存在確認（安全なチェック）
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'プロフィールの更新に失敗しました');
     }
 
-    // 保存開始
-    profileStoreState.setLoading(true);
-
-    // サービス層でプロフィール更新
-    await serviceRegistry.profileDetail.updateProfileDetail(uid, {
-      ...updates,
-      updatedAt: new Date(),
-    });
-
-    // 更新後のプロフィール情報をストアに設定
-    const updatedProfile = {
-      ...currentProfile,
-      ...updates,
-      updatedAt: new Date(),
-    };
-
-    // ストアに保存
-    profileStoreState.setCurrentProfile(updatedProfile);
+    // サービス層から返ってきた最新データをストアに保存
+    profileStoreState.setCurrentProfile(result.data);
 
     return true;
 
   } catch (error: any) {
     throw new Error(error.message || 'プロフィールの更新に失敗しました');
-  } finally {
-    profileStoreState.setLoading(false);
   }
 };

@@ -51,7 +51,7 @@ export interface ProfileDetails {
   smoking: boolean;
   drinking: DrinkingName | string;
   children?: ChildrenName | string;
-  holidayPreferences?: HolidayPreferenceName[];
+  travelPreferences?: HolidayPreferenceName[];  // Firestoreフィールド名はtravelPreferences
   sleepSchedule?: string;
   marriageTimeline?: string;
   marriageViews?: string;
@@ -286,8 +286,8 @@ export const ProfileDetailsEdit: React.FC<ProfileDetailsEditProps> = ({ details,
         <View style={ProfileEditStyles.detailRow}>
           <Text style={ProfileEditStyles.detailLabel}>休日</Text>
           <HolidayPreferencesSelector
-            selectedPreference={details.holidayPreferences?.[0]}
-            onPreferenceChange={(preference) => updateDetail('holidayPreferences', [preference])}
+            selectedPreference={details.travelPreferences?.[0]}
+            onPreferenceChange={(preference) => updateDetail('travelPreferences', [preference])}
             placeholder="休日を選択"
           />
         </View>

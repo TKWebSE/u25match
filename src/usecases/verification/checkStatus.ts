@@ -28,32 +28,34 @@ export interface CheckStatusResult {
  * @returns ステータス確認結果（成功/失敗・ステータス・エラー）
  */
 export const checkStatus = async (): Promise<CheckStatusResult> => {
+  const store = verificationStore.getState();
+
   try {
     // ローディング開始
-    verificationStore.getState().setLoading(true);
+    store.setLoading(true);
 
     // サービス層でステータス取得
     const result = await serviceRegistry.verification.getStatus();
 
     // ストア状態を最新情報に更新
-    const currentStatus = verificationStore.getState().status;
+    const currentStatus = store.status;
 
     // ステータス更新
-    verificationStore.getState().setStatus(result.status);
+    store.setStatus(result.status);
 
     // 書類一覧更新
     if (result.documents) {
-      verificationStore.getState().setDocuments(result.documents);
+      store.setDocuments(result.documents);
     }
 
     // 審査履歴更新
     if (result.reviewHistory) {
-      verificationStore.getState().setReviewHistory(result.reviewHistory);
+      store.setReviewHistory(result.reviewHistory);
     }
 
     // ステータス変更時の通知処理
     if (currentStatus !== result.status) {
-      verificationStore.getState().addReviewHistory({
+      store.addReviewHistory({
         id: `status_change_${Date.now()}`,
         action: 'status_changed',
         oldStatus: currentStatus,
@@ -78,7 +80,7 @@ export const checkStatus = async (): Promise<CheckStatusResult> => {
       error: error.message || 'ステータスの確認に失敗しました'
     };
   } finally {
-    verificationStore.getState().setLoading(false);
+    store.setLoading(false);
   }
 };
 

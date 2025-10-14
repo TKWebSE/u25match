@@ -33,7 +33,7 @@ export const mockProfileData: ProfileData = {
     smoking: false,
     drinking: 'たまに',
     children: 'なし',
-    holidayPreferences: ['土日'],
+    travelPreferences: ['土日'],  // Firestoreフィールド名
     sleepSchedule: '23:00',
     marriageTimeline: '未定',
     marriageViews: 'お互いを理解し合える関係',

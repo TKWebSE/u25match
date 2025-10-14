@@ -44,7 +44,7 @@ export interface ProfileDetails {
   smoking: boolean; // 喫煙習慣
   drinking: string; // 飲酒習慣
   children?: string; // 子供の有無
-  holidayPreferences?: HolidayPreferenceName[]; // 休日の過ごし方
+  travelPreferences?: HolidayPreferenceName[]; // 休日の過ごし方（Firestoreフィールド名）
   sleepSchedule?: string; // 就寝時間
   marriageTimeline?: string; // 結婚予定時期
   marriageViews?: string; // 結婚観
@@ -179,8 +179,8 @@ const getDetailsDiff = (original: ProfileDetails, current: ProfileDetails): Part
     changes.children = current.children;
   }
 
-  if (!arraysEqual(original.holidayPreferences, current.holidayPreferences)) { // 休日過ごし方の変更をチェック
-    changes.holidayPreferences = current.holidayPreferences;
+  if (!arraysEqual(original.travelPreferences, current.travelPreferences)) { // 休日過ごし方の変更をチェック
+    changes.travelPreferences = current.travelPreferences;
   }
 
   if (original.sleepSchedule !== current.sleepSchedule) { // 就寝時間の変更をチェック

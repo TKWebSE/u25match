@@ -4,7 +4,7 @@ import ImageIndicator from '@/src/components/profile/detail/mobile/ImageIndicato
 import { LikeButton } from '@/src/components/profile/detail/mobile/LikeButton.native';
 import { MobileImageCarousel } from '@/src/components/profile/detail/mobile/MobileImageCarousel.native';
 import { ProfileDetailStyles } from '@/src/styles/profile/detail/mobile/ProfileDetailStyles.native';
-import { LoadingState } from '@components/common';
+import { ErrorState, LoadingState } from '@components/common';
 import {
   MobileProfileBio,
   MobileProfileDetails,
@@ -18,8 +18,8 @@ import { getProfile } from '@usecases/profile/getProfile';
 import { sendLike } from '@usecases/profile/sendLike';
 import { getOnlineStatus } from '@utils/getOnlineStatus';
 import { showErrorToast } from '@utils/showToast';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -39,25 +39,31 @@ export default function ProfileScreen() {
   // 状態管理
   const [profile, setProfile] = useState<ProfileDetail | null>(null);
   const [liked, setLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false); // いいね送信中フラグ
+  const [hasError, setHasError] = useState(false); // エラー状態
 
   // プロフィールデータを取得
   const loadProfile = useCallback(async () => {
     try {
+      setHasError(false);
       const result = await getProfile(uniqueId);
       setProfile(result.profile);
       setLiked(result.hasLiked);
+      // プロフィール変更時に画像インデックスをリセット
+      setActiveDotIndex(0);
     } catch (err: any) {
+      setHasError(true);
       showErrorToast(err.message || 'プロフィールの取得に失敗しました');
     }
   }, [uniqueId]);
 
-  // いいね送信
+  // いいね送信（連打防止強化版）
   const handleLike = async () => {
-    // 既にいいね済みなら何もしない（連打防止 & 重複防止）
-    if (liked) return;
+    // 既にいいね済み or いいね送信中なら何もしない
+    if (liked || isLiking) return;
 
-    // いいね送信中は liked=true になるので、連打しても再度送信されない
-    setLiked(true);
+    setIsLiking(true); // 送信中フラグを立てる
+    setLiked(true);    // UI即座に反映
 
     try {
       await sendLike(uniqueId);
@@ -66,13 +72,22 @@ export default function ProfileScreen() {
       showErrorToast(err.message || 'いいねの送信に失敗しました');
       // エラー時のみ元に戻す
       setLiked(false);
+    } finally {
+      setIsLiking(false); // 送信完了
     }
   };
 
-  // 初回読み込み
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+  // 画面フォーカス時に再読み込み（編集後に戻ってきた時も自動更新）
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [loadProfile])
+  );
+
+  // エラー発生時の表示
+  if (hasError) {
+    return <ErrorState message="プロフィールの読み込みに失敗しました" onRetry={loadProfile} />;
+  }
 
   // プロフィールが取得できていない場合はローディング表示
   if (!profile) {
@@ -142,7 +157,7 @@ export default function ProfileScreen() {
       ) : (
         // 他人のプロフィールの場合：いいねボタン
         <View style={ProfileDetailStyles.likeButtonContainer}>
-          <LikeButton onPress={handleLike} liked={liked} />
+          <LikeButton onPress={handleLike} liked={liked} disabled={isLiking} />
         </View>
       )}
     </View>

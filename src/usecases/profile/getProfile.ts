@@ -34,8 +34,12 @@ export const getProfile = async (uid: string): Promise<GetProfileResult> => {
 
   try {
     // 自分のプロフィールで、既にストアにある場合はそれを返す（キャッシュヒット）
-    if (currentUser?.uid === uid && profileStoreState.currentProfile) {
-      console.log('✅ キャッシュからプロフィールを取得');
+    // UIDの一致も確認して、別ユーザーのプロフィールが混入しないようにする
+    if (
+      currentUser?.uid === uid &&
+      profileStoreState.currentProfile &&
+      profileStoreState.currentProfile.uid === uid
+    ) {
       return {
         profile: profileStoreState.currentProfile,
         hasLiked: false, // 自分のプロフィールなのでhasLikedは常にfalse
@@ -45,8 +49,12 @@ export const getProfile = async (uid: string): Promise<GetProfileResult> => {
     // サービス層でプロフィール取得
     const result = await serviceRegistry.profileDetail.getProfileDetail(uid);
 
-    // サービス層でエラーが発生した場合はthrowされるため、ここに到達した時点でデータは存在する
-    const profileDetail = result.data!;
+    // データの存在確認（安全なチェック）
+    if (!result.success || !result.data) {
+      throw new Error(result.error || 'プロフィールデータが取得できませんでした');
+    }
+
+    const profileDetail = result.data;
 
     // 自分のプロフィールの場合のみ、ストアに保存
     if (currentUser?.uid === uid) {

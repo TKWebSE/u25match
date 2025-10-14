@@ -1,29 +1,27 @@
 // src/stores/profileStore.ts
 // プロフィール状態管理ストア - ユーザープロフィール情報・編集状態を担当
 
-import { FirestoreUser } from '@my-types/firestore';
+import { ProfileDetail } from '@services/profile/types';
 import { create } from 'zustand';
 
 /**
  * プロフィール情報
  * Firestoreのusersコレクションと同じ構造
  */
-export type ProfileData = FirestoreUser;
+export type ProfileData = ProfileDetail;
 
 /**
  * プロフィール関連の状態
  */
 interface ProfileState {
-  currentProfile: FirestoreUser | null;  // 現在のプロフィール情報
-  isLoading: boolean;                    // プロフィール処理中フラグ（取得・更新）
+  currentProfile: ProfileDetail | null;  // 現在のプロフィール情報
 }
 
 /**
  * プロフィール関連のアクション
  */
 interface ProfileActions {
-  setCurrentProfile: (profile: FirestoreUser | null) => void;
-  setLoading: (loading: boolean) => void;
+  setCurrentProfile: (profile: ProfileDetail | null) => void;
   reset: () => void;
 }
 
@@ -35,14 +33,11 @@ type ProfileStore = ProfileState & ProfileActions;
 export const profileStore = create<ProfileStore>((set, get) => ({
   // 初期状態
   currentProfile: null,
-  isLoading: false,
 
   // アクション
   setCurrentProfile: (currentProfile) => set({ currentProfile }),
-  setLoading: (isLoading) => set({ isLoading }),
   reset: () => set({
     currentProfile: null,
-    isLoading: false,
   }),
 }));
 

@@ -17,24 +17,23 @@ export interface PurchaseLikesData {
  * いいね購入処理の結果
  */
 export interface PurchaseLikesResult {
-  success: boolean;      // 購入成功フラグ
-  transactionId?: string; // 取引ID（成功時）
-  error?: string;        // エラーメッセージ（失敗時のみ）
+  transactionId: string; // 取引ID
 }
 
 /**
  * いいねを購入するユースケース
  * 
  * フロー:
- * 1. ポイント残高チェック
- * 2. ローディング開始・エラークリア
+ * 1. ポイント残高チェック（不足時はエラースロー）
+ * 2. ローディング開始
  * 3. サービス層でいいね購入処理
  * 4. 購入成功時、ポイント消費・いいね追加
  * 5. 購入履歴に記録
- * 6. 結果をUIに返却
+ * 6. エラー時は呼び出し元にスロー
  * 
  * @param data - 購入データ（プラン・数量・ポイント消費）
- * @returns 購入結果（成功/失敗・取引ID・エラー）
+ * @returns 購入結果（取引ID）
+ * @throws ポイント不足またはその他のエラーが発生した場合は例外をスロー
  */
 export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLikesResult> => {
   const { planId, amount, pointsCost } = data;
@@ -44,15 +43,11 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     // ポイント残高チェック
     const currentPoints = purchaseStoreState.currentPoints;
     if (currentPoints < pointsCost) {
-      return {
-        success: false,
-        error: 'ポイントが不足しています'
-      };
+      throw new Error('ポイントが不足しています');
     }
 
-    // ローディング開始・エラークリア
+    // ローディング開始
     purchaseStoreState.setLoading(true);
-    purchaseStoreState.clearError();
 
     // サービス層でいいね購入処理
     const result = await serviceRegistry.payment.purchaseLikes({
@@ -63,8 +58,7 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
 
     // 購入成功時、ポイント消費・いいね追加
     purchaseStoreState.consumePoints(pointsCost);
-    const currentLikes = purchaseStoreState.currentLikes;
-    purchaseStoreState.setCurrentLikes(currentLikes + amount);
+    purchaseStoreState.setCurrentLikes(purchaseStoreState.currentLikes + amount);
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({
@@ -77,21 +71,13 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     });
 
     return {
-      success: true,
       transactionId: result.transactionId
     };
 
   } catch (error: any) {
     console.error('いいね購入エラー:', error);
-
-    // エラー処理（ストアにエラー情報を設定）
-    purchaseStoreState.setError(error.message || 'いいねの購入に失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'いいねの購入に失敗しました'
-    };
+    // エラーを呼び出し元に再スロー
+    throw error;
   } finally {
     purchaseStoreState.setLoading(false);
   }

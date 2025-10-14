@@ -12,6 +12,7 @@ interface PurchaseState {
   currentLikes: number;       // 現在のいいね数
   purchaseHistory: any[];     // 購入履歴
   isLoading: boolean;         // 購入処理中フラグ
+  error: string | null;       // エラーメッセージ
 }
 
 /**
@@ -24,6 +25,8 @@ interface PurchaseActions {
   setPurchaseHistory: (history: any[]) => void;
   addPurchaseHistory: (purchase: any) => void;
   setLoading: (loading: boolean) => void;
+  setError: (error: string) => void;
+  clearError: () => void;
   // ポイント・ブースト・いいねを消費
   consumePoints: (amount: number) => void;
   consumeBoosts: (amount: number) => void;
@@ -42,6 +45,7 @@ export const purchaseStore = create<PurchaseStore>((set) => ({
   currentLikes: 0,
   purchaseHistory: [],
   isLoading: false,
+  error: null,
 
   // アクション
   setCurrentPoints: (currentPoints) => set({ currentPoints }),
@@ -52,6 +56,8 @@ export const purchaseStore = create<PurchaseStore>((set) => ({
     purchaseHistory: [purchase, ...state.purchaseHistory]
   })),
   setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  clearError: () => set({ error: null }),
 
   // 消費アクション
   consumePoints: (amount) => set((state) => ({

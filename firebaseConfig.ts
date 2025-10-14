@@ -5,6 +5,7 @@ import Constants from 'expo-constants';
 import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
 import { Auth, getAuth } from 'firebase/auth';
 import { Firestore, getFirestore } from 'firebase/firestore';
+import { FirebaseStorage, getStorage } from 'firebase/storage';
 
 // DEVモードの判定 - 開発環境かどうかを判定
 const isDev = isDevMode();
@@ -22,6 +23,7 @@ console.log('🔧 Firebase設定のDEVモード判定:', {
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
+let storage: FirebaseStorage;
 
 // 開発モード（モック）の場合
 if (isDev) {
@@ -133,6 +135,26 @@ if (isDev) {
     }),
   } as unknown as Firestore;
 
+  // モックStorageオブジェクト - Firebase Storageのモック実装
+  storage = {
+    // refメソッドのモック
+    ref: (path?: string) => ({
+      // アップロードメソッドのモック
+      put: async (file: any) => {
+        console.log('🎭 モックStorage put:', { path, file });
+        return Promise.resolve({
+          ref: { fullPath: path || 'mock-path' },
+          metadata: {},
+        });
+      },
+      // ダウンロードURLメソッドのモック
+      getDownloadURL: async () => {
+        console.log('🎭 モックStorage getDownloadURL:', { path });
+        return Promise.resolve(`https://mock-storage.com/${path || 'mock-image.jpg'}`);
+      },
+    }),
+  } as unknown as FirebaseStorage;
+
   // モックアプリインスタンス
   app = {
     name: 'mock-app',
@@ -187,8 +209,9 @@ if (isDev) {
   // AuthとFirestoreインスタンスの取得
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
 }
 
 // 🚀 条件分岐の外でexport - 常に利用可能なFirebaseインスタンスを提供
-export { app, auth, db };
+export { app, auth, db, storage };
 

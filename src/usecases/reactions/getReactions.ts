@@ -8,30 +8,30 @@ import { Reaction, reactionsStore } from '@stores/reactionsStore';
  * リアクション取得処理の結果
  */
 export interface GetReactionsResult {
-  success: boolean;                    // 取得成功フラグ
-  sentReactions?: Reaction[];          // 送信したリアクション（成功時）
-  receivedReactions?: Reaction[];      // 受信したリアクション（成功時）
-  error?: string;                      // エラーメッセージ（失敗時のみ）
+  sentReactions: Reaction[];          // 送信したリアクション
+  receivedReactions: Reaction[];      // 受信したリアクション
 }
 
 /**
  * リアクション一覧を取得するユースケース
  * 
  * フロー:
- * 1. ローディング開始・エラークリア
+ * 1. ローディング開始
  * 2. サービス層でリアクション取得
  * 3. 送信・受信リアクションをストアに設定
  * 4. 本日の使用回数を更新
- * 5. 結果をUIに返却
+ * 5. エラー時は呼び出し元にスロー
  * 
  * @param userId - 対象のユーザーID
- * @returns リアクション取得結果（成功/失敗・リアクション一覧・エラー）
+ * @returns リアクション取得結果（送信・受信リアクション一覧）
+ * @throws エラーが発生した場合は例外をスロー
  */
 export const getReactions = async (userId: string): Promise<GetReactionsResult> => {
+  const store = reactionsStore.getState();
+
   try {
-    // ローディング開始・エラークリア
-    reactionsStore.getState().setLoading(true);
-    reactionsStore.getState().clearError();
+    // ローディング開始
+    store.setLoading(true);
 
     // サービス層でリアクション取得
     const result = await serviceRegistry.reactions.getReactions(userId);
@@ -56,8 +56,8 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
     }));
 
     // 送信・受信リアクションをストアに設定
-    reactionsStore.getState().setSentReactions(sentReactions);
-    reactionsStore.getState().setReceivedReactions(receivedReactions);
+    store.setSentReactions(sentReactions);
+    store.setReceivedReactions(receivedReactions);
 
     // 本日の使用回数を計算・更新
     const today = new Date().toDateString();
@@ -68,33 +68,25 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
       r.type === 'super_like' && r.timestamp.toDateString() === today
     ).length;
 
-    reactionsStore.getState().setDailyLikesUsed(todayLikes);
-    reactionsStore.getState().setSuperLikesUsed(todaySuperLikes);
+    store.setDailyLikesUsed(todayLikes);
+    store.setSuperLikesUsed(todaySuperLikes);
 
     // 制限情報も更新（プレミアム状態に応じて）
     if (result.limits) {
-      reactionsStore.getState().setDailyLikesLimit(result.limits.dailyLikes);
-      reactionsStore.getState().setSuperLikesLimit(result.limits.superLikes);
+      store.setDailyLikesLimit(result.limits.dailyLikes);
+      store.setSuperLikesLimit(result.limits.superLikes);
     }
 
     return {
-      success: true,
       sentReactions,
       receivedReactions
     };
 
   } catch (error: any) {
     console.error('リアクション取得エラー:', error);
-
-    // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setError(error.message || 'リアクションの取得に失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'リアクションの取得に失敗しました'
-    };
+    // エラーを呼び出し元に再スロー
+    throw error;
   } finally {
-    reactionsStore.getState().setLoading(false);
+    store.setLoading(false);
   }
 };

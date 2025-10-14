@@ -2,7 +2,8 @@
 // 🌐 プロフィール詳細サービスの本番実装
 
 import { doc, getDoc, increment, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { db, storage } from '../../../firebaseConfig';
 import { ProfileDetail, ProfileDetailResponse, ProfileDetailService } from './types';
 
 export class ProdProfileDetailService implements ProfileDetailService {
@@ -33,7 +34,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async getProfileDetail(uid: string): Promise<ProfileDetailResponse> {
     try {
-
       const userDocRef = doc(db, 'users', uid);
       const userDoc = await getDoc(userDocRef);
 
@@ -43,9 +43,17 @@ export class ProdProfileDetailService implements ProfileDetailService {
 
       const userData = userDoc.data();
 
+      // FirestoreのTimestamp型をDate型に変換
+      const profileData: ProfileDetail = {
+        ...userData,
+        lastActiveAt: userData.lastActiveAt?.toDate?.() || new Date(userData.lastActiveAt),
+        createdAt: userData.createdAt?.toDate?.() || userData.createdAt,
+        updatedAt: userData.updatedAt?.toDate?.() || userData.updatedAt,
+      } as ProfileDetail;
+
       return {
         success: true,
-        data: userData as ProfileDetail,
+        data: profileData,
       };
     } catch (error: any) {
       throw new Error(error.message || 'プロフィール詳細の取得に失敗しました');
@@ -61,18 +69,35 @@ export class ProdProfileDetailService implements ProfileDetailService {
    */
   async updateProfileDetail(uid: string, data: Partial<ProfileDetail>): Promise<ProfileDetailResponse> {
     try {
-
       const userDocRef = doc(db, 'users', uid);
-      await updateDoc(userDocRef, data);
+
+      // updatedAtをserverTimestamp()に変換してFirestoreに保存
+      const updateData = {
+        ...data,
+        updatedAt: serverTimestamp(),
+      };
+
+      await updateDoc(userDocRef, updateData);
 
       // 更新後のデータを取得
       const updatedDoc = await getDoc(userDocRef);
       const updatedData = updatedDoc.data();
 
+      if (!updatedData) {
+        throw new Error('更新後のデータの取得に失敗しました');
+      }
+
+      // FirestoreのTimestamp型をDate型に変換
+      const profileData: ProfileDetail = {
+        ...updatedData,
+        lastActiveAt: updatedData.lastActiveAt?.toDate?.() || new Date(updatedData.lastActiveAt),
+        createdAt: updatedData.createdAt?.toDate?.() || updatedData.createdAt,
+        updatedAt: updatedData.updatedAt?.toDate?.() || updatedData.updatedAt,
+      } as ProfileDetail;
 
       return {
         success: true,
-        data: updatedData as ProfileDetail,
+        data: profileData,
       };
     } catch (error: any) {
       throw new Error(error.message || 'プロフィール詳細の更新に失敗しました');
@@ -88,8 +113,21 @@ export class ProdProfileDetailService implements ProfileDetailService {
    * @returns アップロード結果
    */
   async uploadProfileImage(uid: string, file: File, imageIndex: number): Promise<{ imageUrl: string }> {
-    // TODO: Firebase Storageへのアップロード実装
-    throw new Error('画像アップロード機能は未実装です');
+    try {
+      // Storageのパスを生成: users/{uid}/profile-images/image-{index}.jpg
+      const storagePath = `users/${uid}/profile-images/image-${imageIndex}.jpg`;
+      const storageRef = ref(storage, storagePath);
+
+      // 画像をアップロード
+      await uploadBytes(storageRef, file);
+
+      // アップロードした画像のダウンロードURLを取得
+      const downloadURL = await getDownloadURL(storageRef);
+
+      return { imageUrl: downloadURL };
+    } catch (error: any) {
+      throw new Error(error.message || 'プロフィール画像のアップロードに失敗しました');
+    }
   }
 
   /**

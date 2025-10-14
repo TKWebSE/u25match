@@ -21,7 +21,7 @@ import { Text, View } from 'react-native';
  * @property {string} details.smoking - 喫煙（必須）
  * @property {string} details.drinking - 飲酒（必須）
  * @property {string} [details.children] - 子供の有無（オプション）
- * @property {string[]} [details.holidayPreferences] - 休日（オプション）
+ * @property {string[]} [details.travelPreferences] - 休日（オプション、Firestoreフィールド名）
  * @property {string} [details.sleepSchedule] - 寝る時間（オプション）
  * @property {string} [details.marriageTimeline] - 結婚予定（オプション）
  * @property {string} [details.marriageViews] - 結婚観（オプション）
@@ -46,7 +46,7 @@ interface ProfileDetailsProps {
     smoking: boolean;
     drinking: string;
     children?: string;
-    holidayPreferences?: string[];
+    travelPreferences?: string[];  // Firestoreフィールド名
     sleepSchedule?: string;
     marriageTimeline?: string;
     marriageViews?: string;
@@ -151,11 +151,11 @@ export const MobileProfileDetails: React.FC<ProfileDetailsProps> = ({ details })
         )}
 
         {/* 休日（オプション項目） */}
-        {details.holidayPreferences && details.holidayPreferences.length > 0 && (
+        {details.travelPreferences && details.travelPreferences.length > 0 && (
           <View style={ProfileDetailStyles.detailRow}>
             <Text style={ProfileDetailStyles.detailLabel}>休日</Text>
             <Text style={ProfileDetailStyles.detailValue}>
-              {details.holidayPreferences.join('、')}
+              {details.travelPreferences.join('、')}
             </Text>
           </View>
         )}

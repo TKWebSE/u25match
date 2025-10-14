@@ -39,10 +39,11 @@ export interface ResubmitDocumentResult {
  */
 export const resubmitDocument = async (data: ResubmitDocumentData): Promise<ResubmitDocumentResult> => {
   const { file, documentType, previousDocumentId } = data;
+  const store = verificationStore.getState();
 
   try {
     // 前回書類の拒否状態確認
-    const previousDocument = verificationStore.getState().documents.find(
+    const previousDocument = store.documents.find(
       doc => doc.id === previousDocumentId
     );
 
@@ -72,9 +73,9 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
     }
 
     // アップロード開始・進捗管理
-    verificationStore.getState().clearError();
-    verificationStore.getState().setUploading(true);
-    verificationStore.getState().setUploadProgress(0, file.name);
+    store.clearError();
+    store.setUploading(true);
+    store.setUploadProgress(0, file.name);
 
     // 進捗更新のシミュレーション
     const progressInterval = setInterval(() => {
@@ -93,10 +94,10 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
 
     // 進捗完了
     clearInterval(progressInterval);
-    verificationStore.getState().setUploadProgress(100);
+    store.setUploadProgress(100);
 
     // 古い書類を削除・新しい書類を追加
-    verificationStore.getState().removeDocument(previousDocumentId);
+    store.removeDocument(previousDocumentId);
 
     const newDocument: UploadedDocument = {
       id: result.documentId,
@@ -106,13 +107,13 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
       status: 'uploaded',
     };
 
-    verificationStore.getState().addDocument(newDocument);
+    store.addDocument(newDocument);
 
     // ステータス更新（rejected → under_review）
-    verificationStore.getState().setStatus('under_review');
+    store.setStatus('under_review');
 
     // 再提出履歴に記録
-    verificationStore.getState().addReviewHistory({
+    store.addReviewHistory({
       id: `resubmit_${Date.now()}`,
       action: 'document_resubmitted',
       documentType,
@@ -131,8 +132,8 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
     console.error('書類再提出エラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    verificationStore.getState().setUploadProgress(0);
-    verificationStore.getState().setError(error.message || '書類の再提出に失敗しました');
+    store.setUploadProgress(0);
+    store.setError(error.message || '書類の再提出に失敗しました');
 
     // UIに結果を返却
     return {
@@ -140,6 +141,6 @@ export const resubmitDocument = async (data: ResubmitDocumentData): Promise<Resu
       error: error.message || '書類の再提出に失敗しました'
     };
   } finally {
-    verificationStore.getState().setUploading(false);
+    store.setUploading(false);
   }
 };

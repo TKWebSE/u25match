@@ -80,9 +80,6 @@ export const myProfileMock: ProfileDetail = {
   // 本人確認済みフラグ
   isVerified: false,
 
-  // 編集可能フラグ
-  isEditable: true,
-
   // 残数情報
   remainingLikes: 10,
   remainingBoosts: 5,
@@ -90,9 +87,6 @@ export const myProfileMock: ProfileDetail = {
 
   // 会員種別（テスト用に無料会員に設定）
   membershipType: 'free' as const,
-  planName: '無料会員',
-  membershipExpiryDate: undefined, // 無料会員なので有効期限なし
-  membershipStartDate: '2024-01-01',
 
   // 作成・更新日時
   createdAt: new Date('2024-01-15'),

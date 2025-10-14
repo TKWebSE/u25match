@@ -37,6 +37,7 @@ export interface UploadDocumentResult {
  */
 export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDocumentResult> => {
   const { file, documentType } = data;
+  const store = verificationStore.getState();
 
   try {
     // ファイル形式・サイズバリデーション
@@ -58,9 +59,9 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
     }
 
     // アップロード開始・進捗管理
-    verificationStore.getState().clearError();
-    verificationStore.getState().setUploading(true);
-    verificationStore.getState().setUploadProgress(0, file.name);
+    store.clearError();
+    store.setUploading(true);
+    store.setUploadProgress(0, file.name);
 
     // 進捗更新のシミュレーション（実際のアップロード時に調整）
     const progressInterval = setInterval(() => {
@@ -78,7 +79,7 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
 
     // 進捗完了
     clearInterval(progressInterval);
-    verificationStore.getState().setUploadProgress(100);
+    store.setUploadProgress(100);
 
     // 書類情報をストアに追加
     const document: UploadedDocument = {
@@ -89,13 +90,13 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
       status: 'uploaded',
     };
 
-    verificationStore.getState().addDocument(document);
+    store.addDocument(document);
 
     // ステータス更新（uploaded → under_review）
-    verificationStore.getState().setStatus('under_review');
+    store.setStatus('under_review');
 
     // 審査履歴に記録
-    verificationStore.getState().addReviewHistory({
+    store.addReviewHistory({
       id: `upload_${Date.now()}`,
       action: 'document_uploaded',
       documentType,
@@ -112,8 +113,8 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
     console.error('書類アップロードエラー:', error);
 
     // エラー処理（ストアにエラー情報を設定）
-    verificationStore.getState().setUploadProgress(0);
-    verificationStore.getState().setError(error.message || '書類のアップロードに失敗しました');
+    store.setUploadProgress(0);
+    store.setError(error.message || '書類のアップロードに失敗しました');
 
     // UIに結果を返却
     return {
@@ -121,6 +122,6 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
       error: error.message || '書類のアップロードに失敗しました'
     };
   } finally {
-    verificationStore.getState().setUploading(false);
+    store.setUploading(false);
   }
 };

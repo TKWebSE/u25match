@@ -5,6 +5,8 @@ import { useStrictAuth } from '@hooks/auth';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import { getProfile } from '@usecases/profile/getProfile';
 import { updateProfile } from '@usecases/profile/updateProfile';
+import { uploadMultipleProfileImages } from '@usecases/profile/uploadProfileImageOnly';
+import { getUploadRequiredIndices } from '@utils/imageUtils';
 import { EditableProfileData, getProfileDiff } from '@utils/profileDiff';
 import { showErrorToast, showSuccessToast } from '@utils/showToast';
 import { useRouter } from 'expo-router';
@@ -29,6 +31,8 @@ const ProfileEditScreen = () => {
   const [profileData, setProfileData] = useState<EditableProfileData | null>(null);
   const [initialData, setInitialData] = useState<EditableProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string>(''); // アップロード進捗（例: "2/3"）
 
   // スクロール制御用のref
   const scrollViewRef = useRef<ScrollView>(null);
@@ -64,19 +68,37 @@ const ProfileEditScreen = () => {
   // 保存処理
   const handleSave = async () => {
     // ローディングガードで弾かれるはずだが、TypeScriptの型チェックのため
-    if (!initialData || !profileData) return;
+    if (!initialData || !profileData || isSaving) return;
+
+    // 変更チェック（setIsSaving前に実行）
+    const changes = getProfileDiff(initialData, profileData);
+    const hasNewImages = getUploadRequiredIndices(profileData.images).length > 0;
+
+    // 変更がない場合（画像の新規アップロードもない場合）は何もしない
+    if (Object.keys(changes).length === 0 && !hasNewImages) {
+      showErrorToast('変更がありません');
+      return; // ここでreturnしてもOK（まだisSavingがtrueになっていない）
+    }
 
     try {
-      // 変更されたフィールドを取得（初期データと比較）
-      const changes = getProfileDiff(initialData, profileData);
+      setIsSaving(true);
+      setUploadProgress('');
 
-      // 変更がない場合は何もしない
-      if (Object.keys(changes).length === 0) {
-        showErrorToast('変更がありません');
-        return;
+      // 新規画像をアップロード（ローカルURIがある場合のみ実行）
+      if (hasNewImages) {
+        setUploadProgress('画像をアップロード中...');
+        const uploadedImages = await uploadMultipleProfileImages(
+          user.uid,
+          profileData.images,
+          (progress) => setUploadProgress(progress)
+        );
+
+        // アップロード後のURLで更新（changesに画像が含まれていなくても追加）
+        changes.images = uploadedImages;
       }
 
       // プロフィールを更新
+      setUploadProgress('プロフィールを保存中...');
       await updateProfile(user.uid, changes);
 
       showSuccessToast('プロフィールを保存しました');
@@ -85,6 +107,9 @@ const ProfileEditScreen = () => {
       router.push(getProfilePath(user.uid) as any);
     } catch (error: any) {
       showErrorToast(error.message || '保存に失敗しました');
+    } finally {
+      setIsSaving(false);
+      setUploadProgress('');
     }
   };
 
@@ -212,8 +237,11 @@ const ProfileEditScreen = () => {
                 onPressOut={() => handleButtonPressOut(saveButtonScale)}
                 style={[ProfileEditStyles.button, ProfileEditStyles.footerButton]}
                 activeOpacity={0.8}
+                disabled={isSaving}
               >
-                <Text style={ProfileEditStyles.buttonText}>保存</Text>
+                <Text style={ProfileEditStyles.buttonText}>
+                  {isSaving ? (uploadProgress || '保存中...') : '保存'}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
 

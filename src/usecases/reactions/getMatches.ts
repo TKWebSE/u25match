@@ -8,29 +8,29 @@ import { Match, reactionsStore } from '@stores/reactionsStore';
  * マッチ取得処理の結果
  */
 export interface GetMatchesResult {
-  success: boolean;          // 取得成功フラグ
-  matches?: Match[];         // マッチ一覧（成功時）
-  error?: string;            // エラーメッセージ（失敗時のみ）
+  matches: Match[];         // マッチ一覧
 }
 
 /**
  * マッチ一覧を取得するユースケース
  * 
  * フロー:
- * 1. ローディング開始・エラークリア
+ * 1. ローディング開始
  * 2. サービス層でマッチ取得
  * 3. マッチ情報をストアに設定
  * 4. アクティブ・非アクティブの整理
- * 5. 結果をUIに返却
+ * 5. エラー時は呼び出し元にスロー
  * 
  * @param userId - 対象のユーザーID
- * @returns マッチ取得結果（成功/失敗・マッチ一覧・エラー）
+ * @returns マッチ取得結果（マッチ一覧）
+ * @throws エラーが発生した場合は例外をスロー
  */
 export const getMatches = async (userId: string): Promise<GetMatchesResult> => {
+  const store = reactionsStore.getState();
+
   try {
-    // ローディング開始・エラークリア
-    reactionsStore.getState().setLoading(true);
-    reactionsStore.getState().clearError();
+    // ローディング開始
+    store.setLoading(true);
 
     // サービス層でマッチ取得
     const result = await serviceRegistry.reactions.getMatches(userId);
@@ -53,25 +53,17 @@ export const getMatches = async (userId: string): Promise<GetMatchesResult> => {
     });
 
     // マッチ情報をストアに設定
-    reactionsStore.getState().setMatches(sortedMatches);
+    store.setMatches(sortedMatches);
 
     return {
-      success: true,
       matches: sortedMatches
     };
 
   } catch (error: any) {
     console.error('マッチ取得エラー:', error);
-
-    // エラー処理（ストアにエラー情報を設定）
-    reactionsStore.getState().setError(error.message || 'マッチの取得に失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || 'マッチの取得に失敗しました'
-    };
+    // エラーを呼び出し元に再スロー
+    throw error;
   } finally {
-    reactionsStore.getState().setLoading(false);
+    store.setLoading(false);
   }
 };
