@@ -77,7 +77,6 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
     };
 
   } catch (error: any) {
-    // エラーを呼び出し元に再スロー
     throw error;
   } finally {
     purchaseStoreState.setLoading(false);
