@@ -59,7 +59,12 @@ export const purchasePoints = async (data: PurchasePointsData): Promise<Purchase
     });
 
     // 購入成功時、プロフィールを再取得（ポイント更新）
-    await getProfile(currentUser.uid);
+    try {
+      await getProfile(currentUser.uid);
+    } catch (error) {
+      // プロフィール取得失敗は購入処理に影響させない
+      console.warn('プロフィール再取得に失敗しました:', error);
+    }
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({

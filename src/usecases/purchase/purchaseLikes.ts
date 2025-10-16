@@ -67,7 +67,12 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     });
 
     // 購入成功時、プロフィールを再取得（ポイント・いいね更新）
-    await getProfile(currentUser.uid);
+    try {
+      await getProfile(currentUser.uid);
+    } catch (error) {
+      // プロフィール取得失敗は購入処理に影響させない
+      console.warn('プロフィール再取得に失敗しました:', error);
+    }
 
     // 購入履歴に記録
     purchaseStoreState.addPurchaseHistory({
@@ -84,7 +89,6 @@ export const purchaseLikes = async (data: PurchaseLikesData): Promise<PurchaseLi
     };
 
   } catch (error: any) {
-    // エラーを呼び出し元に再スロー
     throw error;
   } finally {
     purchaseStoreState.setLoading(false);
