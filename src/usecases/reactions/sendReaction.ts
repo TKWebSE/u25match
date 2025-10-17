@@ -47,10 +47,6 @@ export const sendReaction = async (fromUserId: string, data: SendReactionData): 
       throw new Error('本日のいいね上限に達しています');
     }
 
-    if (type === 'super_like' && !store.canSendSuperLike()) {
-      throw new Error('本日のスーパーいいね上限に達しています');
-    }
-
     // 自分自身にリアクション禁止
     if (fromUserId === toUserId) {
       throw new Error('自分自身にリアクションはできません');

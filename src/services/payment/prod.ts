@@ -20,7 +20,7 @@ export class ProdPaymentService implements PaymentService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to purchase points: ${response.statusText}`);
+        throw new Error(`ポイントの購入に失敗しました: ${response.statusText}`);
       }
 
       const result = await response.json();
@@ -46,7 +46,7 @@ export class ProdPaymentService implements PaymentService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to purchase boosts: ${response.statusText}`);
+        throw new Error(`ブーストの購入に失敗しました: ${response.statusText}`);
       }
 
       const result = await response.json();
@@ -72,7 +72,7 @@ export class ProdPaymentService implements PaymentService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to purchase likes: ${response.statusText}`);
+        throw new Error(`いいねの購入に失敗しました: ${response.statusText}`);
       }
 
       const result = await response.json();
