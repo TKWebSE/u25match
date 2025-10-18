@@ -1,7 +1,7 @@
 // src/services/main/reactions/types.ts
 // 🎯 リアクションサービスの型定義 - 契約書
 
-export type ReactionType = 'like' | 'super_like' | 'pass' | 'footprint';
+export type ReactionType = 'like' | 'footprint';
 
 export interface Reaction {
   id: string;
@@ -19,19 +19,20 @@ export interface ReactionsResponse {
 }
 
 /**
+ * リアクション取得のレスポンス
+ */
+export interface GetReactionsResponse {
+  received: Reaction[];  // 受信したリアクション（いいね・足跡）
+}
+
+/**
  * 🎯 リアクションサービスのインターフェース
  * どんな実装も必ずこの機能を提供する約束
  */
 export interface ReactionsService {
-  // リアクションを送信
-  sendReaction(targetUserId: string): Promise<ReactionsResponse>;
-
-  // スーパーライクを送信
-  sendSuperLike(targetUserId: string): Promise<ReactionsResponse>;
-
   // 足あとを残す
   leaveFootprint(targetUserId: string): Promise<ReactionsResponse>;
 
-  // リアクション履歴を取得
-  getReactions(userId: string): Promise<ReactionsResponse>;
+  // リアクション履歴を取得（受信したいいね・足跡）
+  getReactions(userId: string): Promise<GetReactionsResponse>;
 } 

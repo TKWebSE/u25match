@@ -3,63 +3,51 @@
 
 import { mockReactions } from '@mock/reactionsMock';
 import { BaseService } from '../core/BaseService';
-import { ReactionsResponse, ReactionsService } from './types';
+import { GetReactionsResponse, ReactionsResponse, ReactionsService } from './types';
 
 export class MockReactionsService extends BaseService implements ReactionsService {
-  leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
-    throw new Error('Method not implemented.');
-  }
   /**
-   * ❤️ リアクションを送信（モック）
+   * 👣 足あとを残す（モック）
    * @param targetUserId 対象ユーザーID
    * @returns 送信結果
    */
-  async sendReaction(targetUserId: string): Promise<ReactionsResponse> {
+  async leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
     await this.simulateNetworkDelay();
     return {
       success: true,
       data: {
-        id: `reaction_${Date.now()}`,
-        fromUserId: 'current_user',
-        toUserId: targetUserId,
-        type: 'like',
-        timestamp: new Date(),
-      },
-    };
-  }
-
-  /**
-   * ⭐ スーパーライクを送信（モック）
-   * @param targetUserId 対象ユーザーID
-   * @returns 送信結果
-   */
-  async sendSuperLike(targetUserId: string): Promise<ReactionsResponse> {
-    await this.simulateNetworkDelay();
-    return {
-      success: true,
-      data: {
-        id: `reaction_${Date.now()}`,
-        fromUserId: 'current_user',
-        toUserId: targetUserId,
-        type: 'super_like',
-        timestamp: new Date(),
-        message: 'あなたが気になります！',
+        id: `footprint_${Date.now()}`,
+        viewerId: 'current_user',
+        viewedUserId: targetUserId,
+        viewedAt: new Date(),
       },
     };
   }
 
   /**
    * 📋 リアクション履歴を取得（モック）
-   * @param userId ユーザーID
-   * @returns リアクション履歴
+   * 受信したいいねと足跡の一覧を取得
+   * 
+   * @param userId 対象ユーザーID（自分のID）
+   * @returns 受信したリアクション一覧（いいね・足跡）
    */
-  async getReactions(userId: string): Promise<ReactionsResponse> {
+  async getReactions(userId: string): Promise<GetReactionsResponse> {
     await this.simulateNetworkDelay();
-    // モックデータから該当ユーザーへのリアクションを取得
-    const userReactions = mockReactions.filter(reaction => reaction.toUserId === userId);
+
+    // モックデータからこのユーザーが受信したリアクションを抽出
+    // toUserId が自分のIDのもの = 自分が受け取ったリアクション
+    const receivedReactions = mockReactions
+      .filter(reaction => reaction.toUserId === userId)
+      .map(reaction => ({
+        id: reaction.id,
+        fromUserId: reaction.fromUserId,
+        toUserId: reaction.toUserId,
+        type: reaction.type,
+        timestamp: new Date(reaction.timestamp),
+      }));
+
     return {
-      success: true,
-      data: userReactions,
+      received: receivedReactions,
     };
   }
 } 

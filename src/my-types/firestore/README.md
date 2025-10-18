@@ -12,11 +12,13 @@
 ### `reaction.ts`
 - **FirestoreSentLike** - 送信したいいね
   - 保存場所: `users/{currentUserId}/sentLikes/{targetUserId}`
-  - 用途: いいね履歴、いいね済みチェック
+  - 用途: いいね履歴、いいね済みチェック、マッチング判定
+  - 注意: マッチした瞬間にchatRoom作成 & いいねを削除
   
 - **FirestoreReceivedLike** - 受信したいいね
   - 保存場所: `users/{currentUserId}/receivedLikes/{fromUserId}`
   - 用途: リアクション画面、マッチング判定
+  - 注意: マッチした瞬間にchatRoom作成 & いいねを削除
 
 ### `viewHistory.ts`
 - **FirestoreViewHistory** - 閲覧履歴

@@ -9,16 +9,17 @@
  * 用途:
  * - いいね履歴画面（自分が送ったいいね一覧）
  * - いいね済みチェック（重複防止）
+ * - マッチング判定（相互いいねチェック）
  * 
  * 注意:
  * - currentUserId（自分のID）はパスに含まれるため、フィールドには保存しない
  * - ドキュメントIDが targetUserId（相手のID）になる
+ * - マッチした瞬間にchatRoom作成 & 両方のいいねを削除
  */
 export interface FirestoreSentLike {
-  toUserId: string;             // いいねを送った相手のID（ドキュメントIDと同じ）
-  type: 'like' | 'super_like';  // リアクションの種類
-  timestamp: Date;              // 送信日時
-  isMatched?: boolean;          // マッチしたかどうか
+  toUserId: string;    // いいねを送った相手のID（ドキュメントIDと同じ）
+  type: 'like';        // リアクションの種類
+  timestamp: Date;     // 送信日時
 }
 
 /**
@@ -28,16 +29,16 @@ export interface FirestoreSentLike {
  * 
  * 用途:
  * - リアクション画面（自分がもらったいいね一覧）
- * - マッチング判定
+ * - マッチング判定（相互いいねチェック）
  * 
  * 注意:
  * - currentUserId（自分のID）はパスに含まれるため、フィールドには保存しない
  * - ドキュメントIDが fromUserId（相手のID）になる
+ * - マッチした瞬間にchatRoom作成 & 両方のいいねを削除
  */
 export interface FirestoreReceivedLike {
-  fromUserId: string;           // いいねを送ってきた相手のID（ドキュメントIDと同じ）
-  type: 'like' | 'super_like';  // リアクションの種類
-  timestamp: Date;              // 受信日時
-  isMatched?: boolean;          // マッチしたかどうか
+  fromUserId: string;  // いいねを送ってきた相手のID（ドキュメントIDと同じ）
+  type: 'like';        // リアクションの種類
+  timestamp: Date;     // 受信日時
 }
 

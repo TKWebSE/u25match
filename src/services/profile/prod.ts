@@ -150,7 +150,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
         toUserId: targetUserId,
         type: 'like',
         timestamp: serverTimestamp(),
-        isMatched: false,
       });
 
       // 2. 受信者の receivedLikes サブコレクションに記録
@@ -159,7 +158,6 @@ export class ProdProfileDetailService implements ProfileDetailService {
         fromUserId: currentUserId,
         type: 'like',
         timestamp: serverTimestamp(),
-        isMatched: false,
       });
 
       // 3. 受信者の likeCount を+1
