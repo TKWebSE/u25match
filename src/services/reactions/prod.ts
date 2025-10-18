@@ -1,105 +1,36 @@
 // src/services/main/reactions/prod.ts
 // 🌐 リアクションサービスの本番実装
 
-import { ReactionsResponse, ReactionsService } from './types';
+import { collection, doc, getDocs, query, serverTimestamp, where, writeBatch } from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
+import { GetReactionsResponse, Reaction, ReactionsResponse, ReactionsService } from './types';
 
 export class ProdReactionsService implements ReactionsService {
   /**
-   * ❤️ リアクションを送信（本番）
-   * @param targetUserId 対象ユーザーID
-   * @returns 送信結果
-   */
-  async sendReaction(targetUserId: string): Promise<ReactionsResponse> {
-    try {
-      const response = await fetch('/api/reactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          targetUserId,
-          type: 'like',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to send reaction: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  }
-
-  /**
-   * ⭐ スーパーライクを送信（本番）
-   * @param targetUserId 対象ユーザーID
-   * @returns 送信結果
-   */
-  async sendSuperLike(targetUserId: string): Promise<ReactionsResponse> {
-    try {
-      const response = await fetch('/api/reactions/super-like', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          targetUserId,
-          type: 'super_like',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to send super like: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  }
-
-  /**
    * 👣 足あとを残す（本番）
-   * @param targetUserId 対象ユーザーID
+   * viewHistoryコレクションに閲覧記録を保存
+   * 
+   * @param currentUserId 閲覧者のユーザーID
+   * @param targetUserId 閲覧対象のユーザーID
    * @returns 送信結果
    */
   async leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
     try {
-      const response = await fetch('/api/reactions/footprint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          targetUserId,
-          type: 'footprint',
-        }),
+      const viewHistoryRef = collection(db, 'viewHistory');
+      const docRef = doc(viewHistoryRef);
+
+      const batch = writeBatch(db);
+      batch.set(docRef, {
+        viewerId: 'current_user', // TODO: 実際のログインユーザーIDに置き換え
+        viewedUserId: targetUserId,
+        viewedAt: serverTimestamp(),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to leave footprint: ${response.statusText}`);
-      }
+      await batch.commit();
 
-      const data = await response.json();
       return {
         success: true,
-        data,
+        data: { id: docRef.id },
       };
     } catch (error) {
       return {
@@ -111,27 +42,64 @@ export class ProdReactionsService implements ReactionsService {
 
   /**
    * 📋 リアクション履歴を取得（本番）
-   * @param userId ユーザーID
-   * @returns リアクション履歴
+   * 受信したいいねと足跡の一覧を取得
+   * 
+   * フロー:
+   * 1. users/{userId}/receivedLikes サブコレクションからいいねを取得
+   * 2. viewHistory コレクションから自分が閲覧された記録（足跡）を取得
+   * 3. 両方を統合して返す
+   * 
+   * @param userId 対象ユーザーID（自分のID）
+   * @returns 受信したリアクション一覧（いいね・足跡）
    */
-  async getReactions(userId: string): Promise<ReactionsResponse> {
+  async getReactions(userId: string): Promise<GetReactionsResponse> {
     try {
-      const response = await fetch(`/api/reactions/${userId}`);
+      const receivedReactions: Reaction[] = [];
 
-      if (!response.ok) {
-        throw new Error(`Failed to get reactions: ${response.statusText}`);
-      }
+      // 1. 受信したいいねを取得（サブコレクション）
+      const receivedLikesRef = collection(db, 'users', userId, 'receivedLikes');
+      const likesSnapshot = await getDocs(receivedLikesRef);
 
-      const data = await response.json();
+      likesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        receivedReactions.push({
+          id: doc.id,
+          fromUserId: data.fromUserId,
+          toUserId: userId,
+          type: 'like',
+          timestamp: data.timestamp?.toDate?.() || new Date(data.timestamp),
+        });
+      });
+
+      // 2. 足跡を取得（viewHistoryコレクションから自分が見られた記録）
+      const viewHistoryRef = collection(db, 'viewHistory');
+      const viewHistoryQuery = query(
+        viewHistoryRef,
+        where('viewedUserId', '==', userId)
+      );
+      const viewHistorySnapshot = await getDocs(viewHistoryQuery);
+
+      viewHistorySnapshot.forEach((doc) => {
+        const data = doc.data();
+        receivedReactions.push({
+          id: doc.id,
+          fromUserId: data.viewerId,
+          toUserId: userId,
+          type: 'footprint',
+          timestamp: data.viewedAt?.toDate?.() || new Date(data.viewedAt),
+        });
+      });
+
+      // タイムスタンプでソート（新しい順）
+      receivedReactions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
       return {
-        success: true,
-        data,
+        received: receivedReactions,
       };
     } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      throw new Error(
+        error instanceof Error ? error.message : 'リアクション取得に失敗しました'
+      );
     }
   }
 } 

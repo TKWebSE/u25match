@@ -1,29 +1,32 @@
 // src/usecases/reactions/getReactions.ts
-// リアクション取得のユースケース - 送信・受信リアクション一覧取得処理を担当
+// リアクション取得のユースケース - 受信したリアクション（いいね・足跡）一覧取得処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
-import { Reaction, reactionsStore } from '@stores/reactionsStore';
+import { Reaction, reactionsStore, ReactionType } from '@stores/reactionsStore';
 
 /**
  * リアクション取得処理の結果
  */
 export interface GetReactionsResult {
-  sentReactions: Reaction[];          // 送信したリアクション
-  receivedReactions: Reaction[];      // 受信したリアクション
+  likeReactions: Reaction[];          // 受信したいいね（like）
+  footprintReactions: Reaction[];     // 受信した足跡（footprint）
 }
 
 /**
- * リアクション一覧を取得するユースケース
+ * 受信したリアクション一覧を取得するユースケース
  * 
  * フロー:
  * 1. ローディング開始
  * 2. サービス層でリアクション取得
- * 3. 送信・受信リアクションをストアに設定
- * 4. 本日の使用回数を更新
- * 5. エラー時は呼び出し元にスロー
+ * 3. いいねと足跡に分類してストアに設定
+ * 4. エラー時は呼び出し元にスロー
+ * 
+ * 用途:
+ * - 自分のプロフィールにいいねをくれた人の一覧表示
+ * - 自分のプロフィールを見に来た人（足跡）の一覧表示
  * 
  * @param userId - 対象のユーザーID
- * @returns リアクション取得結果（送信・受信リアクション一覧）
+ * @returns リアクション取得結果（いいね・足跡の一覧）
  * @throws エラーが発生した場合は例外をスロー
  */
 export const getReactions = async (userId: string): Promise<GetReactionsResult> => {
@@ -37,54 +40,31 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
     const result = await serviceRegistry.reactions.getReactions(userId);
 
     // データ変換
-    const sentReactions: Reaction[] = result.sent.map(r => ({
-      id: r.id,
-      fromUserId: r.fromUserId,
-      toUserId: r.toUserId,
-      type: r.type as any,
-      timestamp: new Date(r.timestamp),
-      isMatched: r.isMatched,
+    const receivedReactions: Reaction[] = result.received.map((reaction): Reaction => ({
+      id: reaction.id,
+      fromUserId: reaction.fromUserId,
+      toUserId: reaction.toUserId,
+      type: reaction.type as ReactionType,
+      timestamp: new Date(reaction.timestamp),
     }));
 
-    const receivedReactions: Reaction[] = result.received.map(r => ({
-      id: r.id,
-      fromUserId: r.fromUserId,
-      toUserId: r.toUserId,
-      type: r.type as any,
-      timestamp: new Date(r.timestamp),
-      isMatched: r.isMatched,
-    }));
+    // いいね（like）と足跡（footprint）に分類
+    const likeReactions = receivedReactions.filter(
+      (reaction) => reaction.type === 'like'
+    );
+    const footprintReactions = receivedReactions.filter(
+      (reaction) => reaction.type === 'footprint'
+    );
 
-    // 送信・受信リアクションをストアに設定
-    store.setSentReactions(sentReactions);
+    // ストアに設定
     store.setReceivedReactions(receivedReactions);
 
-    // 本日の使用回数を計算・更新
-    const today = new Date().toDateString();
-    const todayLikes = sentReactions.filter(r =>
-      r.type === 'like' && r.timestamp.toDateString() === today
-    ).length;
-    const todaySuperLikes = sentReactions.filter(r =>
-      r.type === 'super_like' && r.timestamp.toDateString() === today
-    ).length;
-
-    store.setDailyLikesUsed(todayLikes);
-    store.setSuperLikesUsed(todaySuperLikes);
-
-    // 制限情報も更新（プレミアム状態に応じて）
-    if (result.limits) {
-      store.setDailyLikesLimit(result.limits.dailyLikes);
-      store.setSuperLikesLimit(result.limits.superLikes);
-    }
-
     return {
-      sentReactions,
-      receivedReactions
+      likeReactions,
+      footprintReactions
     };
 
   } catch (error: any) {
-    console.error('リアクション取得エラー:', error);
-    // エラーを呼び出し元に再スロー
     throw error;
   } finally {
     store.setLoading(false);
