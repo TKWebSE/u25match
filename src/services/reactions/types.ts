@@ -31,9 +31,6 @@ export interface GetReactionsResponse {
  * どんな実装も必ずこの機能を提供する約束
  */
 export interface ReactionsService {
-  // 足あとを残す
-  leaveFootprint(targetUserId: string): Promise<ReactionsResponse>;
-
   // リアクション履歴を取得（受信したいいね・足跡）
   getReactions(userId: string): Promise<GetReactionsResponse>;
 } 

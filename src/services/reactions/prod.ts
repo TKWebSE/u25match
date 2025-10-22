@@ -1,45 +1,11 @@
 // src/services/main/reactions/prod.ts
 // 🌐 リアクションサービスの本番実装
 
-import { collection, doc, getDocs, query, serverTimestamp, where, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
-import { GetReactionsResponse, Reaction, ReactionsResponse, ReactionsService } from './types';
+import { GetReactionsResponse, Reaction, ReactionsService } from './types';
 
 export class ProdReactionsService implements ReactionsService {
-  /**
-   * 👣 足あとを残す（本番）
-   * viewHistoryコレクションに閲覧記録を保存
-   * 
-   * @param currentUserId 閲覧者のユーザーID
-   * @param targetUserId 閲覧対象のユーザーID
-   * @returns 送信結果
-   */
-  async leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
-    try {
-      const viewHistoryRef = collection(db, 'viewHistory');
-      const docRef = doc(viewHistoryRef);
-
-      const batch = writeBatch(db);
-      batch.set(docRef, {
-        viewerId: 'current_user', // TODO: 実際のログインユーザーIDに置き換え
-        viewedUserId: targetUserId,
-        viewedAt: serverTimestamp(),
-      });
-
-      await batch.commit();
-
-      return {
-        success: true,
-        data: { id: docRef.id },
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
-  }
-
   /**
    * 📋 リアクション履歴を取得（本番）
    * 受信したいいねと足跡の一覧を取得

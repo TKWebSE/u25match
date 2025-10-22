@@ -3,27 +3,9 @@
 
 import { mockReactions } from '@mock/reactionsMock';
 import { BaseService } from '../core/BaseService';
-import { GetReactionsResponse, ReactionsResponse, ReactionsService } from './types';
+import { GetReactionsResponse, ReactionsService } from './types';
 
 export class MockReactionsService extends BaseService implements ReactionsService {
-  /**
-   * 👣 足あとを残す（モック）
-   * @param targetUserId 対象ユーザーID
-   * @returns 送信結果
-   */
-  async leaveFootprint(targetUserId: string): Promise<ReactionsResponse> {
-    await this.simulateNetworkDelay();
-    return {
-      success: true,
-      data: {
-        id: `footprint_${Date.now()}`,
-        viewerId: 'current_user',
-        viewedUserId: targetUserId,
-        viewedAt: new Date(),
-      },
-    };
-  }
-
   /**
    * 📋 リアクション履歴を取得（モック）
    * 受信したいいねと足跡の一覧を取得
