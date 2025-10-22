@@ -17,14 +17,6 @@ const reactionsService = createReactionsService();
  * 3. エラーハンドリング（必要に応じて）
  */
 
-export const sendReaction = (targetUserId: string) => {
-  return reactionsService.sendReaction(targetUserId);
-};
-
-export const sendSuperLike = (targetUserId: string) => {
-  return reactionsService.sendSuperLike(targetUserId);
-};
-
 export const leaveFootprint = (targetUserId: string) => {
   return reactionsService.leaveFootprint(targetUserId);
 };
@@ -34,5 +26,5 @@ export const getReactions = (userId: string) => {
 };
 
 // 型定義も再エクスポート
-export type { Reaction, ReactionsService, ReactionType } from './types';
+export type { Reaction, ReactionsService } from './types';
 

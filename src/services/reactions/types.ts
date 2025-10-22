@@ -1,7 +1,6 @@
 // src/services/main/reactions/types.ts
 // 🎯 リアクションサービスの型定義 - 契約書
 
-export type ReactionType = 'like' | 'footprint';
 
 export interface Reaction {
   id: string;

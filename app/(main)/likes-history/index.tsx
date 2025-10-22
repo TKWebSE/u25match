@@ -29,7 +29,6 @@ interface LikesHistoryItem {
     lastActiveAt: Date;
     gender: 'male' | 'female';
   };
-  reactionType: 'like' | 'footprint';
   timestamp: Date;
   message?: string;
 }
@@ -65,7 +64,6 @@ const LikesHistoryScreen = () => {
               lastActiveAt: randomUser.lastActiveAt,
               gender: randomUser.gender,
             },
-            reactionType: reaction.type,
             timestamp: reaction.timestamp,
             message: reaction.message,
           };
@@ -100,17 +98,6 @@ const LikesHistoryScreen = () => {
     router.push(getProfilePath(userId) as any);
   };
 
-  // リアクションタイプの表示テキストを取得
-  const getReactionTypeText = (type: string) => {
-    switch (type) {
-      case 'like':
-        return '❤️ いいね';
-      case 'footprint':
-        return '👣 足あと';
-      default:
-        return '❤️ いいね';
-    }
-  };
 
   // タイムスタンプの表示テキストを取得
   const getTimeAgo = (timestamp: Date) => {
@@ -144,7 +131,7 @@ const LikesHistoryScreen = () => {
         </View>
         <Text style={styles.userLocation}>{item.user.location}</Text>
         <View style={styles.reactionInfo}>
-          <Text style={styles.reactionType}>{getReactionTypeText(item.reactionType)}</Text>
+          <Text style={styles.reactionType}>❤️ いいね</Text>
           {item.message && (
             <Text style={styles.message} numberOfLines={2}>
               {item.message}

@@ -3,10 +3,6 @@
 
 import { create } from 'zustand';
 
-/**
- * リアクションの種類
- */
-export type ReactionType = 'like' | 'footprint';
 
 /**
  * リアクション情報
