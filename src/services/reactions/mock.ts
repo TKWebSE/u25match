@@ -35,19 +35,32 @@ export class MockReactionsService extends BaseService implements ReactionsServic
     await this.simulateNetworkDelay();
 
     // モックデータからこのユーザーが受信したリアクションを抽出
-    // toUserId が自分のIDのもの = 自分が受け取ったリアクション
-    const receivedReactions = mockReactions
-      .filter(reaction => reaction.toUserId === userId)
+    const userReactions = mockReactions.filter(reaction => reaction.toUserId === userId);
+
+    // いいねと足跡に分類
+    const likes = userReactions
+      .filter(reaction => reaction.type === 'like')
       .map(reaction => ({
         id: reaction.id,
         fromUserId: reaction.fromUserId,
         toUserId: reaction.toUserId,
-        type: reaction.type,
+        timestamp: new Date(reaction.timestamp),
+      }));
+
+    const footprints = userReactions
+      .filter(reaction => reaction.type === 'footprint')
+      .map(reaction => ({
+        id: reaction.id,
+        fromUserId: reaction.fromUserId,
+        toUserId: reaction.toUserId,
         timestamp: new Date(reaction.timestamp),
       }));
 
     return {
-      received: receivedReactions,
+      reactions: {
+        likes,
+        footprints,
+      }
     };
   }
 } 

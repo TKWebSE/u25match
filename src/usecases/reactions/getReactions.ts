@@ -2,14 +2,16 @@
 // リアクション取得のユースケース - 受信したリアクション（いいね・足跡）一覧取得処理を担当
 
 import { serviceRegistry } from '@services/core/ServiceRegistry';
-import { Reaction, reactionsStore, ReactionType } from '@stores/reactionsStore';
+import { Reaction, reactionsStore } from '@stores/reactionsStore';
 
 /**
  * リアクション取得処理の結果
  */
 export interface GetReactionsResult {
-  likeReactions: Reaction[];          // 受信したいいね（like）
-  footprintReactions: Reaction[];     // 受信した足跡（footprint）
+  reactions: {
+    likes: Reaction[];           // 受信したいいね（like）
+    footprints: Reaction[];      // 受信した足跡（footprint）
+  };
 }
 
 /**
@@ -39,29 +41,30 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
     // サービス層でリアクション取得
     const result = await serviceRegistry.reactions.getReactions(userId);
 
-    // データ変換
-    const receivedReactions: Reaction[] = result.received.map((reaction): Reaction => ({
+    // データ変換（型の統一のみ）
+    const likes: Reaction[] = result.reactions.likes.map((reaction): Reaction => ({
       id: reaction.id,
       fromUserId: reaction.fromUserId,
       toUserId: reaction.toUserId,
-      type: reaction.type as ReactionType,
       timestamp: new Date(reaction.timestamp),
     }));
 
-    // いいね（like）と足跡（footprint）に分類
-    const likeReactions = receivedReactions.filter(
-      (reaction) => reaction.type === 'like'
-    );
-    const footprintReactions = receivedReactions.filter(
-      (reaction) => reaction.type === 'footprint'
-    );
+    const footprints: Reaction[] = result.reactions.footprints.map((reaction): Reaction => ({
+      id: reaction.id,
+      fromUserId: reaction.fromUserId,
+      toUserId: reaction.toUserId,
+      timestamp: new Date(reaction.timestamp),
+    }));
 
-    // ストアに設定
-    store.setReceivedReactions(receivedReactions);
+    // ストアに分けて保存
+    store.setLikes(likes);
+    store.setFootprints(footprints);
 
     return {
-      likeReactions,
-      footprintReactions
+      reactions: {
+        likes,
+        footprints,
+      }
     };
 
   } catch (error: any) {

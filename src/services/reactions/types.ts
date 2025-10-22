@@ -7,7 +7,6 @@ export interface Reaction {
   id: string;
   fromUserId: string;
   toUserId: string;
-  type: ReactionType;
   timestamp: Date;
   message?: string;
 }
@@ -22,7 +21,10 @@ export interface ReactionsResponse {
  * リアクション取得のレスポンス
  */
 export interface GetReactionsResponse {
-  received: Reaction[];  // 受信したリアクション（いいね・足跡）
+  reactions: {
+    likes: Reaction[];           // 受信したいいね
+    footprints: Reaction[];      // 受信した足跡
+  };
 }
 
 /**
