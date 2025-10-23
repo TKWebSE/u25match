@@ -2,12 +2,13 @@ import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
 import { getProfilePath } from '@constants/routes';
 import { useCardSize } from '@hooks/ui';
-import { reactionUsers } from '@mock/exploreUserMock';
-import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
+import { useAuthStore } from '@stores/authStore';
+import { useReactionsStore } from '@stores/reactionsStore';
 import { colors, spacing } from '@styles/globalStyles';
+import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
@@ -16,6 +17,8 @@ const { width: screenWidth } = Dimensions.get('window');
 
 const ReactionsScreen = () => {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const { likes, footprints, isLoading } = useReactionsStore();
 
   // タブの状態管理
   const [index, setIndex] = useState(0);
@@ -27,32 +30,26 @@ const ReactionsScreen = () => {
   // 統一カードサイズを取得
   const gridCardSize = useCardSize('grid');
 
-  // リアクションデータをメモ化（パフォーマンス向上）
-  const { likeReactions, footprintReactions } = useMemo(() => {
-    const likes = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
-    const footprints = mockReactions.filter(r => r.type === 'footprint');
-    return { likeReactions: likes, footprintReactions: footprints };
-  }, []);
+  // リアクションデータを取得
+  useEffect(() => {
+    if (user?.uid) {
+      getReactions(user.uid).catch((error) => {
+        console.error('リアクション取得エラー:', error);
+      });
+    }
+  }, [user?.uid]);
 
-  // いいねタブのユーザーリスト
+  // いいねタブのユーザーリスト（一時的に空配列を返す）
   const likesUsers = useMemo(() => {
-    return likeReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  }, [likeReactions]);
+    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
+    return [];
+  }, [likes]);
 
-  // 足あとタブのユーザーリスト
+  // 足あとタブのユーザーリスト（一時的に空配列を返す）
   const footprintsUsers = useMemo(() => {
-    return footprintReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  }, [footprintReactions]);
+    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
+    return [];
+  }, [footprints]);
 
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {
@@ -73,8 +70,19 @@ const ReactionsScreen = () => {
     );
   }, [gridCardSize, handleCardPress]);
 
+  // ローディング表示
+  const renderLoading = () => (
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
+
   // いいねタブのレンダリング
   const renderLikesTab = useCallback(() => {
+    if (isLoading) {
+      return renderLoading();
+    }
+
     if (likesUsers.length === 0) {
       return (
         <View style={styles.emptyStateContainer}>
@@ -106,10 +114,14 @@ const ReactionsScreen = () => {
         })}
       />
     );
-  }, [likesUsers, renderUserItem, gridCardSize]);
+  }, [likesUsers, renderUserItem, gridCardSize, isLoading]);
 
   // 足あとタブのレンダリング
   const renderFootprintsTab = useCallback(() => {
+    if (isLoading) {
+      return renderLoading();
+    }
+
     if (footprintsUsers.length === 0) {
       return (
         <View style={styles.emptyStateContainer}>
@@ -141,7 +153,7 @@ const ReactionsScreen = () => {
         })}
       />
     );
-  }, [footprintsUsers, renderUserItem, gridCardSize]);
+  }, [footprintsUsers, renderUserItem, gridCardSize, isLoading]);
 
   // シーン定義
   const renderScene = SceneMap({
@@ -222,6 +234,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

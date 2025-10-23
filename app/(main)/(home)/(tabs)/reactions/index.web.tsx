@@ -4,12 +4,13 @@ import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
 import { getProfilePath } from '@constants/routes';
 import { useCardLayout } from '@hooks/ui';
-import { reactionUsers } from '@mock/exploreUserMock';
-import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
+import { useAuthStore } from '@stores/authStore';
+import { useReactionsStore } from '@stores/reactionsStore';
 import { colors, spacing } from '@styles/globalStyles';
+import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 interface User {
   name: string;
@@ -22,6 +23,8 @@ interface User {
 
 const ReactionsScreen = () => {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const { likes, footprints, isLoading } = useReactionsStore();
 
   // カードリストエリアの幅を計測（シンプル化）
   const [cardListWidth, setCardListWidth] = useState(0);
@@ -32,22 +35,20 @@ const ReactionsScreen = () => {
   // カードレイアウト情報を取得（カードリストエリアの幅のみ使用）
   const cardLayout = useCardLayout(cardListWidth);
 
+  // リアクションデータを取得
+  useEffect(() => {
+    if (user?.uid) {
+      getReactions(user.uid).catch((error) => {
+        console.error('リアクション取得エラー:', error);
+      });
+    }
+  }, [user?.uid]);
+
   // リアクションデータからユーザーリストを生成
-  const getReactionUsers = () => {
-    const likeReactions = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
-    const footprintReactions = mockReactions.filter(r => r.type === 'footprint');
-
-    const currentReactions = activeTab === 'likes' ? likeReactions : footprintReactions;
-
-    return currentReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  };
-
-  const filteredUsers = getReactionUsers();
+  const filteredUsers: User[] = useMemo(() => {
+    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
+    return [];
+  }, [likes, footprints, activeTab]);
 
   const handleCardPress = (user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
@@ -61,6 +62,14 @@ const ReactionsScreen = () => {
   };
 
   const renderEmptyComponent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      );
+    }
+
     if (filteredUsers.length === 0) {
       return (
         <EmptyState
@@ -81,7 +90,6 @@ const ReactionsScreen = () => {
       <ReactionTabs
         activeTab={activeTab}
         onTabPress={handleTabPress}
-        cardListWidth={cardListWidth}
       />
 
       {/* カードリストエリアの幅を計測 */}
@@ -139,6 +147,12 @@ const styles = StyleSheet.create({
   },
   webScrollContent: {
     flexGrow: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
   },
 });
 

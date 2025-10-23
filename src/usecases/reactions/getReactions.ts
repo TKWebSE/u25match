@@ -20,7 +20,7 @@ export interface GetReactionsResult {
  * フロー:
  * 1. ローディング開始
  * 2. サービス層でリアクション取得
- * 3. いいねと足跡に分類してストアに設定
+ * 3. いいねと足跡をストアに設定
  * 4. エラー時は呼び出し元にスロー
  * 
  * 用途:
@@ -41,29 +41,14 @@ export const getReactions = async (userId: string): Promise<GetReactionsResult> 
     // サービス層でリアクション取得
     const result = await serviceRegistry.reactions.getReactions(userId);
 
-    // データ変換（型の統一のみ）
-    const likes: Reaction[] = result.reactions.likes.map((reaction): Reaction => ({
-      id: reaction.id,
-      fromUserId: reaction.fromUserId,
-      toUserId: reaction.toUserId,
-      timestamp: new Date(reaction.timestamp),
-    }));
-
-    const footprints: Reaction[] = result.reactions.footprints.map((reaction): Reaction => ({
-      id: reaction.id,
-      fromUserId: reaction.fromUserId,
-      toUserId: reaction.toUserId,
-      timestamp: new Date(reaction.timestamp),
-    }));
-
-    // ストアに分けて保存
-    store.setLikes(likes);
-    store.setFootprints(footprints);
+    // ストアに直接保存（変換不要）
+    store.setLikes(result.reactions.likes);
+    store.setFootprints(result.reactions.footprints);
 
     return {
       reactions: {
-        likes,
-        footprints,
+        likes: result.reactions.likes,
+        footprints: result.reactions.footprints,
       }
     };
 
