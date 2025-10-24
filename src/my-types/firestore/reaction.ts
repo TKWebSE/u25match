@@ -38,7 +38,13 @@ export interface FirestoreSentLike {
  */
 export interface FirestoreReceivedLike {
   fromUserId: string;  // いいねを送ってきた相手のID（ドキュメントIDと同じ）
-  type: 'like';        // リアクションの種類
   timestamp: Date;     // 受信日時
+  // リアクション画面表示に必要な最小限の情報（スナップショット）
+  userName: string;
+  userAge: number;
+  userLocation: string;
+  userImageUrl: string;
+  isOnline: boolean;
+  lastActiveAt: Date;
 }
 

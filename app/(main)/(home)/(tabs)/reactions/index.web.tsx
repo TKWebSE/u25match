@@ -1,7 +1,8 @@
 import ReactionTabs from '@/src/components/reactions/web/ReactionTabs.web';
-import EmptyState from '@components/common/EmptyState';
 import UserCard from '@components/common/UserCard';
 import WebGridLayout from '@components/common/WebGridLayout';
+import ReactionsEmptyState from '@components/reactions/multi/ReactionsEmptyState';
+import ReactionsLoadingState from '@components/reactions/multi/ReactionsLoadingState';
 import { getProfilePath } from '@constants/routes';
 import { useCardLayout } from '@hooks/ui';
 import { useAuthStore } from '@stores/authStore';
@@ -10,7 +11,7 @@ import { colors, spacing } from '@styles/globalStyles';
 import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 interface User {
   name: string;
@@ -46,8 +47,18 @@ const ReactionsScreen = () => {
 
   // リアクションデータからユーザーリストを生成
   const filteredUsers: User[] = useMemo(() => {
-    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
-    return [];
+    // アクティブなタブに応じてリアクションデータを取得
+    const reactions = activeTab === 'likes' ? likes : footprints;
+
+    // そのまま表示（ユーザー詳細情報が既に含まれている）
+    return reactions.map(reaction => ({
+      name: reaction.name,
+      age: reaction.age,
+      location: reaction.location,
+      imageUrl: reaction.imageUrl,
+      isOnline: reaction.isOnline,
+      lastActiveAt: reaction.lastActiveAt,
+    }));
   }, [likes, footprints, activeTab]);
 
   const handleCardPress = (user: User) => {
@@ -61,27 +72,36 @@ const ReactionsScreen = () => {
     console.log('🎯 リアクション画面 Web版 タブ切り替え:', tab);
   };
 
-  const renderEmptyComponent = () => {
-    if (isLoading) {
+  const renderContent = () => {
+    if (filteredUsers.length > 0) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
+        <ScrollView
+          style={styles.webScrollView}
+          contentContainerStyle={styles.webScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <WebGridLayout
+            gridTemplateColumns={cardLayout.gridTemplateColumns}
+            gridGap={cardLayout.gridGap}
+          >
+            {filteredUsers.map((user, index) => (
+              <UserCard
+                key={`${user.name}-${index}`}
+                user={user}
+                onPress={handleCardPress}
+                layout={cardLayout}
+              />
+            ))}
+          </WebGridLayout>
+        </ScrollView>
       );
     }
 
-    if (filteredUsers.length === 0) {
-      return (
-        <EmptyState
-          message={
-            activeTab === 'likes'
-              ? 'まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！'
-              : 'まだ足あとがありません。プロフィールを見に来てくれる人がいないかもしれません。'
-          }
-        />
-      );
+    if (isLoading) {
+      return <ReactionsLoadingState />;
     }
-    return null;
+
+    return <ReactionsEmptyState activeTab={activeTab} />;
   };
 
   return (
@@ -101,30 +121,7 @@ const ReactionsScreen = () => {
           console.log('🎯 リアクション画面 Web版 カードリストエリアの幅:', width);
         }}
       >
-        {/* Web環境用のグリッドレイアウト */}
-        {filteredUsers.length > 0 ? (
-          <ScrollView
-            style={styles.webScrollView}
-            contentContainerStyle={styles.webScrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <WebGridLayout
-              gridTemplateColumns={cardLayout.gridTemplateColumns}
-              gridGap={cardLayout.gridGap}
-            >
-              {filteredUsers.map((user, index) => (
-                <UserCard
-                  key={`${user.name}-${index}`}
-                  user={user}
-                  onPress={handleCardPress}
-                  layout={cardLayout}
-                />
-              ))}
-            </WebGridLayout>
-          </ScrollView>
-        ) : (
-          renderEmptyComponent()
-        )}
+        {renderContent()}
       </View>
     </View>
   );
@@ -147,12 +144,6 @@ const styles = StyleSheet.create({
   },
   webScrollContent: {
     flexGrow: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
   },
 });
 

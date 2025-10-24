@@ -1,7 +1,8 @@
 // src/services/main/reactions/mock.ts
 // 🎭 リアクションサービスのモック実装
 
-import { mockReactions } from '@mock/reactionsMock';
+import { mockFootprints } from '@mock/footprintsMock';
+import { mockLikes } from '@mock/likesMock';
 import { BaseService } from '../core/BaseService';
 import { GetReactionsResponse, ReactionsService } from './types';
 
@@ -16,32 +17,10 @@ export class MockReactionsService extends BaseService implements ReactionsServic
   async getReactions(userId: string): Promise<GetReactionsResponse> {
     await this.simulateNetworkDelay();
 
-    // モックデータからこのユーザーが受信したリアクションを抽出
-    const userReactions = mockReactions.filter(reaction => reaction.toUserId === userId);
-
-    // いいねと足跡に分類
-    const likes = userReactions
-      .filter(reaction => reaction.type === 'like')
-      .map(reaction => ({
-        id: reaction.id,
-        fromUserId: reaction.fromUserId,
-        toUserId: reaction.toUserId,
-        timestamp: new Date(reaction.timestamp),
-      }));
-
-    const footprints = userReactions
-      .filter(reaction => reaction.type === 'footprint')
-      .map(reaction => ({
-        id: reaction.id,
-        fromUserId: reaction.fromUserId,
-        toUserId: reaction.toUserId,
-        timestamp: new Date(reaction.timestamp),
-      }));
-
     return {
       reactions: {
-        likes,
-        footprints,
+        likes: mockLikes,
+        footprints: mockFootprints,
       }
     };
   }

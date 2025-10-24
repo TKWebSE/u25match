@@ -18,5 +18,12 @@ export interface FirestoreViewHistory {
   viewerId: string;        // 閲覧した人のID
   viewedUserId: string;    // 閲覧された人のID
   viewedAt: Date;          // 閲覧日時（Firestore Timestamp）
+  // 足跡画面表示に必要な最小限の情報（スナップショット）
+  viewerName: string;
+  viewerAge: number;
+  viewerLocation: string;
+  viewerImageUrl: string;
+  viewerIsOnline: boolean;
+  viewerLastActiveAt: Date;
 }
 

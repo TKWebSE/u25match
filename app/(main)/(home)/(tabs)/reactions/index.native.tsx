@@ -1,5 +1,6 @@
-import EmptyState from '@components/common/EmptyState';
 import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
+import ReactionsEmptyState from '@components/reactions/multi/ReactionsEmptyState';
+import ReactionsLoadingState from '@components/reactions/multi/ReactionsLoadingState';
 import { getProfilePath } from '@constants/routes';
 import { useCardSize } from '@hooks/ui';
 import { useAuthStore } from '@stores/authStore';
@@ -8,7 +9,7 @@ import { colors, spacing } from '@styles/globalStyles';
 import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
@@ -70,27 +71,15 @@ const ReactionsScreen = () => {
     );
   }, [gridCardSize, handleCardPress]);
 
-  // ローディング表示
-  const renderLoading = () => (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color={colors.primary} />
-    </View>
-  );
 
   // いいねタブのレンダリング
   const renderLikesTab = useCallback(() => {
     if (isLoading) {
-      return renderLoading();
+      return <ReactionsLoadingState />;
     }
 
     if (likesUsers.length === 0) {
-      return (
-        <View style={styles.emptyStateContainer}>
-          <EmptyState
-            message="まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！"
-          />
-        </View>
-      );
+      return <ReactionsEmptyState activeTab="likes" />;
     }
 
     return (
@@ -119,17 +108,11 @@ const ReactionsScreen = () => {
   // 足あとタブのレンダリング
   const renderFootprintsTab = useCallback(() => {
     if (isLoading) {
-      return renderLoading();
+      return <ReactionsLoadingState />;
     }
 
     if (footprintsUsers.length === 0) {
-      return (
-        <View style={styles.emptyStateContainer}>
-          <EmptyState
-            message="まだ足あとがありません。プロフィールを見に来てくれる人がいないかもしれません。"
-          />
-        </View>
-      );
+      return <ReactionsEmptyState activeTab="footprints" />;
     }
 
     return (
@@ -232,18 +215,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 0,
     marginBottom: spacing.sm,
-  },
-  emptyStateContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
   },
 });
 

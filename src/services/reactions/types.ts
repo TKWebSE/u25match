@@ -7,7 +7,12 @@ export interface Reaction {
   fromUserId: string;
   toUserId: string;
   timestamp: Date;
-  message?: string;
+  name: string;
+  age: number;
+  location: string;
+  imageUrl: string;
+  isOnline: boolean;
+  lastActiveAt: Date;
 }
 
 export interface ReactionsResponse {

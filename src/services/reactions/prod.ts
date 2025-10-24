@@ -41,6 +41,13 @@ export class ProdReactionsService implements ReactionsService {
           fromUserId: data.fromUserId,
           toUserId: userId,
           timestamp: data.timestamp?.toDate?.() || new Date(data.timestamp),
+          // Firebaseから取得したユーザー詳細情報
+          name: data.userName,
+          age: data.userAge,
+          location: data.userLocation,
+          imageUrl: data.userImageUrl,
+          isOnline: data.isOnline,
+          lastActiveAt: data.lastActiveAt?.toDate?.() || new Date(),
         });
       });
 
@@ -53,6 +60,13 @@ export class ProdReactionsService implements ReactionsService {
           fromUserId: data.viewerId,
           toUserId: userId,
           timestamp: data.viewedAt?.toDate?.() || new Date(data.viewedAt),
+          // Firebaseから取得したユーザー詳細情報
+          name: data.viewerName,
+          age: data.viewerAge,
+          location: data.viewerLocation,
+          imageUrl: data.viewerImageUrl,
+          isOnline: data.viewerIsOnline,
+          lastActiveAt: data.viewerLastActiveAt?.toDate?.() || new Date(),
         });
       });
 

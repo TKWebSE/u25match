@@ -5,13 +5,20 @@ import { create } from 'zustand';
 
 
 /**
- * リアクション情報
+ * リアクション情報（ユーザー詳細情報付き）
  */
 export interface Reaction {
   id: string;
   fromUserId: string;        // リアクションした人
   toUserId: string;          // リアクションされた人
   timestamp: Date;           // リアクション時刻
+  // ユーザー詳細情報
+  name: string;
+  age: number;
+  location: string;
+  imageUrl: string;
+  isOnline: boolean;
+  lastActiveAt: Date;
 }
 
 /**
