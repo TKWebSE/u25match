@@ -8,7 +8,7 @@ import { useReactionsStore } from '@stores/reactionsStore';
 import { colors, spacing } from '@styles/globalStyles';
 import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
@@ -40,17 +40,11 @@ const ReactionsScreen = () => {
     }
   }, [user?.uid]);
 
-  // いいねタブのユーザーリスト（一時的に空配列を返す）
-  const likesUsers = useMemo(() => {
-    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
-    return [];
-  }, [likes]);
+  // いいねタブのユーザーリスト
+  const likesUsers = likes;
 
-  // 足あとタブのユーザーリスト（一時的に空配列を返す）
-  const footprintsUsers = useMemo(() => {
-    // TODO: 実際のユーザープロフィール情報を取得する処理を追加
-    return [];
-  }, [footprints]);
+  // 足あとタブのユーザーリスト
+  const footprintsUsers = footprints;
 
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {
