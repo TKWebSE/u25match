@@ -6,16 +6,26 @@ import SearchModal from '@/src/components/search/mobile/SearchModal';
 import SearchResults from '@/src/components/search/mobile/SearchResults';
 import UserGrid from '@/src/components/search/mobile/UserGrid';
 import { getProfilePath } from '@constants/routes';
-import { reactionUsers } from '@mock/exploreUserMock';
-import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
-import { getUsersByCategory } from '@mock/searchMock';
 import { User } from '@my-types/app/search';
+import { searchByCategory } from '@usecases/search/getSearchUsersByCategory';
+
+import { showErrorToast } from '@/src/utils/showToast';
 import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
+// スクリーン読み込み時に、デフォルトカテゴリーのデータを取得する
+// 取得したデータをsearchResultsに設定する
+// カテゴリーが選択された場合、そのカテゴリを変更。
+// カテゴリー変更を検知して、useEffectが起動し、データを取得する
+// それだけ
+// ストアには原罪のカテゴリやローディングの状態を保存するかどうかくらい。正直いらないと思っているが・・・
+// 　ユースケースは基本的に一つでいいと思ってるが検索条件によっては二つとかになる可能性あり
+// 　エクスプローラー画面と実装内容が同じでユースケースでの条件わけが複雑な印象
+// あと、性別の項目を忘れているので、コレクションに追加して、条件にも異性であることを加える
 const SearchScreen = () => {
   const router = useRouter();
 
@@ -25,12 +35,18 @@ const SearchScreen = () => {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  // リアクションデータをメモ化（パフォーマンス向上）
-  const { likeReactions, footprintReactions } = useMemo(() => {
-    const likes = mockReactions.filter(r => r.type === 'like');
-    const footprints = mockReactions.filter(r => r.type === 'footprint');
-    return { likeReactions: likes, footprintReactions: footprints };
-  }, []);
+  // リアクションデータを取得
+  useEffect(() => {
+    const fetchDefaultCategoryData = async () => {
+      try {
+        const users = await searchByCategory(selectedCategory || 'student');
+        setSearchResults(users);
+      }
+    } catch (error: any) {
+      showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
+    }
+    fetchDefaultCategoryData();
+  }, [selectedCategory]);
 
   // いいねのユーザーリスト
   const likesUsers = useMemo(() => {
