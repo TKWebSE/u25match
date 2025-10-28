@@ -12,7 +12,7 @@ import { searchByCategory } from '@usecases/search/getSearchUsersByCategory';
 import { showErrorToast } from '@/src/utils/showToast';
 import { colors } from '@styles/globalStyles';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -41,37 +41,12 @@ const SearchScreen = () => {
       try {
         const users = await searchByCategory(selectedCategory || 'student');
         setSearchResults(users);
+      } catch (error: any) {
+        showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
       }
-    } catch (error: any) {
-      showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
     }
     fetchDefaultCategoryData();
   }, [selectedCategory]);
-
-  // いいねのユーザーリスト
-  const likesUsers = useMemo(() => {
-    return likeReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  }, [likeReactions]);
-
-  // 足あとのユーザーリスト
-  const footprintsUsers = useMemo(() => {
-    return footprintReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  }, [footprintReactions]);
-
-  // 全ユーザーを結合
-  const allUsers = useMemo(() => {
-    return [...likesUsers, ...footprintsUsers];
-  }, [likesUsers, footprintsUsers]);
 
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {
@@ -85,7 +60,6 @@ const SearchScreen = () => {
     // モーダルを閉じて検索結果を表示
     setIsSearchModalVisible(false);
     setIsSearchActive(true);
-    setSearchResults(getUsersByCategory(categoryKey));
   };
 
   // 検索モーダルを開く
@@ -114,7 +88,7 @@ const SearchScreen = () => {
           />
         ) : (
           <UserGrid
-            users={allUsers}
+            users={searchResults}
             onCardPress={handleCardPress}
             emptyMessage="まだ誰かからのリアクションがありません。プロフィールを充実させてみましょう！"
           />
