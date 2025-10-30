@@ -17,6 +17,7 @@ const ROTATION_ANGLE = 10;
 interface User {
   id: string;
   name: string;
+  gender: 'male' | 'female' | 'other'; // 性別
   age: number;
   location: string;
   imageUrl: string;

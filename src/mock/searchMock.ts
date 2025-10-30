@@ -44,6 +44,7 @@ function generateUsers(category: string, count: number): User[] {
 
     users.push({
       name: `${baseNames[nameIndex]}${i + 1}`,
+      gender: i % 2 === 0 ? 'male' : 'female', // 交互に男女を割り当て
       age: 18 + Math.floor(Math.random() * 7), // 18-24歳
       location: locations[locationIndex],
       imageUrl: `https://picsum.photos/300/300?random=${category}-${i}`,

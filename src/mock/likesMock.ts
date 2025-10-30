@@ -8,6 +8,7 @@ export const mockLikes = [
     toUserId: 'current_user',
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
     name: '田中 太郎',
+    gender: 'male',
     age: 28,
     location: '東京都渋谷区',
     imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',

@@ -7,6 +7,7 @@ import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react
 // ユーザー情報の型定義
 interface User {
   name: string;
+  gender: 'male' | 'female' | 'other'; // 性別
   age: number;
   location: string;
   imageUrl: string;

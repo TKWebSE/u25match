@@ -23,6 +23,7 @@
 export interface FirestoreUser {
   uid: string;                    // ユーザーID
   name: string;                   // ユーザー名
+  gender: 'male' | 'female' | 'other'; // 性別（必須）
   age: number;                    // 年齢
   location: string;               // 居住地
   lastActiveAt: Date;             // 最終アクティブ時刻
