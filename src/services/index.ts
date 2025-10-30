@@ -10,6 +10,9 @@ export * from './chat';
 // 🔍 探索サービス
 export * from './explore';
 
+// 🔎 検索サービス
+export * from './search';
+
 // 👤 プロフィールサービス
 export * from './profile';
 

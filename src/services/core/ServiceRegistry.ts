@@ -15,6 +15,8 @@ import { createReactionsService } from '../reactions/factory';
 import { ReactionsService } from '../reactions/types';
 import { createSalesService } from '../sales/factory';
 import { SalesService } from '../sales/types';
+import { createSearchService } from '../search/factory';
+import { SearchService } from '../search/types';
 import { createSettingsService } from '../settings/factory';
 import { SettingsService } from '../settings/types';
 import { createVerificationService } from '../verification/factory';
@@ -65,6 +67,9 @@ export class ServiceRegistry {
 
     // リアクションサービスの登録
     this.register('reactions', createReactionsService());
+
+    // 検索サービスの登録
+    this.register('search', createSearchService());
 
     // 販売サービスの登録
     this.register('sales', createSalesService());
@@ -188,6 +193,13 @@ export class ServiceRegistry {
    */
   get viewHistory(): ViewHistoryService {
     return this.get<ViewHistoryService>('viewHistory');
+  }
+
+  /**
+   * 🔍 検索サービスの型安全な取得
+   */
+  get search(): SearchService {
+    return this.get<SearchService>('search');
   }
 }
 
