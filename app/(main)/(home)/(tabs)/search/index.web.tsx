@@ -3,85 +3,60 @@
 
 import SearchModal from '@/src/components/search/mobile/SearchModal';
 import WebUserGrid from '@/src/components/search/web/WebUserGrid';
+import { premiumSearchCategories } from '@/src/constants/search/searchCategories';
+import { searchByCategory } from '@/src/usecases/search/searchByCategory';
+import { getMembershipType } from '@/src/utils/membership/membershipUtils';
+import { showErrorToast } from '@/src/utils/showToast';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
-import { reactionUsers } from '@mock/exploreUserMock';
-import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
-import { getUsersByCategory } from '@mock/searchMock';
 import { User } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { getMembershipType } from '@utils/membershipUtils';
+import { ensurePremium } from '@utils/membership/guards';
 import { getCategoryTitle } from '@utils/searchUtils';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SearchScreen = () => {
   const router = useRouter();
   const user = useStrictAuth();
-  const { profile } = useProfile(user.uid);
+  const { profile } = useProfile(user.uid);//ストアから取りたいけど、どうしよう？
 
   // 会員種別の判定
   const membershipType = getMembershipType(profile || undefined);
 
-  // デバッグ用：会員種別をコンソールに表示
-  console.log('🔍 WebSearchScreen - 会員種別:', membershipType);
-  console.log('🔍 WebSearchScreen - プロフィール:', profile);
 
   // 検索モーダルの状態管理
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('recommended');
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  // リアクションデータからユーザーリストを生成（いいねのみ表示）
-  const getReactionUsers = () => {
-    const likeReactions = mockReactions.filter(r => r.type === 'like' || r.type === 'super_like');
-
-    return likeReactions.map((reaction, index) => {
-      const userIndex = (reaction.id.charCodeAt(0) + index) % reactionUsers.length;
-      const user = { ...reactionUsers[userIndex] };
-      user.imageUrl = getUserImageUrl(reaction.id);
-      return user;
-    });
-  };
-
-  const filteredUsers = useMemo(() => getReactionUsers(), []);
-
-  // カードタップハンドラーをメモ化
-  const handleCardPress = useCallback((user: User) => {
-    const userId = user.name.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/profile/${userId}` as any);
-  }, [router]);
+  // リアクションデータを取得
+  useEffect(() => {
+    const fetchDefaultCategoryData = async () => {
+      try {
+        const users = await searchByCategory(selectedCategory || 'recommended');
+        setSearchResults(users);
+      } catch (error: any) {
+        showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
+      }
+    }
+    fetchDefaultCategoryData();
+  }, [selectedCategory]);
 
   // カテゴリ選択ハンドラー
   const handleCategorySelect = (categoryKey: string) => {
     // プレミアム限定カテゴリのチェック
-    const premiumCategories = ['student', 'working', 'marriage'];
-    const isPremiumCategory = premiumCategories.includes(categoryKey);
+    const isPremiumCategory = (premiumSearchCategories as readonly string[]).includes(categoryKey);
 
-    if (isPremiumCategory && membershipType !== 'premium') {
-      Alert.alert(
-        'プレミアム会員限定機能',
-        'この検索機能をご利用いただくには、プレミアム会員への登録が必要です。',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // アラートを閉じるだけ
-            }
-          }
-        ]
-      );
-      return;
-    }
+    if (isPremiumCategory && !ensurePremium(profile || undefined)) return;
 
     setSelectedCategory(categoryKey);
     // モーダルを閉じて検索結果を表示
     setIsSearchModalVisible(false);
     setIsSearchActive(true);
-    setSearchResults(getUsersByCategory(categoryKey));
   };
 
   // 検索モーダルを開く
@@ -90,14 +65,12 @@ const SearchScreen = () => {
     console.log('🔍 現在の会員種別:', membershipType);
 
     // 無料会員でもモーダルを直接開く（制限はモーダル内で行う）
-    console.log('🔍 モーダルを開きます');
     setIsSearchModalVisible(true);
   };
 
   // 検索モーダルを閉じる
   const handleCloseSearchModal = () => {
     setIsSearchModalVisible(false);
-    setSelectedCategory(null);
   };
 
   return (
@@ -128,8 +101,8 @@ const SearchScreen = () => {
         />
       ) : (
         <WebUserGrid
-          users={filteredUsers}
-          emptyMessage="まだ誰かからのいいねがありません。プロフィールを充実させてみましょう！"
+          users={searchResults}
+          emptyMessage="このカテゴリにはユーザーがいません"
         />
       )}
 

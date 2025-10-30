@@ -1,6 +1,6 @@
+import { getMembershipType } from '@/src/utils/membership/membershipUtils';
 import { useProfile } from '@hooks/profile';
 import { ChatRoom } from '@services/chat/types';
-import { getMembershipType } from '@utils/membershipUtils';
 import React from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

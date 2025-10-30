@@ -4,10 +4,13 @@
 import SearchHeader from '@/src/components/search/mobile/SearchHeader';
 import SearchModal from '@/src/components/search/mobile/SearchModal';
 import SearchResults from '@/src/components/search/mobile/SearchResults';
-import UserGrid from '@/src/components/search/mobile/UserGrid';
+import { premiumSearchCategories } from '@/src/constants/search/searchCategories';
 import { getProfilePath } from '@constants/routes';
+import { useStrictAuth } from '@hooks/auth';
+import { useProfile } from '@hooks/profile';
 import { User } from '@my-types/app/search';
-import { searchByCategory } from '@usecases/search/getSearchUsersByCategory';
+import { searchByCategory } from '@usecases/search/searchByCategory';
+import { ensurePremium } from '@utils/membership/guards';
 
 import { showErrorToast } from '@/src/utils/showToast';
 import { colors } from '@styles/globalStyles';
@@ -26,20 +29,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // 　ユースケースは基本的に一つでいいと思ってるが検索条件によっては二つとかになる可能性あり
 // 　エクスプローラー画面と実装内容が同じでユースケースでの条件わけが複雑な印象
 // あと、性別の項目を忘れているので、コレクションに追加して、条件にも異性であることを加える
+
+//メンバーシップの有無でモーダルの選択できるカテゴリーの活性状態を変更する
 const SearchScreen = () => {
   const router = useRouter();
+  const user = useStrictAuth();
+  const { profile } = useProfile(user.uid);//ストアから取りたいけど、どうしよう？
 
   // 検索モーダルの状態管理
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('recommended');
   const [searchResults, setSearchResults] = useState<User[]>([]);
-  const [isSearchActive, setIsSearchActive] = useState(false);
 
   // リアクションデータを取得
   useEffect(() => {
     const fetchDefaultCategoryData = async () => {
       try {
-        const users = await searchByCategory(selectedCategory || 'student');
+        const users = await searchByCategory(selectedCategory || 'recommended');
         setSearchResults(users);
       } catch (error: any) {
         showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
@@ -56,10 +62,14 @@ const SearchScreen = () => {
 
   // カテゴリ選択ハンドラー
   const handleCategorySelect = (categoryKey: string) => {
+    // プレミアム限定カテゴリのチェック
+    const isPremiumCategory = (premiumSearchCategories as readonly string[]).includes(categoryKey);
+
+    if (isPremiumCategory && !ensurePremium(profile || undefined)) return;
+
     setSelectedCategory(categoryKey);
-    // モーダルを閉じて検索結果を表示
+    // モーダルを閉じる
     setIsSearchModalVisible(false);
-    setIsSearchActive(true);
   };
 
   // 検索モーダルを開く
@@ -70,7 +80,6 @@ const SearchScreen = () => {
   // 検索モーダルを閉じる
   const handleCloseSearchModal = () => {
     setIsSearchModalVisible(false);
-    setSelectedCategory(null);
   };
 
   return (
@@ -79,20 +88,12 @@ const SearchScreen = () => {
         {/* ヘッダー */}
         <SearchHeader onSearchPress={handleOpenSearchModal} />
 
-        {/* 検索結果またはメインコンテンツ */}
-        {isSearchActive ? (
-          <SearchResults
-            selectedCategory={selectedCategory}
-            searchResults={searchResults}
-            onCardPress={handleCardPress}
-          />
-        ) : (
-          <UserGrid
-            users={searchResults}
-            onCardPress={handleCardPress}
-            emptyMessage="まだ誰かからのリアクションがありません。プロフィールを充実させてみましょう！"
-          />
-        )}
+        {/* 検索結果 */}
+        <SearchResults
+          selectedCategory={selectedCategory}
+          searchResults={searchResults}
+          onCardPress={handleCardPress}
+        />
 
         {/* 検索モーダル */}
         <SearchModal
