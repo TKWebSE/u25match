@@ -63,8 +63,7 @@ export interface FirestoreUser {
   remainingLikes?: number;        // 残いいね数
   remainingBoosts?: number;       // 残ブースト数
   remainingPoints?: number;       // 残ポイント数
-  membershipType?: 'free' | 'premium' | 'vip'; // 会員種別
-  email?: string;                 // メールアドレス
+  membershipType?: 'free' | 'premium' | 'vip' | 'admin'; // 会員種別
   createdAt?: Date;               // 作成日時
   updatedAt?: Date;               // 更新日時
 }

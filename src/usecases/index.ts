@@ -6,5 +6,6 @@ export * from './explore';
 export * from './profile';
 export * from './purchase';
 export * from './reactions';
+export * from './search';
 export * from './verification';
 

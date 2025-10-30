@@ -1,15 +1,17 @@
 // src/components/search/mobile/SearchModal.tsx
 // 検索モーダルコンポーネント
 
+import { getMembershipType } from '@/src/utils/membership/membershipUtils';
+import { basicSearchCategories } from '@constants/search/searchCategories';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
 import { myProfileMock } from '@mock/myProfileMock';
 import { SearchCategory } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { getMembershipType } from '@utils/membershipUtils';
+import { ensurePremium } from '@utils/membership/guards';
 import React from 'react';
-import { Alert, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface SearchModalProps {
@@ -42,38 +44,14 @@ const SearchModal: React.FC<SearchModalProps> = ({
     }));
   };
 
-  // 基本的なカテゴリ（指定された順序）
-  const basicCategories: SearchCategory[] = [
-    { key: 'recommended', title: '⭐ おすすめ', icon: 'star', isPremiumRequired: false },
-    { key: 'online', title: '🟢 オンライン', icon: 'circle', isPremiumRequired: false },
-    { key: 'beginner', title: '🌱 ビギナー', icon: 'new-releases', isPremiumRequired: false },
-    { key: 'popular', title: '🔥 人気', icon: 'whatshot', isPremiumRequired: false },
-    { key: 'nearby', title: '📍 近くの人', icon: 'location-on', isPremiumRequired: false },
-    { key: 'student', title: '🎓 学生', icon: 'school', isPremiumRequired: true },
-    { key: 'working', title: '💼 社会人', icon: 'work', isPremiumRequired: true },
-    { key: 'marriage', title: '💍 結婚したい', icon: 'favorite', isPremiumRequired: true },
-  ];
+  // 基本カテゴリは定数から取得
+  const basicCategories: SearchCategory[] = basicSearchCategories as SearchCategory[];
 
   // カテゴリ選択時の処理
   const handleCategorySelect = (category: SearchCategory) => {
-    // プレミアム限定カテゴリで無料会員の場合はアラートを表示
-    if (category.isPremiumRequired && membershipType !== 'premium') {
-      Alert.alert(
-        'プレミアム会員限定機能',
-        'この検索機能をご利用いただくには、プレミアム会員への登録が必要です。',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // アラートを閉じるだけ
-            }
-          }
-        ]
-      );
-      return;
-    }
+    // プレミアム限定カテゴリの場合はガードで判定（未プレミアムならアラート表示して中断）
+    if (category.isPremiumRequired && !ensurePremium(profile || undefined)) return;
 
-    // 通常のカテゴリ選択処理
     onCategorySelect(category.key);
   };
 

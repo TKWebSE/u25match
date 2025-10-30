@@ -1,15 +1,14 @@
-import UnifiedUserCard, { User } from '@components/common/mobile/UnifiedUserCard';
-import ReactionsEmptyState from '@components/reactions/multi/ReactionsEmptyState';
-import ReactionsLoadingState from '@components/reactions/multi/ReactionsLoadingState';
+import { User } from '@components/common/mobile/UnifiedUserCard';
+import ReactionsTabList from '@components/reactions/mobile/ReactionsTabList.native';
 import { getProfilePath } from '@constants/routes';
 import { useCardSize } from '@hooks/ui';
 import { useAuthStore } from '@stores/authStore';
 import { useReactionsStore } from '@stores/reactionsStore';
-import { colors, spacing } from '@styles/globalStyles';
+import { colors } from '@styles/globalStyles';
 import { getReactions } from '@usecases/reactions/getReactions';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
@@ -40,97 +39,37 @@ const ReactionsScreen = () => {
     }
   }, [user?.uid]);
 
-  // いいねタブのユーザーリスト
-  const likesUsers = likes;
-
-  // 足あとタブのユーザーリスト
-  const footprintsUsers = footprints;
-
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {
     const userId = user.name.toLowerCase().replace(/\s+/g, '-');
     router.push(getProfilePath(userId) as any);
   }, [router]);
 
-  // 統一カードを使用したレンダリング（メモ化）
-  const renderUserItem = useCallback(({ item, index }: { item: User; index: number }) => {
-    return (
-      <UnifiedUserCard
-        key={`${item.name}-${index}`}
-        user={item}
-        onPress={handleCardPress}
-        size={gridCardSize}
-        layout="grid"
-      />
-    );
-  }, [gridCardSize, handleCardPress]);
-
-
   // いいねタブのレンダリング
   const renderLikesTab = useCallback(() => {
-    if (isLoading) {
-      return <ReactionsLoadingState />;
-    }
-
-    if (likesUsers.length === 0) {
-      return <ReactionsEmptyState activeTab="likes" />;
-    }
-
     return (
-      <FlatList
-        data={likesUsers}
-        renderItem={renderUserItem}
-        keyExtractor={(item, index) => `likes-${item.name}-${index}`}
-        numColumns={2}
-        contentContainerStyle={styles.gridContainer}
-        columnWrapperStyle={styles.row}
-        showsVerticalScrollIndicator={false}
-        // パフォーマンス最適化
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        initialNumToRender={6}
-        getItemLayout={(data, index) => ({
-          length: gridCardSize.height,
-          offset: gridCardSize.height * Math.floor(index / 2),
-          index,
-        })}
+      <ReactionsTabList
+        users={likes}
+        isLoading={isLoading}
+        activeTab="likes"
+        onCardPress={handleCardPress}
+        gridCardSize={gridCardSize}
       />
     );
-  }, [likesUsers, renderUserItem, gridCardSize, isLoading]);
+  }, [likes, isLoading, handleCardPress, gridCardSize]);
 
   // 足あとタブのレンダリング
   const renderFootprintsTab = useCallback(() => {
-    if (isLoading) {
-      return <ReactionsLoadingState />;
-    }
-
-    if (footprintsUsers.length === 0) {
-      return <ReactionsEmptyState activeTab="footprints" />;
-    }
-
     return (
-      <FlatList
-        data={footprintsUsers}
-        renderItem={renderUserItem}
-        keyExtractor={(item, index) => `footprints-${item.name}-${index}`}
-        numColumns={2}
-        contentContainerStyle={styles.gridContainer}
-        columnWrapperStyle={styles.row}
-        showsVerticalScrollIndicator={false}
-        // パフォーマンス最適化
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        initialNumToRender={6}
-        getItemLayout={(data, index) => ({
-          length: gridCardSize.height,
-          offset: gridCardSize.height * Math.floor(index / 2),
-          index,
-        })}
+      <ReactionsTabList
+        users={footprints}
+        isLoading={isLoading}
+        activeTab="footprints"
+        onCardPress={handleCardPress}
+        gridCardSize={gridCardSize}
       />
     );
-  }, [footprintsUsers, renderUserItem, gridCardSize, isLoading]);
+  }, [footprints, isLoading, handleCardPress, gridCardSize]);
 
   // シーン定義
   const renderScene = SceneMap({
@@ -200,15 +139,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 3,
     zIndex: 1,
-  },
-  gridContainer: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  row: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 0,
-    marginBottom: spacing.sm,
   },
 });
 

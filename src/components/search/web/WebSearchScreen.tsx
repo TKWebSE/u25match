@@ -1,6 +1,7 @@
 // src/components/search/web/WebSearchScreen.tsx
 // Web版検索画面のメインコンポーネント
 
+import { getMembershipType } from '@/src/utils/membership/membershipUtils';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useStrictAuth } from '@hooks/auth';
 import { useProfile } from '@hooks/profile';
@@ -9,7 +10,6 @@ import { getUserImageUrl, mockReactions } from '@mock/reactionsMock';
 import { getUsersByCategory } from '@mock/searchMock';
 import { User } from '@my-types/app/search';
 import { colors, spacing } from '@styles/globalStyles';
-import { getMembershipType } from '@utils/membershipUtils';
 import { getCategoryTitle } from '@utils/searchUtils';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
