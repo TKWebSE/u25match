@@ -12,6 +12,7 @@
  * 完全な情報が必要な場合は FirestoreUser を使用してください
  */
 export interface User {
+  uid: string; // ユーザーID（検索結果から自分を除外するため）
   name: string;
   gender: 'male' | 'female' | 'other'; // 性別
   age: number;

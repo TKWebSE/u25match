@@ -9,11 +9,12 @@ import { serviceRegistry } from '@services/core/ServiceRegistry';
  * - サービス層に委譲（mock/firebase の切替はサービス内で実施）
  *
  * @param categoryKey - 検索するカテゴリキー（例: 'student', 'working', 'online'）
+ * @param currentUserId - 現在のユーザーID（検索結果から自分を除外するため）
  * @returns 該当カテゴリのユーザーリスト
  */
-export const searchByCategory = async (categoryKey: string): Promise<User[]> => {
+export const searchByCategory = async (categoryKey: string, currentUserId: string): Promise<User[]> => {
   try {
-    return await serviceRegistry.search.getUsersByCategory(categoryKey);
+    return await serviceRegistry.search.getUsersByCategory(categoryKey, currentUserId);
   } catch (error: any) {
     throw new Error(`カテゴリ検索に失敗しました: ${error.message}`);
   }

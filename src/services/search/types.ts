@@ -4,7 +4,7 @@ import { User } from '@my-types/app/search';
 
 export interface SearchService {
   // カテゴリに基づいてユーザーを取得
-  getUsersByCategory(categoryKey: string): Promise<User[]>;
+  getUsersByCategory(categoryKey: string, currentUserId: string): Promise<User[]>;
 }
 
 

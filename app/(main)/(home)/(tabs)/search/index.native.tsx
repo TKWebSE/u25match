@@ -45,14 +45,14 @@ const SearchScreen = () => {
   useEffect(() => {
     const fetchDefaultCategoryData = async () => {
       try {
-        const users = await searchByCategory(selectedCategory || 'recommended');
+        const users = await searchByCategory(selectedCategory || 'recommended', user.uid);
         setSearchResults(users);
       } catch (error: any) {
         showErrorToast(error.message || 'デフォルトカテゴリーのデータ取得に失敗しました');
       }
     }
     fetchDefaultCategoryData();
-  }, [selectedCategory]);
+  }, [selectedCategory, user.uid]);
 
   // カードタップハンドラーをメモ化
   const handleCardPress = useCallback((user: User) => {

@@ -43,6 +43,7 @@ function generateUsers(category: string, count: number): User[] {
     const hobbyIndex = Math.floor(Math.random() * hobbies.length);
 
     users.push({
+      uid: `mock-${category}-${i}`, // モック用UID
       name: `${baseNames[nameIndex]}${i + 1}`,
       gender: i % 2 === 0 ? 'male' : 'female', // 交互に男女を割り当て
       age: 18 + Math.floor(Math.random() * 7), // 18-24歳
@@ -64,6 +65,7 @@ export const getAllSearchUsers = (): User[] => {
 };
 
 // 特定のカテゴリのユーザーを取得する関数
-export const getUsersByCategory = (category: string): User[] => {
-  return searchUsersMock[category] || [];
+export const getUsersByCategory = (category: string, currentUserId: string): User[] => {
+  const users = searchUsersMock[category] || [];
+  return users.filter(user => user.uid !== currentUserId);
 };
