@@ -13,15 +13,6 @@ export interface UploadDocumentData {
 }
 
 /**
- * 書類アップロード処理の結果
- */
-export interface UploadDocumentResult {
-  success: boolean;        // アップロード成功フラグ
-  documentId?: string;     // 書類ID（成功時）
-  error?: string;          // エラーメッセージ（失敗時のみ）
-}
-
-/**
  * 本人確認書類をアップロードするユースケース
  * 
  * フロー:
@@ -33,9 +24,9 @@ export interface UploadDocumentResult {
  * 6. 結果をUIに返却
  * 
  * @param data - アップロードデータ（ファイル・書類種別）
- * @returns アップロード結果（成功/失敗・書類ID・エラー）
+ * @returns アップロード結果（成功/失敗）
  */
-export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDocumentResult> => {
+export const uploadDocument = async (data: UploadDocumentData): Promise<boolean> => {
   const { file, documentType } = data;
   const store = verificationStore.getState();
 
@@ -45,21 +36,14 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
     const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (!allowedTypes.includes(file.type)) {
-      return {
-        success: false,
-        error: 'JPG、PNG、PDFファイルのみアップロード可能です'
-      };
+      throw new Error('JPG、PNG、PDFファイルのみアップロード可能です');
     }
 
     if (file.size > maxSize) {
-      return {
-        success: false,
-        error: 'ファイルサイズは10MB以下にしてください'
-      };
+      throw new Error('ファイルサイズは10MB以下にしてください');
     }
 
     // アップロード開始・進捗管理
-    store.clearError();
     store.setUploading(true);
     store.setUploadProgress(0, file.name);
 
@@ -104,23 +88,11 @@ export const uploadDocument = async (data: UploadDocumentData): Promise<UploadDo
       timestamp: new Date(),
     });
 
-    return {
-      success: true,
-      documentId: result.documentId
-    };
+    return true;
 
   } catch (error: any) {
-    console.error('書類アップロードエラー:', error);
+    throw error;
 
-    // エラー処理（ストアにエラー情報を設定）
-    store.setUploadProgress(0);
-    store.setError(error.message || '書類のアップロードに失敗しました');
-
-    // UIに結果を返却
-    return {
-      success: false,
-      error: error.message || '書類のアップロードに失敗しました'
-    };
   } finally {
     store.setUploading(false);
   }

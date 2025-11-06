@@ -162,13 +162,6 @@ const VerificationScreen = () => {
     return new File([blob], fileName, { type: 'image/jpeg' });
   };
 
-  /**
-   * 戻る処理
-   */
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
