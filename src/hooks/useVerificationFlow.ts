@@ -108,21 +108,19 @@ export const useVerificationFlow = () => {
 
   // 本人確認書類のアップロード処理を実行
   const handleStartVerification = useCallback(async () => {
-    if (!frontImage || !backImage) {
-      showErrorToast('身分証明書の表裏両方の写真をアップロードしてください');
-      return;
-    }
-
     try {
-      const frontFile = await uriToFile(frontImage, 'front.jpg');
-      await uploadDocument({
-        file: frontFile,
-        documentType: 'identity_card',
-      });
+      if (!frontImage || !backImage) {
+        throw new Error('身分証明書の表裏両方の写真をアップロードしてください');
+      }
 
+      const frontFile = await uriToFile(frontImage, 'front.jpg');
       const backFile = await uriToFile(backImage, 'back.jpg');
+
       await uploadDocument({
-        file: backFile,
+        files: {
+          front: frontFile,
+          back: backFile,
+        },
         documentType: 'identity_card',
       });
 
