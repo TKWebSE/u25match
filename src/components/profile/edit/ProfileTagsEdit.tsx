@@ -1,3 +1,4 @@
+import { tagDataMap } from '@constants/tagDataMap';
 import { ProfileEditStyles } from '@styles/profile/ProfileEditStyles';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -12,10 +13,9 @@ interface ProfileTagsEditProps {
   onTagsChange: (tags: Array<{ id: string; name: string; imageUrl: string }>) => void;
 }
 
-// タグキーから画像を取得する関数
-const getTagImage = (tagName: string): any => {
-  // デフォルト画像
-  return require('@assets/tag-images/cat.jpg');
+// タグIDから画像を取得する関数
+const getTagImage = (tagId: string): any => {
+  return tagDataMap[tagId as keyof typeof tagDataMap]?.image || require('@assets/tag-images/cat.jpg');
 };
 
 // 個別のタグ表示コンポーネント（編集機能なし）
@@ -34,7 +34,7 @@ const TagItemEdit: React.FC<{
       {/* Detailと同じレイアウト：画像とテキストを横並びで表示 */}
       <View style={ProfileEditStyles.tagContent}>
         <Image
-          source={getTagImage(tag.name)}
+          source={getTagImage(tag.id)}
           style={ProfileEditStyles.tagImage}
           onError={handleImageError}
         />
