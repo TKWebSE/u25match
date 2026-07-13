@@ -1,6 +1,5 @@
 import { useLegalDocuments } from '@components/common';
 import { AccountInfo } from '@components/settings/AccountInfo';
-import { LikesHistoryButton } from '@components/settings/LikesHistoryButton';
 import { LogoutButton } from '@components/settings/LogoutButton';
 import { MembershipDisplay } from '@components/settings/mobile/MembershipDisplay.native';
 import { RemainingStats } from '@components/settings/RemainingStats';
@@ -9,7 +8,6 @@ import {
   CONTACT_SCREEN_PATH,
   getProfilePath,
   getSalesDetailPath,
-  LIKES_HISTORY_SCREEN_PATH,
   MEMBERSHIP_REGISTRATION_SCREEN_PATH,
   NOTIFICATIONS_SCREEN_PATH,
   PURCHASE_BOOSTS_SCREEN_PATH,
@@ -121,11 +119,6 @@ const SettingsScreen = () => {
   // ポイント購入画面への遷移
   const handlePointsPurchase = () => {
     router.push(PURCHASE_POINTS_SCREEN_PATH as any);
-  };
-
-  // いいね履歴画面への遷移
-  const handleLikesHistory = () => {
-    router.push(LIKES_HISTORY_SCREEN_PATH as any);
   };
 
   // ブースト実行処理
@@ -695,12 +688,6 @@ const SettingsScreen = () => {
               <Text style={SettingsStyles.buttonArrow}>›</Text>
             </TouchableOpacity>
           </View> */}
-
-          {/* いいね履歴セクション */}
-          <View style={SettingsStyles.section}>
-            <Text style={SettingsStyles.sectionTitle}>いいね履歴</Text>
-            <LikesHistoryButton onPress={handleLikesHistory} />
-          </View>
 
           {/* お知らせセクション */}
           <View style={SettingsStyles.section}>

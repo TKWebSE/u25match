@@ -36,7 +36,6 @@ export const getSalesDetailPath = (saleId: string) => `/sales/${saleId}`;
 
 // その他の画面
 export const CONTACT_SCREEN_PATH = '/contact';
-export const LIKES_HISTORY_SCREEN_PATH = '/likes-history';
 export const MEMBERSHIP_STATUS_SCREEN_PATH = '/membership-status';
 export const MEMBERSHIP_REGISTRATION_SCREEN_PATH = '/membership-registration';
 export const NOTIFICATIONS_SCREEN_PATH = '/notifications';

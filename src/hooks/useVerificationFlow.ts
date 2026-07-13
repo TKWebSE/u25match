@@ -109,6 +109,7 @@ export const useVerificationFlow = () => {
   // 本人確認書類のアップロード処理を実行
   const handleStartVerification = useCallback(async () => {
     try {
+      //入力値チェック、、これがないとエラーが出る
       if (!frontImage || !backImage) {
         throw new Error('身分証明書の表裏両方の写真をアップロードしてください');
       }
